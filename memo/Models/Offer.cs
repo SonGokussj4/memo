@@ -22,7 +22,7 @@ namespace memo.Models
         [Display(Name = "Datum Odeslání"), Column(TypeName = "date"), DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime? SentDate { get; set; }
 
-        [Display(Name = "Předmět Nabídky"), Column(TypeName = "text")]
+        [Display(Name = "Předmět Nabídky"), Column(TypeName = "ntext")]
         public string Subject { get; set; }
 
         [Required]
@@ -73,7 +73,7 @@ namespace memo.Models
         // [InverseProperty(nameof(OfferStatus.Offer))]
         // public virtual OfferStatus StatusNavigation { get; set; }
 
-        [Display(Name = "Důvod Prohry"), Column(TypeName = "text")]
+        [Display(Name = "Důvod Prohry"), Column(TypeName = "ntext")]
         public string LostReason { get; set; }
 
         [Display(Name = "Vytvořeno"), Column(TypeName = "date")]

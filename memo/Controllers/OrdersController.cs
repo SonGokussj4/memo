@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Net;
 using System.Globalization;
+using memo.ViewModels;
 
 namespace memo.Controllers
 {
@@ -28,8 +29,8 @@ namespace memo.Controllers
         {
             IList<Order> model = _db.Order
                 .Include(x => x.Offer)
+                .Include(y => y.Contact)
                 // .Include(x => x.Company)
-                // .Include(y => y.Contact)
                 // .Include(z => z.Currency)
                 // .Include(a => a.OfferStatus)
                 .ToList();
@@ -44,12 +45,88 @@ namespace memo.Controllers
         }
 
         [HttpGet]
-        public IActionResult Create(int? id)
+        public IActionResult Select(int? offerId)
         {
             Order model = new Order();
 
             List<Offer> wonOffersList = _db.Offer
                 .Where(t => t.Status == 2)
+                .OrderBy(t => t.OfferName)
+                .ToList();
+            ViewBag.WonOffersList = new SelectList(wonOffersList, "OfferId", "OfferName");
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult Select(Order model)
+        {
+            List<Offer> wonOffersList = _db.Offer
+                .Where(t => t.Status == 2)
+                .OrderBy(t => t.OfferName)
+                .ToList();
+            ViewBag.WonOffersList = new SelectList(wonOffersList, "OfferId", "OfferName");
+
+            if (model != null)
+            {
+                return RedirectToAction("Create", model);
+            }
+
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult Refresh(int offerId, OfferOrderVM vm)
+        {
+            // List<Offer> wonOffersList = _db.Offer
+            //     .Where(t => t.Status == 2)
+            //     .ToList();
+            // ViewBag.WonOffersList = new SelectList(wonOffersList, "OfferId", "OfferName");
+
+            if (vm != null)
+            {
+                vm.Order.OfferId = offerId;
+                return RedirectToAction("Create", vm.Order);
+            }
+
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult Create(int? id, Order model)
+        {
+            List<Offer> wonOffersList = _db.Offer
+                .Where(t => t.Status == 2)
+                .OrderBy(t => t.OfferName)
+                .ToList();
+            ViewBag.WonOffersList = new SelectList(wonOffersList, "OfferId", "OfferName");
+            ViewBag.CurrencyList = new SelectList(_db.Currency.ToList(), "CurrencyId", "Name");
+            ViewBag.ContactList = new SelectList(_db.Contact.ToList(), "ContactId", "PersonName");
+
+            OfferOrderVM viewModel = new OfferOrderVM()
+            {
+                Offer = _db.Offer.Find(model.OfferId),
+                Order = model
+            };
+
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        public IActionResult Create(OfferOrderVM vm)
+        {
+            if (ModelState.IsValid)
+            {
+                _db.Add(vm.Order);
+                _db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+
+            Order model = new Order();
+
+            List<Offer> wonOffersList = _db.Offer
+                .Where(t => t.Status == 2)
+                .OrderBy(t => t.OfferName)
                 .ToList();
             ViewBag.WonOffersList = new SelectList(wonOffersList, "OfferId", "OfferName");
 

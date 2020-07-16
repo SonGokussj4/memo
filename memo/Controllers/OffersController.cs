@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Net;
 using System.Globalization;
+using memo.ViewModels;
 
 namespace memo.Controllers
 {
@@ -39,89 +40,35 @@ namespace memo.Controllers
         {
             Offer model = new Offer();
 
-            List<Company> companyList = _db.Company.ToList();
-            ViewBag.CompanyList = new SelectList(companyList, "CompanyId", "Name");
-
-            List<Contact> contactList = _db.Contact.ToList();
-            ViewBag.ContactList = new SelectList(contactList, "ContactId", "PersonName");
-
+            ViewBag.CompanyList = new SelectList(_db.Company.ToList(), "CompanyId", "Name");
+            ViewBag.ContactList = new SelectList(_db.Contact.ToList(), "ContactId", "PersonName");
             ViewBag.DepartmentList = getDepartmentList();
-
-            List<Currency> currencyList = _db.Currency.ToList();
-            ViewBag.CurrencyList = new SelectList(currencyList, "CurrencyId", "Name");
-
-            List<OfferStatus> offerStatusList = _db.OfferStatus.ToList();
-            ViewBag.OfferStatusList = new SelectList(offerStatusList, "OfferStatusId", "Status");
+            ViewBag.CurrencyList = new SelectList(_db.Currency.ToList(), "CurrencyId", "Name");
+            ViewBag.OfferStatusList = new SelectList(_db.OfferStatus.ToList(), "OfferStatusId", "Status");
 
             model.ExchangeRate = getCurrency();
+
             return View(model);
-        }
-
-        private SelectList getDepartmentList()
-        {
-            List<SelectListItem> departmentList = new List<SelectListItem>
-            {
-                new SelectListItem { Value = "O1", Text = "O1 Management" },
-                new SelectListItem { Value = "A0", Text = "A0 Marketing" },
-                new SelectListItem { Value = "A1", Text = "A1 Konstrukce" },
-                new SelectListItem { Value = "A2", Text = "A2 Výpočty" },
-                new SelectListItem { Value = "A3", Text = "A3 Technická podpora" },
-                new SelectListItem { Value = "A4", Text = "A4 TPV" },
-                new SelectListItem { Value = "A5", Text = "A5 Dokumentace" },
-                new SelectListItem { Value = "A6", Text = "A6 Letecké služby" },
-                new SelectListItem { Value = "O2", Text = "O2 Airworthiness" },
-                new SelectListItem { Value = "O3", Text = "O3 ICT" },
-                new SelectListItem { Value = "O4", Text = "O4 HR" },
-                new SelectListItem { Value = "O6", Text = "O6 Business Develop." },
-                new SelectListItem { Value = "P135", Text = "P135 Zodiac" },
-                new SelectListItem { Value = "C0", Text = "C0 Správa" },
-                new SelectListItem { Value = "C1", Text = "C1 Vývoj aut" },
-                new SelectListItem { Value = "C2", Text = "C2 Analýzy" },
-                new SelectListItem { Value = "C3", Text = "C3 STIHL" },
-                new SelectListItem { Value = "C4", Text = "C4 EKONOMIKA" },
-                new SelectListItem { Value = "C5", Text = "C5 Design" },
-                new SelectListItem { Value = "C6", Text = "C6 Aerodynamika" },
-                new SelectListItem { Value = "C7", Text = "C7 Vývoj aut Kvasiny" },
-            };
-
-            return new SelectList(departmentList, "Value", "Text");
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Create(Offer offer)
         {
-            // SqlCommand com = new SqlCommand("Sp_ListAll", _context);
-            // com.CommandType = CommandType.StoredProcedure;
-            // SqlDataAdapter da = new SqlDataAdapter(_context);
-            // DataSet ds = new DataSet();
-            // da.Fill(ds);
-            // return ds;
+            offer.Status = 1;  // default
 
-            // if (!ModelState.IsValid)
-            // {
-            //     model.CategoryList = new SelectList(_db.Categories, "ID", "Name"); // add this
-            //     return View(model);
-            // }
             if (ModelState.IsValid)
             {
                 _db.Add(offer);
                 _db.SaveChanges();
                 return RedirectToAction("Index");
             }
+
             ViewBag.DepartmentList = getDepartmentList();
-
-            List<Company> companyList = _db.Company.ToList();
-            ViewBag.CompanyList = new SelectList(companyList, "CompanyId", "Name");
-
-            List<Contact> contactList = _db.Contact.ToList();
-            ViewBag.ContactList = new SelectList(contactList, "ContactId", "PersonName");
-
-            List<Currency> currencyList = _db.Currency.ToList();
-            ViewBag.CurrencyList = new SelectList(currencyList, "CurrencyId", "Name");
-
-            List<OfferStatus> offerStatusList = _db.OfferStatus.ToList();
-            ViewBag.OfferStatusList = new SelectList(offerStatusList, "OfferStatusId", "Status");
+            ViewBag.CompanyList = new SelectList(_db.Company.ToList(), "CompanyId", "Name");
+            ViewBag.ContactList = new SelectList(_db.Contact.ToList(), "ContactId", "PersonName");
+            ViewBag.CurrencyList = new SelectList(_db.Currency.ToList(), "CurrencyId", "Name");
+            ViewBag.OfferStatusList = new SelectList(_db.OfferStatus.ToList(), "OfferStatusId", "Status");
 
             return View(offer);
         }
@@ -141,18 +88,10 @@ namespace memo.Controllers
             }
 
             ViewBag.DepartmentList = getDepartmentList();
-
-            List<Company> companyList = _db.Company.ToList();
-            ViewBag.CompanyList = new SelectList(companyList, "CompanyId", "Name");
-
-            List<Contact> contactList = _db.Contact.ToList();
-            ViewBag.ContactList = new SelectList(contactList, "ContactId", "PersonName");
-
-            List<Currency> currencyList = _db.Currency.ToList();
-            ViewBag.CurrencyList = new SelectList(currencyList, "CurrencyId", "Name");
-
-            List<OfferStatus> offerStatusList = _db.OfferStatus.ToList();
-            ViewBag.OfferStatusList = new SelectList(offerStatusList, "OfferStatusId", "Status");
+            ViewBag.CompanyList = new SelectList( _db.Company.ToList(), "CompanyId", "Name");
+            ViewBag.ContactList = new SelectList( _db.Contact.ToList(), "ContactId", "PersonName");
+            ViewBag.CurrencyList = new SelectList( _db.Currency.ToList(), "CurrencyId", "Name");
+            ViewBag.OfferStatusList = new SelectList( _db.OfferStatus.ToList(), "OfferStatusId", "Status");
 
             return View(offer);
         }
@@ -185,6 +124,23 @@ namespace memo.Controllers
                         throw;
                     }
                 }
+
+                if (model.Status == 2)  // model.OfferStatus.Status == "Won"
+                {
+                    // OfferOrderVM viewModel = new OfferOrderVM()
+                    // {
+                    //     Offer = model,
+                    //     Order = new Order() {
+                    //         OfferId = model.OfferId
+                    //     }
+                    // };
+                    // return RedirectToAction("Create", "Orders", viewModel);
+
+                    Order order = new Order();
+                    order.OfferId = model.OfferId;
+                    return RedirectToAction("Select", "Orders", order);
+                }
+
                 return RedirectToAction(nameof(Index));
             }
 
@@ -194,18 +150,10 @@ namespace memo.Controllers
             // Logger.LogWarning(errors.ToString());
 
             ViewBag.DepartmentList = getDepartmentList();
-
-            List<Company> companyList = _db.Company.ToList();
-            ViewBag.CompanyList = new SelectList(companyList, "CompanyId", "Name");
-
-            List<Contact> contactList = _db.Contact.ToList();
-            ViewBag.ContactList = new SelectList(contactList, "ContactId", "PersonName");
-
-            List<Currency> currencyList = _db.Currency.ToList();
-            ViewBag.CurrencyList = new SelectList(currencyList, "CurrencyId", "Name");
-
-            List<OfferStatus> offerStatusList = _db.OfferStatus.ToList();
-            ViewBag.OfferStatusList = new SelectList(offerStatusList, "OfferStatusId", "Status");
+            ViewBag.CompanyList = new SelectList(_db.Company.ToList(), "CompanyId", "Name");
+            ViewBag.ContactList = new SelectList(_db.Contact.ToList(), "ContactId", "PersonName");
+            ViewBag.CurrencyList = new SelectList(_db.Currency.ToList(), "CurrencyId", "Name");
+            ViewBag.OfferStatusList = new SelectList(_db.OfferStatus.ToList(), "OfferStatusId", "Status");
 
             return View(model);
         }
@@ -266,6 +214,36 @@ namespace memo.Controllers
                 }
             }
             return 0;
+        }
+
+        private SelectList getDepartmentList()
+        {
+            List<SelectListItem> departmentList = new List<SelectListItem>
+            {
+                new SelectListItem { Value = "O1", Text = "O1 Management" },
+                new SelectListItem { Value = "A0", Text = "A0 Marketing" },
+                new SelectListItem { Value = "A1", Text = "A1 Konstrukce" },
+                new SelectListItem { Value = "A2", Text = "A2 Výpočty" },
+                new SelectListItem { Value = "A3", Text = "A3 Technická podpora" },
+                new SelectListItem { Value = "A4", Text = "A4 TPV" },
+                new SelectListItem { Value = "A5", Text = "A5 Dokumentace" },
+                new SelectListItem { Value = "A6", Text = "A6 Letecké služby" },
+                new SelectListItem { Value = "O2", Text = "O2 Airworthiness" },
+                new SelectListItem { Value = "O3", Text = "O3 ICT" },
+                new SelectListItem { Value = "O4", Text = "O4 HR" },
+                new SelectListItem { Value = "O6", Text = "O6 Business Develop." },
+                new SelectListItem { Value = "P135", Text = "P135 Zodiac" },
+                new SelectListItem { Value = "C0", Text = "C0 Správa" },
+                new SelectListItem { Value = "C1", Text = "C1 Vývoj aut" },
+                new SelectListItem { Value = "C2", Text = "C2 Analýzy" },
+                new SelectListItem { Value = "C3", Text = "C3 STIHL" },
+                new SelectListItem { Value = "C4", Text = "C4 EKONOMIKA" },
+                new SelectListItem { Value = "C5", Text = "C5 Design" },
+                new SelectListItem { Value = "C6", Text = "C6 Aerodynamika" },
+                new SelectListItem { Value = "C7", Text = "C7 Vývoj aut Kvasiny" },
+            };
+
+            return new SelectList(departmentList, "Value", "Text");
         }
 
         private bool OfferExists(int id)

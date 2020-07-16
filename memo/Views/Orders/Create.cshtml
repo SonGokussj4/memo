@@ -3,7 +3,7 @@
 }
 
 @* @model memo.ViewModels.CreateOfferViewModel *@
-@model memo.Models.Order
+@model memo.ViewModels.OfferOrderVM
 
 <div class="text-center">
     <h1 class="display-6">@ViewData["Title"]</h1>
@@ -12,15 +12,163 @@
 
 <div class="container">
     <div class="col-lg-8 push-lg-4 personal-info">
-        <form role="form" autocomplete="on" asp-action="Create" method="post">
+
+        <!-- FORM - OBJEDNAVKA -->
+        <form role="form" autocomplete="on" asp-action="Refresh" method="post">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-        <input type="hidden" asp-for="OrderId" />
 
         <div class="form-group row">
-            <label asp-for="OfferId" class="col-lg-3 col-form-label form-control-label control-label">Objednávka</label>
+            <label asp-for="Order.OfferId" class="col-lg-3 col-form-label form-control-label control-label">Objednávka</label>
             <div class="col-lg-4">
-                @Html.DropDownListFor(model => model.OfferId, ViewBag.WonOffersList as SelectList, "-- Vyber Objednávku --", new { @class = "form-control" })
-                <span asp-validation-for="OfferId" class="text-danger"></span>
+                <input type="hidden" asp-for="Order.OfferId" />
+                @* @Html.DropDownListFor(model => model.Order.OfferId, ViewBag.WonOffersList as SelectList, "-- Vyber Objednávku --", new { @class = "form-control", onchange = @"this.form.submit();" }) *@
+                @Html.DropDownList("OfferId", ViewBag.WonOffersList as SelectList, "-- Vyber Objednávku --", new { @class = "form-control", onchange = @"this.form.submit();" })
+                <span asp-validation-for="Order.OfferId" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label asp-for="Offer.ReceiveDate" class="col-lg-3 col-form-label form-control-label control-label"></label>
+            <div class="col-lg-4">
+                <input asp-for="Offer.ReceiveDate" class="form-control" type="text" required="" autocomplete="off" readonly />
+            </div>
+            <label class="col-lg-1 col-form-label form-control-label control-label"> --> </label>
+            <div class="col-lg-4">
+                <input asp-for="Offer.SentDate" class="form-control" type="text" autocomplete="off" readonly />
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label asp-for="Offer.Subject" class="col-lg-3 col-form-label form-control-label control-label"></label>
+            <div class="col-lg-9">
+                <input asp-for="Offer.Subject" class="form-control" type="text" readonly />
+                <span asp-validation-for="Offer.Subject" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label asp-for="Offer.Price" class="col-lg-3 col-form-label form-control-label control-label"></label>
+            <div class="col-lg-5">
+                <input asp-for="Offer.Price" class="form-control" type="text" readonly />
+                <span asp-validation-for="Offer.Price" class="text-danger"></span>
+            </div>
+            <div class="col-lg-2">
+                @Html.DropDownListFor(model => model.Offer.CurrencyId, ViewBag.CurrencyList as SelectList, new { @class = "form-control", @disabled = "disabled" })
+                @Html.HiddenFor(model => model.Offer.CurrencyId)
+                <span asp-validation-for="Offer.Currency" class="text-danger"></span>
+            </div>
+            <div class="col-lg-2">
+                <input asp-for="Offer.ExchangeRate" class="form-control" type="text" readonly />
+                <span asp-validation-for="Offer.ExchangeRate" class="text-danger"></span>
+            </div>
+        </div>
+
+        </form>
+
+        <hr />
+
+        <!-- FORM - ZAKAZKA -->
+        <form role="form" autocomplete="on" asp-action="Create" method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <input type="hidden" asp-for="Order.OrderId" />
+
+        <div class="form-group row">
+            <label asp-for="Order.OrderName" class="col-lg-3 col-form-label form-control-label control-label"></label>
+            <div class="col-lg-9">
+                <input asp-for="Order.OrderName" class="form-control" type="text" required="" placeholder="EV-ord/rrrr/####" />
+                <span asp-validation-for="Order.OrderName" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label asp-for="Order.PriceFinal" class="col-lg-3 col-form-label form-control-label control-label"></label>
+            <div class="col-lg-3">
+                <input asp-for="Order.PriceFinal" class="form-control" type="text" required="" onchange="changeDiscount(this.value)"/>
+                <span asp-validation-for="Order.PriceFinal" class="text-danger"></span>
+            </div>
+            <div class="col-lg-3">
+                <label asp-for="Order.PriceDiscount" class="col-lg-2 col-form-label form-control-label control-label"></label>
+            </div>
+            <div class="col-lg-3">
+                <input asp-for="Order.PriceDiscount" class="form-control" type="text" required="" readonly />
+                <span asp-validation-for="Order.PriceDiscount" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label asp-for="Order.OrderCode" class="col-lg-3 col-form-label form-control-label control-label"></label>
+            <div class="col-lg-9">
+                <input asp-for="Order.OrderCode" class="form-control" type="text" required="" />
+                <span asp-validation-for="Order.OrderCode" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label asp-for="Order.ContactId" class="col-lg-3 col-form-label form-control-label control-label"></label>
+            <div class="col-lg-9">
+                @Html.DropDownListFor(model => model.Order.ContactId, ViewBag.ContactList as SelectList, "-- Vyber Kontakt --", new { @class = "form-control" })
+                <span asp-validation-for="Order.ContactId" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label asp-for="Order.HourWage" class="col-lg-3 col-form-label form-control-label control-label"></label>
+            <div class="col-lg-3">
+                <input asp-for="Order.HourWage" class="form-control" type="text" onchange="changeDiscount(this.value)"/>
+                <span asp-validation-for="Order.HourWage" class="text-danger"></span>
+            </div>
+            <div class="col-lg-3">
+                <label asp-for="Order.TotalHours" class="col-lg-2 col-form-label form-control-label control-label"></label>
+            </div>
+            <div class="col-lg-3">
+                <input asp-for="Order.TotalHours" class="form-control" type="text" />
+                <span asp-validation-for="Order.TotalHours" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label asp-for="Order.InvoiceIssueDate" class="col-lg-3 col-form-label form-control-label control-label"></label>
+            <div class="col-lg-9 mycalendar">
+                <input asp-for="Order.InvoiceIssueDate" class="form-control" type="text" autocomplete="off"/>
+                <span asp-validation-for="Order.InvoiceIssueDate" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label asp-for="Order.InvoiceDueDate" class="col-lg-3 col-form-label form-control-label control-label"></label>
+            <div class="col-lg-9 mycalendar">
+                <input asp-for="Order.InvoiceDueDate" class="form-control" type="text" autocomplete="off"/>
+                <span asp-validation-for="Order.InvoiceDueDate" class="text-danger"></span>
+            </div>
+        </div>
+
+         <div class="form-group row">
+            <label asp-for="Order.PriceFinalCzk" class="col-lg-3 col-form-label form-control-label control-label"></label>
+            <div class="col-lg-7">
+                <input asp-for="Order.PriceFinalCzk" class="form-control" type="text" />
+                <span asp-validation-for="Order.PriceFinalCzk" class="text-danger"></span>
+            </div>
+            <div class="col-lg-2">
+                <input asp-for="Order.ExchangeRate" class="form-control" type="text"/>
+                <span asp-validation-for="Order.ExchangeRate" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label asp-for="Order.Notes" class="col-lg-3 col-form-label form-control-label control-label"></label>
+            <div class="col-lg-9">
+                <textarea asp-for="Order.Notes" class="form-control"></textarea>
+                @* @Html.TextAreaFor(m => m.Order.Notes, additionalViewData: new { htmlAttributes = new { @class = "form-control" }}) *@
+                <span asp-validation-for="Order.Notes" class="text-danger"></span>
+            </div>
+        </div>
+
+
+        <div class="form-group row">
+            <label class="col-lg-3 col-form-label form-control-label"></label>
+            <div class="col-lg-9">
+                <input type="reset" class="btn btn-secondary" value="Resetovat pole" />
+                <input type="submit" class="btn btn-primary" value="Vytvořit zakázku" />
             </div>
         </div>
 
@@ -151,6 +299,12 @@
                 calendarWeeks: true,
                 autoclose: true,
                 todayHighlight: true
+            });
+
+            $('#Order_PriceFinal').on('input', function(){
+                var offerPrice = parseInt($('#Offer_Price').val());
+                var finalPrice = parseInt($('#Order_PriceFinal').val());
+                $('#Order_PriceDiscount').val(offerPrice - finalPrice);
             });
         })
 

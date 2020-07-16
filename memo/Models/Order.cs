@@ -16,6 +16,7 @@ namespace memo.Models
         public Offer Offer { get; set; }
 
         [StringLength(50)]
+        [RegularExpression(@"^EV-ord/\d{4}/\d{4}$", ErrorMessage = "Číslo zakázky musí být ve tvaru EV-ord/rrrr/####, kde rrrr je rok a #### pořadové unikátní číslo")]
         public string OrderName { get; set; }
 
         public int? PriceFinal { get; set; }
@@ -26,6 +27,7 @@ namespace memo.Models
         public string OrderCode { get; set; }
 
         public int? ContactId { get; set; }
+        public Contact Contact { get; set; }
 
         public double? HourWage { get; set; }
 

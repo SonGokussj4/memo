@@ -94,3 +94,12 @@ VALUES
 
 -- // Vynulovat pocitadlo novych zaznamu
 -- DBCC CHECKIDENT ('memo.Company', RESEED, 0)
+
+-- // Zmenit typ sloupce z [text] na [ntext]
+-- ALTER TABLE memo.Offer
+-- ALTER COLUMN [LostReason] [varchar](max) NULL;
+
+-- ALTER TABLE memo.Offer
+-- ALTER COLUMN [LostReason] [ntext] NULL;
+
+

@@ -1,15 +1,46 @@
 @{
-    ViewData["Title"] = "Nová Nabídka";
+    ViewData["Title"] = "Nová Zakázka";
 }
 
 @* @model memo.ViewModels.CreateOfferViewModel *@
-@model memo.Models.Offer
+@model memo.Models.Order
 
 <div class="text-center">
     <h1 class="display-6">@ViewData["Title"]</h1>
     <hr />
 </div>
 
+<div class="container">
+    <div class="col-lg-8 push-lg-4 personal-info">
+
+        @using (Html.BeginForm("Select", "Orders"))
+        {
+            @* <form role="form" autocomplete="on" asp-action="Create" method="post"> *@
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            @* <input type="hidden" asp-for="OrderId" /> *@
+
+            <div class="form-group row">
+                <label asp-for="OfferId" class="col-lg-3 col-form-label form-control-label control-label">Objednávka</label>
+                <div class="col-lg-4">
+                    @* @Html.DropDownListFor(model => model.OfferId, ViewBag.WonOffersList as SelectList, "-- Vyber Objednávku --", new { @class = "form-control", onchange = "this.form.submit();" }) *@
+                    @Html.DropDownListFor(model => model.OfferId, ViewBag.WonOffersList as SelectList, "-- Vyber Objednávku --", new { @class = "form-control" })
+                    <span asp-validation-for="OfferId" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-lg-3 col-form-label form-control-label"></label>
+                <div class="col-lg-9">
+                    <input type="reset" class="btn btn-secondary" value="Resetovat pole" />
+                    <input type="submit" class="btn btn-primary" value="Vybrat objednávku" />
+                </div>
+            </div>
+        }
+        @* </form> *@
+    </div>
+</div>
+
+@*
 <div class="container">
     <div class="col-lg-8 push-lg-4 personal-info">
         <form role="form" autocomplete="on" asp-action="Create" method="post">
@@ -54,7 +85,6 @@
                 <span asp-validation-for="EveDivision" class="text-danger"></span>
             </div>
             <div class="col-lg-3">
-                @* @Html.DropDownList("EveDepartment", new SelectList(ViewBag.DepartmentList, "Value", "Text", "-- Oddělení --"), new { @class = "form-control"}) *@
                 @Html.DropDownList("EveDepartment", new SelectList(ViewBag.DepartmentList, "Value", "Text"), new { @class = "form-control"})
                 <span asp-validation-for="EveDepartment" class="text-danger"></span>
             </div>
@@ -92,13 +122,13 @@
             </div>
         </div>
 
-        @* <div class="form-group row">
+        <div class="form-group row">
             <label asp-for="Status" class="col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-5">
                 @Html.DropDownListFor(model => model.Status, ViewBag.OfferStatusList as SelectList, new { @class = "form-control" })
                 <span asp-validation-for="Status" class="text-danger"></span>
             </div>
-        </div> *@
+        </div>
 
         <div class="form-group row">
             <label class="col-lg-3 col-form-label form-control-label"></label>
@@ -110,7 +140,7 @@
 
         </form>
     </div>
-</div>
+</div> *@
 
 @section Scripts {
 
