@@ -24,11 +24,11 @@
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link text-dark"asp-area="" asp-controller="Offer" asp-action="Index">Nabídky</a>
+                            <a class="nav-link text-dark" asp-controller="Offer" asp-action="Index">Nabídky</a>
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link text-dark"asp-area="" asp-controller="Order" asp-action="Index">Zakázky</a>
+                            <a class="nav-link text-dark" asp-controller="Order" asp-action="Index">Zakázky</a>
                         </li>
 
                         <li class="nav-item dropdown">
@@ -37,8 +37,8 @@
                                Data
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <a href="#" class="dropdown-item">Kontakty</a>
-                                <a href="#" class="dropdown-item">Firmy</a>
+                                <a class="dropdown-item" asp-controller="Contacts" asp-action="Index">Kontakty</a>
+                                <a class="dropdown-item">Firmy</a>
                                 <div class="dropdown-divider"></div>
                                 <a href="#" class="dropdown-item">Cokoli jineho</a>
                             </div>
