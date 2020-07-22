@@ -8,6 +8,11 @@ namespace memo.Models
     [Table("Company", Schema = "memo")]
     public partial class Company
     {
+        public Company()
+        {
+            Offer = new HashSet<Offer>();
+        }
+
         [Key]
         public int CompanyId { get; set; }
         [Display(Name = "Jméno"), StringLength(50)]
@@ -22,5 +27,8 @@ namespace memo.Models
         public string Web { get; set; }
         [DataType(DataType.Date), Column(TypeName = "date")]
         public DateTime? CreateDate { get; set; }
+
+        [InverseProperty("Company")]
+        public virtual ICollection<Offer> Offer { get; set; }
     }
 }

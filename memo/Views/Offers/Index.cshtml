@@ -2,7 +2,36 @@
     ViewData["Title"] = "Nabídky";
 }
 
+@model IEnumerable<memo.Models.Offer>
+
 <div class="text-center">
     <h1 class="display-4">Nabídky</h1>
-
 </div>
+
+
+<div id="toolbar" style="padding-bottom: 10px;">
+    <a asp-action="Create" class="btn btn-outline-success"><i class="fa fa-plus-square-o"></i> Nová Nabídka</a>
+</div>
+
+
+<table class="table table-sm">
+    <thead>
+        <tr>
+            <th scope="col"></th>
+            <th scope="col">Název</th>
+            <th scope="col">Předmět</th>
+            <th scope="col">Firma Id</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var offer in Model)
+        {
+            <tr>
+                <th scope="row"><a href="#"><i class="fa fa-pencil fa-fw" aria-hidden="true"></i></a></th>
+                <th scope="row">@offer.OfferName</th>
+                <th scope="row">@offer.Subject</th>
+                <th scope="row">@offer.CompanyId</th>
+            </tr>
+        }
+    </tbody>
+</table>

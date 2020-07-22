@@ -18,7 +18,7 @@ namespace memo.Models
         public string Phone { get; set; }
         [Display(Name = "E-mail"), StringLength(255)]
         public string Email { get; set; }
-        [DataType(DataType.Date), Column(TypeName = "date")]
+        [DataType(DataType.Date), Column(TypeName = "date"), DisplayFormat(DataFormatString = "{0:dd.MM.yyyy}", ApplyFormatInEditMode = true)]
         public DateTime? CreateDate { get; set; }
     }
 }
