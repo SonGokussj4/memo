@@ -1,17 +1,5 @@
 -- This sql query should create all tables and it's relations
 
--- Drop the table 'Company' in schema 'Memo'
-IF EXISTS (
-    SELECT *
-        FROM sys.tables
-        JOIN sys.schemas
-            ON sys.tables.schema_id = sys.schemas.schema_id
-    WHERE sys.schemas.name = N'memo'
-        -- AND sys.tables.name = N'Company'
-)
-    DROP TABLE "memo.Company","memo.Contact","memo.Offer","memo.OfferStatus","memo.Order","memo.Currency"
-GO
-
 CREATE TABLE [memo].[Company] (
   [CompanyId] int PRIMARY KEY IDENTITY(1, 1),
   [Name] nvarchar(50),
@@ -28,7 +16,7 @@ CREATE TABLE [memo].[Contact] (
   [PersonName] nvarchar(50),
   [Department] nvarchar(50),
   [Phone] nvarchar(50),
-  [Email] Email,
+  [Email] nvarchar(255),
   [CreateDate] date
 )
 GO
@@ -45,7 +33,7 @@ CREATE TABLE [memo].[Offer] (
   [EveDepartment] nvarchar(50),
   [EveCreatedUser] nvarchar(50),
   [Price] int,
-  [Currency] int,
+  [CurrencyId] int,
   [ExchangeRate] float,
   [PriceCzk] int,
   [Status] int,
@@ -56,7 +44,7 @@ GO
 
 CREATE TABLE [memo].[OfferStatus] (
   [OfferStatusId] int PRIMARY KEY IDENTITY(1, 1),
-  [Status] string
+  [Status] nvarchar(20)
 )
 GO
 
@@ -81,32 +69,32 @@ GO
 
 CREATE TABLE [memo].[Currency] (
   [CurrencyId] int PRIMARY KEY IDENTITY(1, 1),
-  [Name] string
+  [Name] nvarchar(10)
 )
 GO
 
-ALTER TABLE [Offer] ADD FOREIGN KEY ([ContactId]) REFERENCES [Contact] ([ContactId])
+ALTER TABLE [memo].[Offer] ADD FOREIGN KEY ([ContactId]) REFERENCES [memo].[Contact] ([ContactId])
 GO
 
-ALTER TABLE [Offer] ADD FOREIGN KEY ([CompanyId]) REFERENCES [Company] ([CompanyId])
+ALTER TABLE [memo].[Offer] ADD FOREIGN KEY ([CompanyId]) REFERENCES [memo].[Company] ([CompanyId])
 GO
 
-ALTER TABLE [Offer] ADD FOREIGN KEY ([Status]) REFERENCES [OfferStatus] ([OfferStatusId])
+ALTER TABLE [memo].[Offer] ADD FOREIGN KEY ([Status]) REFERENCES [memo].[OfferStatus] ([OfferStatusId])
 GO
 
-ALTER TABLE [Offer] ADD FOREIGN KEY ([OfferId]) REFERENCES [Order] ([OfferId])
+ALTER TABLE [memo].[Order] ADD FOREIGN KEY ([OfferId]) REFERENCES [memo].[Offer] ([OfferId])
 GO
 
-ALTER TABLE [Order] ADD FOREIGN KEY ([ContactId]) REFERENCES [Contact] ([ContactId])
+ALTER TABLE [memo].[Order] ADD FOREIGN KEY ([ContactId]) REFERENCES [memo].[Contact] ([ContactId])
 GO
 
-ALTER TABLE [Currency] ADD FOREIGN KEY ([CurrencyId]) REFERENCES [Offer] ([Currency])
+ALTER TABLE [memo].[Offer] ADD FOREIGN KEY ([CurrencyId]) REFERENCES [memo].[Currency] ([CurrencyId])
 GO
 
 EXEC sp_addextendedproperty
 @name = N'Column_Description',
 @value = 'EVE_qui_2020_003_SKODA_EKX_',
-@level0type = N'Schema', @level0name = 'dbo',
+@level0type = N'Schema', @level0name = 'memo',
 @level1type = N'Table',  @level1name = 'Offer',
 @level2type = N'Column', @level2name = 'OfferName';
 GO
@@ -114,7 +102,7 @@ GO
 EXEC sp_addextendedproperty
 @name = N'Column_Description',
 @value = 'Ongoing, Won, Lost',
-@level0type = N'Schema', @level0name = 'dbo',
+@level0type = N'Schema', @level0name = 'memo',
 @level1type = N'Table',  @level1name = 'OfferStatus',
 @level2type = N'Column', @level2name = 'Status';
 GO
@@ -122,7 +110,7 @@ GO
 EXEC sp_addextendedproperty
 @name = N'Column_Description',
 @value = 'EVE-Quo/2020-003',
-@level0type = N'Schema', @level0name = 'dbo',
+@level0type = N'Schema', @level0name = 'memo',
 @level1type = N'Table',  @level1name = 'Order',
 @level2type = N'Column', @level2name = 'OrderName';
 GO
@@ -130,7 +118,7 @@ GO
 EXEC sp_addextendedproperty
 @name = N'Column_Description',
 @value = 'CZK, EUR, USD',
-@level0type = N'Schema', @level0name = 'dbo',
+@level0type = N'Schema', @level0name = 'memo',
 @level1type = N'Table',  @level1name = 'Currency',
 @level2type = N'Column', @level2name = 'Name';
 GO
