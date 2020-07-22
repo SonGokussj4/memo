@@ -122,3 +122,16 @@ EXEC sp_addextendedproperty
 @level1type = N'Table',  @level1name = 'Currency',
 @level2type = N'Column', @level2name = 'Name';
 GO
+
+ALTER TABLE [memo].[Company] ADD CONSTRAINT DF_Company DEFAULT GETDATE() FOR CreateDate
+GO
+
+ALTER TABLE [memo].[Contact] ADD CONSTRAINT DF_Contact DEFAULT GETDATE() FOR CreateDate
+GO
+
+ALTER TABLE [memo].[Offer] ADD CONSTRAINT DF_Offer DEFAULT GETDATE() FOR CreateDate
+GO
+
+ALTER TABLE [memo].[Order] ADD CONSTRAINT DF_Order DEFAULT GETDATE() FOR CreateDate
+GO
+
