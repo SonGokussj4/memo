@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using memo.Models;
 using memo.Data;
+using memo.ViewModels;
+using Microsoft.EntityFrameworkCore;
 
 namespace memo.Controllers
 {
@@ -21,16 +23,9 @@ namespace memo.Controllers
 
         public IActionResult Index()
         {
-            IEnumerable<Offer> model = _db.Offer.ToList();
+            IList<Offer> model = _db.Offer.Include(c => c.Company).ToList();
+
             return View(model);
-
-            // List<Offer> offerList = _db.Offer.ToList();
-
-            // OfferViewModel offerVM = new OfferViewModel();
-
-            // List<OfferViewModel> = offerList.Select(x=>
-            // )
-
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

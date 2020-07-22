@@ -30,6 +30,9 @@ namespace memo.Models
         [Display(Name = "Firma")]
         public int? CompanyId { get; set; }
 
+        [ForeignKey("CompanyId")]
+        public Company Company { get; set; }
+
         [Required]
         [Display(Name = "EVE Divize"), StringLength(50)]
         public string EveDivision { get; set; }
@@ -62,9 +65,9 @@ namespace memo.Models
         public DateTime? CreateDate { get; set; }
 
 
-        [ForeignKey(nameof(CompanyId))]
-        [InverseProperty("Offer")]
-        public virtual Company Company { get; set; }
+        // [ForeignKey(nameof(CompanyId))]
+        // [InverseProperty("Offer")]
+        // public virtual Company Company { get; set; }
 
         [ForeignKey(nameof(CurrencyId))]
         [InverseProperty("Offer")]

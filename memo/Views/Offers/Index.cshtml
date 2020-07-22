@@ -2,7 +2,7 @@
     ViewData["Title"] = "Nabídky";
 }
 
-@model IEnumerable<memo.Models.Offer>
+@model IList<memo.Models.Offer>
 
 <div class="text-center">
     <h1 class="display-4">Nabídky</h1>
@@ -18,19 +18,19 @@
     <thead>
         <tr>
             <th scope="col"></th>
+            <th scope="col">Id</th>
             <th scope="col">Název</th>
-            <th scope="col">Předmět</th>
-            <th scope="col">Firma Id</th>
+            <th scope="col">Firma</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var offer in Model)
+        @foreach (var item in Model)
         {
             <tr>
                 <th scope="row"><a href="#"><i class="fa fa-pencil fa-fw" aria-hidden="true"></i></a></th>
-                <th scope="row">@offer.OfferName</th>
-                <th scope="row">@offer.Subject</th>
-                <th scope="row">@offer.CompanyId</th>
+                <th scope="row">@item.OfferId</th>
+                <th scope="row">@item.OfferName</th>
+                <th scope="row">@item.Company.Name</th>
             </tr>
         }
     </tbody>
