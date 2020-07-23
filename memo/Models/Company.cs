@@ -15,18 +15,25 @@ namespace memo.Models
 
         [Key]
         public int CompanyId { get; set; }
+
         [Display(Name = "Jméno"), StringLength(50)]
         public string Name { get; set; }
+
         [Display(Name = "Město"), StringLength(50)]
         public string City { get; set; }
+
         [Display(Name = "Adresa"), StringLength(50)]
         public string Address { get; set; }
+
         [Display(Name = "Telefon"), StringLength(50)]
         public string Phone { get; set; }
+
         [Display(Name = "Web"), StringLength(50)]
         public string Web { get; set; }
+
         [DataType(DataType.Date), Column(TypeName = "date")]
         public DateTime? CreateDate { get; set; }
+
 
         [InverseProperty("Company")]
         public virtual ICollection<Offer> Offer { get; set; }

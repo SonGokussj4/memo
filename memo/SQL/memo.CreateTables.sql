@@ -23,7 +23,7 @@ GO
 
 CREATE TABLE [memo].[Offer] (
   [OfferId] int PRIMARY KEY IDENTITY(1, 1),
-  [OfferName] nvarchar(50),
+  [OfferName] nvarchar(50) UNIQUE,
   [ReceiveDate] date,
   [SentDate] date,
   [Subject] text,
@@ -42,6 +42,9 @@ CREATE TABLE [memo].[Offer] (
 )
 GO
 
+--ALTER TABLE [memo].[Offer]
+--  ADD CONSTRAINT UQ_OfferName UNIQUE (OfferName);
+
 CREATE TABLE [memo].[OfferStatus] (
   [OfferStatusId] int PRIMARY KEY IDENTITY(1, 1),
   [Status] nvarchar(20)
@@ -51,7 +54,7 @@ GO
 CREATE TABLE [memo].[Order] (
   [OrderId] int PRIMARY KEY IDENTITY(1, 1),
   [OfferId] int,
-  [OrderName] nvarchar(50),
+  [OrderName] nvarchar(50) UNIQUE,
   [PriceFinal] int,
   [PriceDiscount] int,
   [OrderCode] nvarchar(50),
@@ -66,6 +69,9 @@ CREATE TABLE [memo].[Order] (
   [CreateDate] date
 )
 GO
+
+--ALTER TABLE [memo].[Order]
+--  ADD CONSTRAINT UQ_OrderName UNIQUE (OrderName);
 
 CREATE TABLE [memo].[Currency] (
   [CurrencyId] int PRIMARY KEY IDENTITY(1, 1),

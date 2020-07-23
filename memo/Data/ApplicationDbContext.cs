@@ -4,6 +4,7 @@ using System.Text;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using memo.Models;
+using memo.ViewModels;
 
 namespace memo.Data
 {
@@ -21,6 +22,9 @@ namespace memo.Data
         public virtual DbSet<Currency> Currency { get; set; }
         public virtual DbSet<Offer> Offer { get; set; }
         public virtual DbSet<OfferStatus> OfferStatus { get; set; }
+
+        // // ViewModels
+        // public DbSet<CreateOfferViewModel> CreateOfferVM { get; set; }
 
         // MODEL BUILDER
         protected override void OnModelCreating(ModelBuilder modelBuilder)

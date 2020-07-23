@@ -1,0 +1,127 @@
+@{
+    ViewData["Title"] = "Nová Nabídka";
+}
+
+@* @model memo.ViewModels.CreateOfferViewModel *@
+@model memo.Models.Offer
+
+<div class="text-center">
+    <h1 class="display-4">Nabídky</h1>
+</div>
+
+<div class="container">
+    <div class="col-lg-8 push-lg-4 personal-info">
+        <form role="form" autocomplete="on" asp-action="Create" method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="form-group row">
+            <label asp-for="OfferName" class="col-lg-3 col-form-label form-control-label control-label"></label>
+            <div class="col-lg-9">
+                <input asp-for="OfferName" class="form-control" type="text" required="" />
+                <span asp-validation-for="OfferName" class="text-danger"></span>
+            </div>
+        </div>
+
+        @* <div class="form-group row">
+            <label asp-for="ReceiveDate" class="col-lg-3 col-form-label form-control-label control-label"></label>
+            <div class="col-lg-9 mycalendar">
+                <input asp-for="ReceiveDate" class="form-control" type="text" required="" />
+                <span asp-validation-for="ReceiveDate" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label asp-for="SentDate" class="col-lg-3 col-form-label form-control-label control-label"></label>
+            <div class="col-lg-9 mycalendar">
+                <input asp-for="SentDate" class="form-control" type="text" />
+                <span asp-validation-for="SentDate" class="text-danger"></span>
+            </div>
+        </div> *@
+
+        @* <div class="form-group row">
+            <label asp-for="Offer.Subject" class="col-lg-3 col-form-label form-control-label control-label"></label>
+            <div class="col-lg-9">
+                <input asp-for="Offer.Subject" class="form-control" type="text" />
+                <span asp-validation-for="Offer.Subject" class="text-danger"></span>
+            </div>
+        </div> *@
+
+        @* <div class="form-group row">
+            <label asp-for="Contact" class="col-lg-3 col-form-label form-control-label control-label"></label>
+            <div class="col-lg-9">
+                <input asp-for="Contact" class="form-control" type="text" />
+                <span asp-validation-for="Contact" class="text-danger"></span>
+            </div>
+        </div> *@
+
+        <div class="form-group row">
+            <label asp-for="EveDivision" class="col-lg-3 col-form-label form-control-label control-label"></label>
+            <div class="col-lg-9">
+                @Html.DropDownList("EveDivision", new SelectList(Model.EveDivisionList, "Value", "Text", "Select..."), new { @class = "form-control"})
+                <span asp-validation-for="EveDivision" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label asp-for="CompanyId" class="col-lg-3 col-form-label form-control-label control-label"></label>
+            <div class="col-lg-9">
+                @Html.DropDownList("CompanyId", new SelectList(Model.CompanyId.ToString(), "Value", "Text", "Select..."), new { @class = "form-control"})
+                <span asp-validation-for="CompanyId" class="text-danger"></span>
+            </div>
+        </div>
+
+        @* <div class="form-group row">
+            <label asp-for="Company" class="col-lg-3 col-form-label form-control-label control-label"></label>
+            <div class="col-lg-9"> *@
+                @* <input asp-for="Company" class="form-control" type="text" r/> *@
+                @* @Html.DropDownListFor(model => model.Id, Model.Manufacturer,"Select", new { @class = "form-control" } ) *@
+                @* @Html.DropDownList("Company", new SelectList(Model.Company.Name, "Value", "Text", "Vyber..."), new { @class = "form-controll"}) *@
+                @* <span asp-validation-for="Company" class="text-danger"></span>
+            </div>
+        </div> *@
+
+        @* <div class="form-group row">
+            <label asp-for="Contact" class="col-lg-3 col-form-label form-control-label control-label"></label>
+            <div class="col-lg-9">
+                @Html.DropDownList("CompanyId", new SelectList(Model.CompanyId, "Value", "Text", "Vyber..."), new { @class = "form-controll"})
+                <span asp-validation-for="Contact" class="text-danger"></span>
+            </div>
+        </div> *@
+
+        <div class="form-group row">
+            <label class="col-lg-3 col-form-label form-control-label"></label>
+            <div class="col-lg-9">
+                <input type="reset" class="btn btn-secondary" value="Vyprázdnit pole" />
+                <input type="submit" class="btn btn-primary" value="Vytvořit nabídku" />
+            </div>
+        </div>
+
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+
+        $(document).ready(function(){
+
+            $('.mycalendar input').datepicker({
+                format: "dd.mm.yyyy",
+                startDate: "01.01.1980",
+                endDate: "01.01.2021",
+                todayBtn: "linked",
+                language: "cs",
+                daysOfWeekHighlighted: "0,6",
+                calendarWeeks: true,
+                autoclose: true,
+                todayHighlight: true
+            });
+        })
+
+    </script>
+
+}
+

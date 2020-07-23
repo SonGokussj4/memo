@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace memo.Models
 {
@@ -11,7 +12,7 @@ namespace memo.Models
         [Key]
         public int OfferId { get; set; }
 
-        [Display(Name = "Název"), StringLength(50)]
+        [Display(Name = "Ev. Číslo nabídky"), StringLength(50)]
         public string OfferName { get; set; }
 
         [Display(Name = "Datum Přijetí"), Column(TypeName = "date")]
@@ -23,9 +24,11 @@ namespace memo.Models
         [Display(Name = "Předmět Nabídky"), Column(TypeName = "text")]
         public string Subject { get; set; }
 
-
         [Display(Name = "Kontakt")]
         public int? ContactId { get; set; }
+
+        [ForeignKey("ContactId")]
+        public Contact Contact { get; set; }
 
         [Display(Name = "Firma")]
         public int? CompanyId { get; set; }
@@ -36,6 +39,13 @@ namespace memo.Models
         [Required]
         [Display(Name = "EVE Divize"), StringLength(50)]
         public string EveDivision { get; set; }
+
+        [NotMapped]
+        public List<SelectListItem> EveDivisionList { get; } = new List<SelectListItem>
+        {
+            new SelectListItem { Value = "AD", Text = "AD" },
+            new SelectListItem { Value = "ED", Text = "ED" },
+        };
 
         [Display(Name = "EVE Oddělení"), StringLength(50)]
         public string EveDepartment { get; set; }

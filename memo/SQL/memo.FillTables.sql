@@ -3,12 +3,12 @@
 DELETE FROM [memo].[Company];
 
 INSERT INTO [memo].[Company]
-  (Name, City, Phone, Web)
+  (Name, City, Address, Phone, Web)
 VALUES
-  ('Škoda Auto, a.s.', 'Mladá Boleslav', '+420 356 815 354', 'www.skoda-auto.cz'),
-  ('Andreas Stihl', 'Waiblingen', '+49 607 130 553 58', 'www.stihl.de'),
-  ('Cybex', 'Vídeň / Bayreuth', '+49 921 785 114 80', 'www.cybex-online.com'),
-  ('Varroc', 'Nový Jičín', '+420 556 623 111', 'www.varroclighting.com')
+  ('Škoda Auto, a.s.', 'Mladá Boleslav', NULL, '+420 356 815 354', 'www.skoda-auto.cz'),
+  ('Andreas Stihl', 'Waiblingen', NULL, '+49 607 130 553 58', 'www.stihl.de'),
+  ('Cybex', 'Vídeň / Bayreuth', NULL, '+49 921 785 114 80', 'www.cybex-online.com'),
+  ('Varroc', 'Nový Jičín', NULL, '+420 556 623 111', 'www.varroclighting.com')
 
 
 DELETE FROM [memo].[Contact];
@@ -86,3 +86,11 @@ VALUES
 --   [Name] nvarchar(10)
 -- )
 -- GO
+
+
+
+-- // Zmenit jmeno constrain za jine
+--EXEC sp_rename N'memo.UQ_OrderName', N'memo.UQ_OfferName', N'OBJECT'
+
+-- // Vynulovat pocitadlo novych zaznamu
+-- DBCC CHECKIDENT ('memo.Company', RESEED, 0)
