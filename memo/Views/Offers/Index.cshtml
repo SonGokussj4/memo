@@ -18,9 +18,15 @@
     <thead>
         <tr>
             <th scope="col"></th>
-            <th scope="col">Id</th>
+            @* <th scope="col">Id</th> *@
             <th scope="col">Název</th>
+            <th scope="col">Přijato</th>
             <th scope="col">Firma</th>
+            <th scope="col">Kontakt</th>
+            <th scope="col">Předmět</th>
+            <th scope="col">Cena</th>
+            <th scope="col">Měna</th>
+            <th scope="col">Status</th>
         </tr>
     </thead>
     <tbody>
@@ -28,12 +34,18 @@
         {
             <tr>
                 <th scope="row">
-                    <a asp-action="Edit"><i class="fa fa-pencil fa-fw" aria-hidden="true"></i></a>
+                    <a asp-action="Edit" asp-route-id=@item.OfferId><i class="fa fa-pencil fa-fw" aria-hidden="true"></i></a>
                     <a asp-action="Delete" asp-route-id=@item.OfferId><i class="fa fa-times fa-fw" style="color: red", aria-hidden="true"></i></a>
                 </th>
-                <th scope="row">@item.OfferId</th>
+                @* <th scope="row">@item.OfferId</th> *@
                 <th scope="row">@item.OfferName</th>
+                <th scope="row">@item.ReceiveDate.Value.ToString("dd.MM.yyyy")</th>
                 <th scope="row">@item.Company.Name</th>
+                <th scope="row">@item.Contact.PersonName</th>
+                <th scope="row">@item.Subject</th>
+                <th scope="row">@item.Price</th>
+                <th scope="row">@item.Currency.Name</th>
+                <th scope="row">@item.OfferStatus.Status</th>
             </tr>
         }
     </tbody>

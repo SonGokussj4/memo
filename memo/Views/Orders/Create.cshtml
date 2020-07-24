@@ -1,15 +1,34 @@
 @{
-    ViewData["Title"] = "Nová Nabídka";
+    ViewData["Title"] = "Nová Zakázka";
 }
 
 @* @model memo.ViewModels.CreateOfferViewModel *@
-@model memo.Models.Offer
+@model memo.Models.Order
 
 <div class="text-center">
     <h1 class="display-6">@ViewData["Title"]</h1>
     <hr />
 </div>
 
+<div class="container">
+    <div class="col-lg-8 push-lg-4 personal-info">
+        <form role="form" autocomplete="on" asp-action="Create" method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <input type="hidden" asp-for="OrderId" />
+
+        <div class="form-group row">
+            <label asp-for="OfferId" class="col-lg-3 col-form-label form-control-label control-label">Objednávka</label>
+            <div class="col-lg-4">
+                @Html.DropDownListFor(model => model.OfferId, ViewBag.WonOffersList as SelectList, "-- Vyber Objednávku --", new { @class = "form-control" })
+                <span asp-validation-for="OfferId" class="text-danger"></span>
+            </div>
+        </div>
+
+        </form>
+    </div>
+</div>
+
+@*
 <div class="container">
     <div class="col-lg-8 push-lg-4 personal-info">
         <form role="form" autocomplete="on" asp-action="Create" method="post">
@@ -54,7 +73,6 @@
                 <span asp-validation-for="EveDivision" class="text-danger"></span>
             </div>
             <div class="col-lg-3">
-                @* @Html.DropDownList("EveDepartment", new SelectList(ViewBag.DepartmentList, "Value", "Text", "-- Oddělení --"), new { @class = "form-control"}) *@
                 @Html.DropDownList("EveDepartment", new SelectList(ViewBag.DepartmentList, "Value", "Text"), new { @class = "form-control"})
                 <span asp-validation-for="EveDepartment" class="text-danger"></span>
             </div>
@@ -110,7 +128,7 @@
 
         </form>
     </div>
-</div>
+</div> *@
 
 @section Scripts {
 

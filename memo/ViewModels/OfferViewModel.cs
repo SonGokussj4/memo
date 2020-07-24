@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using memo.Models;
 
 namespace memo.ViewModels
@@ -7,7 +8,10 @@ namespace memo.ViewModels
         public int OfferId { get; set; }
         public string Name { get; set; }
 
-        // public int CompanyId { get; set; }
-        public string Company { get; set; }
+        public int CompanyId { get; set; }
+        public IEnumerable<Company> CompanyList { get; set; }
+
+        public int ContactId { get; set; }
+        public IEnumerable<Contact> ContactList { get; set; }
     }
 }

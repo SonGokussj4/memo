@@ -18,7 +18,7 @@ namespace memo.Models
         [StringLength(20)]
         public string Status { get; set; }
 
-        [InverseProperty("StatusNavigation")]
+        [InverseProperty("OfferStatus")]
         public virtual ICollection<Offer> Offer { get; set; }
     }
 }

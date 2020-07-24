@@ -12,6 +12,9 @@ using memo.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System.Globalization;
+using Microsoft.AspNetCore.Localization;
+using System.Threading;
 
 namespace memo
 {
@@ -30,6 +33,9 @@ namespace memo
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
+            services.AddDbContext<EvektorDbContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("EvektorDbConnection")));
+
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
@@ -41,6 +47,22 @@ namespace memo
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            // // Culture specific problems
+            // var cultureInfo = new CultureInfo("cs-CZ");
+            // cultureInfo.NumberFormat.NumberDecimalSeparator = ".";
+            // cultureInfo.NumberFormat.NumberGroupSeparator = " ";
+            // cultureInfo.NumberFormat.CurrencyDecimalSeparator = ".";
+
+            // Thread.CurrentThread.CurrentCulture = cultureInfo;
+
+            // var supportedCultures = new[] { cultureInfo };
+            // app.UseRequestLocalization(new RequestLocalizationOptions
+            // {
+            //     DefaultRequestCulture = new RequestCulture("cs-CZ"),
+            //     SupportedCultures = supportedCultures,
+            //     SupportedUICultures = supportedCultures
+            // });
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

@@ -22,6 +22,7 @@ namespace memo.Data
         public virtual DbSet<Currency> Currency { get; set; }
         public virtual DbSet<Offer> Offer { get; set; }
         public virtual DbSet<OfferStatus> OfferStatus { get; set; }
+        public virtual DbSet<Order> Order { get; set; }
 
         // // ViewModels
         // public DbSet<CreateOfferViewModel> CreateOfferVM { get; set; }
@@ -44,19 +45,33 @@ namespace memo.Data
                 entity.Property(e => e.CreateDate).HasDefaultValueSql("(getdate())");
 
                 entity.HasOne(d => d.Company)
-                    .WithMany(p => p.Offer)
+                    .WithMany(p => p.Offers)
                     .HasForeignKey(d => d.CompanyId)
                     .HasConstraintName("FK__Offer__CompanyId__30C33EC3");
+
+                entity.HasOne(d => d.Contact)
+                    .WithMany(p => p.Offers)
+                    .HasForeignKey(d => d.ContactId)
+                    .HasConstraintName("FK__Offer__ContactId__2FCF1A8A");
 
                 entity.HasOne(d => d.Currency)
                     .WithMany(p => p.Offer)
                     .HasForeignKey(d => d.CurrencyId)
                     .HasConstraintName("FK__Offer__CurrencyI__3493CFA7");
 
-                entity.HasOne(d => d.StatusNavigation)
+                entity.HasOne(d => d.OfferStatus)
                     .WithMany(p => p.Offer)
                     .HasForeignKey(d => d.Status)
                     .HasConstraintName("FK__Offer__Status__31B762FC");
+            });
+
+            modelBuilder.Entity<Order>(entity =>
+            {
+                entity.HasIndex(e => e.OrderName)
+                    .HasName("UQ_OrderName")
+                    .IsUnique();
+
+                entity.Property(e => e.CreateDate).HasDefaultValueSql("(getdate())");
             });
 
             // If this is missing, it gives exception:

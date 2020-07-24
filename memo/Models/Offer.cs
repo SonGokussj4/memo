@@ -13,27 +13,26 @@ namespace memo.Models
         public int OfferId { get; set; }
 
         [Display(Name = "Ev. Číslo nabídky"), StringLength(50)]
+        [RegularExpression(@"^EV-obj/\d{4}/\d{4}$", ErrorMessage = "Číslo nabídky musí být ve tvaru EV-obj/rrrr/####, kde rrrr je rok a #### pořadové unikátní číslo")]
         public string OfferName { get; set; }
 
-        [Display(Name = "Datum Přijetí"), Column(TypeName = "date")]
+        [Display(Name = "Datum Přijetí"), Column(TypeName = "date"), DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime? ReceiveDate { get; set; }
 
-        [Display(Name = "Datum Odeslání"), Column(TypeName = "date")]
+        [Display(Name = "Datum Odeslání"), Column(TypeName = "date"), DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime? SentDate { get; set; }
 
         [Display(Name = "Předmět Nabídky"), Column(TypeName = "text")]
         public string Subject { get; set; }
 
+        [Required]
         [Display(Name = "Kontakt")]
         public int? ContactId { get; set; }
-
-        [ForeignKey("ContactId")]
         public Contact Contact { get; set; }
 
+        [Required]
         [Display(Name = "Firma")]
         public int? CompanyId { get; set; }
-
-        [ForeignKey("CompanyId")]
         public Company Company { get; set; }
 
         [Required]
@@ -58,6 +57,9 @@ namespace memo.Models
 
         [Display(Name = "Měna")]
         public int? CurrencyId { get; set; }
+        public Currency Currency { get; set; }
+        // [InverseProperty("Offer")]
+        // public virtual Currency Currency { get; set; }
 
         [Display(Name = "Směnný Kurz")]
         public double? ExchangeRate { get; set; }
@@ -65,26 +67,16 @@ namespace memo.Models
         [Display(Name = "Cena v CZK")]
         public int? PriceCzk { get; set; }
 
-        [Display(Name = "Status")]
-        public int? Status { get; set; }
+        [Display(Name = "Status Nabídky")]
+        public int Status { get; set; }
+        public OfferStatus OfferStatus { get; set; }
+        // [InverseProperty(nameof(OfferStatus.Offer))]
+        // public virtual OfferStatus StatusNavigation { get; set; }
 
         [Display(Name = "Důvod Prohry"), Column(TypeName = "text")]
         public string LostReason { get; set; }
 
         [Display(Name = "Vytvořeno"), Column(TypeName = "date")]
         public DateTime? CreateDate { get; set; }
-
-
-        // [ForeignKey(nameof(CompanyId))]
-        // [InverseProperty("Offer")]
-        // public virtual Company Company { get; set; }
-
-        [ForeignKey(nameof(CurrencyId))]
-        [InverseProperty("Offer")]
-        public virtual Currency Currency { get; set; }
-
-        [ForeignKey(nameof(Status))]
-        [InverseProperty(nameof(OfferStatus.Offer))]
-        public virtual OfferStatus StatusNavigation { get; set; }
     }
 }

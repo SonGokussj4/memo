@@ -1,5 +1,5 @@
 @{
-    ViewData["Title"] = "Nová Nabídka";
+    ViewData["Title"] = "Úprava Nabídky";
 }
 
 @* @model memo.ViewModels.CreateOfferViewModel *@
@@ -10,10 +10,12 @@
     <hr />
 </div>
 
+
 <div class="container">
     <div class="col-lg-8 push-lg-4 personal-info">
-        <form role="form" autocomplete="on" asp-action="Create" method="post">
+        <form role="form" autocomplete="on" asp-action="Edit" method="post">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <input type="hidden" asp-for="OfferId" />
 
         <div class="form-group row">
             <label asp-for="OfferName" class="col-lg-3 col-form-label form-control-label control-label"></label>
@@ -54,7 +56,6 @@
                 <span asp-validation-for="EveDivision" class="text-danger"></span>
             </div>
             <div class="col-lg-3">
-                @* @Html.DropDownList("EveDepartment", new SelectList(ViewBag.DepartmentList, "Value", "Text", "-- Oddělení --"), new { @class = "form-control"}) *@
                 @Html.DropDownList("EveDepartment", new SelectList(ViewBag.DepartmentList, "Value", "Text"), new { @class = "form-control"})
                 <span asp-validation-for="EveDepartment" class="text-danger"></span>
             </div>
@@ -103,8 +104,8 @@
         <div class="form-group row">
             <label class="col-lg-3 col-form-label form-control-label"></label>
             <div class="col-lg-9">
-                <input type="reset" class="btn btn-secondary" value="Vyprázdnit pole" />
-                <input type="submit" class="btn btn-primary" value="Vytvořit nabídku" />
+                <input type="reset" class="btn btn-secondary" value="Resetovat pole" />
+                <input type="submit" class="btn btn-primary" value="Upravit nabídku" />
             </div>
         </div>
 

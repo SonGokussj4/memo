@@ -10,7 +10,7 @@ namespace memo.Models
     {
         public Contact()
         {
-            Offer = new HashSet<Offer>();
+            Offers = new HashSet<Offer>();
         }
 
         [Key]
@@ -33,6 +33,6 @@ namespace memo.Models
 
 
         [InverseProperty("Contact")]
-        public virtual ICollection<Offer> Offer { get; set; }
+        public virtual ICollection<Offer> Offers { get; set; }
     }
 }
