@@ -109,7 +109,7 @@ namespace memo.Controllers
 
                 if (vm.Edit == "true")
                 {
-                    return RedirectToAction("Edit", "Orders", new {@id = vm.Order.OrderId} );
+                    return RedirectToAction("Edit", "Orders", new { @id=vm.Order.OrderId, @offerId=vm.OfferId } );
                 }
                 return RedirectToAction("Create", vm.Order);
             }
@@ -161,7 +161,7 @@ namespace memo.Controllers
 
         // GET: Order/Edit/5
         [HttpGet]
-        public IActionResult Edit(int? id)
+        public IActionResult Edit(int? id, int? offerId)
         // public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -182,6 +182,11 @@ namespace memo.Controllers
             ViewBag.WonOffersList = new SelectList(wonOffersList, "OfferId", "OfferName");
             ViewBag.CurrencyList = new SelectList(_db.Currency.ToList(), "CurrencyId", "Name");
             ViewBag.ContactList = new SelectList(_db.Contact.ToList(), "ContactId", "PersonName");
+
+            if (offerId != null)
+            {
+                order.OfferId = offerId;
+            }
 
             Offer offer = _db.Offer.Find(order.OfferId);
             if (offer == null)
