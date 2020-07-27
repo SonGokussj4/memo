@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace memo.Models
 {
     [Table("tWorks")]
-    public partial class TWorks
+    public partial class tWorks
     {
         [Key]
         [Column("ID")]

@@ -1,5 +1,5 @@
 @{
-    ViewData["Title"] = "Nová Zakázka";
+    ViewData["Title"] = "Úprava Zakázky";
 }
 
 @* @model memo.ViewModels.CreateOfferViewModel *@
@@ -16,11 +16,13 @@
         <!-- FORM - OBJEDNAVKA -->
         <form role="form" autocomplete="on" asp-action="Refresh" method="post">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <input type="hidden" asp-for="Edit" value="true" />
 
         <div class="form-group row">
             <label asp-for="Order.OfferId" class="col-lg-3 col-form-label form-control-label control-label">Objednávka</label>
             <div class="col-lg-4">
                 <input type="hidden" asp-for="Order.OfferId" />
+                <input type="hidden" asp-for="Order.OrderId" />
                 @* @Html.DropDownListFor(model => model.Order.OfferId, ViewBag.WonOffersList as SelectList, "-- Vyber Objednávku --", new { @class = "form-control", onchange = @"this.form.submit();" }) *@
                 @Html.DropDownList("OfferId", ViewBag.WonOffersList as SelectList, "-- Vyber Objednávku --", new { @class = "form-control", onchange = @"this.form.submit();" })
                 <span asp-validation-for="Order.OfferId" class="text-danger"></span>
@@ -68,9 +70,10 @@
         <hr />
 
         <!-- FORM - ZAKAZKA -->
-        <form role="form" autocomplete="on" asp-action="Create" method="post">
+        <form role="form" autocomplete="on" asp-action="Edit" method="post">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <input type="hidden" asp-for="Order.OfferId" />
+        <input type="hidden" asp-for="Order.OrderId" />
 
         <div class="form-group row">
             <label asp-for="Order.OrderName" class="col-lg-3 col-form-label form-control-label control-label"></label>
@@ -168,7 +171,7 @@
             <label class="col-lg-3 col-form-label form-control-label"></label>
             <div class="col-lg-9">
                 <input type="reset" class="btn btn-secondary" value="Resetovat pole" />
-                <input type="submit" class="btn btn-primary" value="Vytvořit zakázku" />
+                <input type="submit" class="btn btn-primary" value="Upravit zakázku" />
             </div>
         </div>
 

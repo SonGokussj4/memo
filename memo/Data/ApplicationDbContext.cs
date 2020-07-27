@@ -24,12 +24,23 @@ namespace memo.Data
         public virtual DbSet<OfferStatus> OfferStatus { get; set; }
         public virtual DbSet<Order> Order { get; set; }
 
+        // PROCEDURES
+        public virtual DbSet<SumMinutesSP> SumMinutesSP { get; set; }
+
+        // EVE
+        public virtual DbSet<tWorks> tWorks { get; set; }
+        public virtual DbSet<cOrders> cOrders { get; set; }
+
         // // ViewModels
         // public DbSet<CreateOfferViewModel> CreateOfferVM { get; set; }
 
         // MODEL BUILDER
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<SumMinutesSP>(entity => {
+                entity.HasNoKey();
+            });
+
             modelBuilder.Entity<Contact>(entity =>
             {
                 entity.Property(e => e.CreateDate).HasDefaultValueSql("(getdate())");
@@ -71,7 +82,8 @@ namespace memo.Data
                     .HasName("UQ_OrderName")
                     .IsUnique();
 
-                entity.Property(e => e.CreateDate).HasDefaultValueSql("(getdate())");
+                entity.Property(e => e.CreateDate)
+                    .HasDefaultValueSql("(getdate())");
             });
 
             // If this is missing, it gives exception:

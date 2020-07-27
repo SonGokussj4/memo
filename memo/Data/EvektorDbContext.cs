@@ -16,7 +16,8 @@ namespace memo.Data
         {
         }
 
-        public virtual DbSet<TWorks> TWorks { get; set; }
+        public virtual DbSet<tWorks> tWorks { get; set; }
+        public virtual DbSet<cOrders> cOrders { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -24,9 +25,16 @@ namespace memo.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<TWorks>(entity =>
+            modelBuilder.Entity<tWorks>(entity =>
             {
                 entity.Property(e => e.EnterTime).HasDefaultValueSql("(getdate())");
+            });
+
+            modelBuilder.Entity<cOrders>(entity =>
+            {
+                entity.Property(e => e.OrderCode).IsUnicode(false);
+
+                entity.Property(e => e.OrderName).IsUnicode(false);
             });
 
             OnModelCreatingPartial(modelBuilder);

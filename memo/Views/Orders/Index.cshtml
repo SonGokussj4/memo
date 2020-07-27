@@ -3,6 +3,8 @@
 }
 
 @model IList<memo.Models.Order>
+@* @model IList<memo.ViewModels.OfferOrderVM> *@
+@* @model memo.ViewModels.OfferOrderVM *@
 
 <div class="text-center">
     <h1 class="display-4">@ViewData["Title"]</h1>
@@ -14,13 +16,13 @@
 </div>
 
 
-<table class="table table-sm">
+<table class="table table-sm table-striped table-hover" >
     <thead>
         <tr>
             <th scope="col"></th>
             @* <th scope="col">Id</th> *@
-            <th scope="col">OrderId</th>
-            <th scope="col">OfferId</th>
+            @* <th scope="col">OrderId</th> *@
+            @* <th scope="col">OfferId</th> *@
             <th scope="col">Objednávka</th>
             <th scope="col">Název</th>
             @* <th scope="col">Kontakt</th>
@@ -32,6 +34,7 @@
             <th scope="col">Hod. Mzda</th>
             <th scope="col">Spáleno</th>
             <th scope="col">Limit Hodin</th>
+            <th scope="col">Procent</th>
         </tr>
     </thead>
     <tbody>
@@ -39,23 +42,26 @@
         {
             <tr>
                 <th scope="row">
-                    <a asp-action="Edit" asp-route-id=@item.OfferId><i class="fa fa-pencil fa-fw" aria-hidden="true"></i></a>
-                    <a asp-action="Delete" asp-route-id=@item.OfferId><i class="fa fa-times fa-fw" style="color: red", aria-hidden="true"></i></a>
+                    <a asp-action="Edit" asp-route-id=@item.OrderId><i class="fa fa-pencil fa-fw" aria-hidden="true"></i></a>
+                    <a asp-action="Delete" asp-route-id=@item.OrderId><i class="fa fa-times fa-fw" style="color: red", aria-hidden="true"></i></a>
                 </th>
+                @* <th scope="row">@item.OrderId</th> *@
                 @* <th scope="row">@item.OfferId</th> *@
-                <th scope="row">@item.OrderId</th>
                 @* <th scope="row">@item.ReceiveDate.Value.ToString("dd.MM.yyyy")</th> *@
                 @* <th scope="row">@item.Company.Name</th> *@
                 @* <th scope="row">@item.Contact.PersonName</th> *@
-                <th scope="row">@item.OfferId</th>
+                @* <th scope="row">@item.OfferId</th> *@
                 <th scope="row">@item.Offer.OfferName</th>
                 <th scope="row">@item.OrderName</th>
                 @* <th scope="row">@item.Currency.Name</th>
                 <th scope="row">@item.OfferStatus.Status</th> *@
                 <th scope="row">@item.OrderCode</th>
                 <th scope="row">@item.HourWage</th>
-                <th scope="row">@(ViewBag.Suma / 60) hod</th>
+                @* <th scope="row">@item.HourWage @item.Offer.Currency.Name</th> *@
+                @* <th scope="row">@item.Minutes minutes</th> *@
+                <th scope="row">@( item.Burned / 60 ) hodin</th>
                 <th scope="row">@item.TotalHours</th>
+                <th scope="row">@( String.Format("{0:0.00}", (float)item.Burned / 60 / item.TotalHours * 100) ) %</th>
             </tr>
         }
     </tbody>
