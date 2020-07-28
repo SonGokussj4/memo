@@ -76,18 +76,18 @@ namespace memo.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(Contact contact)
+        public IActionResult Create(Contact model)
         {
             if (ModelState.IsValid)
             {
-                contact.Active = true;  // default
+                model.Active = true;  // default
 
-                _db.Add(contact);
+                _db.Add(model);
                 _db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            return View(contact);
+            return View(model);
         }
 
 

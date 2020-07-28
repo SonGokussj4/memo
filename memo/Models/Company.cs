@@ -34,6 +34,8 @@ namespace memo.Models
         [DataType(DataType.Date), Column(TypeName = "date")]
         public DateTime? CreateDate { get; set; }
 
+        [Display(Name = "Aktivní")]
+        public bool Active { get; set; }
 
         [InverseProperty("Company")]
         public virtual ICollection<Offer> Offers { get; set; }

@@ -4,9 +4,21 @@
 
 @model IEnumerable<memo.Models.Company>
 
+<style>
+    .hide {
+        display: none;
+    }
+</style>
+
 <div class="text-center">
     <h1 class="display-4">Firmy</h1>
+</div>
 
+<div id="toolbar" style="padding-bottom: 10px;">
+    <a asp-action="Create" class="btn btn-outline-success"><i class="fa fa-plus-square-o"></i> Nová firma</a>
+    @* <a id="btnToggleActive" class="btn btn-outline-primary pull-right" onclick="ToggleActive()">
+        <i class="fa fa-eye-slash"></i> Aktivní (@Model.Count(m => m.Active) / @Model.Count())
+    </a> *@
 </div>
 
 <table class="table table-sm">
@@ -19,20 +31,111 @@
             <th scope="col">Adresa</th>
             <th scope="col">Telefon</th>
             <th scope="col">Vytvořeno</th>
+            <th scope="col">Aktivní</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var company in Model)
+        @foreach (var item in Model)
         {
             <tr>
-                <th scope="row"><a href="#"><i class="fa fa-pencil fa-fw" aria-hidden="true"></i></a></th>
-                <th scope="row">@company.CompanyId</th>
-                <th scope="row">@company.Name</th>
-                <th scope="row">@company.City</th>
-                <th scope="row">@company.Address</th>
-                <th scope="row">@company.Phone</th>
-                <th scope="row">@String.Format("{0:dd.MM.yyyy}", @company.CreateDate)</th>
+                <th scope="row">
+                    <a asp-action="Edit" asp-route-id=@item.CompanyId><i class="fa fa-pencil fa-fw" aria-hidden="true"></i></a>
+                    <a href="#" onclick="ConfirmDelete(@item.CompanyId)"><i class="fa fa-times fa-fw" style="color: red", aria-hidden="true"></i></a>
+                </th>
+                @* <th scope="row"><a href="#"><i class="fa fa-pencil fa-fw" aria-hidden="true"></i></a></th> *@
+                <th scope="row">@item.CompanyId</th>
+                <th scope="row">@item.Name</th>
+                <th scope="row">@item.City</th>
+                <th scope="row">@item.Address</th>
+                <th scope="row">@item.Phone</th>
+                <th scope="row">@String.Format("{0:dd.MM.yyyy}", @item.CreateDate)</th>
+                <th scope="row">@item.Active</th>
             </tr>
         }
     </tbody>
 </table>
+
+<!-- Modal Confirm Delete-->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <!-- header -->
+            <div class="modal-header">
+                <h5 class="modal-title" id="myModalLabel">Smazání kontaktu</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <!-- body -->
+            <div class="modal-body">
+                Opravdu smazat?
+                <span id="modalItemId"></span>
+            </div>
+            <!-- footer -->
+            <div class="modal-footer">
+                <a href="#" class="btn btn-default" data-dismiss="modal">Zpět</a>
+                <a href="#" class="btn btn-danger" onclick="DeleteEmployee()">Smazat</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*hidden field for storing current employeeId*@
+<input type="hidden" id="hiddenId" />
+
+@section scripts{
+<script>
+    var DeleteItem = function () {
+        var itemId = $("#hiddenId").val();
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("Delete","Companies")',
+            data: { Id: itemId },
+            success: function (result) {
+                $("#myModal").modal("hide");
+                $("#row_" + itemId).remove();
+                //window.location = "Contacts/Index";
+            }
+        })
+    }
+
+    var ConfirmDelete = function (ItemId) {
+        $("#hiddenId").val(ItemId);
+        $("#myModal").modal('show');
+        $("#modalItemId").val( 'Hmm' + ItemId );
+    };
+
+    function ToggleActive() {
+        console.log("Hihi");
+        var btn = document.getElementById("btnToggleActive");
+
+
+        if (btn.children[0].className == "fa fa-eye-slash") {
+            btn.children[0].className = "fa fa-eye"
+            btn.lastChild.nodeValue = " Všichni (@Model.Count())"
+            var hiddenRows = document.getElementsByClassName("hide");
+            for(var i=0; i<hiddenRows.length; i++){
+                hiddenRows[i].className = "show hiddenBefore";
+            };
+        }
+        else {
+            btn.children[0].className = "fa fa-eye-slash"
+            btn.lastChild.nodeValue = " Aktivní (@Model.Count(m => m.Active) / @Model.Count())"
+            var hiddenRows = document.getElementsByClassName("show hiddenBefore");
+            for(var i=0; i<hiddenRows.length; i++){
+                hiddenRows[i].className = "hide";
+            }
+        }
+
+    }
+    //function goContacts() {
+    //    $.ajax({
+    //        type: "get",
+    //        url: '@Url.Action("Edit", "Contacts", new { id = 2 })',
+    //        success: function (result) {
+    //            window.location = "Contacts/Index";
+    //        }
+    //    });
+    //}
+
+
+</script>
+}

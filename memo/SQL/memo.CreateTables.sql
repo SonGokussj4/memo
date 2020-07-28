@@ -7,7 +7,8 @@ CREATE TABLE [memo].[Company] (
   [Address] nvarchar(50),
   [Phone] nvarchar(50),
   [Web] nvarchar(50),
-  [CreateDate] date
+  [CreateDate] date,
+  [Active] tinyint DEFAULT TRUE
 )
 GO
 

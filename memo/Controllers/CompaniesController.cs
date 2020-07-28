@@ -25,6 +25,71 @@ namespace memo.Controllers
             return View(model);
         }
 
+        public IActionResult Edit(int? id)
+        {
+            Company model = _db.Company.Find(id);
+            if (model == null)
+            {
+                return NotFound();
+            }
+            return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult Edit(Company company)
+        {
+            if (ModelState.IsValid)
+            {
+                _db.Update(company);
+                _db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> Delete(int? id)
+        {
+            if (id == null)
+            {
+                return BadRequest("You have to specify 'id' to delete");
+            }
+
+            Company company = await _db.Company.FindAsync(id);
+            if (company == null)
+            {
+                return NotFound();
+            }
+            // TODO: overit, zda neni v nejakem Offer/Order uveden kontakt, popr co delat pak?
+
+            _db.Company.Remove(company);
+            await _db.SaveChangesAsync();
+
+            return RedirectToAction("Index");
+        }
+
+        public IActionResult Create()
+        {
+            Company model = new Company();
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult Create(Company model)
+        {
+            if (ModelState.IsValid)
+            {
+                model.Active = true;  // default
+
+                _db.Add(model);
+                _db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+
+            return View(model);
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

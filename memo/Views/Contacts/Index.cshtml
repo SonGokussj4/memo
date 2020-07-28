@@ -1,9 +1,8 @@
-@model IEnumerable<memo.Models.Contact>
-
 @{
     ViewData["Title"] = "Kontakty";
 }
 
+@model IEnumerable<memo.Models.Contact>
 
 <style>
     .hide {
@@ -11,18 +10,16 @@
     }
 </style>
 
-
 <div class="text-center">
     <h1 class="display-4">Kontakty</h1>
 </div>
 
 <div id="toolbar" style="padding-bottom: 10px;">
     <a asp-action="Create" class="btn btn-outline-success"><i class="fa fa-plus-square-o"></i> Nový kontakt</a>
-    <a id="btnToggleActive" class="btn btn-outline-primary" onclick="ToggleActive()">
+    <a id="btnToggleActive" class="btn btn-outline-primary pull-right" onclick="ToggleActive()">
         <i class="fa fa-eye-slash"></i> Aktivní (@Model.Count(m => m.Active) / @Model.Count())
     </a>
 </div>
-
 
 <table class="table table-sm">
     <thead>
@@ -54,7 +51,7 @@
     </tbody>
 </table>
 
-<!-- Modal -->
+<!-- Modal Confirm Delete-->
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog modal-sm" role="document">
         <div class="modal-content">
@@ -66,44 +63,40 @@
             <!-- body -->
             <div class="modal-body">
                 Opravdu smazat?
-                <span id="modalContactId"></span>
+                <span id="modalItemId"></span>
             </div>
             <!-- footer -->
             <div class="modal-footer">
                 <a href="#" class="btn btn-default" data-dismiss="modal">Zpět</a>
-                <a href="#" class="btn btn-danger" onclick="DeleteEmployee()">Smazat</a>
+                <a href="#" class="btn btn-danger" onclick="DeleteItem()">Smazat</a>
             </div>
-
         </div>
-
     </div>
-
 </div>
 
 @*hidden field for storing current employeeId*@
-<input type="hidden" id="hiddenContactId" />
+<input type="hidden" id="hiddenId" />
 
 @section scripts{
 <script>
-    var DeleteEmployee = function () {
-        var contactId = $("#hiddenContactId").val();
+    var DeleteItem = function () {
+        var itemId = $("#hiddenId").val();
         $.ajax({
             type: "POST",
             url: '@Url.Action("Delete","Contacts")',
-            data: { Id: contactId },
+            data: { Id: itemId },
             success: function (result) {
                 $("#myModal").modal("hide");
-                $("#row_" + contactId).remove();
+                $("#row_" + itemId).remove();
                 //window.location = "Contacts/Index";
-                //setInterval('goContacts()', 1000);
             }
         })
     }
 
-    var ConfirmDelete = function (ContactId) {
-        $("#hiddenContactId").val(ContactId);
+    var ConfirmDelete = function (ItemId) {
+        $("#hiddenId").val(ItemId);
         $("#myModal").modal('show');
-        $("#modalContactId").val( 'Hmm' + ContactId );
+        $("#modalItemId").val( 'Hmm' + ItemId );
     };
 
     function ToggleActive() {
