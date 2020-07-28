@@ -17,7 +17,8 @@ CREATE TABLE [memo].[Contact] (
   [Department] nvarchar(50),
   [Phone] nvarchar(50),
   [Email] nvarchar(255),
-  [CreateDate] date
+  [CreateDate] date,
+  [Active] tinyint DEFAULT TRUE
 )
 GO
 
