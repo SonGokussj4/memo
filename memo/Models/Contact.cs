@@ -28,9 +28,11 @@ namespace memo.Models
         [Display(Name = "E-mail"), StringLength(255)]
         public string Email { get; set; }
 
-        [DataType(DataType.Date), Column(TypeName = "date"), DisplayFormat(DataFormatString = "{0:dd.MM.yyyy}", ApplyFormatInEditMode = true)]
+        [DataType(DataType.Date), Column(TypeName = "date")]
         public DateTime? CreateDate { get; set; }
 
+        [Display(Name = "Aktivní")]
+        public bool Active { get; set; }
 
         [InverseProperty("Contact")]
         public virtual ICollection<Offer> Offers { get; set; }
