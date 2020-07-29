@@ -8,7 +8,7 @@ CREATE TABLE [memo].[Company] (
   [Phone] nvarchar(50),
   [Web] nvarchar(50),
   [CreateDate] date,
-  [Active] tinyint DEFAULT TRUE
+  [Active] bit DEFAULT 1
 )
 GO
 
@@ -19,7 +19,7 @@ CREATE TABLE [memo].[Contact] (
   [Phone] nvarchar(50),
   [Email] nvarchar(255),
   [CreateDate] date,
-  [Active] tinyint DEFAULT TRUE
+  [Active] bit DEFAULT 1
 )
 GO
 
