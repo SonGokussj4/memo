@@ -89,17 +89,21 @@ VALUES
 
 
 
--- // Zmenit jmeno constrain za jine
+-- Zmenit jmeno constrain za jine
+-- ##################################
 --EXEC sp_rename N'memo.UQ_OrderName', N'memo.UQ_OfferName', N'OBJECT'
 
--- // Vynulovat pocitadlo novych zaznamu
+
+-- Vynulovat pocitadlo novych zaznamu
+-- ##################################
 -- DBCC CHECKIDENT ('memo.Company', RESEED, 0)
 
--- // Zmenit typ sloupce z [text] na [ntext]
--- ALTER TABLE memo.Offer
--- ALTER COLUMN [LostReason] [varchar](max) NULL;
 
--- ALTER TABLE memo.Offer
+-- Zmenit typ sloupce z [text] na [ntext]
+-- ##################################
+-- ALTER TABLE [memo].[Offer]
+-- ALTER COLUMN [LostReason] [varchar](max) NULL;
+-- ALTER TABLE [memo].[Offer]
 -- ALTER COLUMN [LostReason] [ntext] NULL;
 
 

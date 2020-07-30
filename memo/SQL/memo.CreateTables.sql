@@ -28,7 +28,7 @@ CREATE TABLE [memo].[Offer] (
   [OfferName] nvarchar(50) UNIQUE,
   [ReceiveDate] date,
   [SentDate] date,
-  [Subject] text,
+  [Subject] ntext,
   [ContactId] int,
   [CompanyId] int,
   [EveDivision] nvarchar(50) NOT NULL CHECK ([EveDivision] IN ('AD', 'ED')),
@@ -39,7 +39,7 @@ CREATE TABLE [memo].[Offer] (
   [ExchangeRate] float,
   [PriceCzk] int,
   [Status] int,
-  [LostReason] text,
+  [LostReason] ntext,
   [CreateDate] date
 )
 GO
@@ -67,7 +67,7 @@ CREATE TABLE [memo].[Order] (
   [InvoiceDueDate] date,
   [ExchangeRate] float,
   [PriceFinalCzk] int,
-  [Notes] text,
+  [Notes] ntext,
   [CreateDate] date
 )
 GO
