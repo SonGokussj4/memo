@@ -13,7 +13,7 @@ namespace memo.Models
         public int OfferId { get; set; }
 
         [Display(Name = "Ev. Číslo nabídky"), StringLength(50)]
-        [RegularExpression(@"^EV-obj/\d{4}/\d{4}$", ErrorMessage = "Číslo nabídky musí být ve tvaru EV-obj/rrrr/####, kde rrrr je rok a #### pořadové unikátní číslo")]
+        [RegularExpression(@"^EV-quo/\d{4}/\d{4}$", ErrorMessage = "Číslo nabídky musí být ve tvaru EV-quo/rrrr/####, kde rrrr je rok a #### pořadové unikátní číslo")]
         public string OfferName { get; set; }
 
         [Display(Name = "Datum Přijetí"), Column(TypeName = "date"), DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]

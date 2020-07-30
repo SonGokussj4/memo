@@ -18,11 +18,11 @@
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
         <div class="form-group row">
-            <label asp-for="Order.OfferId" class="col-lg-3 col-form-label form-control-label control-label">Objednávka</label>
+            <label asp-for="Order.OfferId" class="col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-4">
                 <input type="hidden" asp-for="Order.OfferId" />
                 @* @Html.DropDownListFor(model => model.Order.OfferId, ViewBag.WonOffersList as SelectList, "-- Vyber Objednávku --", new { @class = "form-control", onchange = @"this.form.submit();" }) *@
-                @Html.DropDownList("OfferId", ViewBag.WonOffersList as SelectList, "-- Vyber Objednávku --", new { @class = "form-control", onchange = @"this.form.submit();" })
+                @Html.DropDownList("OfferId", ViewBag.WonOffersList as SelectList, "-- Vyber Objednávku --", new { @class = "form-control", onchange = @"this.form.submit();", @required = "" })
                 <span asp-validation-for="Order.OfferId" class="text-danger"></span>
             </div>
         </div>
@@ -75,7 +75,7 @@
         <div class="form-group row">
             <label asp-for="Order.OrderName" class="col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-9">
-                <input asp-for="Order.OrderName" class="form-control" type="text" required="" placeholder="EV-ord/rrrr/####" />
+                <input asp-for="Order.OrderName" class="form-control" type="text" required="" />
                 <span asp-validation-for="Order.OrderName" class="text-danger"></span>
             </div>
         </div>
@@ -87,7 +87,7 @@
                 <span asp-validation-for="Order.PriceFinal" class="text-danger"></span>
             </div>
             <div class="col-lg-3">
-                <label asp-for="Order.PriceDiscount" class="col-lg-2 col-form-label form-control-label control-label"></label>
+                <label asp-for="Order.PriceDiscount" class="col-form-label form-control-label control-label"></label>
             </div>
             <div class="col-lg-3">
                 <input asp-for="Order.PriceDiscount" class="form-control" type="text" required="" readonly />

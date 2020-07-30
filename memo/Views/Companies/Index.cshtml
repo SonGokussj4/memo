@@ -27,7 +27,7 @@
     </a>
 </div>
 
-<table class="table table-sm">
+<table class="table table-sm table-hover">
     <thead>
         <tr>
             <th scope="col"></th>
@@ -36,6 +36,7 @@
             <th scope="col">Město</th>
             <th scope="col">Adresa</th>
             <th scope="col">Telefon</th>
+            <th scope="col">Splatnost [dny]</th>
             <th scope="col">Vytvořeno</th>
             @* <th scope="col">Aktivní</th> *@
         </tr>
@@ -54,6 +55,7 @@
                 <th scope="row">@item.City</th>
                 <th scope="row">@item.Address</th>
                 <th scope="row">@item.Phone</th>
+                <th scope="row">@item.InvoiceDueDays</th>
                 <th scope="row">@String.Format("{0:dd.MM.yyyy}", @item.CreateDate)</th>
                 @* <th scope="row">@item.Active</th> *@
             </tr>

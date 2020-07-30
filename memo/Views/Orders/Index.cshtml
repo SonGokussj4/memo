@@ -16,7 +16,7 @@
 </div>
 
 
-<table class="table table-sm table-striped table-hover" >
+<table class="table table-sm table-hover" >
     <thead>
         <tr>
             <th scope="col"></th>
@@ -28,13 +28,13 @@
             @* <th scope="col">Kontakt</th>
             <th scope="col">Předmět</th>
             <th scope="col">Cena</th>
-            <th scope="col">Měna</th>
             <th scope="col">Status</th> *@
             <th scope="col">Číslo zakázky</th>
             <th scope="col">Hod. mzda</th>
-            <th scope="col">Spáleno</th>
-            <th scope="col">Limit hodin</th>
-            <th scope="col">Procent</th>
+            @* <th scope="col">Měna</th> *@
+            <th scope="col">Spáleno [hod]</th>
+            <th scope="col">Plánované [hod]</th>
+            <th scope="col">Stav plnění</th>
         </tr>
     </thead>
     <tbody>
@@ -53,13 +53,13 @@
                 @* <th scope="row">@item.OfferId</th> *@
                 <th scope="row">@item.Offer.OfferName</th>
                 <th scope="row">@item.OrderName</th>
-                @* <th scope="row">@item.Currency.Name</th>
-                <th scope="row">@item.OfferStatus.Status</th> *@
+                @* <th scope="row">@item.OfferStatus.Status</th> *@
                 <th scope="row">@item.OrderCode</th>
                 <th scope="row">@item.HourWage</th>
+                @* <th scope="row">@item.Currency.Name</th> *@
                 @* <th scope="row">@item.HourWage @item.Offer.Currency.Name</th> *@
                 @* <th scope="row">@item.Minutes minutes</th> *@
-                <th scope="row">@( item.Burned / 60 ) hodin</th>
+                <th scope="row">@( item.Burned / 60 )</th>
                 <th scope="row">@item.TotalHours</th>
                 <th scope="row">@( String.Format("{0:0.00}", (float)item.Burned / 60 / item.TotalHours * 100) ) %</th>
             </tr>

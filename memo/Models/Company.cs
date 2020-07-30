@@ -34,6 +34,9 @@ namespace memo.Models
         [DataType(DataType.Date), Column(TypeName = "date")]
         public DateTime? CreateDate { get; set; }
 
+        [Display(Name = "Splatnost")]
+        public int InvoiceDueDays { get; set; }
+
         [Display(Name = "Aktivní")]
         public bool Active { get; set; }
 
