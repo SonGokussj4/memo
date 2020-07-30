@@ -3,12 +3,12 @@
 DELETE FROM [memo].[Company];
 
 INSERT INTO [memo].[Company]
-  (Name, City, Address, Phone, Web)
+  (CompanyId, Name, City, Address, Phone, Web, InvoiceDueDays)
 VALUES
-  ('Škoda Auto, a.s.', 'Mladá Boleslav', NULL, '+420 356 815 354', 'www.skoda-auto.cz'),
-  ('Andreas Stihl', 'Waiblingen', NULL, '+49 607 130 553 58', 'www.stihl.de'),
-  ('Cybex', 'Vídeň / Bayreuth', NULL, '+49 921 785 114 80', 'www.cybex-online.com'),
-  ('Varroc', 'Nový Jičín', NULL, '+420 556 623 111', 'www.varroclighting.com')
+  ('5', 'Škoda Auto, a.s.', 'Mladá Boleslav', NULL, '+420 356 815 354', 'www.skoda-auto.cz', '30'),
+  ('13', 'Andreas Stihl', 'Waiblingen', NULL, '+49 607 130 553 58', 'www.stihl.de', '66'),
+  ('14', 'Cybex', 'Vídeň / Bayreuth', NULL, '+49 921 785 114 80', 'www.cybex-online.com', '15'),
+  ('15', 'Varroc', 'Nový Jičín', NULL, '+420 556 623 111', 'www.varroclighting.com', '45')
 
 
 DELETE FROM [memo].[Contact];

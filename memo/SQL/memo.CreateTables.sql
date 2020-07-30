@@ -8,6 +8,7 @@ CREATE TABLE [memo].[Company] (
   [Phone] nvarchar(50),
   [Web] nvarchar(50),
   [CreateDate] date,
+  [InvoiceDueDays] int DEFAULT 0,
   [Active] bit DEFAULT 1
 )
 GO
