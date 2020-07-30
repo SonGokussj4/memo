@@ -34,6 +34,11 @@ namespace memo.Data
         // // ViewModels
         // public DbSet<CreateOfferViewModel> CreateOfferVM { get; set; }
 
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.EnableSensitiveDataLogging();
+        }
+
         // MODEL BUILDER
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

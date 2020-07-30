@@ -83,3 +83,11 @@ body {
 .table-sm tbody th {
   font-weight: 400;
 }
+
+form.myform {
+  background-color: rgba(255, 218, 0, 0.07);
+  margin: -10px;
+  padding: 10px;
+  border: 1px solid lightgray;
+  border-radius: 10px;
+}

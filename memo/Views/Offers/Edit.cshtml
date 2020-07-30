@@ -1,5 +1,5 @@
 @{
-    ViewData["Title"] = "Úprava Nabídky";
+    ViewData["Title"] = "Úprava nabídky";
 }
 
 @* @model memo.ViewModels.CreateOfferViewModel *@
@@ -68,11 +68,11 @@
         <div class="form-group row">
             <label class="col-lg-3 col-form-label form-control-label control-label">Zákazník</label>
             <div class="col-lg-5">
-                @Html.DropDownListFor(model => model.CompanyId, ViewBag.CompanyList as SelectList, "-- Vyber Firmu --", new { @class = "form-control" })
+                @Html.DropDownListFor(model => model.CompanyId, ViewBag.CompanyList as SelectList, "-- Vyber firmu --", new { @class = "form-control" })
                 <span asp-validation-for="CompanyId" class="text-danger"></span>
             </div>
             <div class="col-lg-4">
-                @Html.DropDownListFor(model => model.ContactId, ViewBag.ContactList as SelectList, "-- Vyber Kontakt --", new { @class = "form-control" })
+                @Html.DropDownListFor(model => model.ContactId, ViewBag.ContactList as SelectList, "-- Vyber kontakt --", new { @class = "form-control" })
                 <span asp-validation-for="ContactId" class="text-danger"></span>
             </div>
         </div>

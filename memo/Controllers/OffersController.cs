@@ -100,7 +100,6 @@ namespace memo.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Offer model)
         {
-
             if (id != model.OfferId)
             {
                 return NotFound();
@@ -108,6 +107,7 @@ namespace memo.Controllers
 
             if (ModelState.IsValid)
             {
+                // Offer oldOffer = _db.Offer.Find(id);
                 try
                 {
                     _db.Update(model);
@@ -125,17 +125,9 @@ namespace memo.Controllers
                     }
                 }
 
+                // if (model.Status == 2 && model.Status != oldOffer.Status)  // model.OfferStatus.Status == "Won"
                 if (model.Status == 2)  // model.OfferStatus.Status == "Won"
                 {
-                    // OfferOrderVM viewModel = new OfferOrderVM()
-                    // {
-                    //     Offer = model,
-                    //     Order = new Order() {
-                    //         OfferId = model.OfferId
-                    //     }
-                    // };
-                    // return RedirectToAction("Create", "Orders", viewModel);
-
                     Order order = new Order();
                     order.OfferId = model.OfferId;
                     return RedirectToAction("Select", "Orders", order);

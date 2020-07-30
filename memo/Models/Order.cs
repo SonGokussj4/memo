@@ -17,45 +17,44 @@ namespace memo.Models
         public int? OfferId { get; set; }
         public Offer Offer { get; set; }
 
-        [Display(Name = "Ev. č. zakázky*"), StringLength(50)]
-        //[RegularExpression(@"^EV-quo/\d{4}/\d{4}$", ErrorMessage = "Číslo zakázky musí být ve tvaru EV-quo/rrrr/####, kde rrrr je rok a #### pořadové unikátní číslo")]
+        [Display(Name = "Číslo objednávky zákazníka*"), StringLength(50)]
         public string OrderName { get; set; }
 
-        [Display(Name = "Vyhraná cena")]
+        [Display(Name = "Konečná cena")]
         public int? PriceFinal { get; set; }
 
-        [Display(Name = "Sleva z nabídky")]
+        [Display(Name = "Poskytnutá sleva")]
         public int? PriceDiscount { get; set; }
 
-        [Display(Name = "Kód vykazování*"), StringLength(50)]
+        [Display(Name = "Kód vykazování EVE*"), StringLength(50)]
         public string OrderCode { get; set; }
         // public cOrders cOrders { get; set; }
 
-        [Display(Name = "Kontakt")]
+        [Display(Name = "Vedoucí projektu v EVEKTORu")]
         public int? ContactId { get; set; }
         public Contact Contact { get; set; }
 
         [Required]
-        [Display(Name = "Hodinová mzda*")]
+        [Display(Name = "Hodinová sazba komerční*")]
         public double? HourWage { get; set; }
 
-        [Display(Name = "Plánované hodiny")]
+        [Display(Name = "Celkem hodin plánovaných")]
         public int? TotalHours { get; set; }
 
         [Required]
         [Display(Name = "Předp. termín vystavení faktury*"), Column(TypeName = "date")]
         public DateTime? InvoiceIssueDate { get; set; }
 
-        [Display(Name = "Předp. termín splatnosti"), Column(TypeName = "date")]
+        [Display(Name = "Datum splatnosti faktury"), Column(TypeName = "date")]
         public DateTime? InvoiceDueDate { get; set; }
 
         [Display(Name = "Kurs")]
         public double? ExchangeRate { get; set; }
 
-        [Display(Name = "Vyhraná cena v CZK")]
+        [Display(Name = "Konečná cena bez DPH v CZK")]
         public int? PriceFinalCzk { get; set; }
 
-        [Display(Name = "Poznámka"), Column(TypeName = "ntext")]
+        [Display(Name = "Poznámky"), Column(TypeName = "ntext")]
         public string Notes { get; set; }
 
         [Column(TypeName = "date")]

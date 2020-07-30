@@ -1,5 +1,5 @@
 @{
-    ViewData["Title"] = "Úprava Zakázky";
+    ViewData["Title"] = "Úprava zakázky";
 }
 
 @* @model memo.ViewModels.CreateOfferViewModel *@
@@ -24,7 +24,7 @@
                 <input type="hidden" asp-for="Order.OfferId" />
                 <input type="hidden" asp-for="Order.OrderId" />
                 @* @Html.DropDownListFor(model => model.Order.OfferId, ViewBag.WonOffersList as SelectList, "-- Vyber Objednávku --", new { @class = "form-control", onchange = @"this.form.submit();" }) *@
-                @Html.DropDownList("OfferId", ViewBag.WonOffersList as SelectList, "-- Vyber Objednávku --", new { @class = "form-control", onchange = @"this.form.submit();" })
+                @Html.DropDownList("OfferId", ViewBag.WonOffersList as SelectList, "-- Vyber objednávku --", new { @class = "form-control", onchange = @"this.form.submit();" })
                 <span asp-validation-for="Order.OfferId" class="text-danger"></span>
             </div>
         </div>
@@ -34,7 +34,7 @@
             <div class="col-lg-4">
                 <input asp-for="Offer.ReceiveDate" class="form-control" type="text" required="" autocomplete="off" readonly />
             </div>
-            <label class="col-lg-1 col-form-label form-control-label control-label"> --> </label>
+            <label class="col-lg-1 col-form-label form-control-label control-label"> <i class="fa fa-angle-double-right"> </label>
             <div class="col-lg-4">
                 <input asp-for="Offer.SentDate" class="form-control" type="text" autocomplete="off" readonly />
             </div>
@@ -109,7 +109,7 @@
         <div class="form-group row">
             <label asp-for="Order.ContactId" class="col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-9">
-                @Html.DropDownListFor(model => model.Order.ContactId, ViewBag.ContactList as SelectList, "-- Vyber Kontakt --", new { @class = "form-control" })
+                @Html.DropDownListFor(model => model.Order.ContactId, ViewBag.ContactList as SelectList, "-- Vyber kontakt --", new { @class = "form-control" })
                 <span asp-validation-for="Order.ContactId" class="text-danger"></span>
             </div>
         </div>
@@ -121,7 +121,7 @@
                 <span asp-validation-for="Order.HourWage" class="text-danger"></span>
             </div>
             <div class="col-lg-3">
-                <label asp-for="Order.TotalHours" class="col-lg-2 col-form-label form-control-label control-label"></label>
+                <label asp-for="Order.TotalHours" class="col-form-label form-control-label control-label"></label>
             </div>
             <div class="col-lg-3">
                 <input asp-for="Order.TotalHours" class="form-control" type="text" readonly />
@@ -147,10 +147,11 @@
 
          <div class="form-group row">
             <label asp-for="Order.PriceFinalCzk" class="col-lg-3 col-form-label form-control-label control-label"></label>
-            <div class="col-lg-7">
+            <div class="col-lg-6">
                 <input asp-for="Order.PriceFinalCzk" class="form-control" type="text" />
                 <span asp-validation-for="Order.PriceFinalCzk" class="text-danger"></span>
             </div>
+            <label asp-for="Order.ExchangeRate" class="col-lg-1 col-form-label form-control-label control-label"></label>
             <div class="col-lg-2">
                 <input asp-for="Order.ExchangeRate" class="form-control" type="text"/>
                 <span asp-validation-for="Order.ExchangeRate" class="text-danger"></span>
@@ -179,107 +180,6 @@
     </div>
 </div>
 
-@*
-<div class="container">
-    <div class="col-lg-8 push-lg-4 personal-info">
-        <form role="form" autocomplete="on" asp-action="Create" method="post">
-        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-        <div class="form-group row">
-            <label asp-for="OfferName" class="col-lg-3 col-form-label form-control-label control-label"></label>
-            <div class="col-lg-9">
-                <input asp-for="OfferName" class="form-control" type="text" required="" placeholder="EV-obj/rrrr/####"/>
-                <span asp-validation-for="OfferName" class="text-danger"></span>
-            </div>
-        </div>
-
-        <div class="form-group row">
-            <label asp-for="ReceiveDate" class="col-lg-3 col-form-label form-control-label control-label"></label>
-            <div class="col-lg-9 mycalendar">
-                <input asp-for="ReceiveDate" class="form-control" type="text" required="" autocomplete="off"/>
-                <span asp-validation-for="ReceiveDate" class="text-danger"></span>
-            </div>
-        </div>
-
-        <div class="form-group row">
-            <label asp-for="SentDate" class="col-lg-3 col-form-label form-control-label control-label"></label>
-            <div class="col-lg-9 mycalendar">
-                <input asp-for="SentDate" class="form-control" type="text" autocomplete="off"/>
-                <span asp-validation-for="SentDate" class="text-danger"></span>
-            </div>
-        </div>
-
-        <div class="form-group row">
-            <label asp-for="Subject" class="col-lg-3 col-form-label form-control-label control-label"></label>
-            <div class="col-lg-9">
-                <input asp-for="Subject" class="form-control" type="text" />
-                <span asp-validation-for="Subject" class="text-danger"></span>
-            </div>
-        </div>
-
-        <div class="form-group row">
-            <label class="col-lg-3 col-form-label form-control-label control-label">Evektor</label>
-            <div class="col-lg-2">
-                @Html.DropDownList("EveDivision", new SelectList(Model.EveDivisionList, "Value", "Text", "-- Divize --"), new { @class = "form-control"})
-                <span asp-validation-for="EveDivision" class="text-danger"></span>
-            </div>
-            <div class="col-lg-3">
-                @Html.DropDownList("EveDepartment", new SelectList(ViewBag.DepartmentList, "Value", "Text"), new { @class = "form-control"})
-                <span asp-validation-for="EveDepartment" class="text-danger"></span>
-            </div>
-            <div class="col-lg-4">
-                <input asp-for="EveCreatedUser" class="form-control" type="text" placeholder="Uživatelské jméno"/>
-                <span asp-validation-for="EveCreatedUser" class="text-danger"></span>
-            </div>
-        </div>
-
-        <div class="form-group row">
-            <label class="col-lg-3 col-form-label form-control-label control-label">Zákazník</label>
-            <div class="col-lg-5">
-                @Html.DropDownListFor(model => model.CompanyId, ViewBag.CompanyList as SelectList, "-- Vyber Firmu --", new { @class = "form-control" })
-                <span asp-validation-for="CompanyId" class="text-danger"></span>
-            </div>
-            <div class="col-lg-4">
-                @Html.DropDownListFor(model => model.ContactId, ViewBag.ContactList as SelectList, "-- Vyber Kontakt --", new { @class = "form-control" })
-                <span asp-validation-for="ContactId" class="text-danger"></span>
-            </div>
-        </div>
-
-        <div class="form-group row">
-            <label asp-for="Price" class="col-lg-3 col-form-label form-control-label control-label"></label>
-            <div class="col-lg-5">
-                <input asp-for="Price" class="form-control" type="text" />
-                <span asp-validation-for="Price" class="text-danger"></span>
-            </div>
-            <div class="col-lg-2">
-                @Html.DropDownListFor(model => model.CurrencyId, ViewBag.CurrencyList as SelectList, new { @class = "form-control" })
-                <span asp-validation-for="Currency" class="text-danger"></span>
-            </div>
-            <div class="col-lg-2">
-                <input asp-for="ExchangeRate" class="form-control" type="text"/>
-                <span asp-validation-for="ExchangeRate" class="text-danger"></span>
-            </div>
-        </div>
-
-        <div class="form-group row">
-            <label asp-for="Status" class="col-lg-3 col-form-label form-control-label control-label"></label>
-            <div class="col-lg-5">
-                @Html.DropDownListFor(model => model.Status, ViewBag.OfferStatusList as SelectList, new { @class = "form-control" })
-                <span asp-validation-for="Status" class="text-danger"></span>
-            </div>
-        </div>
-
-        <div class="form-group row">
-            <label class="col-lg-3 col-form-label form-control-label"></label>
-            <div class="col-lg-9">
-                <input type="reset" class="btn btn-secondary" value="Vyprázdnit pole" />
-                <input type="submit" class="btn btn-primary" value="Vytvořit nabídku" />
-            </div>
-        </div>
-
-        </form>
-    </div>
-</div> *@
 
 @section Scripts {
 

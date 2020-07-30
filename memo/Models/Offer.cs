@@ -12,17 +12,17 @@ namespace memo.Models
         [Key]
         public int OfferId { get; set; }
 
-        [Display(Name = "Ev. Číslo nabídky"), StringLength(50)]
+        [Display(Name = "Ev. číslo nabídky"), StringLength(50)]
         [RegularExpression(@"^EV-quo/\d{4}/\d{4}$", ErrorMessage = "Číslo nabídky musí být ve tvaru EV-quo/rrrr/####, kde rrrr je rok a #### pořadové unikátní číslo")]
         public string OfferName { get; set; }
 
-        [Display(Name = "Datum Přijetí"), Column(TypeName = "date"), DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+        [Display(Name = "Datum přijetí poptávky"), Column(TypeName = "date"), DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime? ReceiveDate { get; set; }
 
-        [Display(Name = "Datum Odeslání"), Column(TypeName = "date"), DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+        [Display(Name = "Datum odeslání nabídky"), Column(TypeName = "date"), DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime? SentDate { get; set; }
 
-        [Display(Name = "Předmět Nabídky"), Column(TypeName = "ntext")]
+        [Display(Name = "Předmět nabídky"), Column(TypeName = "ntext")]
         public string Subject { get; set; }
 
         [Required]
@@ -36,7 +36,7 @@ namespace memo.Models
         public Company Company { get; set; }
 
         [Required]
-        [Display(Name = "EVE Divize"), StringLength(50)]
+        [Display(Name = "EVE divize"), StringLength(50)]
         public string EveDivision { get; set; }
 
         [NotMapped]
@@ -46,13 +46,13 @@ namespace memo.Models
             new SelectListItem { Value = "ED", Text = "ED" },
         };
 
-        [Display(Name = "EVE Oddělení"), StringLength(50)]
+        [Display(Name = "EVE oddělení"), StringLength(50)]
         public string EveDepartment { get; set; }
 
-        [Display(Name = "EVE Zadal"), StringLength(50)]
+        [Display(Name = "EVE zadal"), StringLength(50)]
         public string EveCreatedUser { get; set; }
 
-        [Display(Name = "Cena")]
+        [Display(Name = "Cena bez DPH")]
         public int? Price { get; set; }
 
         [Display(Name = "Měna")]
@@ -61,19 +61,19 @@ namespace memo.Models
         // [InverseProperty("Offer")]
         // public virtual Currency Currency { get; set; }
 
-        [Display(Name = "Směnný Kurz")]
+        [Display(Name = "Směnný kurz")]
         public double? ExchangeRate { get; set; }
 
         [Display(Name = "Cena v CZK")]
         public int? PriceCzk { get; set; }
 
-        [Display(Name = "Status Nabídky")]
+        [Display(Name = "Status nabídky")]
         public int Status { get; set; }
         public OfferStatus OfferStatus { get; set; }
         // [InverseProperty(nameof(OfferStatus.Offer))]
         // public virtual OfferStatus StatusNavigation { get; set; }
 
-        [Display(Name = "Důvod Prohry"), Column(TypeName = "ntext")]
+        [Display(Name = "Důvod prohry"), Column(TypeName = "ntext")]
         public string LostReason { get; set; }
 
         [Display(Name = "Vytvořeno"), Column(TypeName = "date")]
