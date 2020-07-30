@@ -107,3 +107,10 @@ VALUES
 -- ALTER COLUMN [LostReason] [ntext] NULL;
 
 
+-- Upravit  sloupec/sloupce tabulky při konkrétní podmínce
+-- ##################################
+-- UPDATE [dbo].[cOrders]
+-- SET
+--     Planned = 666
+-- WHERE
+--     OrderCode = '927.0040'

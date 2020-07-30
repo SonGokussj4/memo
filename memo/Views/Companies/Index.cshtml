@@ -4,7 +4,7 @@
 
 @model IEnumerable<memo.Models.Company>
 
-<style>
+@* <style>
     .hide {
         display: none;
     }
@@ -14,7 +14,7 @@
     .table-sm tbody th {
         font-weight: 400;
     }
-</style>
+</style> *@
 
 <div class="text-center">
     <h1 class="display-4">Firmy</h1>
@@ -78,7 +78,7 @@
             <!-- footer -->
             <div class="modal-footer">
                 <a href="#" class="btn btn-default" data-dismiss="modal">Zpět</a>
-                <a href="#" class="btn btn-danger" onclick="DeleteEmployee()">Smazat</a>
+                <a href="#" class="btn btn-danger" onclick="DeleteItem()">Smazat</a>
             </div>
         </div>
     </div>
@@ -89,30 +89,50 @@
 
 @section scripts{
 <script>
-    var DeleteItem = function () {
+    // POST delete command to controller
+    //----------------------------------
+    function DeleteItem() {
         var itemId = $("#hiddenId").val();
         $.ajax({
             type: "POST",
-            url: '@Url.Action("Delete","Companies")',
+            url: '@Url.Action("Delete", "Companies")',
             data: { Id: itemId },
-            success: function (result) {
+            success: function () {
+                $("#myModal").modal("hide")
+                //$("#row_" + itemId).remove();
+                window.location = "Companies/Index"
+            },
+            error: function() {
+                alert("Tato firma je přidělena nabídce/zakázce. Nelze ji odstranit.");
                 $("#myModal").modal("hide");
-                $("#row_" + itemId).remove();
-                //window.location = "Contacts/Index";
             }
         })
     }
 
+    //function goContacts() {
+    //    $.ajax({
+    //        type: "get",
+    //        url: '@Url.Action("Edit", "Contacts", new { id = 2 })',
+    //        success: function (result) {
+    //            window.location = "Contacts/Index";
+    //        }
+    //    });
+    //}
+
+    // MODAL dialog for delete confirmation
+    //-------------------------------------
     var ConfirmDelete = function (ItemId) {
         $("#hiddenId").val(ItemId);
         $("#myModal").modal('show');
         $("#modalItemId").val( 'Hmm' + ItemId );
     };
 
+
+    // Function to toggle Active/Disabled Contacts/Companies in table
+    //---------------------------------------------------------------
     function ToggleActive() {
         console.log("Hihi");
         var btn = document.getElementById("btnToggleActive");
-
 
         if (btn.children[0].className == "fa fa-eye-slash") {
             btn.children[0].className = "fa fa-eye"
@@ -130,18 +150,6 @@
                 hiddenRows[i].className = "hide";
             }
         }
-
     }
-    //function goContacts() {
-    //    $.ajax({
-    //        type: "get",
-    //        url: '@Url.Action("Edit", "Contacts", new { id = 2 })',
-    //        success: function (result) {
-    //            window.location = "Contacts/Index";
-    //        }
-    //    });
-    //}
-
-
 </script>
 }

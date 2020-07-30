@@ -4,11 +4,6 @@
 
 @model IEnumerable<memo.Models.Contact>
 
-<style>
-    .hide {
-        display: none;
-    }
-</style>
 
 <div class="text-center">
     <h1 class="display-4">Kontakty</h1>
@@ -74,35 +69,55 @@
     </div>
 </div>
 
-@*hidden field for storing current employeeId*@
+@*hidden field for storing current Id*@
 <input type="hidden" id="hiddenId" />
 
 @section scripts{
 <script>
-    var DeleteItem = function () {
+    // POST delete command to controller
+    //----------------------------------
+    function DeleteItem() {
         var itemId = $("#hiddenId").val();
         $.ajax({
             type: "POST",
-            url: '@Url.Action("Delete","Contacts")',
+            url: '@Url.Action("Delete", "Contacts")',
             data: { Id: itemId },
-            success: function (result) {
+            success: function () {
+                $("#myModal").modal("hide")
+                //$("#row_" + itemId).remove();
+                window.location = "Contacts/Index"
+            },
+            error: function() {
+                alert("Tento uživatel je přidělen nabídce/zakázce. Nelze ho odstranit.");
                 $("#myModal").modal("hide");
-                $("#row_" + itemId).remove();
-                //window.location = "Contacts/Index";
             }
         })
     }
 
+    //function goContacts() {
+    //    $.ajax({
+    //        type: "get",
+    //        url: '@Url.Action("Edit", "Contacts", new { id = 2 })',
+    //        success: function (result) {
+    //            window.location = "Contacts/Index";
+    //        }
+    //    });
+    //}
+
+    // MODAL dialog for delete confirmation
+    //-------------------------------------
+    //function ConfirmDelete(ItemId) {
     var ConfirmDelete = function (ItemId) {
         $("#hiddenId").val(ItemId);
         $("#myModal").modal('show');
         $("#modalItemId").val( 'Hmm' + ItemId );
     };
 
-    function ToggleActive() {
-        console.log("Hihi");
-        var btn = document.getElementById("btnToggleActive");
 
+    // Function to toggle Active/Disabled Contacts/Companies in table
+    //---------------------------------------------------------------
+    function ToggleActive() {
+        var btn = document.getElementById("btnToggleActive");
 
         if (btn.children[0].className == "fa fa-eye-slash") {
             btn.children[0].className = "fa fa-eye"
@@ -120,18 +135,7 @@
                 hiddenRows[i].className = "hide";
             }
         }
-
     }
-    //function goContacts() {
-    //    $.ajax({
-    //        type: "get",
-    //        url: '@Url.Action("Edit", "Contacts", new { id = 2 })',
-    //        success: function (result) {
-    //            window.location = "Contacts/Index";
-    //        }
-    //    });
-    //}
-
 
 </script>
 }

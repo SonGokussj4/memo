@@ -143,6 +143,12 @@ namespace memo.Controllers
         {
             if (ModelState.IsValid)
             {
+                int? totalHours = _db.cOrders
+                    .Where(t => t.OrderCode == vm.Order.OrderCode)
+                    .Select(t => t.Planned).FirstOrDefault();
+
+                vm.Order.TotalHours = totalHours;
+
                 _db.Add(vm.Order);
                 _db.SaveChanges();
                 return RedirectToAction("Index");
@@ -193,13 +199,13 @@ namespace memo.Controllers
             {
                 return NotFound();
             }
-            // offer.OfferId = (int)order.OfferId;
 
             OfferOrderVM viewModel = new OfferOrderVM()
             {
                 Offer = offer,
                 Order = order,
-                OfferId = (int)order.OfferId
+                OfferId = (int)order.OfferId,
+                // TotalHours = totalHours
             };
 
             return View(viewModel);
@@ -219,6 +225,12 @@ namespace memo.Controllers
             {
                 try
                 {
+                    int? totalHours = _db.cOrders
+                    .Where(t => t.OrderCode == vm.Order.OrderCode)
+                    .Select(t => t.Planned).FirstOrDefault();
+
+                    vm.Order.TotalHours = totalHours;
+
                     _db.Update(vm.Order);
                     _db.SaveChanges();
                 }
