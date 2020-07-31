@@ -16,7 +16,7 @@ using System.Data;
 
 namespace memo.Controllers
 {
-    public class OrdersController : Controller
+    public class OrdersController : ControllerBase
     {
         public ApplicationDbContext _db { get; }
         public EvektorDbContext _eveDb { get; }
@@ -131,10 +131,12 @@ namespace memo.Controllers
             Offer offer = new Offer();
             string offerCompanyName = string.Empty;
             int invoiceDueDays = 0;
+            string curSymbol = "CZK";
 
             if (model.OfferId != null)
             {
                 offer = _db.Offer.Find(model.OfferId);
+                curSymbol = _db.Currency.Find(offer.CurrencyId).Name;
 
                 Company company = _db.Company.Find(offer.CompanyId);
                 if (company != null)
@@ -143,6 +145,8 @@ namespace memo.Controllers
                     invoiceDueDays = company.InvoiceDueDays;
                 }
             }
+
+            model.ExchangeRate = getCurrency(curSymbol);
 
             OfferOrderVM viewModel = new OfferOrderVM()
             {
@@ -167,6 +171,7 @@ namespace memo.Controllers
 
                 vm.Order.TotalHours = totalHours;
 
+                var totalCzkPrice =
                 _db.Add(vm.Order);
                 _db.SaveChanges();
                 return RedirectToAction("Index");

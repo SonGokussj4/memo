@@ -32,7 +32,8 @@ namespace memo.Models
         [Display(Name = "Web"), StringLength(50)]
         public string Web { get; set; }
 
-        [DataType(DataType.Date), Column(TypeName = "date")]
+        [Display(Name = "Datum vytvoření"), Column(TypeName = "date")]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime? CreateDate { get; set; }
 
         [Display(Name = "Splatnost")]

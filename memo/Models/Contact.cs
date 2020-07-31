@@ -28,7 +28,8 @@ namespace memo.Models
         [Display(Name = "E-mail"), StringLength(255)]
         public string Email { get; set; }
 
-        [DataType(DataType.Date), Column(TypeName = "date")]
+        [Display(Name = "Datum vytvoření"), Column(TypeName = "date")]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime? CreateDate { get; set; }
 
         [Display(Name = "Aktivní")]

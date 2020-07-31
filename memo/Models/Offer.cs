@@ -76,7 +76,8 @@ namespace memo.Models
         [Display(Name = "Důvod prohry"), Column(TypeName = "ntext")]
         public string LostReason { get; set; }
 
-        [Display(Name = "Vytvořeno"), Column(TypeName = "date")]
+        [Display(Name = "Datum vytvoření"), Column(TypeName = "date")]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime? CreateDate { get; set; }
 
         [Display(Name = "Aktivní")]

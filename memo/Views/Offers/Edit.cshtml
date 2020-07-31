@@ -141,6 +141,31 @@
                 autoclose: true,
                 todayHighlight: true
             });
+
+
+            function changeExchangeRate(curSymbol) {
+                $.ajax({
+                    url: '@Url.Action("getCurrency", "Offers")',
+                    type: 'GET',
+                    //dataType: 'json',
+                    // we set cache: false because GET requests are often cached by browsers
+                    // IE is particularly aggressive in that respect
+                    cache: false,
+                    data: { symbol: curSymbol },
+                    success: function(res) {
+                        $('#ExchangeRate').val(res);
+                    }
+                });
+            }
+
+
+            $('#CurrencyId').change(function() {
+                var sel = document.getElementById('CurrencyId');
+                var opt = sel.options[sel.selectedIndex];
+                curSymbol = opt.text
+                console.log("Changing... to " + curSymbol);
+                changeExchangeRate(curSymbol);
+            });
         })
 
     </script>

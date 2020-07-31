@@ -193,11 +193,19 @@
             </div>
         </div>
 
-        <div class="form-group">
-                <label asp-for="Order.Active" class="control-label"></label>
-                <input asp-for="Order.Active" class="form-group" type="checkbox" />
-                <span asp-validation-for="Order.Active" class="text-danger"></span>
+        <div class="form-group row">
+            <label asp-for="Order.CreateDate" class="col-lg-3 col-form-label form-control-label control-label"></label>
+            <div class="col-lg-9 mycalendar">
+                <input asp-for="Order.CreateDate" class="form-control" type="text" autocomplete="off"/>
+                <span asp-validation-for="Order.CreateDate" class="text-danger"></span>
             </div>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Order.Active" class="control-label"></label>
+            <input asp-for="Order.Active" class="form-group" type="checkbox" />
+            <span asp-validation-for="Order.Active" class="text-danger"></span>
+        </div>
 
         <div class="form-group row">
             <label class="col-lg-3 col-form-label form-control-label"></label>

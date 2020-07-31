@@ -46,7 +46,7 @@ namespace memo.Controllers
             ViewBag.CurrencyList = new SelectList(_db.Currency.ToList(), "CurrencyId", "Name");
             ViewBag.OfferStatusList = new SelectList(_db.OfferStatus.ToList(), "OfferStatusId", "Status");
 
-            model.ExchangeRate = getCurrency();
+            model.ExchangeRate = getCurrency("CZK");
 
             return View(model);
         }
@@ -176,30 +176,34 @@ namespace memo.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        public double getCurrency() {
+        public double getCurrency(string symbol) {
+
+            // CZK is missing from list, return 1, no conversion needed
+            if (symbol.ToUpper() == "CZK")
+            {
+                return 1;
+            }
 
             string URL = @"https://www.cnb.cz/cs/financni-trhy/devizovy-trh/kurzy-devizoveho-trhu/kurzy-devizoveho-trhu/denni_kurz.txt";
 
             WebClient client = new WebClient();
             string text = client.DownloadString(URL);
 
-            var lines = text.Split("\n");
+            String[] lines = text.Split("\n");
 
-            // // Downloaded list does not have any elements
-            // if (lines.Count() <= 1)
-            // {
-            //     throw new InvalidOperationException($"No elements in downloaded data. Check out: {URL}");
-            // }
-
+            // 31.07.2020 #147
+            // země|měna|množství|kód|kurz
+            // Austrálie|dolar|1|AUD|15,872
+            // Brazílie|real|1|BRL|4,276
             foreach (string line in lines.Skip(1))
             {
                 if (line.Contains("|") == false)
                     continue;
 
                 string[] splitted = line.Split("|");
-                string currency = splitted[splitted.Count() - 2];
+                string iterSymbol = splitted[splitted.Count() - 2];
 
-                if (currency == "EUR")
+                if (iterSymbol == symbol)
                 {
                     // return Convert.ToDouble(splitted.Last());
                     return double.Parse(splitted.Last().Replace(",", "."), CultureInfo.InvariantCulture);
