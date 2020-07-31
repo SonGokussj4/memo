@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using memo.Models;
 
 namespace memo.ViewModels
@@ -16,5 +17,11 @@ namespace memo.ViewModels
 
         public int OfferId { get; set; }
         public string Edit { get; set; }
+
+        [Display(Name = "Firma")]
+        public string OfferCompanyName { get; set; }
+
+        [Display(Name = "Splatnost")]
+        public int InvoiceDueDays { get; set; }
     }
 }

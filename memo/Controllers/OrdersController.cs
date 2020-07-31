@@ -128,10 +128,28 @@ namespace memo.Controllers
             ViewBag.CurrencyList = new SelectList(_db.Currency.ToList(), "CurrencyId", "Name");
             ViewBag.ContactList = new SelectList(_db.Contact.ToList(), "ContactId", "PersonName");
 
+            Offer offer = new Offer();
+            string offerCompanyName = string.Empty;
+            int invoiceDueDays = 0;
+
+            if (model.OfferId != null)
+            {
+                offer = _db.Offer.Find(model.OfferId);
+
+                Company company = _db.Company.Find(offer.CompanyId);
+                if (company != null)
+                {
+                    offerCompanyName = company.Name;
+                    invoiceDueDays = company.InvoiceDueDays;
+                }
+            }
+
             OfferOrderVM viewModel = new OfferOrderVM()
             {
-                Offer = _db.Offer.Find(model.OfferId),
-                Order = model
+                Offer = offer,
+                Order = model,
+                OfferCompanyName = offerCompanyName,
+                InvoiceDueDays = invoiceDueDays,
             };
 
             return View(viewModel);
@@ -211,6 +229,8 @@ namespace memo.Controllers
                 Offer = offer,
                 Order = order,
                 OfferId = (int)order.OfferId,
+                OfferCompanyName = _db.Company.Find(offer.CompanyId).Name,
+                InvoiceDueDays = _db.Company.Find(offer.CompanyId).InvoiceDueDays,
                 // TotalHours = totalHours
             };
 

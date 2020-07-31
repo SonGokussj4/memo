@@ -21,9 +21,17 @@
             <label asp-for="Order.OfferId" class="col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-4">
                 <input type="hidden" asp-for="Order.OfferId" />
+                <input type="hidden" asp-for="Order.OrderId" />
                 @* @Html.DropDownListFor(model => model.Order.OfferId, ViewBag.WonOffersList as SelectList, "-- Vyber Objednávku --", new { @class = "form-control", onchange = @"this.form.submit();" }) *@
-                @Html.DropDownList("OfferId", ViewBag.WonOffersList as SelectList, "-- Vyber objednávku --", new { @class = "form-control", onchange = @"this.form.submit();", @required = "" })
+                @Html.DropDownList("OfferId", ViewBag.WonOffersList as SelectList, "-- Vyber objednávku --", new { @class = "form-control", onchange = @"this.form.submit();" })
                 <span asp-validation-for="Order.OfferId" class="text-danger"></span>
+            </div>
+            <div class="col-lg-1">
+                <label asp-for="OfferCompanyName" class="col-form-label form-control-label control-label"></label>
+            </div>
+            <div class="col-lg-4">
+                <input asp-for="OfferCompanyName" class="form-control" type="text" readonly />
+                <span asp-validation-for="OfferCompanyName" class="text-danger"></span>
             </div>
         </div>
 
@@ -60,6 +68,13 @@
             <div class="col-lg-2">
                 <input asp-for="Offer.ExchangeRate" class="form-control" type="text" readonly />
                 <span asp-validation-for="Offer.ExchangeRate" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label asp-for="InvoiceDueDays" class="col-lg-3 col-form-label form-control-label control-label"></label>
+            <div class="col-lg-3">
+                <input asp-for="InvoiceDueDays" class="form-control" type="text" required="" autocomplete="off" readonly />
             </div>
         </div>
 
@@ -209,10 +224,23 @@
                 todayHighlight: true
             });
 
+
             $('#Order_PriceFinal').on('input', function(){
                 var offerPrice = parseInt($('#Offer_Price').val());
                 var finalPrice = parseInt($('#Order_PriceFinal').val());
                 $('#Order_PriceDiscount').val(offerPrice - finalPrice);
+            });
+
+
+            $('#Order_InvoiceIssueDate').change('input', function(){
+                var date = new Date($('#Order_InvoiceIssueDate').val());
+                date.setDate( date.getUTCDate() + @Model.InvoiceDueDays );
+                var futureDate = date.getFullYear()
+                    +'-'
+                    +('0'+(date.getMonth()+1)).slice(-2)
+                    +'-'
+                    +('0'+(date.getDate())).slice(-2);
+                $('#Order_InvoiceDueDate').val(futureDate);
             });
         })
 

@@ -42,10 +42,10 @@ namespace memo.Models
         public int? TotalHours { get; set; }
 
         [Required]
-        [Display(Name = "Předp. termín vystavení faktury*"), Column(TypeName = "date")]
+        [Display(Name = "Předp. termín vystavení faktury*"), Column(TypeName = "date"), DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime? InvoiceIssueDate { get; set; }
 
-        [Display(Name = "Datum splatnosti faktury"), Column(TypeName = "date")]
+        [Display(Name = "Datum splatnosti faktury"), Column(TypeName = "date"), DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime? InvoiceDueDate { get; set; }
 
         [Display(Name = "Kurs")]
