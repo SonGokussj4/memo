@@ -78,5 +78,8 @@ namespace memo.Models
 
         [Display(Name = "Vytvořeno"), Column(TypeName = "date")]
         public DateTime? CreateDate { get; set; }
+
+        [Display(Name = "Aktivní")]
+        public Boolean Active { get; set; }
     }
 }

@@ -7,7 +7,7 @@ CREATE TABLE [memo].[Company] (
   [Address] nvarchar(50),
   [Phone] nvarchar(50),
   [Web] nvarchar(50),
-  [CreateDate] date,
+  [CreateDate] date DEFAULT GETDATE(),
   [InvoiceDueDays] int DEFAULT 0,
   [Active] bit DEFAULT 1
 )
@@ -19,7 +19,7 @@ CREATE TABLE [memo].[Contact] (
   [Department] nvarchar(50),
   [Phone] nvarchar(50),
   [Email] nvarchar(255),
-  [CreateDate] date,
+  [CreateDate] date DEFAULT GETDATE(),
   [Active] bit DEFAULT 1
 )
 GO
@@ -41,7 +41,8 @@ CREATE TABLE [memo].[Offer] (
   [PriceCzk] int,
   [Status] int,
   [LostReason] ntext,
-  [CreateDate] date
+  [CreateDate] date DEFAULT GETDATE(),
+  [Active] bit DEFAULT 1
 )
 GO
 
@@ -69,7 +70,9 @@ CREATE TABLE [memo].[Order] (
   [ExchangeRate] float,
   [PriceFinalCzk] int,
   [Notes] ntext,
-  [CreateDate] date
+  [CreateDate] date DEFAULT GETDATE(),
+  [OtherCosts] int DEFAULT 0,
+  [Active] bit DEFAULT 1
 )
 GO
 
@@ -132,15 +135,15 @@ EXEC sp_addextendedproperty
 @level2type = N'Column', @level2name = 'Name';
 GO
 
-ALTER TABLE [memo].[Company] ADD CONSTRAINT DF_Company DEFAULT GETDATE() FOR CreateDate
-GO
+-- ALTER TABLE [memo].[Company] ADD CONSTRAINT DF_Company DEFAULT GETDATE() FOR CreateDate
+-- GO
 
-ALTER TABLE [memo].[Contact] ADD CONSTRAINT DF_Contact DEFAULT GETDATE() FOR CreateDate
-GO
+-- ALTER TABLE [memo].[Contact] ADD CONSTRAINT DF_Contact DEFAULT GETDATE() FOR CreateDate
+-- GO
 
-ALTER TABLE [memo].[Offer] ADD CONSTRAINT DF_Offer DEFAULT GETDATE() FOR CreateDate
-GO
+-- ALTER TABLE [memo].[Offer] ADD CONSTRAINT DF_Offer DEFAULT GETDATE() FOR CreateDate
+-- GO
 
-ALTER TABLE [memo].[Order] ADD CONSTRAINT DF_Order DEFAULT GETDATE() FOR CreateDate
-GO
+-- ALTER TABLE [memo].[Order] ADD CONSTRAINT DF_Order DEFAULT GETDATE() FOR CreateDate
+-- GO
 

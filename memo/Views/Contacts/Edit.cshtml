@@ -39,8 +39,10 @@
             </div>
 
             <div class="form-group">
-                <label asp-for="Active" class="control-label"></label>
-                <input asp-for="Active" class="form-group" type="checkbox" />
+                <label asp-for="Active" class="control-label">
+                    <input asp-for="Active" class="form-group" type="checkbox" />
+                    @Html.DisplayNameFor(m => m.Active)
+                </label>
                 <span asp-validation-for="Active" class="text-danger"></span>
             </div>
 

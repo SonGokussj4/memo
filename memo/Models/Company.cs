@@ -16,6 +16,7 @@ namespace memo.Models
         [Key]
         public int CompanyId { get; set; }
 
+        [Required]
         [Display(Name = "Název"), StringLength(50)]
         public string Name { get; set; }
 

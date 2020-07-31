@@ -10,9 +10,11 @@
     <h1 class="display-4">@ViewData["Title"]</h1>
 </div>
 
-// TODO: Pridat aktivaci/deaktivaci zakazky
 <div id="toolbar" style="padding-bottom: 10px;">
     <a asp-action="Create" class="btn btn-outline-success"><i class="fa fa-plus-square-o"></i> Nová zakázka</a>
+    <a id="btnToggleActive" class="btn btn-outline-primary pull-right" onclick="ToggleActive()">
+        <i class="fa fa-eye-slash"></i> Aktivní (@Model.Count(m => m.Active) / @Model.Count())
+    </a>
 </div>
 
 
@@ -40,7 +42,7 @@
     <tbody>
         @foreach (var item in Model)
         {
-            <tr>
+            <tr id="row_@item.OrderId" class="@(item.Active ? Html.Raw("show") : Html.Raw("hide"))">
                 <th scope="row">
                     <a asp-action="Edit" asp-route-id=@item.OrderId><i class="fa fa-pencil fa-fw" aria-hidden="true"></i></a>
                     <a href="#" onclick="ConfirmDelete(@item.OrderId)"><i class="fa fa-times fa-fw" style="color: red", aria-hidden="true"></i></a>
@@ -124,6 +126,29 @@
         $("#myModal").modal('show');
         $("#modalItemId").val( 'Hmm' + ItemId );
     };
+
+    // Function to toggle Active/Disabled Contacts/Companies in table
+    //---------------------------------------------------------------
+    function ToggleActive() {
+        var btn = document.getElementById("btnToggleActive");
+
+        if (btn.children[0].className == "fa fa-eye-slash") {
+            btn.children[0].className = "fa fa-eye"
+            btn.lastChild.nodeValue = " Všichni (@Model.Count())"
+            var hiddenRows = document.getElementsByClassName("hide");
+            for(var i=0; i<hiddenRows.length; i++){
+                hiddenRows[i].className = "show hiddenBefore";
+            };
+        }
+        else {
+            btn.children[0].className = "fa fa-eye-slash"
+            btn.lastChild.nodeValue = " Aktivní (@Model.Count(m => m.Active) / @Model.Count())"
+            var hiddenRows = document.getElementsByClassName("show hiddenBefore");
+            for(var i=0; i<hiddenRows.length; i++){
+                hiddenRows[i].className = "hide";
+            }
+        }
+    }
 
 </script>
 }

@@ -6,20 +6,30 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using memo.Models;
+using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
 
 namespace memo.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        // private readonly RoleManager<IdentityRole> roleManager;
+        // private readonly UserManager<IdentityUser> userManager;
 
-        public HomeController(ILogger<HomeController> logger)
+        // public HomeController(RoleManager<IdentityRole> roleManager, UserManager<IdentityUser> userManager)
+        public HomeController()
         {
-            _logger = logger;
+            // this.roleManager = roleManager;
+            // this.userManager = userManager;
         }
 
         public IActionResult Index()
         {
+            var user = User.FindFirstValue(ClaimTypes.Name);
+            ViewBag.user = user;
+            var role = User.FindFirstValue(ClaimTypes.Role);
+            ViewBag.role = role;
+
             return View();
         }
 

@@ -60,6 +60,12 @@ namespace memo.Models
         [Column(TypeName = "date")]
         public DateTime? CreateDate { get; set; }
 
+        [Display(Name = "Další náklady")]
+        public int OtherCosts { get; set; }
+
+        [Display(Name = "Aktivní")]
+        public Boolean Active { get; set; }
+
         [NotMapped]
         [Display(Name = "Spáleno")]
         public int Burned { get; set; }

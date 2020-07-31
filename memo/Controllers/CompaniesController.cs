@@ -86,6 +86,10 @@ namespace memo.Controllers
                 _db.SaveChanges();
                 return RedirectToAction("Index");
             }
+            else
+            {
+                ModelState.AddModelError(string.Empty, "Invalid SOMETHING");
+            }
 
             return View(model);
         }

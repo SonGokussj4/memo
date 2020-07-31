@@ -175,12 +175,6 @@ namespace memo.Controllers
                 return NotFound();
             }
 
-            Order order = _db.Order.Find(id);
-            if (order == null)
-            {
-                return NotFound();
-            }
-
             List<Offer> wonOffersList = _db.Offer
                 .Where(t => t.Status == 2)
                 .OrderBy(t => t.OfferName)
@@ -188,6 +182,18 @@ namespace memo.Controllers
             ViewBag.WonOffersList = new SelectList(wonOffersList, "OfferId", "OfferName");
             ViewBag.CurrencyList = new SelectList(_db.Currency.ToList(), "CurrencyId", "Name");
             ViewBag.ContactList = new SelectList(_db.Contact.ToList(), "ContactId", "PersonName");
+
+            if (offerId == 0)
+            {
+                ModelState.AddModelError(string.Empty, "Nelze vybrat prázdnou objednávku");
+                return View();
+            }
+
+            Order order = _db.Order.Find(id);
+            if (order == null)
+            {
+                return NotFound();
+            }
 
             if (offerId != null)
             {
