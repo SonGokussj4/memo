@@ -170,8 +170,9 @@ namespace memo.Controllers
                     .Select(t => t.Planned).FirstOrDefault();
 
                 vm.Order.TotalHours = totalHours;
+                vm.Order.PriceFinalCzk = Convert.ToInt32(
+                    (vm.Order.PriceFinal + vm.Order.OtherCosts) * vm.Order.ExchangeRate);
 
-                var totalCzkPrice =
                 _db.Add(vm.Order);
                 _db.SaveChanges();
                 return RedirectToAction("Index");
@@ -261,6 +262,8 @@ namespace memo.Controllers
                     .Select(t => t.Planned).FirstOrDefault();
 
                     vm.Order.TotalHours = totalHours;
+                    vm.Order.PriceFinalCzk = Convert.ToInt32(
+                        (vm.Order.PriceFinal + vm.Order.OtherCosts) * vm.Order.ExchangeRate);
 
                     _db.Update(vm.Order);
                     _db.SaveChanges();

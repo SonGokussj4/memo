@@ -143,7 +143,7 @@
         <div class="form-group row">
             <label asp-for="Order.HourWage" class="col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-3">
-                <input asp-for="Order.HourWage" class="form-control" type="text" onchange="changeDiscount(this.value)"/>
+                <input asp-for="Order.HourWage" class="form-control" type="text" onchange="this.value = this.value.replace(/,/g, '.')"/>
                 <span asp-validation-for="Order.HourWage" class="text-danger"></span>
             </div>
             <div class="col-lg-3">
@@ -174,12 +174,12 @@
          <div class="form-group row">
             <label asp-for="Order.PriceFinalCzk" class="col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-6">
-                <input asp-for="Order.PriceFinalCzk" class="form-control" type="text" />
+                <input asp-for="Order.PriceFinalCzk" class="form-control" type="text" readonly />
                 <span asp-validation-for="Order.PriceFinalCzk" class="text-danger"></span>
             </div>
             <label asp-for="Order.ExchangeRate" class="col-lg-1 col-form-label form-control-label control-label"></label>
             <div class="col-lg-2">
-                <input asp-for="Order.ExchangeRate" class="form-control" type="text"/>
+                <input asp-for="Order.ExchangeRate" class="form-control" type="text" onchange="this.value = this.value.replace(/,/g, '.')"/>
                 <span asp-validation-for="Order.ExchangeRate" class="text-danger"></span>
             </div>
         </div>

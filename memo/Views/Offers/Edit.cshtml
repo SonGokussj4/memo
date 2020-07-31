@@ -88,7 +88,7 @@
                 <span asp-validation-for="Currency" class="text-danger"></span>
             </div>
             <div class="col-lg-2">
-                <input asp-for="ExchangeRate" class="form-control" type="text"/>
+                <input asp-for="ExchangeRate" class="form-control" type="text" onchange="this.value = this.value.replace(/,/g, '.')"/>
                 <span asp-validation-for="ExchangeRate" class="text-danger"></span>
             </div>
         </div>
