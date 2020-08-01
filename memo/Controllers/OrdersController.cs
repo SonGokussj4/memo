@@ -169,6 +169,7 @@ namespace memo.Controllers
                     .Where(t => t.OrderCode == vm.Order.OrderCode)
                     .Select(t => t.Planned).FirstOrDefault();
 
+                vm.Order.Active = true;
                 vm.Order.TotalHours = totalHours;
                 vm.Order.PriceFinalCzk = Convert.ToInt32(
                     (vm.Order.PriceFinal + vm.Order.OtherCosts) * vm.Order.ExchangeRate);

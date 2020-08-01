@@ -22,13 +22,13 @@
         <form role="form" autocomplete="on" asp-action="Create" method="post">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-        <div class="form-group row">
+        @* <div class="form-group row">
             <label asp-for="OfferName" class="required col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-9">
                 <input asp-for="OfferName" class="form-control" type="text" required="" placeholder="EV-quo/rrrr/####"/>
                 <span asp-validation-for="OfferName" class="text-danger"></span>
             </div>
-        </div>
+        </div> *@
 
         <div class="form-group row">
             <label asp-for="ReceiveDate" class="required col-lg-3 col-form-label form-control-label control-label"></label>

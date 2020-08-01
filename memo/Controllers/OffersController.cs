@@ -56,6 +56,22 @@ namespace memo.Controllers
         public IActionResult Create(Offer offer)
         {
             offer.Status = 1;  // default
+            offer.Active = true;
+
+            int maxOfferNum = 0;
+            var offerNames = _db.Offer.Where(m => m.OfferName.Contains("3019")).Select(m => m.OfferName).ToList();
+            foreach (string item in offerNames)
+            {
+                int num = Convert.ToInt32(item.Split("/").Last());
+                if (num > maxOfferNum)
+                {
+                    maxOfferNum = num;
+                }
+            }
+            string maxOfferNumNext = String.Format("{0:0000}", maxOfferNum + 1);
+            string newOfferNum = $"EV-quo/3019/{maxOfferNumNext}";
+
+            offer.OfferName = newOfferNum;
 
             if (ModelState.IsValid)
             {
@@ -107,7 +123,8 @@ namespace memo.Controllers
 
             if (ModelState.IsValid)
             {
-                // Offer oldOffer = _db.Offer.Find(id);
+                string oldStatus = _db.OfferStatus.Find(model.Status).Status;
+
                 try
                 {
                     _db.Update(model);
@@ -126,7 +143,7 @@ namespace memo.Controllers
                 }
 
                 // if (model.Status == 2 && model.Status != oldOffer.Status)  // model.OfferStatus.Status == "Won"
-                if (model.Status == 2)  // model.OfferStatus.Status == "Won"
+                if (model.Status == 2 && oldStatus != "Won")  // model.OfferStatus.Status == "Won"
                 {
                     Order order = new Order();
                     order.OfferId = model.OfferId;
