@@ -117,6 +117,12 @@ namespace memo.Controllers
             return View();
         }
 
+        public IActionResult CreateEveProject()
+        {
+            return Redirect("https://seznam.cz");
+        }
+
+
         [HttpGet]
         public IActionResult Create(int? id, Order model)
         {

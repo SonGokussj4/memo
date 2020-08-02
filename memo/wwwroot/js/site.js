@@ -10,3 +10,8 @@ $(function () {
         liveSearchNormalize: true,
     });
 });
+
+// Initialize bootstrap-tooltips
+$(function () {
+    $('[data-toggle="tooltip"]').tooltip()
+})

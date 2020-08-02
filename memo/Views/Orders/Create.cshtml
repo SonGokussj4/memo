@@ -61,7 +61,7 @@
                 <span asp-validation-for="Offer.Price" class="text-danger"></span>
             </div>
             <div class="col-lg-2">
-                @Html.DropDownListFor(model => model.Offer.CurrencyId, ViewBag.CurrencyList as SelectList, new { @class = "form-control selectpicker", @disabled = "disabled" })
+                @Html.DropDownListFor(model => model.Offer.CurrencyId, ViewBag.CurrencyList as SelectList, new { @class = "form-control", @disabled = "disabled" })
                 @Html.HiddenFor(model => model.Offer.CurrencyId)
                 <span asp-validation-for="Offer.Currency" class="text-danger"></span>
             </div>
@@ -120,17 +120,29 @@
 
         <div class="form-group row">
             <label asp-for="Order.OrderCode" class="col-lg-3 col-form-label form-control-label control-label"></label>
-            <div class="col-lg-9">
+            <div class="col-lg-8">
                 <input asp-for="Order.OrderCode" class="form-control" type="text" required="" />
                 <span asp-validation-for="Order.OrderCode" class="text-danger"></span>
+            </div>
+            <div class="col-lg-1">
+                <a href="@Url.Action("CreateEveProject")" target="_blank" class="btn btn-outline-success"
+                   data-toggle="tooltip" data-placement="top" title="Vytvořit nový EVE projekt">
+                    <i class="fa fa-plus-square"></i>
+                </a>
             </div>
         </div>
 
         <div class="form-group row">
             <label asp-for="Order.ContactId" class="col-lg-3 col-form-label form-control-label control-label"></label>
-            <div class="col-lg-9">
-                @Html.DropDownListFor(model => model.Order.ContactId, ViewBag.ContactList as SelectList, "-- Vyber kontakt --", new { @class = "form-control" })
+            <div class="col-lg-8">
+                @Html.DropDownListFor(model => model.Order.ContactId, ViewBag.ContactList as SelectList, "-- Vyber kontakt --", new { @class = "form-control selectpicker" })
                 <span asp-validation-for="Order.ContactId" class="text-danger"></span>
+            </div>
+            <div class="col-lg-1">
+                <a href="@Url.Action("Create", "Contacts")" target="_blank" class="btn btn-outline-success"
+                   data-toggle="tooltip" data-placement="top" title="Přidat kontakt">
+                    <i class="fa fa-plus-square"></i>
+                </a>
             </div>
         </div>
 
@@ -243,6 +255,7 @@
                     +('0'+(date.getDate())).slice(-2);
                 $('#Order_InvoiceDueDate').val(futureDate);
             });
+
         })
 
     </script>
