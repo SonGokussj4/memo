@@ -91,3 +91,31 @@ form.myform {
   border: 1px solid lightgray;
   border-radius: 10px;
 }
+
+/* Bootstrap-Select fixes
+-------------------------------------------------- */
+.bootstrap-select .no-results {
+    background: #ffb2b2;
+    border-radius: 5px;
+}
+
+.bootstrap-select>.dropdown-toggle.bs-placeholder {
+    color: #495057;
+}
+
+.bootstrap-select>.btn-light,
+.bootstrap-select>.btn-light:hover,
+.bootstrap-select>.btn-light:active,
+.show>.btn-light.dropdown-toggle {
+    background-color: #ffffff;
+    border-color: #ced4da;
+    color: #495057;
+}
+
+.bootstrap-select .dropdown-toggle:focus,
+.bootstrap-select>select.mobile-device:focus+.dropdown-toggle {
+    outline: 0px auto -webkit-focus-ring-color!important;
+    background-color: #ffffff;
+    border-color: #ced4da;
+    color: #495057;
+}

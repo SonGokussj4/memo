@@ -74,11 +74,11 @@
         <div class="form-group row">
             <label class="required col-lg-3 col-form-label form-control-label control-label">Zákazník</label>
             <div class="col-lg-5">
-                @Html.DropDownListFor(model => model.CompanyId, ViewBag.CompanyList as SelectList, "-- Vyber firmu --", new { @class = "form-control" })
+                @Html.DropDownListFor(model => model.CompanyId, ViewBag.CompanyList as SelectList, "-- Vyber firmu --", new { @class = "form-control selectpicker" })
                 <span asp-validation-for="CompanyId" class="text-danger"></span>
             </div>
             <div class="col-lg-4">
-                @Html.DropDownListFor(model => model.ContactId, ViewBag.ContactList as SelectList, "-- Vyber kontakt --", new { @class = "form-control" })
+                @Html.DropDownListFor(model => model.ContactId, ViewBag.ContactList as SelectList, "-- Vyber kontakt --", new { @class = "form-control selectpicker" })
                 <span asp-validation-for="ContactId" class="text-danger"></span>
             </div>
         </div>
@@ -159,6 +159,7 @@
                 console.log("Changing... to " + curSymbol);
                 changeExchangeRate(curSymbol);
             });
+
         })
 
     </script>

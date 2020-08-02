@@ -4,7 +4,18 @@
 
 @model IEnumerable<memo.Models.Contact>
 
-
+<style>
+    .filter-control>input.form-control,
+    .filter-control>select.form-control {
+        margin: 0px;
+        padding: 0px 20px;
+        height: 30px;
+        border-radius: 5px;
+        border-left: 0px;
+        border-right: 0px;
+        border-bottom: 0px;
+    }
+</style>
 <div class="text-center">
     <h1 class="display-4">Kontakty</h1>
 </div>
@@ -14,8 +25,12 @@
     <a id="btnToggleActive" class="btn btn-outline-primary pull-right" onclick="ToggleActive()">
         <i class="fa fa-eye-slash"></i> Aktivní (@Model.Count(m => m.Active) / @Model.Count())
     </a>
+    <button style="margin-right: 5px;" class="btn btn-outline-info" name="BtnMujFilter" id="BtnMujFilter" type="button">
+        <i class="fa fa-filter"> Filter</i>
+    </button>
 </div>
 
+<!--
 <table class="table table-sm table-hover">
     <thead>
         <tr>
@@ -45,8 +60,55 @@
         }
     </tbody>
 </table>
+-->
 
-<!-- Modal Confirm Delete-->
+<table
+    id="table"
+    data-filter-control="false"
+    data-show-search-clear-button="true"
+    data-show-toggle="true"
+    data-cookie="true"
+    data-cookie-id-table="saveId"
+    data-show-columns-toggle-all="true"
+    data-show-columns="true"
+    data-show-export="true"
+    data-toolbar="#toolbar"
+    data-toggle="table"
+    data-search="true"
+    class="table table-sm text-nowrap text-xsmall"
+    style="width:100%"
+    >
+    <thead>
+        <tr>
+            <th scope="col" data-field="0" data-filter-control="input" style="width: 10px;"></th>
+            <th scope="col" data-field="1" data-filter-control="input">Jméno</th>
+            <th scope="col" data-field="2" data-filter-control="select">Oddělení</th>
+            <th scope="col" data-field="3" data-filter-control="input">Telefon</th>
+            <th scope="col" data-field="4" data-filter-control="input">E-mail</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr id="row_@item.ContactId" class="@(item.Active ? Html.Raw("show") : Html.Raw("hide"))">
+                <th scope="row" style="width: 10px;">
+                    <a asp-action="Edit" asp-route-id=@item.ContactId><i class="fa fa-pencil fa-fw" aria-hidden="true"></i></a>
+                    @* <a asp-action="Delete" asp-route-id=@item.ContactId><i class="fa fa-times fa-fw" style="color: red", aria-hidden="true"></i></a> *@
+                    <a href="#" onclick="ConfirmDelete(@item.ContactId)"><i class="fa fa-times fa-fw" style="color: red", aria-hidden="true"></i></a>
+                </th>
+                <th scope="row">@item.PersonName</th>
+                <th scope="row">@item.Department</th>
+                <th scope="row">@item.Phone</th>
+                <th scope="row">@item.Email</th>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+<!---------------------------
+    Modal: Confirm Delete
+---------------------------->
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog modal-sm" role="document">
         <div class="modal-content">
@@ -114,8 +176,8 @@
     };
 
 
-    // Function to toggle Active/Disabled Contacts/Companies in table
-    //---------------------------------------------------------------
+    // Function to toggle Active/Disabled in table
+    //--------------------------------------------
     function ToggleActive() {
         var btn = document.getElementById("btnToggleActive");
 
@@ -135,7 +197,23 @@
                 hiddenRows[i].className = "hide";
             }
         }
-    }
+    };
+
+
+    // Filter button on top of the bootstrap datatable to switch filter textboxes
+    //---------------------------------------------------------------------------
+    $(function() {
+
+        $('#table').bootstrapTable();
+        const $table = $('#table');
+
+        FilterButton = $('#BtnMujFilter');
+        FilterButton.click(function() {
+            $table.bootstrapTable('destroy');
+            $table.data("filter-control", !$table.data("filter-control"));
+            $table.bootstrapTable();
+        });
+    })
 
 </script>
 }

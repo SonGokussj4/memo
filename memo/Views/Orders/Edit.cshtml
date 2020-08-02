@@ -26,7 +26,7 @@
                 <input type="hidden" asp-for="Order.OfferId" />
                 <input type="hidden" asp-for="Order.OrderId" />
                 @* @Html.DropDownListFor(model => model.Order.OfferId, ViewBag.WonOffersList as SelectList, "-- Vyber Objednávku --", new { @class = "form-control", onchange = @"this.form.submit();" }) *@
-                @Html.DropDownList("OfferId", ViewBag.WonOffersList as SelectList, "-- Vyber objednávku --", new { @class = "form-control", onchange = @"this.form.submit();" })
+                @Html.DropDownList("OfferId", ViewBag.WonOffersList as SelectList, "-- Vyber objednávku --", new { @class = "form-control selectpicker", onchange = @"this.form.submit();" })
                 <span asp-validation-for="Order.OfferId" class="text-danger"></span>
             </div>
             <div class="col-lg-1">
@@ -64,7 +64,7 @@
                 <span asp-validation-for="Offer.Price" class="text-danger"></span>
             </div>
             <div class="col-lg-2">
-                @Html.DropDownListFor(model => model.Offer.CurrencyId, ViewBag.CurrencyList as SelectList, new { @class = "form-control", @disabled = "disabled" })
+                @Html.DropDownListFor(model => model.Offer.CurrencyId, ViewBag.CurrencyList as SelectList, new { @class = "form-control selectpicker", @disabled = "disabled" })
                 @Html.HiddenFor(model => model.Offer.CurrencyId)
                 <span asp-validation-for="Offer.Currency" class="text-danger"></span>
             </div>

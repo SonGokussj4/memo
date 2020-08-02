@@ -36,6 +36,7 @@
             @* <th scope="col">Měna</th> *@
             <th scope="col">Spáleno [hod]</th>
             <th scope="col">Plánované [hod]</th>
+            <th scope="col">Cena v CZK</th>
             <th scope="col">Stav plnění</th>
         </tr>
     </thead>
@@ -63,6 +64,7 @@
                 @* <th scope="row">@item.Minutes minutes</th> *@
                 <th scope="row">@( item.Burned / 60 )</th>
                 <th scope="row">@item.TotalHours</th>
+                <th scope="row">@String.Format("{0:#,0}", @item.PriceFinalCzk)</th>
                 <th scope="row">@( String.Format("{0:0.00}", (float)item.Burned / 60 / item.TotalHours * 100) ) %</th>
             </tr>
         }

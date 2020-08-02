@@ -3,4 +3,10 @@
 
 // Write your JavaScript code.
 
-
+// Bootstrap-Select options
+$(function () {
+    $('.selectpicker').selectpicker({
+        liveSearch: true,
+        liveSearchNormalize: true,
+    });
+});
