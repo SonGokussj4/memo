@@ -40,6 +40,7 @@ namespace memo.Controllers
             IList<Order> model = _db.Order
                 .Include(x => x.Offer)
                 .Include(y => y.Contact)
+                .Include(z => z.Offer.Currency)
                 // .Include(z => z.cOrders)
                 // .Include(a => a.cProjects)
                 // .Include(x => x.Company)
@@ -119,7 +120,7 @@ namespace memo.Controllers
 
         public IActionResult CreateEveProject()
         {
-            return Redirect("https://seznam.cz");
+            return Redirect("http://intranet/apps/works/index.htm");
         }
 
 

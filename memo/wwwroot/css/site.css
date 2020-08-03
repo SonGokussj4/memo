@@ -78,6 +78,7 @@ body {
 
 .hiddenBefore {
   color: #00000081;
+  background-color: #e7e7e7;
 }
 
 .table-sm tbody th {
@@ -92,6 +93,31 @@ form.myform {
   border-radius: 10px;
 }
 
+/* Red * after label that has 'required' class */
+.required:after {
+  content:" *";
+  color: #f10808;
+  font-size: 1.2em;
+}
+
+/* Small divider after X (remove) in first column in DataTable */
+.editDivider {
+  padding-right: 25px;
+  border-right: 1px solid #dee2e6;
+  margin-right: 10px;
+}
+
+/* Smaller filter field above DataTable */
+.filter-control>input.form-control,
+.filter-control>select.form-control {
+    margin: 0px;
+    padding: 0px 20px;
+    height: 30px;
+    border-radius: 5px;
+    border-left: 0px;
+    border-right: 0px;
+    border-bottom: 0px;
+}
 /* Bootstrap-Select fixes
 -------------------------------------------------- */
 .bootstrap-select .no-results {

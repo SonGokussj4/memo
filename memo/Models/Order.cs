@@ -13,11 +13,11 @@ namespace memo.Models
         public int OrderId { get; set; }
 
         // [Required]
-        [Display(Name = "Objednávka*")]
+        [Display(Name = "Objednávka")]
         public int? OfferId { get; set; }
         public Offer Offer { get; set; }
 
-        [Display(Name = "Číslo objednávky zákazníka*"), StringLength(50)]
+        [Display(Name = "Číslo objednávky zákazníka"), StringLength(50)]
         public string OrderName { get; set; }
 
         [Display(Name = "Konečná cena")]
@@ -26,7 +26,7 @@ namespace memo.Models
         [Display(Name = "Poskytnutá sleva")]
         public int? PriceDiscount { get; set; }
 
-        [Display(Name = "Kód vykazování EVE*"), StringLength(50)]
+        [Display(Name = "Kód vykazování EVE"), StringLength(50)]
         public string OrderCode { get; set; }
         // public cOrders cOrders { get; set; }
 
@@ -35,14 +35,14 @@ namespace memo.Models
         public Contact Contact { get; set; }
 
         [Required]
-        [Display(Name = "Hodinová sazba komerční*")]
+        [Display(Name = "Hodinová sazba komerční")]
         public double? HourWage { get; set; }
 
         [Display(Name = "Celkem hodin plánovaných")]
         public int? TotalHours { get; set; }
 
         [Required]
-        [Display(Name = "Předp. termín vystavení faktury*"), Column(TypeName = "date")]
+        [Display(Name = "Předp. termín vystavení faktury"), Column(TypeName = "date")]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime? InvoiceIssueDate { get; set; }
 

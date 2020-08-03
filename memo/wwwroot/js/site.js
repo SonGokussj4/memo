@@ -15,3 +15,19 @@ $(function () {
 $(function () {
     $('[data-toggle="tooltip"]').tooltip()
 })
+
+
+// Filter button on top of the bootstrap datatable to switch filter textboxes
+//---------------------------------------------------------------------------
+$(function() {
+
+    $('#table').bootstrapTable();
+    const $table = $('#table');
+
+    FilterButton = $('#BtnMujFilter');
+    FilterButton.click(function() {
+        $table.bootstrapTable('destroy');
+        $table.data("filter-control", !$table.data("filter-control"));
+        $table.bootstrapTable();
+    });
+})

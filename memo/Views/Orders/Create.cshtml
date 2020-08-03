@@ -13,12 +13,14 @@
 <div class="container">
     <div class="col-lg-8 push-lg-4 personal-info">
 
-        <!-- FORM - OBJEDNAVKA -->
+        <!--------------------------------------------------------------------------------------
+            FORM - OBJEDNAVKA
+        --------------------------------------------------------------------------------------->
         <form role="form" autocomplete="on" asp-action="Refresh" method="post">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
         <div class="form-group row">
-            <label asp-for="Order.OfferId" class="col-lg-3 col-form-label form-control-label control-label"></label>
+            <label asp-for="Order.OfferId" class="required col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-4">
                 <input type="hidden" asp-for="Order.OfferId" />
                 <input type="hidden" asp-for="Order.OrderId" />
@@ -82,13 +84,15 @@
 
         <hr />
 
-        <!-- FORM - ZAKAZKA -->
+        <!--------------------------------------------------------------------------------------
+            FORM - ZAKAZKA
+        --------------------------------------------------------------------------------------->
         <form role="form" autocomplete="on" asp-action="Create" method="post">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <input type="hidden" asp-for="Order.OfferId" />
 
         <div class="form-group row">
-            <label asp-for="Order.OrderName" class="col-lg-3 col-form-label form-control-label control-label"></label>
+            <label asp-for="Order.OrderName" class="required col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-9">
                 <input asp-for="Order.OrderName" class="form-control" type="text" required="" />
                 <span asp-validation-for="Order.OrderName" class="text-danger"></span>
@@ -96,7 +100,7 @@
         </div>
 
         <div class="form-group row">
-            <label asp-for="Order.PriceFinal" class="col-lg-3 col-form-label form-control-label control-label"></label>
+            <label asp-for="Order.PriceFinal" class="required col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-3">
                 <input asp-for="Order.PriceFinal" class="form-control" type="text" required="" onchange="changeDiscount(this.value)"/>
                 <span asp-validation-for="Order.PriceFinal" class="text-danger"></span>
@@ -119,7 +123,7 @@
         </div>
 
         <div class="form-group row">
-            <label asp-for="Order.OrderCode" class="col-lg-3 col-form-label form-control-label control-label"></label>
+            <label asp-for="Order.OrderCode" class="required col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-8">
                 <input asp-for="Order.OrderCode" class="form-control" type="text" required="" />
                 <span asp-validation-for="Order.OrderCode" class="text-danger"></span>
@@ -147,7 +151,7 @@
         </div>
 
         <div class="form-group row">
-            <label asp-for="Order.HourWage" class="col-lg-3 col-form-label form-control-label control-label"></label>
+            <label asp-for="Order.HourWage" class="required col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-3">
                 <input asp-for="Order.HourWage" class="form-control" type="text" onchange="this.value = this.value.replace(/,/g, '.')"/>
                 <span asp-validation-for="Order.HourWage" class="text-danger"></span>
@@ -162,7 +166,7 @@
         </div>
 
         <div class="form-group row">
-            <label asp-for="Order.InvoiceIssueDate" class="col-lg-3 col-form-label form-control-label control-label"></label>
+            <label asp-for="Order.InvoiceIssueDate" class="required col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-9 mycalendar">
                 <input asp-for="Order.InvoiceIssueDate" class="form-control" type="text" autocomplete="off"/>
                 <span asp-validation-for="Order.InvoiceIssueDate" class="text-danger"></span>

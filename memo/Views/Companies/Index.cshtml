@@ -25,43 +25,59 @@
     <a id="btnToggleActive" class="btn btn-outline-primary pull-right" onclick="ToggleActive()">
         <i class="fa fa-eye-slash"></i> Aktivní (@Model.Count(m => m.Active) / @Model.Count())
     </a>
+    <button style="margin-right: 5px;" class="btn btn-outline-info" name="BtnMujFilter" id="BtnMujFilter" type="button">
+        <i class="fa fa-filter"> Filter</i>
+    </button>
 </div>
 
-<table class="table table-sm table-hover">
+<table
+    id="table"
+    data-filter-control="false"
+    data-show-search-clear-button="true"
+    data-show-toggle="true"
+    data-cookie="true"
+    data-cookie-id-table="saveId"
+    data-show-columns-toggle-all="true"
+    data-show-columns="true"
+    data-show-export="true"
+    data-toolbar="#toolbar"
+    data-toggle="table"
+    data-search="true"
+    class="table table-sm text-nowrap text-xsmall"
+    style="width:100%"
+    >
     <thead>
         <tr>
-            <th scope="col"></th>
-            @* <th scope="col">Id</th> *@
-            <th scope="col">Jméno</th>
-            <th scope="col">Město</th>
-            <th scope="col">Adresa</th>
-            <th scope="col">Telefon</th>
-            <th scope="col">Splatnost [dny]</th>
-            <th scope="col">Vytvořeno</th>
-            @* <th scope="col">Aktivní</th> *@
+            <th scope="col" data-field="0" data-sortable="false" data-filter-control="input">Úprava</th>
+            <th scope="col" data-field="1" data-sortable="true" data-filter-control="input">Jméno</th>
+            <th scope="col" data-field="2" data-sortable="true" data-filter-control="input">Město</th>
+            <th scope="col" data-field="3" data-sortable="true" data-filter-control="input">Adresa</th>
+            <th scope="col" data-field="4" data-sortable="true" data-filter-control="input">Telefon</th>
+            <th scope="col" data-field="5" data-sortable="true" data-filter-control="input">Web</th>
+            <th scope="col" data-field="6" data-sortable="true" data-filter-control="input">Splatnost [dny]</th>
+            <th scope="col" data-field="7" data-sortable="true" data-filter-control="input">Vytvořeno</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model)
         {
             <tr id="row_@item.CompanyId" class="@(item.Active ? Html.Raw("show") : Html.Raw("hide"))">
-                <th scope="row">
+                <th scope="row" style="width: 10px;">
                     <a asp-action="Edit" asp-route-id=@item.CompanyId><i class="fa fa-pencil fa-fw" aria-hidden="true"></i></a>
-                    <a href="#" onclick="ConfirmDelete(@item.CompanyId)"><i class="fa fa-times fa-fw" style="color: red", aria-hidden="true"></i></a>
+                    <a href="#" onclick="ConfirmDelete(@item.CompanyId)"><i class="fa fa-times fa-fw" style="color: red;", aria-hidden="true"></i></a>
                 </th>
-                @* <th scope="row"><a href="#"><i class="fa fa-pencil fa-fw" aria-hidden="true"></i></a></th> *@
-                @* <th scope="row">@item.CompanyId</th> *@
                 <th scope="row">@item.Name</th>
                 <th scope="row">@item.City</th>
                 <th scope="row">@item.Address</th>
                 <th scope="row">@item.Phone</th>
+                <th scope="row">@item.Web</th>
                 <th scope="row">@item.InvoiceDueDays</th>
                 <th scope="row">@String.Format("{0:dd.MM.yyyy}", @item.CreateDate)</th>
-                @* <th scope="row">@item.Active</th> *@
             </tr>
         }
     </tbody>
 </table>
+
 
 <!-- Modal Confirm Delete-->
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">

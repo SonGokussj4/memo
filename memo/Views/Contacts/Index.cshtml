@@ -4,18 +4,7 @@
 
 @model IEnumerable<memo.Models.Contact>
 
-<style>
-    .filter-control>input.form-control,
-    .filter-control>select.form-control {
-        margin: 0px;
-        padding: 0px 20px;
-        height: 30px;
-        border-radius: 5px;
-        border-left: 0px;
-        border-right: 0px;
-        border-bottom: 0px;
-    }
-</style>
+
 <div class="text-center">
     <h1 class="display-4">Kontakty</h1>
 </div>
@@ -29,38 +18,6 @@
         <i class="fa fa-filter"> Filter</i>
     </button>
 </div>
-
-<!--
-<table class="table table-sm table-hover">
-    <thead>
-        <tr>
-            <th scope="col"></th>
-            <th scope="col">Jméno</th>
-            <th scope="col">Oddělení</th>
-            <th scope="col">Telefon</th>
-            <th scope="col">E-mail</th>
-            @* <th scope="col">Aktivní</th> *@
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr id="row_@item.ContactId" class="@(item.Active ? Html.Raw("show") : Html.Raw("hide"))">
-                <th scope="row">
-                    <a asp-action="Edit" asp-route-id=@item.ContactId><i class="fa fa-pencil fa-fw" aria-hidden="true"></i></a>
-                    @* <a asp-action="Delete" asp-route-id=@item.ContactId><i class="fa fa-times fa-fw" style="color: red", aria-hidden="true"></i></a> *@
-                    <a href="#" onclick="ConfirmDelete(@item.ContactId)"><i class="fa fa-times fa-fw" style="color: red", aria-hidden="true"></i></a>
-                </th>
-                <th scope="row">@item.PersonName</th>
-                <th scope="row">@item.Department</th>
-                <th scope="row">@item.Phone</th>
-                <th scope="row">@item.Email</th>
-                @* <th scope="row">@Html.CheckBoxFor(m => item.Active, new { @checked = "checked" })</th> *@
-            </tr>
-        }
-    </tbody>
-</table>
--->
 
 <table
     id="table"
@@ -77,14 +34,21 @@
     data-search="true"
     class="table table-sm text-nowrap text-xsmall"
     style="width:100%"
+    data-silent-sort="true"
+    @* data-show-pagination-switch="true" *@
+    @* data-pagination="true" *@
+    @* data-height="800" *@
+    @* data-page-size="50" *@
+    @* data-page-list="[10, 25, 50, 100, 200, All]" *@
     >
     <thead>
         <tr>
-            <th scope="col" data-field="0" data-filter-control="input" style="width: 10px;"></th>
-            <th scope="col" data-field="1" data-filter-control="input">Jméno</th>
-            <th scope="col" data-field="2" data-filter-control="select">Oddělení</th>
-            <th scope="col" data-field="3" data-filter-control="input">Telefon</th>
-            <th scope="col" data-field="4" data-filter-control="input">E-mail</th>
+            <th scope="col" data-field="0" data-sortable="false" data-filter-control="input">Úprava</th>
+            <th scope="col" data-field="1" data-sortable="true" data-filter-control="input">Jméno</th>
+            <th scope="col" data-field="2" data-sortable="true" data-filter-control="select">Oddělení</th>
+            <th scope="col" data-field="3" data-sortable="true" data-filter-control="input">Telefon</th>
+            <th scope="col" data-field="4" data-sortable="true" data-filter-control="input">E-mail</th>
+            <th scope="col" data-field="5" data-sortable="true" data-filter-control="input">Vytvořeno</th>
         </tr>
     </thead>
     <tbody>
@@ -93,13 +57,15 @@
             <tr id="row_@item.ContactId" class="@(item.Active ? Html.Raw("show") : Html.Raw("hide"))">
                 <th scope="row" style="width: 10px;">
                     <a asp-action="Edit" asp-route-id=@item.ContactId><i class="fa fa-pencil fa-fw" aria-hidden="true"></i></a>
-                    @* <a asp-action="Delete" asp-route-id=@item.ContactId><i class="fa fa-times fa-fw" style="color: red", aria-hidden="true"></i></a> *@
-                    <a href="#" onclick="ConfirmDelete(@item.ContactId)"><i class="fa fa-times fa-fw" style="color: red", aria-hidden="true"></i></a>
+                    <a href="#" onclick="ConfirmDelete(@item.ContactId)"><i class="fa fa-times fa-fw" style="color: red;", aria-hidden="true"></i></a>
+                    @* <a href="#" onclick="ConfirmDelete(@item.ContactId)"><i class="fa fa-times fa-fw editDivider" style="color: red;", aria-hidden="true"></i></a> *@
+                    @* @item.ContactId *@
                 </th>
                 <th scope="row">@item.PersonName</th>
                 <th scope="row">@item.Department</th>
                 <th scope="row">@item.Phone</th>
                 <th scope="row">@item.Email</th>
+                <th scope="row">@String.Format("{0:dd.MM.yyyy}", @item.CreateDate)</th>
             </tr>
         }
     </tbody>
@@ -200,20 +166,6 @@
     };
 
 
-    // Filter button on top of the bootstrap datatable to switch filter textboxes
-    //---------------------------------------------------------------------------
-    $(function() {
-
-        $('#table').bootstrapTable();
-        const $table = $('#table');
-
-        FilterButton = $('#BtnMujFilter');
-        FilterButton.click(function() {
-            $table.bootstrapTable('destroy');
-            $table.data("filter-control", !$table.data("filter-control"));
-            $table.bootstrapTable();
-        });
-    })
 
 </script>
 }
