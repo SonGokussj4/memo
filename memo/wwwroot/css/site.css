@@ -70,6 +70,20 @@ body {
   line-height: 60px; /* Vertically center the text there */
 }
 
+/* Body and Card
+-------------------------------------------------- */
+body {
+  background-color: #fdfdfd;
+}
+.card {
+  background-color: white;
+  padding: 30px;
+  box-shadow: 0 0.46875rem 2.1875rem rgba(4,9,20,0.03),
+              0 0.9375rem 1.40625rem rgba(4,9,20,0.03),
+              0 0.25rem 0.53125rem rgba(4,9,20,0.05),
+              0 0.125rem 0.1875rem rgba(4,9,20,0.03);
+}
+
 /* User modifications
 -------------------------------------------------- */
 .hide {
@@ -121,31 +135,33 @@ form.myform {
 /* Bootstrap-Select fixes
 -------------------------------------------------- */
 .bootstrap-select .no-results {
-    background: #ffb2b2;
-    border-radius: 5px;
+  background: #ffb2b2;
+  border-radius: 5px;
 }
 
 .bootstrap-select>.dropdown-toggle.bs-placeholder {
-    color: #495057;
+  color: #495057;
 }
 
 .bootstrap-select>.btn-light,
 .bootstrap-select>.btn-light:hover,
 .bootstrap-select>.btn-light:active,
 .show>.btn-light.dropdown-toggle {
-    background-color: #ffffff;
-    border-color: #ced4da;
-    color: #495057;
+  background-color: #ffffff;
+  border-color: #ced4da;
+  color: #495057;
 }
 
 .bootstrap-select .dropdown-toggle:focus,
 .bootstrap-select>select.mobile-device:focus+.dropdown-toggle {
-    outline: 0px auto -webkit-focus-ring-color!important;
-    background-color: #ffffff;
-    border-color: #ced4da;
-    color: #495057;
+  outline: 0px auto -webkit-focus-ring-color!important;
+  background-color: #ffffff;
+  border-color: #ced4da;
+  color: #495057;
 }
 
+/* Bootstrap-Select2 fixes
+-------------------------------------------------- */
 .select2-container--default .select2-selection--single {
     border: 1px solid #ced4da;
     height: 40px;
@@ -161,5 +177,5 @@ form.myform {
 }
 
 .select2-container--default .select2-results>.select2-results__options {
-    max-height: 400px;
+    max-height: 500px;
 }
