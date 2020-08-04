@@ -16,6 +16,7 @@ GO
 CREATE TABLE [memo].[Contact] (
   [ContactId] int PRIMARY KEY IDENTITY(1, 1),
   [PersonName] nvarchar(50),
+  [CompanyId] int DEFAULT 1,
   [Department] nvarchar(50),
   [Phone] nvarchar(50),
   [Email] nvarchar(255),

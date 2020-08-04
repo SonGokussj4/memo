@@ -5,6 +5,15 @@
 @* @model memo.ViewModels.CreateOfferViewModel *@
 @model memo.ViewModels.OfferOrderVM
 
+<style>
+    .eveOrder {
+        border: 1px solid #ced4da;
+        margin: 0px -15px;
+        padding: 5px 0px;
+        margin-bottom: 10px;
+        background-color: whitesmoke;
+    }
+</style>
 <div class="text-center">
     <h1 class="display-6">@ViewData["Title"]</h1>
     <hr />
@@ -121,32 +130,39 @@
                 <span asp-validation-for="Order.OtherCosts" class="text-danger"></span>
             </div>
         </div>
+        <div class="form-group eveOrder">
+            <div class="form-group row">
+                <label asp-for="Order.OrderCode" class="required col-lg-3 col-form-label form-control-label control-label"></label>
+                <div class="col-lg-3">
+                    <input asp-for="Order.OrderCode" class="form-control" type="text" required="" />
+                    <span asp-validation-for="Order.OrderCode" class="text-danger"></span>
+                </div>
+                <div class="col-lg-3">
+                    <a href="@Url.Action("CreateEveProject")" target="_blank" class="btn btn-outline-success form-control"
+                    data-toggle="tooltip" data-placement="top" title="Nová EVE zakázka">
+                        <i class="fa fa-plus-square"> Zakázka</i>
+                    </a>
+                </div>
+                <div class="col-lg-3">
+                    <a href="@Url.Action("CreateEveProject")" target="_blank" class="btn btn-outline-success form-control"
+                    data-toggle="tooltip" data-placement="top" title="Nová EVE modulová zakázka">
+                        <i class="fa fa-plus-square"> Zakázka [M]</i>
+                    </a>
+                </div>
+            </div>
 
-        <div class="form-group row">
-            <label asp-for="Order.OrderCode" class="required col-lg-3 col-form-label form-control-label control-label"></label>
-            <div class="col-lg-8">
-                <input asp-for="Order.OrderCode" class="form-control" type="text" required="" />
-                <span asp-validation-for="Order.OrderCode" class="text-danger"></span>
-            </div>
-            <div class="col-lg-1">
-                <a href="@Url.Action("CreateEveProject")" target="_blank" class="btn btn-outline-success"
-                   data-toggle="tooltip" data-placement="top" title="Vytvořit nový EVE projekt">
-                    <i class="fa fa-plus-square"></i>
-                </a>
-            </div>
-        </div>
-
-        <div class="form-group row">
-            <label asp-for="Order.ContactId" class="col-lg-3 col-form-label form-control-label control-label"></label>
-            <div class="col-lg-8">
-                @Html.DropDownListFor(model => model.Order.ContactId, ViewBag.ContactList as SelectList, "-- Vyber kontakt --", new { @class = "form-control selectpicker" })
-                <span asp-validation-for="Order.ContactId" class="text-danger"></span>
-            </div>
-            <div class="col-lg-1">
-                <a href="@Url.Action("Create", "Contacts")" target="_blank" class="btn btn-outline-success"
-                   data-toggle="tooltip" data-placement="top" title="Přidat kontakt">
-                    <i class="fa fa-plus-square"></i>
-                </a>
+            <div class="form-group row">
+                <label asp-for="Order.ContactId" class="col-lg-3 col-form-label form-control-label control-label"></label>
+                <div class="col-lg-6">
+                    @Html.DropDownListFor(model => model.Order.ContactId, ViewBag.ContactList as SelectList, "-- Vyber kontakt --", new { @class = "form-control selectpicker" })
+                    <span asp-validation-for="Order.ContactId" class="text-danger"></span>
+                </div>
+                <div class="col-lg-3">
+                    <a href="@Url.Action("Create", "Contacts")" target="_blank" class="btn btn-outline-success form-control"
+                    data-toggle="tooltip" data-placement="top" title="Přidat kontakt">
+                        <i class="fa fa-plus-square"> Přidat kontakt</i>
+                    </a>
+                </div>
             </div>
         </div>
 
@@ -156,13 +172,6 @@
                 <input asp-for="Order.HourWage" class="form-control" type="text" onchange="this.value = this.value.replace(/,/g, '.')"/>
                 <span asp-validation-for="Order.HourWage" class="text-danger"></span>
             </div>
-            @* <div class="col-lg-3">
-                <label asp-for="Order.TotalHours" class="col-lg-2 col-form-label form-control-label control-label"></label>
-            </div>
-            <div class="col-lg-3">
-                <input asp-for="Order.TotalHours" class="form-control" type="text" />
-                <span asp-validation-for="Order.TotalHours" class="text-danger"></span>
-            </div> *@
         </div>
 
         <div class="form-group row">

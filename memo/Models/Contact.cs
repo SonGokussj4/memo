@@ -19,6 +19,10 @@ namespace memo.Models
         [Display(Name = "Jméno"), StringLength(50)]
         public string PersonName { get; set; }
 
+        [Display(Name = "Firma")]
+        public int? CompanyId { get; set; }
+        public Company Company { get; set; }
+
         [Display(Name = "Oddělení"), StringLength(50)]
         public string Department { get; set; }
 

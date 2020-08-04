@@ -4,10 +4,17 @@
 // Write your JavaScript code.
 
 // Bootstrap-Select options
-$(function () {
-    $('.selectpicker').selectpicker({
-        liveSearch: true,
-        liveSearchNormalize: true,
+// $(function () {
+//     $('.selectpicker').selectpicker({
+//         liveSearch: true,
+//         liveSearchNormalize: true,
+//         reload: true,
+//     });
+// });
+
+$(document).ready(function () {
+    $('.selectpicker').select2({
+        // dropdownCssClass: 'form-control',
     });
 });
 

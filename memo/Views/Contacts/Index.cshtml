@@ -45,10 +45,11 @@
         <tr>
             <th scope="col" data-field="0" data-sortable="false" data-filter-control="input">Úprava</th>
             <th scope="col" data-field="1" data-sortable="true" data-filter-control="input">Jméno</th>
-            <th scope="col" data-field="2" data-sortable="true" data-filter-control="select">Oddělení</th>
-            <th scope="col" data-field="3" data-sortable="true" data-filter-control="input">Telefon</th>
-            <th scope="col" data-field="4" data-sortable="true" data-filter-control="input">E-mail</th>
-            <th scope="col" data-field="5" data-sortable="true" data-filter-control="input">Vytvořeno</th>
+            <th scope="col" data-field="2" data-sortable="true" data-filter-control="input">Firma</th>
+            <th scope="col" data-field="3" data-sortable="true" data-filter-control="select">Oddělení</th>
+            <th scope="col" data-field="4" data-sortable="true" data-filter-control="input">Telefon</th>
+            <th scope="col" data-field="5" data-sortable="true" data-filter-control="input">E-mail</th>
+            <th scope="col" data-field="6" data-sortable="true" data-filter-control="input">Vytvořeno</th>
         </tr>
     </thead>
     <tbody>
@@ -58,10 +59,9 @@
                 <th scope="row" style="width: 10px;">
                     <a asp-action="Edit" asp-route-id=@item.ContactId><i class="fa fa-pencil fa-fw" aria-hidden="true"></i></a>
                     <a href="#" onclick="ConfirmDelete(@item.ContactId)"><i class="fa fa-times fa-fw" style="color: red;", aria-hidden="true"></i></a>
-                    @* <a href="#" onclick="ConfirmDelete(@item.ContactId)"><i class="fa fa-times fa-fw editDivider" style="color: red;", aria-hidden="true"></i></a> *@
-                    @* @item.ContactId *@
                 </th>
                 <th scope="row">@item.PersonName</th>
+                <th scope="row">@item.Company?.Name</th>
                 <th scope="row">@item.Department</th>
                 <th scope="row">@item.Phone</th>
                 <th scope="row">@item.Email</th>

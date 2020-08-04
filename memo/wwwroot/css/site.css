@@ -145,3 +145,21 @@ form.myform {
     border-color: #ced4da;
     color: #495057;
 }
+
+.select2-container--default .select2-selection--single {
+    border: 1px solid #ced4da;
+    height: 40px;
+    border-radius: 0.25rem;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    line-height: 40px;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 35px;
+}
+
+.select2-container--default .select2-results>.select2-results__options {
+    max-height: 400px;
+}

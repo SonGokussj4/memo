@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using memo.Models;
 using memo.Data;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace memo.Controllers
 {
@@ -21,7 +23,10 @@ namespace memo.Controllers
 
         public IActionResult Index()
         {
-            var model = _db.Contact.ToList();
+            var model = _db.Contact
+                .Include(x => x.Company)
+                .ToList();
+            // var model = _db.Contact.ToList();
             return View(model);
         }
 
@@ -32,6 +37,7 @@ namespace memo.Controllers
             {
                 return NotFound();
             }
+            ViewBag.CompanyList = new SelectList(_db.Company.ToList(), "CompanyId", "Name");
             return View(model);
         }
 
@@ -71,7 +77,7 @@ namespace memo.Controllers
         public IActionResult Create()
         {
             Contact model = new Contact();
-
+            ViewBag.CompanyList = new SelectList(_db.Company.ToList(), "CompanyId", "Name");
             return View(model);
         }
 
