@@ -5,26 +5,6 @@
 @* @model memo.ViewModels.CreateOfferViewModel *@
 @model memo.Models.Offer
 
-<style>
-    .eveOffer {
-        border: 1px solid #ced4da;
-        margin: 0px -15px;
-        padding: 5px 0px;
-        margin-bottom: 10px;
-        background-color: whitesmoke;
-        border-radius: .25rem;
-    }
-
-    .customerOffer {
-        border: 1px solid #ced4da;
-        margin: 0px -15px;
-        padding: 5px 0px;
-        margin-bottom: 10px;
-        background-color: #fff6dc;
-        border-radius: .25rem;
-    }
-
-</style>
 
 <div class="text-center">
     <h1 class="display-6">@ViewData["Title"]</h1>
@@ -53,7 +33,7 @@
         </div>
 
         <div class="form-group row">
-            <label asp-for="Subject" class="col-lg-3 col-form-label form-control-label control-label"></label>
+            <label asp-for="Subject" class="required col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-9">
                 <input asp-for="Subject" class="form-control" type="text" />
                 <span asp-validation-for="Subject" class="text-danger"></span>
@@ -63,16 +43,15 @@
         <div class="form-group row eveOffer">
             <label class="col-lg-3 col-form-label form-control-label control-label">Evektor</label>
             <div class="col-lg-2">
-                @Html.DropDownList("EveDivision", new SelectList(Model.EveDivisionList, "Value", "Text", "-- Divize --"), new { @class = "form-control"})
+                @Html.DropDownList("EveDivision", new SelectList(Model.EveDivisionList, "Value", "Text", "-- Divize --"), new { @class = "form-control selectpicker"})
                 <span asp-validation-for="EveDivision" class="text-danger"></span>
             </div>
             <div class="col-lg-3">
-                @* @Html.DropDownList("EveDepartment", new SelectList(ViewBag.DepartmentList, "Value", "Text", "-- Oddělení --"), new { @class = "form-control"}) *@
-                @Html.DropDownList("EveDepartment", new SelectList(ViewBag.DepartmentList, "Value", "Text"), new { @class = "form-control"})
+                @Html.DropDownList("EveDepartment", new SelectList(ViewBag.DepartmentList, "Value", "Text"), new { @class = "form-control selectpicker"})
                 <span asp-validation-for="EveDepartment" class="text-danger"></span>
             </div>
             <div class="col-lg-4">
-                <input asp-for="EveCreatedUser" class="form-control" type="text" placeholder="Uživatelské jméno"/>
+                @Html.DropDownList("EveCreatedUser", new SelectList(ViewBag.EveContactList, "Value", "Text"), new { @class = "form-control selectpicker"})
                 <span asp-validation-for="EveCreatedUser" class="text-danger"></span>
             </div>
         </div>
@@ -90,9 +69,9 @@
         </div>
 
         <div class="form-group row">
-            <label asp-for="Price" class="col-lg-3 col-form-label form-control-label control-label"></label>
+            <label asp-for="Price" class="required col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-5">
-                <input asp-for="Price" class="form-control" type="text" />
+                <input asp-for="Price" class="form-control" type="text"/>
                 <span asp-validation-for="Price" class="text-danger"></span>
             </div>
             <div class="col-lg-2">

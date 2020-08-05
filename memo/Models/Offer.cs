@@ -52,6 +52,7 @@ namespace memo.Models
         [Display(Name = "EVE zadal"), StringLength(50)]
         public string EveCreatedUser { get; set; }
 
+        [Required]
         [Display(Name = "Cena bez DPH")]
         public int? Price { get; set; }
 

@@ -43,6 +43,7 @@ namespace memo.Controllers
             ViewBag.CompanyList = new SelectList(_db.Company.ToList(), "CompanyId", "Name");
             ViewBag.ContactList = new SelectList(_db.Contact.ToList(), "ContactId", "PersonName");
             ViewBag.DepartmentList = getDepartmentList();
+            ViewBag.EveContactList = getEveContacts();
             ViewBag.CurrencyList = new SelectList(_db.Currency.ToList(), "CurrencyId", "Name");
             ViewBag.OfferStatusList = new SelectList(_db.OfferStatus.ToList(), "OfferStatusId", "Status");
 
@@ -83,6 +84,7 @@ namespace memo.Controllers
             ViewBag.DepartmentList = getDepartmentList();
             ViewBag.CompanyList = new SelectList(_db.Company.ToList(), "CompanyId", "Name");
             ViewBag.ContactList = new SelectList(_db.Contact.ToList(), "ContactId", "PersonName");
+            ViewBag.EveContactList = getEveContacts();
             ViewBag.CurrencyList = new SelectList(_db.Currency.ToList(), "CurrencyId", "Name");
             ViewBag.OfferStatusList = new SelectList(_db.OfferStatus.ToList(), "OfferStatusId", "Status");
 
@@ -105,7 +107,8 @@ namespace memo.Controllers
 
             ViewBag.DepartmentList = getDepartmentList();
             ViewBag.CompanyList = new SelectList( _db.Company.ToList(), "CompanyId", "Name");
-            ViewBag.ContactList = new SelectList( _db.Contact.ToList(), "ContactId", "PersonName");
+            ViewBag.ContactList = new SelectList(_db.Contact.ToList(), "ContactId", "PersonName");
+            ViewBag.EveContactList = getEveContacts();
             ViewBag.CurrencyList = new SelectList( _db.Currency.ToList(), "CurrencyId", "Name");
             ViewBag.OfferStatusList = new SelectList( _db.OfferStatus.ToList(), "OfferStatusId", "Status");
 
@@ -123,7 +126,6 @@ namespace memo.Controllers
 
             if (ModelState.IsValid)
             {
-                string oldStatus = _db.OfferStatus.Find(model.Status).Status;
 
                 try
                 {
@@ -142,6 +144,7 @@ namespace memo.Controllers
                     }
                 }
 
+                string oldStatus = _db.OfferStatus.Find(_db.Offer.Find(id).Status).Status;
                 // if (model.Status == 2 && model.Status != oldOffer.Status)  // model.OfferStatus.Status == "Won"
                 if (model.Status == 2 && oldStatus != "Won")  // model.OfferStatus.Status == "Won"
                 {
@@ -161,13 +164,14 @@ namespace memo.Controllers
             ViewBag.DepartmentList = getDepartmentList();
             ViewBag.CompanyList = new SelectList(_db.Company.ToList(), "CompanyId", "Name");
             ViewBag.ContactList = new SelectList(_db.Contact.ToList(), "ContactId", "PersonName");
+            ViewBag.EveContactList = getEveContacts();
             ViewBag.CurrencyList = new SelectList(_db.Currency.ToList(), "CurrencyId", "Name");
             ViewBag.OfferStatusList = new SelectList(_db.OfferStatus.ToList(), "OfferStatusId", "Status");
 
             return View(model);
         }
 
-        // GET: Offers/Delete/5
+        [HttpPost]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -257,6 +261,18 @@ namespace memo.Controllers
             };
 
             return new SelectList(departmentList, "Value", "Text");
+        }
+
+        private SelectList getEveContacts()
+        {
+            List<SelectListItem> eveContactsList = new List<SelectListItem>
+            {
+                new SelectListItem { Value = "Jan Verner", Text = "Jan Verner" },
+                new SelectListItem { Value = "Michal Jakšík", Text = "Michal Jakšík" },
+                new SelectListItem { Value = "Ivo Grác", Text = "Ivo Grác" },
+            };
+
+            return new SelectList(eveContactsList, "Value", "Text");
         }
 
         private bool OfferExists(int id)

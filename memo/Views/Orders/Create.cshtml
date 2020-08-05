@@ -5,28 +5,23 @@
 @* @model memo.ViewModels.CreateOfferViewModel *@
 @model memo.ViewModels.OfferOrderVM
 
-<style>
-    .eveOrder {
-        border: 1px solid #ced4da;
-        margin: 0px -15px;
-        padding: 5px 0px;
-        margin-bottom: 10px;
-        background-color: whitesmoke;
-    }
-</style>
+
 <div class="text-center">
     <h1 class="display-6">@ViewData["Title"]</h1>
     <hr />
 </div>
 
-<div class="container">
+<div class="container d-flex justify-content-center">
     <div class="col-lg-8 push-lg-4 personal-info">
 
         <!--------------------------------------------------------------------------------------
             FORM - OBJEDNAVKA
         --------------------------------------------------------------------------------------->
-        <form role="form" autocomplete="on" asp-action="Refresh" method="post">
+        <form class="card" role="form" autocomplete="on" asp-action="Refresh" method="post">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <h5 class="card-title">Detaily objednávky</h5>
+        <hr />
 
         <div class="form-group row">
             <label asp-for="Order.OfferId" class="required col-lg-3 col-form-label form-control-label control-label"></label>
@@ -91,20 +86,76 @@
 
         </form>
 
-        <hr />
+        <br />
 
         <!--------------------------------------------------------------------------------------
             FORM - ZAKAZKA
         --------------------------------------------------------------------------------------->
-        <form role="form" autocomplete="on" asp-action="Create" method="post">
+        <form class="card" role="form" autocomplete="on" asp-action="Create" method="post">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <input type="hidden" asp-for="Order.OfferId" />
+
+        <h5 class="card-title">Vyplnit novou zakázku</h5>
+        <hr />
 
         <div class="form-group row">
             <label asp-for="Order.OrderName" class="required col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-9">
                 <input asp-for="Order.OrderName" class="form-control" type="text" required="" />
                 <span asp-validation-for="Order.OrderName" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-group eveOrder">
+            <div class="form-group row ">
+                <label asp-for="Order.OrderCode" class="required col-lg-3 col-form-label form-control-label control-label"></label>
+                <div class="col-lg-3">
+                    <input asp-for="Order.OrderCode" class="form-control" type="text" required="" />
+                    <span asp-validation-for="Order.OrderCode" class="text-danger"></span>
+                </div>
+                <div class="col-lg-3">
+                    <a href="@Url.Action("CreateEveProject")" target="_blank" class="btn btn-outline-success form-control"
+                    data-toggle="tooltip" data-placement="top" title="Nová EVE zakázka">
+                        <i class="fa fa-plus-square"> Zakázka</i>
+                    </a>
+                </div>
+                <div class="col-lg-3">
+                    <a href="@Url.Action("CreateEveProjectM")" target="_blank" class="btn btn-outline-success form-control"
+                    data-toggle="tooltip" data-placement="top" title="Nová EVE modulová zakázka">
+                        <i class="fa fa-plus-square"> Zakázka [M]</i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label asp-for="Order.ContactId" class="col-lg-3 col-form-label form-control-label control-label"></label>
+                <div class="col-lg-9">
+                    @Html.DropDownListFor(model => model.Order.ContactId, ViewBag.ContactList as SelectList, "-- Vyber kontakt --", new { @class = "form-control selectpicker" })
+                    <span asp-validation-for="Order.ContactId" class="text-danger"></span>
+                </div>
+                @* <div class="col-lg-3">
+                    <a href="@Url.Action("Create", "Contacts")" target="_blank" class="btn btn-outline-success form-control"
+                    data-toggle="tooltip" data-placement="top" title="Přidat kontakt">
+                        <i class="fa fa-plus-square"> Přidat kontakt</i>
+                    </a>
+                </div> *@
+            </div>
+
+        </div>
+
+        <div class="form-group row">
+            <label asp-for="Order.InvoiceIssueDate" class="required col-lg-3 col-form-label form-control-label control-label"></label>
+            <div class="col-lg-9 mycalendar">
+                <input asp-for="Order.InvoiceIssueDate" class="form-control" type="text" autocomplete="off"/>
+                <span asp-validation-for="Order.InvoiceIssueDate" class="text-danger"></span>
+            </div>
+        </div>
+        @* TODO: pridat zde navaznost na Offer.Company.InvoiceDueDays a pri onchange() InvoiceIssueDate pridat dny, pokud prazdne*@
+        <div class="form-group row">
+            <label asp-for="Order.InvoiceDueDate" class="col-lg-3 col-form-label form-control-label control-label"></label>
+            <div class="col-lg-9 mycalendar">
+                <input asp-for="Order.InvoiceDueDate" class="form-control" type="text" autocomplete="off"/>
+                <span asp-validation-for="Order.InvoiceDueDate" class="text-danger"></span>
             </div>
         </div>
 
@@ -125,44 +176,9 @@
 
         <div class="form-group row">
             <label asp-for="Order.OtherCosts" class="col-lg-3 col-form-label form-control-label control-label"></label>
-            <div class="col-lg-9">
+            <div class="col-lg-3">
                 <input asp-for="Order.OtherCosts" class="form-control" type="text" />
                 <span asp-validation-for="Order.OtherCosts" class="text-danger"></span>
-            </div>
-        </div>
-        <div class="form-group eveOrder">
-            <div class="form-group row">
-                <label asp-for="Order.OrderCode" class="required col-lg-3 col-form-label form-control-label control-label"></label>
-                <div class="col-lg-3">
-                    <input asp-for="Order.OrderCode" class="form-control" type="text" required="" />
-                    <span asp-validation-for="Order.OrderCode" class="text-danger"></span>
-                </div>
-                <div class="col-lg-3">
-                    <a href="@Url.Action("CreateEveProject")" target="_blank" class="btn btn-outline-success form-control"
-                    data-toggle="tooltip" data-placement="top" title="Nová EVE zakázka">
-                        <i class="fa fa-plus-square"> Zakázka</i>
-                    </a>
-                </div>
-                <div class="col-lg-3">
-                    <a href="@Url.Action("CreateEveProject")" target="_blank" class="btn btn-outline-success form-control"
-                    data-toggle="tooltip" data-placement="top" title="Nová EVE modulová zakázka">
-                        <i class="fa fa-plus-square"> Zakázka [M]</i>
-                    </a>
-                </div>
-            </div>
-
-            <div class="form-group row">
-                <label asp-for="Order.ContactId" class="col-lg-3 col-form-label form-control-label control-label"></label>
-                <div class="col-lg-6">
-                    @Html.DropDownListFor(model => model.Order.ContactId, ViewBag.ContactList as SelectList, "-- Vyber kontakt --", new { @class = "form-control selectpicker" })
-                    <span asp-validation-for="Order.ContactId" class="text-danger"></span>
-                </div>
-                <div class="col-lg-3">
-                    <a href="@Url.Action("Create", "Contacts")" target="_blank" class="btn btn-outline-success form-control"
-                    data-toggle="tooltip" data-placement="top" title="Přidat kontakt">
-                        <i class="fa fa-plus-square"> Přidat kontakt</i>
-                    </a>
-                </div>
             </div>
         </div>
 
@@ -174,29 +190,13 @@
             </div>
         </div>
 
-        <div class="form-group row">
-            <label asp-for="Order.InvoiceIssueDate" class="required col-lg-3 col-form-label form-control-label control-label"></label>
-            <div class="col-lg-9 mycalendar">
-                <input asp-for="Order.InvoiceIssueDate" class="form-control" type="text" autocomplete="off"/>
-                <span asp-validation-for="Order.InvoiceIssueDate" class="text-danger"></span>
-            </div>
-        </div>
-        @* TODO: pridat zde navaznost na Offer.Company.InvoiceDueDays a pri onchange() InvoiceIssueDate pridat dny, pokud prazdne*@
-        <div class="form-group row">
-            <label asp-for="Order.InvoiceDueDate" class="col-lg-3 col-form-label form-control-label control-label"></label>
-            <div class="col-lg-9 mycalendar">
-                <input asp-for="Order.InvoiceDueDate" class="form-control" type="text" autocomplete="off"/>
-                <span asp-validation-for="Order.InvoiceDueDate" class="text-danger"></span>
-            </div>
-        </div>
-
          <div class="form-group row">
             <label asp-for="Order.PriceFinalCzk" class="col-lg-3 col-form-label form-control-label control-label"></label>
-            <div class="col-lg-6">
+            <div class="col-lg-5">
                 <input asp-for="Order.PriceFinalCzk" class="form-control" type="text" readonly />
                 <span asp-validation-for="Order.PriceFinalCzk" class="text-danger"></span>
             </div>
-            <label asp-for="Order.ExchangeRate" class="col-lg-1 col-form-label form-control-label control-label"></label>
+            <label asp-for="Order.ExchangeRate" class="col-lg-2 col-form-label form-control-label control-label"></label>
             <div class="col-lg-2">
                 <input asp-for="Order.ExchangeRate" class="form-control" type="text" onchange="this.value = this.value.replace(/,/g, '.')"/>
                 <span asp-validation-for="Order.ExchangeRate" class="text-danger"></span>

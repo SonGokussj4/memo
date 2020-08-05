@@ -120,7 +120,12 @@ namespace memo.Controllers
 
         public IActionResult CreateEveProject()
         {
-            return Redirect("http://intranet/apps/works/index.htm");
+            return Redirect("http://intranet/apps/works/admin/cindex.asp");
+        }
+
+        public IActionResult CreateEveProjectM()
+        {
+            return Redirect("http://intranet/apps/works/moduls/levels.asp");
         }
 
 
@@ -133,7 +138,8 @@ namespace memo.Controllers
                 .ToList();
             ViewBag.WonOffersList = new SelectList(wonOffersList, "OfferId", "OfferName");
             ViewBag.CurrencyList = new SelectList(_db.Currency.ToList(), "CurrencyId", "Name");
-            ViewBag.ContactList = new SelectList(_db.Contact.ToList(), "ContactId", "PersonName");
+            ViewBag.ContactList = new SelectList(_db.Contact.Where(m => m.CompanyId == 45).ToList(), "ContactId", "PersonName");
+            ViewBag.EveContactList = getEveContacts();
 
             Offer offer = new Offer();
             string offerCompanyName = string.Empty;
@@ -214,6 +220,7 @@ namespace memo.Controllers
             ViewBag.WonOffersList = new SelectList(wonOffersList, "OfferId", "OfferName");
             ViewBag.CurrencyList = new SelectList(_db.Currency.ToList(), "CurrencyId", "Name");
             ViewBag.ContactList = new SelectList(_db.Contact.ToList(), "ContactId", "PersonName");
+            ViewBag.EveContactList = getEveContacts();
 
             if (offerId == 0)
             {
@@ -311,6 +318,18 @@ namespace memo.Controllers
         private bool OrderExists(int id)
         {
             return _db.Order.Any(e => e.OrderId == id);
+        }
+
+        private SelectList getEveContacts()
+        {
+            List<SelectListItem> eveContactsList = new List<SelectListItem>
+            {
+                new SelectListItem { Value = "Jan Verner", Text = "Jan Verner" },
+                new SelectListItem { Value = "Michal Jakšík", Text = "Michal Jakšík" },
+                new SelectListItem { Value = "Ivo Grác", Text = "Ivo Grác" },
+            };
+
+            return new SelectList(eveContactsList, "Value", "Text");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
