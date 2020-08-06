@@ -69,13 +69,16 @@ namespace memo.Models
         public int? PriceCzk { get; set; }
 
         [Display(Name = "Status nabídky")]
-        public int Status { get; set; }
+        public int OfferStatusId { get; set; }
         public OfferStatus OfferStatus { get; set; }
         // [InverseProperty(nameof(OfferStatus.Offer))]
         // public virtual OfferStatus StatusNavigation { get; set; }
 
         [Display(Name = "Důvod prohry"), Column(TypeName = "ntext")]
         public string LostReason { get; set; }
+
+        [Display(Name = "Poznámky"), Column(TypeName = "ntext")]
+        public string Notes { get; set; }
 
         [Display(Name = "Datum vytvoření"), Column(TypeName = "date")]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]

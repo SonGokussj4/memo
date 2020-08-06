@@ -77,7 +77,7 @@ namespace memo.Data
 
                 entity.HasOne(d => d.OfferStatus)
                     .WithMany(p => p.Offer)
-                    .HasForeignKey(d => d.Status)
+                    .HasForeignKey(d => d.OfferStatusId)
                     .HasConstraintName("FK__Offer__Status__31B762FC");
             });
 

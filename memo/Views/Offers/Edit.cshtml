@@ -20,9 +20,53 @@
         <div class="form-group row">
             <label asp-for="OfferName" class="col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-9">
-                <input asp-for="OfferName" class="form-control" type="text" required="" placeholder="EV-obj/rrrr/####" readonly />
+                <input asp-for="OfferName" class="form-control" type="text" readonly />
                 <span asp-validation-for="OfferName" class="text-danger"></span>
             </div>
+        </div>
+
+        <input type="hidden" asp-for="OfferStatusId" />
+        <div class="form-group row">
+            <label asp-for="OfferStatusId" class="col-lg-3 col-form-label form-control-label control-label"></label>
+            <div class="col-lg-2">
+                @Html.TextBoxFor(m => m.OfferStatus.Status, new { @class = "form-control", @readonly = "readonly" })
+                <span asp-validation-for="OfferStatusId" class="text-danger"></span>
+            </div>
+
+            <label class="col-lg-3 col-form-label form-control-label control-label text-right">Změnit: </label>
+            <div class="col-lg-2">
+                <button class="btn btn-success form-control" id="btnWon">
+                    <i class="fa fa-smile-o"></i> Výhra
+                </button>
+                @* <a href="@Url.Action("Edit", "Offers", new { OfferStatusId = 2 })" data-form-method="post" class="btn btn-success" style="width: 100%;">
+                    <i class="fa fa-smile-o"></i> Výhra
+                </a> *@
+                @* <input type="submit" class="btn btn-primary" value="Výhra" /> *@
+            </div>
+
+            <div class="col-lg-2">
+                <button class="btn btn-danger form-control" id="btnLost">
+                    <i class="fa fa-frown-o"></i> Prohra
+                </button>
+                @* <a href="@Url.Action("Offers", "Edit")" class="btn btn-danger" style="width: 100%;">
+                    <i class="fa fa-frown-o"></i> Prohra
+                </a> *@
+
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-lg-3 col-form-label form-control-label control-label">Aktivita</label>
+            <div class="pretty p-bigger p-default p-curve p-toggle">
+                <input asp-for="Active" type="checkbox"/>
+                <div class="state p-success p-on">
+                    <label>Aktivní</label>
+                </div>
+                <div class="state p-danger p-off">
+                    <label>Neaktivní </label>
+                </div>
+            </div>
+            <span asp-validation-for="Active" class="text-danger"></span>
         </div>
 
         <hr />
@@ -96,17 +140,12 @@
         </div>
 
         <div class="form-group row">
-            <label asp-for="Status" class="col-lg-3 col-form-label form-control-label control-label"></label>
-            <div class="col-lg-5">
-                @Html.DropDownListFor(model => model.Status, ViewBag.OfferStatusList as SelectList, new { @class = "form-control" })
-                <span asp-validation-for="Status" class="text-danger"></span>
+            <label asp-for="Notes" class="col-lg-3 col-form-label form-control-label control-label"></label>
+            <div class="col-lg-9">
+                <textarea asp-for="Notes" class="form-control"></textarea>
+                @* @Html.TextAreaFor(m => m.Notes, additionalViewData: new { htmlAttributes = new { @class = "form-control" }}) *@
+                <span asp-validation-for="Notes" class="text-danger"></span>
             </div>
-        </div>
-
-        <div class="form-group">
-            <label asp-for="Active" class="control-label"></label>
-            <input asp-for="Active" class="form-group" type="checkbox" />
-            <span asp-validation-for="Active" class="text-danger"></span>
         </div>
 
         <div class="form-group row">
@@ -168,6 +207,20 @@
                 console.log("Changing... to " + curSymbol);
                 changeExchangeRate(curSymbol);
             });
+
+            $('#btnWon').click(function() {
+                console.log("Vyhra");
+                $("#OfferStatusId").val('2');
+            });
+
+            $('#btnLost').click(function() {
+                console.log("Prohra");
+                $("#OfferStatusId").val('3');
+            });
+
+
+
+
         })
 
     </script>

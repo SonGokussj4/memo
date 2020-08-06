@@ -56,7 +56,7 @@ namespace memo.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create(Offer offer)
         {
-            offer.Status = 1;  // default
+            offer.OfferStatusId = 1;  // default
             offer.Active = true;
 
             int maxOfferNum = 0;
@@ -144,9 +144,9 @@ namespace memo.Controllers
                     }
                 }
 
-                string oldStatus = _db.OfferStatus.Find(_db.Offer.Find(id).Status).Status;
+                string oldStatus = _db.OfferStatus.Find(_db.Offer.Find(id).OfferStatusId).Status;
                 // if (model.Status == 2 && model.Status != oldOffer.Status)  // model.OfferStatus.Status == "Won"
-                if (model.Status == 2 && oldStatus != "Won")  // model.OfferStatus.Status == "Won"
+                if (model.OfferStatusId == 2 && oldStatus != "Won")  // model.OfferStatus.Status == "Won"
                 {
                     Order order = new Order();
                     order.OfferId = model.OfferId;

@@ -72,7 +72,7 @@ namespace memo.Controllers
             Order model = new Order();
 
             List<Offer> wonOffersList = _db.Offer
-                .Where(t => t.Status == 2)
+                .Where(t => t.OfferStatusId == 2)
                 .OrderBy(t => t.OfferName)
                 .ToList();
             ViewBag.WonOffersList = new SelectList(wonOffersList, "OfferId", "OfferName");
@@ -85,7 +85,7 @@ namespace memo.Controllers
         public IActionResult Select(Order model)
         {
             List<Offer> wonOffersList = _db.Offer
-                .Where(t => t.Status == 2)
+                .Where(t => t.OfferStatusId == 2)
                 .OrderBy(t => t.OfferName)
                 .ToList();
             ViewBag.WonOffersList = new SelectList(wonOffersList, "OfferId", "OfferName");
@@ -133,7 +133,7 @@ namespace memo.Controllers
         public IActionResult Create(int? id, Order model)
         {
             List<Offer> wonOffersList = _db.Offer
-                .Where(t => t.Status == 2)
+                .Where(t => t.OfferStatusId == 2)
                 .OrderBy(t => t.OfferName)
                 .ToList();
             ViewBag.WonOffersList = new SelectList(wonOffersList, "OfferId", "OfferName");
@@ -195,7 +195,7 @@ namespace memo.Controllers
             // Order model = new Order();
 
             List<Offer> wonOffersList = _db.Offer
-                .Where(t => t.Status == 2)
+                .Where(t => t.OfferStatusId == 2)
                 .OrderBy(t => t.OfferName)
                 .ToList();
             ViewBag.WonOffersList = new SelectList(wonOffersList, "OfferId", "OfferName");
@@ -214,7 +214,7 @@ namespace memo.Controllers
             }
 
             List<Offer> wonOffersList = _db.Offer
-                .Where(t => t.Status == 2)
+                .Where(t => t.OfferStatusId == 2)
                 .OrderBy(t => t.OfferName)
                 .ToList();
             ViewBag.WonOffersList = new SelectList(wonOffersList, "OfferId", "OfferName");
@@ -299,7 +299,7 @@ namespace memo.Controllers
             }
 
             List<Offer> wonOffersList = _db.Offer
-                .Where(t => t.Status == 2)
+                .Where(t => t.OfferStatusId == 2)
                 .OrderBy(t => t.OfferName)
                 .ToList();
             ViewBag.WonOffersList = new SelectList(wonOffersList, "OfferId", "OfferName");

@@ -40,7 +40,7 @@ CREATE TABLE [memo].[Offer] (
   [CurrencyId] int,
   [ExchangeRate] float,
   [PriceCzk] int,
-  [Status] int,
+  [OfferStatusId] int,
   [LostReason] ntext,
   [CreateDate] date DEFAULT GETDATE(),
   [Active] bit DEFAULT 1
@@ -92,7 +92,7 @@ GO
 ALTER TABLE [memo].[Offer] ADD FOREIGN KEY ([CompanyId]) REFERENCES [memo].[Company] ([CompanyId])
 GO
 
-ALTER TABLE [memo].[Offer] ADD FOREIGN KEY ([Status]) REFERENCES [memo].[OfferStatus] ([OfferStatusId])
+ALTER TABLE [memo].[Offer] ADD FOREIGN KEY ([OfferStatusId]) REFERENCES [memo].[OfferStatus] ([OfferStatusId])
 GO
 
 ALTER TABLE [memo].[Order] ADD FOREIGN KEY ([OfferId]) REFERENCES [memo].[Offer] ([OfferId])

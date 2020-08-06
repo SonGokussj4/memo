@@ -85,6 +85,15 @@
         </div>
 
         <div class="form-group row">
+            <label asp-for="Notes" class="col-lg-3 col-form-label form-control-label control-label"></label>
+            <div class="col-lg-9">
+                <textarea asp-for="Notes" class="form-control"></textarea>
+                @* @Html.TextAreaFor(m => m.Notes, additionalViewData: new { htmlAttributes = new { @class = "form-control" }}) *@
+                <span asp-validation-for="Notes" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-group row">
             <label class="col-lg-3 col-form-label form-control-label"></label>
             <div class="col-lg-9">
                 <input type="reset" class="btn btn-secondary" value="Vyprázdnit pole" />
