@@ -117,19 +117,25 @@
         var btn = document.getElementById("btnToggleActive");
 
         if (btn.children[0].className == "fa fa-eye-slash") {
+            // Change icon and text
             btn.children[0].className = "fa fa-eye"
             btn.lastChild.nodeValue = " Všichni (@Model.Count())"
+            // Get class('hide') elements and copy to normal array
             var hiddenRows = document.getElementsByClassName("hide");
-            for(var i=0; i<hiddenRows.length; i++){
+            elementArray = [].slice.call(hiddenRows, 0);
+            for(var i = elementArray.length - 1; i >= 0; i--){
                 hiddenRows[i].className = "show hiddenBefore";
             };
         }
         else {
+            // Change icon and text
             btn.children[0].className = "fa fa-eye-slash"
             btn.lastChild.nodeValue = " Aktivní (@Model.Count(m => m.Active) / @Model.Count())"
+            // Get class('show hiddenBefore') elements and copy to normal array
             var hiddenRows = document.getElementsByClassName("show hiddenBefore");
-            for(var i=0; i<hiddenRows.length; i++){
-                hiddenRows[i].className = "hide";
+            elementArray = [].slice.call(hiddenRows, 0);
+            for(var i=0; i<elementArray.length; i++){
+                elementArray[i].className = "hide";
             }
         }
     }
