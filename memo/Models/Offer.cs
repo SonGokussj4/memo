@@ -69,9 +69,9 @@ namespace memo.Models
         public int? PriceCzk { get; set; }
 
         [Display(Name = "Status nabídky")]
-        public int? OfferStatusId { get; set; }
+        public int OfferStatusId { get; set; }
         public OfferStatus OfferStatus { get; set; }
-        // [InverseProperty(nameof(OfferStatus.Offer))]
+        // [InverseProperty(nameof(OfferStatus.OfferStatusId))]
         // public virtual OfferStatus StatusNavigation { get; set; }
 
         [Display(Name = "Důvod prohry"), Column(TypeName = "ntext")]

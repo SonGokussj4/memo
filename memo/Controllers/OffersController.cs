@@ -111,6 +111,7 @@ namespace memo.Controllers
             ViewBag.EveContactList = getEveContacts();
             ViewBag.CurrencyList = new SelectList( _db.Currency.ToList(), "CurrencyId", "Name");
             ViewBag.OfferStatusList = new SelectList( _db.OfferStatus.ToList(), "OfferStatusId", "Status");
+            ViewBag.OfferStatusName = offer.OfferStatus.Status;
 
             return View(offer);
         }

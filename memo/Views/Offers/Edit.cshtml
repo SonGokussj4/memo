@@ -30,9 +30,13 @@
         <div class="form-group row">
             <label asp-for="OfferStatusId" class="col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-2">
-                @Html.TextBoxFor(m => m.OfferStatus.Status, new { @class = "form-control", @readonly = "readonly" })
+                @Html.TextBox("Neco", (string)@ViewBag.OfferStatusName, new { @class = "form-control", @readonly = "readonly" })
+                @* <input asp-for="OfferName" class="form-control" type="text" required="" autocomplete="off" readonly/> *@
+                @* @Html.TextBoxFor(m => m.OfferStatus.Status, new { @class = "form-control", @readonly = "readonly" }) *@
                 @* <span asp-validation-for="OfferStatusId" class="text-danger"></span> *@
             </div>
+
+            @* @Html.HiddenFor(m => m.OfferStatus.Status) *@
 
             <label class="col-lg-3 col-form-label form-control-label control-label text-right">Změnit: </label>
             <div class="col-lg-2">
