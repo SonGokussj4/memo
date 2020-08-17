@@ -117,50 +117,37 @@ namespace memo.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Offer model)
+        public IActionResult Edit(int id, Offer model, string offerStatusId)
         {
             if (id != model.OfferId)
             {
                 return NotFound();
             }
 
+
+
             if (ModelState.IsValid)
             {
-
                 try
                 {
                     _db.Update(model);
-                    await _db.SaveChangesAsync();
+                    _db.SaveChanges();
+                    return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!OfferExists(model.OfferId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    ModelState.AddModelError("", "Unable to save changes. " +
+                                             "Try again, and if the problem persists, " +
+                                             "see your system administrator.");
                 }
-
-                string oldStatus = _db.OfferStatus.Find(_db.Offer.Find(id).OfferStatusId).Status;
-                // if (model.Status == 2 && model.Status != oldOffer.Status)  // model.OfferStatus.Status == "Won"
-                if (model.OfferStatusId == 2 && oldStatus != "Won")  // model.OfferStatus.Status == "Won"
-                {
-                    Order order = new Order();
-                    order.OfferId = model.OfferId;
-                    return RedirectToAction("Select", "Orders", order);
-                }
-
-                return RedirectToAction(nameof(Index));
             }
 
-            var errors = ModelState.Where(x => x.Value.Errors.Any())
-                .Select(x => new { x.Key, x.Value.Errors });
-            Console.WriteLine(errors.ToString());
-            // Logger.LogWarning(errors.ToString());
+            // // Errors
+            // var errors = ModelState.Where(x => x.Value.Errors.Any())
+            //     .Select(x => new { x.Key, x.Value.Errors });
+            // Console.WriteLine(errors.ToString());
 
+            // Populate
             ViewBag.DepartmentList = getDepartmentList();
             ViewBag.CompanyList = new SelectList(_db.Company.ToList(), "CompanyId", "Name");
             ViewBag.ContactList = new SelectList(_db.Contact.ToList(), "ContactId", "PersonName");

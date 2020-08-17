@@ -5,7 +5,7 @@
 @model IList<memo.Models.Offer>
 
 <div class="text-center">
-    <h1 class="display-4">Nabídky</h1>
+    <h1 class="display-4">@ViewData["Title"]</h1>
 </div>
 
 <div id="toolbar" style="padding-bottom: 10px;">
@@ -121,21 +121,32 @@
             btn.children[0].className = "fa fa-eye"
             btn.lastChild.nodeValue = " Všichni (@Model.Count())"
             // Get class('hide') elements and copy to normal array
-            var hiddenRows = document.getElementsByClassName("hide");
-            elementArray = [].slice.call(hiddenRows, 0);
-            for(var i = elementArray.length - 1; i >= 0; i--){
+            //var hiddenRows = document.getElementsByClassName("hide");
+            //elementArray = [].slice.call(hiddenRows, 0);
+            //for(var i = elementArray.length - 1; i >= 0; i--){
+            //    hiddenRows[i].className = "show hiddenBefore";
+            //};
+
+            var hiddenRows = document.querySelectorAll(".hide");
+            console.log(hiddenRows);
+            for(var i = 0; i < hiddenRows.length; i++){
                 hiddenRows[i].className = "show hiddenBefore";
-            };
+            }
+
         }
         else {
             // Change icon and text
             btn.children[0].className = "fa fa-eye-slash"
             btn.lastChild.nodeValue = " Aktivní (@Model.Count(m => m.Active) / @Model.Count())"
             // Get class('show hiddenBefore') elements and copy to normal array
-            var hiddenRows = document.getElementsByClassName("show hiddenBefore");
-            elementArray = [].slice.call(hiddenRows, 0);
-            for(var i=0; i<elementArray.length; i++){
-                elementArray[i].className = "hide";
+            //var hiddenRows = document.getElementsByClassName("show hiddenBefore");
+            //elementArray = [].slice.call(hiddenRows, 0);
+            //for(var i=0; i<elementArray.length; i++){
+            //    elementArray[i].className = "hide";
+            //}
+            var hiddenRows = document.querySelectorAll(".show.hiddenBefore");
+            for(var i = 0; i < hiddenRows.length; i++){
+                hiddenRows[i].className = "hide";
             }
         }
     }

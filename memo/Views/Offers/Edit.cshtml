@@ -15,7 +15,9 @@
     <div class="col-lg-10 personal-info">
         <form class="card" role="form" autocomplete="on" asp-action="Edit" method="post">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
         <input type="hidden" asp-for="OfferId" />
+        @* <input type="hidden" asp-for="OfferStatusId" /> *@
 
         <div class="form-group row">
             <label asp-for="OfferName" class="col-lg-3 col-form-label form-control-label control-label"></label>
@@ -25,29 +27,30 @@
             </div>
         </div>
 
-        <input type="hidden" asp-for="OfferStatusId" />
         <div class="form-group row">
             <label asp-for="OfferStatusId" class="col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-2">
                 @Html.TextBoxFor(m => m.OfferStatus.Status, new { @class = "form-control", @readonly = "readonly" })
-                <span asp-validation-for="OfferStatusId" class="text-danger"></span>
+                @* <span asp-validation-for="OfferStatusId" class="text-danger"></span> *@
             </div>
 
             <label class="col-lg-3 col-form-label form-control-label control-label text-right">Změnit: </label>
             <div class="col-lg-2">
-                <button class="btn btn-success form-control" id="btnWon">
+                @* <button class="btn btn-success form-control" id="btnWon">
                     <i class="fa fa-smile-o"></i> Výhra
-                </button>
+                </button> *@
                 @* <a href="@Url.Action("Edit", "Offers", new { OfferStatusId = 2 })" data-form-method="post" class="btn btn-success" style="width: 100%;">
                     <i class="fa fa-smile-o"></i> Výhra
                 </a> *@
                 @* <input type="submit" class="btn btn-primary" value="Výhra" /> *@
+                <input name="offerStatusId" type="submit" id="btnWon" class="btn btn-primary" value="2" />
             </div>
 
             <div class="col-lg-2">
-                <button class="btn btn-danger form-control" id="btnLost">
+                <input name="offerStatusId" type="submit" id="btnLost" class="btn btn-primary" value="3" />
+                @* <button class="btn btn-danger form-control" id="btnLost">
                     <i class="fa fa-frown-o"></i> Prohra
-                </button>
+                </button> *@
                 @* <a href="@Url.Action("Offers", "Edit")" class="btn btn-danger" style="width: 100%;">
                     <i class="fa fa-frown-o"></i> Prohra
                 </a> *@
@@ -208,15 +211,23 @@
                 changeExchangeRate(curSymbol);
             });
 
-            $('#btnWon').click(function() {
-                console.log("Vyhra");
-                $("#OfferStatusId").val('2');
-            });
+            //$('#btnWon').click(function() {
+            //    console.log("Vyhra");
+            //    $("#OfferStatusId").val('2');
+            //});
 
-            $('#btnLost').click(function() {
-                console.log("Prohra");
-                $("#OfferStatusId").val('3');
-            });
+            //$('#btnLost').click(function() {
+            //    console.log("Prohra");
+            //    $("#OfferStatusId").val('3');
+            //});
+
+            //$("#btnWon").click(function () {
+            //    console.log("Uspech...");
+            //    document.forms[0].submit();
+            //    console.log("Formy");
+            //    console.log(document.forms);
+            //    return false;
+        });
 
 
 

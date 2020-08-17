@@ -35,21 +35,39 @@
                     <partial name="_LoginPartial" />
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">
+                                <i class="fa fa-info-circle fa-2"></i> Info
+                            </a>
                         </li>
 
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-controller="Offers" asp-action="Index">Nabídky</a>
+                        <li class="nav-item pl-3">
+                            <a class="nav-link text-dark" asp-controller="Offers" asp-action="Index">
+                                <i class="fa fa-list-alt" style="color:#5182ee"></i> Nabídky
+                            </a>
                         </li>
 
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-controller="Orders" asp-action="Index">Zakázky</a>
+                        <li class="nav-item pl-3 pr-3">
+                            <a class="nav-link text-dark" asp-controller="Orders" asp-action="Index">
+                                <i class="fa fa-handshake-o" style="color:green"></i> Zakázky
+                            </a>
                         </li>
 
-                        <li class="nav-item dropdown">
+                        <li class="nav-item pl-3 border-left">
+                            <a class="nav-link" asp-controller="Contacts" asp-action="Index">
+                                <i class="fa fa-address-book-o"></i> Kontakty
+                            </a>
+                        </li>
+
+                        <li class="nav-item pl-3">
+                            <a class="nav-link" asp-controller="Companies" asp-action="Index">
+                                <i class="fa fa-building-o"></i> Firmy
+                            </a>
+                        </li>
+
+                        @* <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
                                  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                               Data
+                                <i class="fa fa-address-book-o"> Data</i>
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                                 <a class="dropdown-item" asp-controller="Contacts" asp-action="Index">Kontakty</a>
@@ -57,7 +75,7 @@
                                 <div class="dropdown-divider"></div>
                                 <a href="#" class="dropdown-item">Cokoli jineho</a>
                             </div>
-                        </li>
+                        </li> *@
                         @* <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li> *@
