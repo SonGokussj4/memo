@@ -110,11 +110,11 @@ DELETE FROM [memo].[Offer];
 DELETE FROM [memo].[OfferStatus];
 
 INSERT INTO [memo].[OfferStatus]
-  (Status)
+  (Name)
 VALUES
-  ('In Progress'),
-  ('Won'),
-  ('Lost')
+  ('Čeká'),
+  ('Výhra'),
+  ('Prohra')
 
 
 -- CREATE TABLE [memo].[Order] (

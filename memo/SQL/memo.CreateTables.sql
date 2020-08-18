@@ -52,7 +52,7 @@ GO
 
 CREATE TABLE [memo].[OfferStatus] (
   [OfferStatusId] int PRIMARY KEY IDENTITY(1, 1),
-  [Status] nvarchar(20)
+  [Name] nvarchar(20)
 )
 GO
 

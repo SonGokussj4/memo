@@ -5,6 +5,21 @@
 @* @model memo.ViewModels.CreateOfferViewModel *@
 @model memo.Models.Offer
 
+<style>
+    .offerStatus_1 {
+        color: grey;
+        text-align: center;
+    }
+    .offerStatus_2 {
+        color: green;
+        text-align: center;
+    }
+    .offerStatus_3 {
+        color: red;
+        text-align: center;
+    }
+</style>
+
 <div class="text-center">
     <h1 class="display-6">@ViewData["Title"]</h1>
     <hr />
@@ -17,7 +32,7 @@
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
         <input type="hidden" asp-for="OfferId" />
-        @* <input type="hidden" asp-for="OfferStatusId" /> *@
+        <input type="hidden" asp-for="OfferStatusId" />
 
         <div class="form-group row">
             <label asp-for="OfferName" class="col-lg-3 col-form-label form-control-label control-label"></label>
@@ -30,7 +45,7 @@
         <div class="form-group row">
             <label asp-for="OfferStatusId" class="col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-2">
-                @Html.TextBox("Neco", (string)@ViewBag.OfferStatusName, new { @class = "form-control", @readonly = "readonly" })
+                @Html.TextBox("OfferStatusName", (string)@ViewBag.OfferStatusName, new { @class = "form-control offerStatus_" + Model.OfferStatusId, @readonly = "readonly" })
                 @* <input asp-for="OfferName" class="form-control" type="text" required="" autocomplete="off" readonly/> *@
                 @* @Html.TextBoxFor(m => m.OfferStatus.Status, new { @class = "form-control", @readonly = "readonly" }) *@
                 @* <span asp-validation-for="OfferStatusId" class="text-danger"></span> *@
@@ -38,7 +53,17 @@
 
             @* @Html.HiddenFor(m => m.OfferStatus.Status) *@
 
-            <label class="col-lg-3 col-form-label form-control-label control-label text-right">Změnit: </label>
+            @* <label class="col-lg-3 col-form-label form-control-label control-label text-right">Změnit: </label> *@
+            <div class="col-lg-1">
+            </div>
+
+            <div class="col-lg-2">
+                <button class="btn btn-secondary form-control" type="submit"
+                        asp-action="ChangeOfferStatus" asp-controller="Offers"
+                        asp-route-id="@Model.OfferId" asp-route-btnOfferStatusId="1">
+                    <i class="fa fa-hourglass-half"></i> Čeká
+                </button>
+            </div>
             <div class="col-lg-2">
                 @* <button class="btn btn-success form-control" id="btnWon">
                     <i class="fa fa-smile-o"></i> Výhra
@@ -47,18 +72,27 @@
                     <i class="fa fa-smile-o"></i> Výhra
                 </a> *@
                 @* <input type="submit" class="btn btn-primary" value="Výhra" /> *@
-                <input name="offerStatusId" type="submit" id="btnWon" class="btn btn-primary" value="2" />
+                @* <input name="offerStatusId" type="submit" id="btnWon" class="btn btn-primary" value="2" /> *@
+                <button class="btn btn-success form-control" type="submit"
+                        asp-action="ChangeOfferStatus" asp-controller="Offers"
+                        asp-route-id="@Model.OfferId" asp-route-btnOfferStatusId="2">
+                    <i class="fa fa-smile-o"></i> Výhra
+                </button>
             </div>
 
             <div class="col-lg-2">
-                <input name="offerStatusId" type="submit" id="btnLost" class="btn btn-primary" value="3" />
+                @* <input name="offerStatusId" type="submit" id="btnLost" class="btn btn-primary" value="3" /> *@
                 @* <button class="btn btn-danger form-control" id="btnLost">
                     <i class="fa fa-frown-o"></i> Prohra
                 </button> *@
                 @* <a href="@Url.Action("Offers", "Edit")" class="btn btn-danger" style="width: 100%;">
                     <i class="fa fa-frown-o"></i> Prohra
                 </a> *@
-
+                <button class="btn btn-danger form-control" type="submit"
+                        asp-action="ChangeOfferStatus" asp-controller="Offers"
+                        asp-route-id="@Model.OfferId" asp-route-btnOfferStatusId="3">
+                    <i class="fa fa-frown-o"></i> Prohra
+                </button>
             </div>
         </div>
 
@@ -121,11 +155,11 @@
         <div class="form-group row customerOffer">
             <label class="col-lg-3 col-form-label form-control-label control-label">Zákazník</label>
             <div class="col-lg-5">
-                @Html.DropDownListFor(model => model.CompanyId, ViewBag.CompanyList as SelectList, "-- Vyber firmu --", new { @class = "form-control selectpicker" })
+                @Html.DropDownListFor(model => model.CompanyId, ViewBag.CompanyList as SelectList, "-- Vyber firmu --", new { @class = "form-control selectpicker", @style = "width: 100%;" })
                 <span asp-validation-for="CompanyId" class="text-danger"></span>
             </div>
             <div class="col-lg-4">
-                @Html.DropDownListFor(model => model.ContactId, ViewBag.ContactList as SelectList, "-- Vyber kontakt --", new { @class = "form-control selectpicker" })
+                @Html.DropDownListFor(model => model.ContactId, ViewBag.ContactList as SelectList, "-- Vyber kontakt --", new { @class = "form-control selectpicker", @style = "width: 100%;" })
                 <span asp-validation-for="ContactId" class="text-danger"></span>
             </div>
         </div>
@@ -154,6 +188,19 @@
                 <span asp-validation-for="Notes" class="text-danger"></span>
             </div>
         </div>
+
+        @* Lost offer textarea only visible if Offer was Lost *@
+        @if (Model.OfferStatusId == 3)
+        {
+            <div class="form-group row lostOffer">
+                <label asp-for="LostReason" class="col-lg-3 col-form-label form-control-label control-label"></label>
+                <div class="col-lg-9">
+                    <textarea asp-for="LostReason" class="form-control"></textarea>
+                    @* @Html.TextAreaFor(m => m.LostReason, additionalViewData: new { htmlAttributes = new { @class = "form-control" }}) *@
+                    <span asp-validation-for="LostReason" class="text-danger"></span>
+                </div>
+            </div>
+        }
 
         <div class="form-group row">
             <label class="col-lg-3 col-form-label form-control-label"></label>
@@ -211,32 +258,11 @@
                 var sel = document.getElementById('CurrencyId');
                 var opt = sel.options[sel.selectedIndex];
                 curSymbol = opt.text
-                console.log("Changing... to " + curSymbol);
+                //console.log("Changing... to " + curSymbol);
                 changeExchangeRate(curSymbol);
             });
 
-            //$('#btnWon').click(function() {
-            //    console.log("Vyhra");
-            //    $("#OfferStatusId").val('2');
-            //});
-
-            //$('#btnLost').click(function() {
-            //    console.log("Prohra");
-            //    $("#OfferStatusId").val('3');
-            //});
-
-            //$("#btnWon").click(function () {
-            //    console.log("Uspech...");
-            //    document.forms[0].submit();
-            //    console.log("Formy");
-            //    console.log(document.forms);
-            //    return false;
         });
-
-
-
-
-        })
 
     </script>
 

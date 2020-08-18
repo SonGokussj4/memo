@@ -60,7 +60,9 @@ namespace memo.Controllers
             offer.Active = true;
 
             int maxOfferNum = 0;
-            var offerNames = _db.Offer.Where(m => m.OfferName.Contains("3019")).Select(m => m.OfferName).ToList();
+            var offerNames = _db.Offer.Where(m => m.OfferName.Contains(DateTime.Now.Year.ToString()))
+                .Select(m => m.OfferName).ToList();
+
             foreach (string item in offerNames)
             {
                 int num = Convert.ToInt32(item.Split("/").Last());
@@ -73,6 +75,10 @@ namespace memo.Controllers
             string newOfferNum = $"EV-quo/3019/{maxOfferNumNext}";
 
             offer.OfferName = newOfferNum;
+            offer.PriceCzk = Convert.ToInt32(offer.Price * offer.ExchangeRate);
+            offer.LostReason = "";
+            offer.Notes = String.IsNullOrEmpty(offer.Notes) ? "" : offer.Notes;
+            offer.CreateDate = DateTime.Now;
 
             if (ModelState.IsValid)
             {
@@ -111,21 +117,55 @@ namespace memo.Controllers
             ViewBag.EveContactList = getEveContacts();
             ViewBag.CurrencyList = new SelectList( _db.Currency.ToList(), "CurrencyId", "Name");
             ViewBag.OfferStatusList = new SelectList( _db.OfferStatus.ToList(), "OfferStatusId", "Status");
-            ViewBag.OfferStatusName = offer.OfferStatus.Status;
+            ViewBag.OfferStatusName = offer.OfferStatus.Name;
 
             return View(offer);
         }
 
         [HttpPost]
+        public IActionResult ChangeOfferStatus(int id, int btnOfferStatusId)
+        {
+            Offer offer = _db.Offer.Find(id);
+            offer.OfferStatusId = btnOfferStatusId;
+
+            _db.Update(offer);
+            _db.SaveChanges();
+
+            switch (btnOfferStatusId)
+            {
+                case 1:
+                    offer.LostReason = string.Empty;
+                    _db.Update(offer);
+                    _db.SaveChanges();
+                    return RedirectToAction("Edit", "Offers", new {Id = id});
+
+                case 3:
+                    return RedirectToAction("Edit", "Offers", new {Id = id});
+
+                case 2:
+                    offer.LostReason = string.Empty;
+                    _db.Update(offer);
+                    _db.SaveChanges();
+                    return RedirectToAction("Create", "Orders", new {OfferId = id});
+
+                default:
+                    return RedirectToAction(nameof(Index));
+            }
+        }
+
+        [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(int id, Offer model, string offerStatusId)
+        public IActionResult Edit(int id, Offer model)
+        // public IActionResult Edit(int id, Offer model, string offerStatusId)
         {
             if (id != model.OfferId)
             {
                 return NotFound();
             }
 
-
+            // Offer offer = _db.Offer.Find(id);
+            // model.OfferStatusId = offer.OfferStatusId;
+            // _db.Entry(offer).State = EntityState.Detached;
 
             if (ModelState.IsValid)
             {
@@ -133,7 +173,6 @@ namespace memo.Controllers
                 {
                     _db.Update(model);
                     _db.SaveChanges();
-                    return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -141,6 +180,17 @@ namespace memo.Controllers
                                              "Try again, and if the problem persists, " +
                                              "see your system administrator.");
                 }
+
+                // string oldStatus = _db.OfferStatus.Find(_db.Offer.Find(id).OfferStatusId).Status;
+                // // if (model.Status == 2 && model.Status != oldOffer.Status)  // model.OfferStatus.Status == "Won"
+                // if (model.OfferStatusId == 2 && oldStatus != "Won")  // model.OfferStatus.Status == "Won"
+                // {
+                //     Order order = new Order();
+                //     order.OfferId = model.OfferId;
+                //     return RedirectToAction("Select", "Orders", order);
+                // }
+
+                return RedirectToAction(nameof(Index));
             }
 
             // // Errors

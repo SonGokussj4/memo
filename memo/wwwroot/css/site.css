@@ -104,6 +104,15 @@ body {
   border-radius: .25rem;
 }
 
+.lostOffer {
+  border: 1px solid #ced4da;
+  margin: 0px -15px;
+  padding: 8px 0px;
+  margin-bottom: 10px;
+  background-color: #ff000021;
+  border-radius: .25rem;
+}
+
 .eveOrder {
   border: 1px solid #ced4da;
   margin: 0px -15px;
@@ -217,6 +226,9 @@ form.myform {
     max-height: 500px;
 }
 
+.select2 {
+  width:100%!important;
+}
 /* .select2 select2-container select2-container--default {
   max-width: -webkit-fill-available;
 } */
