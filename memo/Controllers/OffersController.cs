@@ -71,11 +71,11 @@ namespace memo.Controllers
                     maxOfferNum = num;
                 }
             }
-            string maxOfferNumNext = String.Format("{0:0000}", maxOfferNum + 1);
-            string newOfferNum = $"EV-quo/3019/{maxOfferNumNext}";
+            string maxOfferNumNext = String.Format("{0:0000}", maxOfferNum + 1);  // 0069
+            string newOfferNum = $"EV-quo/{DateTime.Now.Year.ToString()}/{maxOfferNumNext}";  // EV-quo/2020/0069
 
             offer.OfferName = newOfferNum;
-            offer.PriceCzk = Convert.ToInt32(offer.Price * offer.ExchangeRate);
+            offer.PriceCzk = Convert.ToInt32(offer.Price * offer.ExchangeRate);  // 1000 * 26,243
             offer.LostReason = "";
             offer.Notes = String.IsNullOrEmpty(offer.Notes) ? "" : offer.Notes;
             offer.CreateDate = DateTime.Now;
@@ -235,7 +235,7 @@ namespace memo.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        public double getCurrency(string symbol) {
+        public Decimal getCurrency(string symbol) {
 
             // CZK is missing from list, return 1, no conversion needed
             if (symbol.ToUpper() == "CZK")
@@ -265,7 +265,7 @@ namespace memo.Controllers
                 if (iterSymbol == symbol)
                 {
                     // return Convert.ToDouble(splitted.Last());
-                    return double.Parse(splitted.Last().Replace(",", "."), CultureInfo.InvariantCulture);
+                    return Decimal.Parse(splitted.Last().Replace(",", "."), CultureInfo.InvariantCulture);
                 }
             }
             return 0;

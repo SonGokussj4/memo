@@ -63,7 +63,7 @@ namespace memo.Models
         // public virtual Currency Currency { get; set; }
 
         [Display(Name = "Směnný kurz")]
-        public double? ExchangeRate { get; set; }
+        public decimal? ExchangeRate { get; set; }
 
         [Display(Name = "Cena v CZK")]
         public int? PriceCzk { get; set; }

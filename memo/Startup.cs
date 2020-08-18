@@ -47,21 +47,21 @@ namespace memo
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            // // Culture specific problems
-            // var cultureInfo = new CultureInfo("cs-CZ");
-            // cultureInfo.NumberFormat.NumberDecimalSeparator = ".";
-            // cultureInfo.NumberFormat.NumberGroupSeparator = " ";
-            // cultureInfo.NumberFormat.CurrencyDecimalSeparator = ".";
+            // Culture specific problems
+            var cultureInfo = new CultureInfo("cs-CZ");
+            cultureInfo.NumberFormat.NumberDecimalSeparator = ".";
+            cultureInfo.NumberFormat.NumberGroupSeparator = " ";
+            cultureInfo.NumberFormat.CurrencyDecimalSeparator = ".";
 
-            // Thread.CurrentThread.CurrentCulture = cultureInfo;
+            Thread.CurrentThread.CurrentCulture = cultureInfo;
 
-            // var supportedCultures = new[] { cultureInfo };
-            // app.UseRequestLocalization(new RequestLocalizationOptions
-            // {
-            //     DefaultRequestCulture = new RequestCulture("cs-CZ"),
-            //     SupportedCultures = supportedCultures,
-            //     SupportedUICultures = supportedCultures
-            // });
+            var supportedCultures = new[] { cultureInfo };
+            app.UseRequestLocalization(new RequestLocalizationOptions
+            {
+                DefaultRequestCulture = new RequestCulture("cs-CZ"),
+                SupportedCultures = supportedCultures,
+                SupportedUICultures = supportedCultures
+            });
 
             if (env.IsDevelopment())
             {
