@@ -134,19 +134,21 @@ namespace memo.Controllers
             switch (btnOfferStatusId)
             {
                 case 1:
+                    // Reason was changes to "Čeká", reset potential `LostReason` value
                     offer.LostReason = string.Empty;
                     _db.Update(offer);
                     _db.SaveChanges();
                     return RedirectToAction("Edit", "Offers", new {Id = id});
 
-                case 3:
-                    return RedirectToAction("Edit", "Offers", new {Id = id});
-
                 case 2:
+                    // Reason was changes to "Výhra", reset potential `LostReason` value
                     offer.LostReason = string.Empty;
                     _db.Update(offer);
                     _db.SaveChanges();
                     return RedirectToAction("Create", "Orders", new {OfferId = id});
+
+                case 3:
+                    return RedirectToAction("Edit", "Offers", new {Id = id});
 
                 default:
                     return RedirectToAction(nameof(Index));
@@ -234,6 +236,52 @@ namespace memo.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        public string getCurrencyStr(string symbol)
+        {
+            // CZK is missing from list, return 1, no conversion needed
+            if (symbol.ToUpper() == "CZK")
+            {
+                return "1";
+            }
+
+            string URL = @"https://www.cnb.cz/cs/financni-trhy/devizovy-trh/kurzy-devizoveho-trhu/kurzy-devizoveho-trhu/denni_kurz.txt";
+
+            WebClient client = new WebClient();
+            string text = client.DownloadString(URL);
+
+            String[] lines = text.Split("\n");
+
+            // 31.07.2020 #147
+            // země|měna|množství|kód|kurz
+            // Austrálie|dolar|1|AUD|15,872
+            // Brazílie|real|1|BRL|4,276
+            foreach (string line in lines.Skip(1))
+            {
+                if (line.Contains("|") == false)
+                    continue;
+
+                string[] splitted = line.Split("|");
+                string iterSymbol = splitted[splitted.Count() - 2];
+
+                if (iterSymbol == symbol)
+                {
+                    return Decimal.Parse(splitted.Last().Replace(",", "."), CultureInfo.InvariantCulture).ToString();
+                    // return Convert.ToDouble(splitted.Last());
+                    // if (separator != "")
+                    // {
+                    //     //CultureInfo.InvariantCulture.NumberFormat.CurrencyDecimalSeparator = separator;
+                    //     //CultureInfo.InvariantCulture.NumberFormat.NumberDecimalSeparator = separator;
+                    //     return Decimal.Parse(splitted.Last().Replace(",", separator), CultureInfo.CurrentCulture);
+                    // }
+                    // else
+                    // {
+                    //     return Decimal.Parse(splitted.Last().Replace(",", "."), CultureInfo.InvariantCulture);
+                    // }
+                }
+            }
+            return "";
         }
 
         public decimal getCurrency(string symbol, string separator = "") {

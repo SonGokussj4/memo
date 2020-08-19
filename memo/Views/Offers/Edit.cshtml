@@ -242,17 +242,19 @@
 
             function changeExchangeRate(curSymbol) {
                 $.ajax({
-                    url: '@Url.Action("getCurrency", "Offers")',
+                    //url: '@Url.Action("getCurrency", "Offers")',
+                    url: '@Url.Action("getCurrencyStr", "Offers")',
                     type: 'GET',
                     //dataType: 'json',
                     // we set cache: false because GET requests are often cached by browsers
                     // IE is particularly aggressive in that respect
                     cache: false,
-                    data: { symbol: curSymbol, separator: whatDecimalSeparator() },
+                    //data: { symbol: curSymbol, separator: whatDecimalSeparator() },
+                    data: { symbol: curSymbol },
                     success: function (res) {
-                        console.log("whatDecimalSeparator: " + whatDecimalSeparator());
-                        resStr = res.toString();
-                        res = resStr.replace(".", whatDecimalSeparator());
+                        //console.log("whatDecimalSeparator: " + whatDecimalSeparator());
+                        //resStr = res.toString();
+                        //res = resStr.replace(".", whatDecimalSeparator());
                         $('#ExchangeRate').val(res);
                     }
                 });
