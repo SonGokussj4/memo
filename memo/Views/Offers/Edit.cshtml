@@ -175,7 +175,8 @@
                 <span asp-validation-for="Currency" class="text-danger"></span>
             </div>
             <div class="col-lg-2">
-                <input asp-for="ExchangeRate" class="form-control" type="text" onchange="this.value = this.value.replace(/,/g, '.')"/>
+                @* <input asp-for="ExchangeRate" class="form-control" type="text" onchange="this.value = this.value.replace(/,/g, '.')"/> *@
+                <input asp-for="ExchangeRate" class="form-control" type="text" />
                 <span asp-validation-for="ExchangeRate" class="text-danger"></span>
             </div>
         </div>
@@ -217,6 +218,7 @@
 @section Scripts {
 
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="~/js/CustomValidation.js"></script>
 
     <script>
 
@@ -246,8 +248,11 @@
                     // we set cache: false because GET requests are often cached by browsers
                     // IE is particularly aggressive in that respect
                     cache: false,
-                    data: { symbol: curSymbol },
-                    success: function(res) {
+                    data: { symbol: curSymbol, separator: whatDecimalSeparator() },
+                    success: function (res) {
+                        console.log("whatDecimalSeparator: " + whatDecimalSeparator());
+                        resStr = res.toString();
+                        res = resStr.replace(".", whatDecimalSeparator());
                         $('#ExchangeRate').val(res);
                     }
                 });
@@ -261,6 +266,44 @@
                 //console.log("Changing... to " + curSymbol);
                 changeExchangeRate(curSymbol);
             });
+
+
+            $("#ExchangeRate").on("keydown input change textInput", function (e) {
+                console.log("Hmm");
+                // allow function keys and decimal separators
+                if (
+                    // backspace, delete, tab, escape, enter, comma and .
+                    $.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 188, 190]) !== -1 ||
+                    // Ctrl/cmd+A, Ctrl/cmd+C, Ctrl/cmd+X
+                    ($.inArray(e.keyCode, [65, 67, 88]) !== -1 && (e.ctrlKey === true || e.metaKey === true)) ||
+                    // home, end, left, right
+                    (e.keyCode >= 35 && e.keyCode <= 39)) {
+
+                    // // optional: replace commas with dots in real-time (for en-US locals)
+                    // if (e.keyCode === 188) {
+                    //     e.preventDefault();
+                    //     $(this).val($(this).val() + whatDecimalSeparator());
+                    // }
+
+                    // // optional: replace decimal points (num pad) and dots with commas in real-time (for EU locals)
+                    // if (e.keyCode === 110 || e.keyCode === 190) {
+                    //     e.preventDefault();
+                    //     $(this).val($(this).val() + whatDecimalSeparator());
+                    // }
+
+                    return;
+                }
+                // block any non-number
+                if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+                    e.preventDefault();
+                }
+            });
+
+            function whatDecimalSeparator() {
+                var n = 1.1;
+                n = n.toLocaleString().substring(1, 2);
+                return n;
+            };
 
         });
 

@@ -63,7 +63,10 @@ namespace memo.Models
         // public virtual Currency Currency { get; set; }
 
         [Display(Name = "Směnný kurz")]
-        public decimal? ExchangeRate { get; set; }
+        [Column(TypeName = "decimal(18,3)")]
+        // [RegularExpression("([a-zA-Z0-9 .&'-]+)", ErrorMessage = "Enter only alphabets and numbers of First Name")]
+        [RegularExpression(@"\d+([,.]\d+)?", ErrorMessage = "Pouze čísla s čárkou. Např: 26,49")]
+        public decimal ExchangeRate { get; set; }
 
         [Display(Name = "Cena v CZK")]
         public int? PriceCzk { get; set; }

@@ -204,7 +204,8 @@ namespace memo.Controllers
             ViewBag.ContactList = new SelectList(_db.Contact.ToList(), "ContactId", "PersonName");
             ViewBag.EveContactList = getEveContacts();
             ViewBag.CurrencyList = new SelectList(_db.Currency.ToList(), "CurrencyId", "Name");
-            ViewBag.OfferStatusList = new SelectList(_db.OfferStatus.ToList(), "OfferStatusId", "Status");
+            // ViewBag.OfferStatusList = new SelectList(_db.OfferStatus.ToList(), "OfferStatusId", "Status");
+            ViewBag.OfferStatusName = _db.OfferStatus.Find(model.OfferStatusId).Name;;
 
             return View(model);
         }
@@ -235,7 +236,7 @@ namespace memo.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        public Decimal getCurrency(string symbol) {
+        public decimal getCurrency(string symbol, string separator = "") {
 
             // CZK is missing from list, return 1, no conversion needed
             if (symbol.ToUpper() == "CZK")
@@ -264,8 +265,18 @@ namespace memo.Controllers
 
                 if (iterSymbol == symbol)
                 {
-                    // return Convert.ToDouble(splitted.Last());
                     return Decimal.Parse(splitted.Last().Replace(",", "."), CultureInfo.InvariantCulture);
+                    // return Convert.ToDouble(splitted.Last());
+                    // if (separator != "")
+                    // {
+                    //     //CultureInfo.InvariantCulture.NumberFormat.CurrencyDecimalSeparator = separator;
+                    //     //CultureInfo.InvariantCulture.NumberFormat.NumberDecimalSeparator = separator;
+                    //     return Decimal.Parse(splitted.Last().Replace(",", separator), CultureInfo.CurrentCulture);
+                    // }
+                    // else
+                    // {
+                    //     return Decimal.Parse(splitted.Last().Replace(",", "."), CultureInfo.InvariantCulture);
+                    // }
                 }
             }
             return 0;
