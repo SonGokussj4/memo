@@ -159,7 +159,7 @@ namespace memo.Controllers
                 }
             }
 
-            model.ExchangeRate = getCurrency(curSymbol);
+            model.ExchangeRate = Decimal.Parse(getCurrencyStr(curSymbol).Replace(",", "."), CultureInfo.InvariantCulture);
 
             OfferOrderVM viewModel = new OfferOrderVM()
             {

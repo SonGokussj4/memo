@@ -51,8 +51,10 @@ namespace memo.Models
         public DateTime? InvoiceDueDate { get; set; }
 
         [Display(Name = "Kurs")]
-        [DisplayFormat(DataFormatString = "{0:#.00}", ApplyFormatInEditMode = true)]
-        public double? ExchangeRate { get; set; }
+        [Column(TypeName = "decimal(18,3)")]
+        // [DisplayFormat(DataFormatString = "{0:#.000}", ApplyFormatInEditMode = true)]
+        [RegularExpression(@"\d+([,.]\d+)?", ErrorMessage = "Pouze čísla s čárkou. Např: 26,49")]
+        public decimal ExchangeRate { get; set; }
 
         [Display(Name = "Konečná cena bez DPH v CZK")]
         // [DisplayFormat(DataFormatString = "{0:#,0}", ApplyFormatInEditMode = true)]

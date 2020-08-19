@@ -178,3 +178,15 @@ VALUES
 --     Planned = 666
 -- WHERE
 --     OrderCode = '927.0040'
+
+
+-- Změnit sloupec double na decimal
+--SELECT
+--	ExchangeRate,
+--	CAST([ExchangeRate] as decimal(18,3)) exchangerate_decimal
+--from [memo].[Order]
+
+-- ALTER TABLE
+-- 	[memo].[Order]
+-- ALTER COLUMN
+-- 	[ExchangeRate] DECIMAL(18,3);
