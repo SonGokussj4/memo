@@ -50,6 +50,14 @@
                 <span asp-validation-for="InvoiceDueDays" class="text-danger"></span>
             </div>
 
+            <div class="form-group row">
+                <label asp-for="Notes" class="col-lg-3 col-form-label form-control-label control-label"></label>
+                <div class="col-lg-9">
+                    <textarea asp-for="Notes" class="form-control"></textarea>
+                    <span asp-validation-for="Notes" class="text-danger"></span>
+                </div>
+            </div>
+
             <div class="form-group">
                 <label asp-for="Active" class="control-label"></label>
                 <input asp-for="Active" class="form-group" type="checkbox" />
@@ -57,7 +65,7 @@
             </div>
 
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <input type="submit" value="Uložit" class="btn btn-primary" />
             </div>
 
         </form>

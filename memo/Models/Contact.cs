@@ -19,6 +19,12 @@ namespace memo.Models
         [Display(Name = "Jméno"), StringLength(50)]
         public string PersonName { get; set; }
 
+        [Display(Name = "Příjmení"), StringLength(50)]
+        public string PersonLastName { get; set; }
+
+        [Display(Name = "Titul"), StringLength(20)]
+        public string PersonTitle { get; set; }
+
         [Display(Name = "Firma")]
         public int? CompanyId { get; set; }
         public Company Company { get; set; }
@@ -31,6 +37,9 @@ namespace memo.Models
 
         [Display(Name = "E-mail"), StringLength(255)]
         public string Email { get; set; }
+
+        [Display(Name = "Poznámky"), Column(TypeName = "ntext")]
+        public string Notes { get; set; }
 
         [Display(Name = "Datum vytvoření"), Column(TypeName = "date")]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]

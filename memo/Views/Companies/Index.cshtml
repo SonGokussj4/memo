@@ -4,18 +4,6 @@
 
 @model IEnumerable<memo.Models.Company>
 
-@* <style>
-    .hide {
-        display: none;
-    }
-    .hiddenBefore {
-        color: #0000005e;
-    }
-    .table-sm tbody th {
-        font-weight: 400;
-    }
-</style> *@
-
 <div class="text-center">
     <h1 class="display-4">Firmy</h1>
 </div>
@@ -48,14 +36,15 @@
     >
     <thead>
         <tr>
-            <th scope="col" data-field="0" data-sortable="false" data-filter-control="input">Úprava</th>
-            <th scope="col" data-field="1" data-sortable="true" data-filter-control="input">Jméno</th>
+            <th scope="col" data-field="0" data-sortable="false" data-filter-control="input"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></th>
+            <th scope="col" data-field="1" data-sortable="true" data-filter-control="input">Název</th>
             <th scope="col" data-field="2" data-sortable="true" data-filter-control="input">Město</th>
             <th scope="col" data-field="3" data-sortable="true" data-filter-control="input">Adresa</th>
             <th scope="col" data-field="4" data-sortable="true" data-filter-control="input">Telefon</th>
             <th scope="col" data-field="5" data-sortable="true" data-filter-control="input">Web</th>
-            <th scope="col" data-field="6" data-sortable="true" data-filter-control="input">Splatnost [dny]</th>
-            <th scope="col" data-field="7" data-sortable="true" data-filter-control="input">Vytvořeno</th>
+            <th scope="col" data-field="6" data-sortable="true" data-filter-control="input">Splatnost<br />[dny]</th>
+            <th scope="col" data-field="7" data-sortable="true" data-filter-control="input">Poznámky</th>
+            <th scope="col" data-field="8" data-sortable="true" data-filter-control="input">Vytvořeno</th>
         </tr>
     </thead>
     <tbody>
@@ -70,8 +59,9 @@
                 <th scope="row">@item.City</th>
                 <th scope="row">@item.Address</th>
                 <th scope="row">@item.Phone</th>
-                <th scope="row">@item.Web</th>
+                <th scope="row"><a href="http://@item.Web" target="_blank">@item.Web</a></th>
                 <th scope="row">@item.InvoiceDueDays</th>
+                <th scope="row">@item.Notes</th>
                 <th scope="row">@String.Format("{0:dd.MM.yyyy}", @item.CreateDate)</th>
             </tr>
         }

@@ -9,6 +9,7 @@ CREATE TABLE [memo].[Company] (
   [Web] nvarchar(50),
   [CreateDate] date DEFAULT GETDATE(),
   [InvoiceDueDays] int DEFAULT 0,
+  [Notes] ntext,
   [Active] bit DEFAULT 1
 )
 GO
@@ -16,10 +17,13 @@ GO
 CREATE TABLE [memo].[Contact] (
   [ContactId] int PRIMARY KEY IDENTITY(1, 1),
   [PersonName] nvarchar(50),
+  [PersonLastName] nvarchar(50),
+  [PersonTitle] nvarchar(20),
   [CompanyId] int DEFAULT 1,
   [Department] nvarchar(50),
   [Phone] nvarchar(50),
   [Email] nvarchar(255),
+  [Notes] ntext,
   [CreateDate] date DEFAULT GETDATE(),
   [Active] bit DEFAULT 1
 )
@@ -41,6 +45,7 @@ CREATE TABLE [memo].[Offer] (
   [ExchangeRate] decimal(18,3),
   [PriceCzk] int,
   [OfferStatusId] int,
+  [Notes] ntext,
   [LostReason] ntext,
   [CreateDate] date DEFAULT GETDATE(),
   [Active] bit DEFAULT 1

@@ -47,41 +47,41 @@ VALUES
 DELETE FROM [memo].[Contact];
 
 INSERT INTO [memo].[Contact]
-  ([PersonName], [Department], [Phone], [Email])
+  ([PersonName], [Department], [Phone], [Email], [PersonLastName], [PersonTitle])
 VALUES
-  ('bosport', '', '', 'bosport@bosport.eu'),
-  ('georg.ude', '', '', 'georg.ude@cybex-online.com'),
-  ('stefan.aschinger', '', '', 'stefan.aschinger@cybex-online.com'),
-  ('J.Nauhardt', '', '', 'J.Nauhardt@gubesch.de'),
-  ('tomas.rehor', '', '', 'tomas.rehor@hauk.cz'),
-  ('juraj.chovanec', '', '', 'juraj.chovanec@hella.com'),
-  ('zdenek.bures', '', '', 'zdenek.bures@hella.com'),
-  ('patrik.coufal', '', '', 'patrik.coufal@mbtool.cz'),
-  ('hrosova', '', '', 'hrosova@plastika.cz'),
-  ('hebnarova', '', '', 'hebnarova@plastika.cz'),
-  ('petr.marsalek', '', '', 'petr.marsalek@safrangoup.com'),
-  ('petr.sedlacek', '', '', 'petr.sedlacek@safrangroup.com'),
-  ('michal.dufek', '', '', 'michal.dufek@safrangroup.com'),
-  ('jaroslav.brodsky', '', '', 'jaroslav.brodsky@skoda.cz'),
-  ('Jan.Tymich', '', '', 'Jan.Tymich@skoda-auto.cz'),
-  ('Jaroslav.Havel', '', '', 'Jaroslav.Havel@skoda-auto.cz'),
-  ('Robert.Prochyra2', '', '', 'Robert.Prochyra2@skoda-auto.cz'),
-  ('Zdenek.Drapak', '', '', 'Zdenek.Drapak@skoda-auto.cz'),
-  ('Pavel.Sevela', '', '', 'Pavel.Sevela@skoda-auto.cz'),
-  ('Martin.Bradac', '', '', 'Martin.Bradac@skoda-auto.cz'),
-  ('Jan.Hrncir', '', '', 'Jan.Hrncir@skoda-auto.cz'),
-  ('TOMAS.HORNICEK', '', '', 'TOMAS.HORNICEK@SKODA-AUTO.CZ'),
-  ('Vladimir.Sestak', '', '', 'Vladimir.Sestak@skoda-auto.cz'),
-  ('David.Dvorak', '', '', 'David.Dvorak@skoda-auto.cz'),
-  ('Michaela.Kabelkova', '', '', 'Michaela.Kabelkova@skoda-auto.cz'),
-  ('Jirina.Cabelkova', '', '', 'Jirina.Cabelkova@skoda-auto.cz'),
-  ('ext.Iveta.Sebestova2', '', '', 'Iveta.Sebestova2@skoda-auto.cz'),
-  ('Milos.Jambor', '', '', 'Milos.Jambor@skoda-auto.cz'),
-  ('Jiri.Holoubek', '', '', 'Jiri.Holoubek@skoda-auto.cz'),
-  ('Janos.Barsony', '', '', 'Janos.Barsony@skoda-auto.cz'),
-  ('Martin.Stastny', '', '', 'Martin.Stastny@skoda-auto.cz'),
-  ('Martin.Cerny2', '', '', 'Martin.Cerny2@skoda-auto.cz'),
-  ('Gilles.Recher', '', '', 'Gilles.Recher@telene.com')
+  ('bosport', '', '', 'bosport@bosport.eu', '', ''),
+  ('georg.ude', '', '', 'georg.ude@cybex-online.com', '', 'Ing'),
+  ('stefan.aschinger', '', '', 'stefan.aschinger@cybex-online.com', '', 'Bc'),
+  ('J.Nauhardt', '', '', 'J.Nauhardt@gubesch.de', '', ''),
+  ('tomas.rehor', '', '', 'tomas.rehor@hauk.cz', '', ''),
+  ('juraj.chovanec', '', '', 'juraj.chovanec@hella.com', '', ''),
+  ('zdenek.bures', '', '', 'zdenek.bures@hella.com', '', ''),
+  ('patrik.coufal', '', '', 'patrik.coufal@mbtool.cz', '', ''),
+  ('hrosova', '', '', 'hrosova@plastika.cz', '', ''),
+  ('hebnarova', '', '', 'hebnarova@plastika.cz', '', ''),
+  ('petr.marsalek', '', '', 'petr.marsalek@safrangoup.com', '', ''),
+  ('petr.sedlacek', '', '', 'petr.sedlacek@safrangroup.com', '', ''),
+  ('michal.dufek', '', '', 'michal.dufek@safrangroup.com', '', ''),
+  ('jaroslav.brodsky', '', '', 'jaroslav.brodsky@skoda.cz', '', ''),
+  ('Jan.Tymich', '', '', 'Jan.Tymich@skoda-auto.cz', '', ''),
+  ('Jaroslav.Havel', '', '', 'Jaroslav.Havel@skoda-auto.cz', '', ''),
+  ('Robert.Prochyra2', '', '', 'Robert.Prochyra2@skoda-auto.cz', '', ''),
+  ('Zdenek.Drapak', '', '', 'Zdenek.Drapak@skoda-auto.cz', '', ''),
+  ('Pavel.Sevela', '', '', 'Pavel.Sevela@skoda-auto.cz', '', ''),
+  ('Martin.Bradac', '', '', 'Martin.Bradac@skoda-auto.cz', '', ''),
+  ('Jan.Hrncir', '', '', 'Jan.Hrncir@skoda-auto.cz', '', ''),
+  ('TOMAS.HORNICEK', '', '', 'TOMAS.HORNICEK@SKODA-AUTO.CZ', '', ''),
+  ('Vladimir.Sestak', '', '', 'Vladimir.Sestak@skoda-auto.cz', '', ''),
+  ('David.Dvorak', '', '', 'David.Dvorak@skoda-auto.cz', '', ''),
+  ('Michaela.Kabelkova', '', '', 'Michaela.Kabelkova@skoda-auto.cz', '', ''),
+  ('Jirina.Cabelkova', '', '', 'Jirina.Cabelkova@skoda-auto.cz', '', ''),
+  ('ext.Iveta.Sebestova2', '', '', 'Iveta.Sebestova2@skoda-auto.cz', '', ''),
+  ('Milos.Jambor', '', '', 'Milos.Jambor@skoda-auto.cz', '', ''),
+  ('Jiri.Holoubek', '', '', 'Jiri.Holoubek@skoda-auto.cz', '', ''),
+  ('Janos.Barsony', '', '', 'Janos.Barsony@skoda-auto.cz', '', ''),
+  ('Martin.Stastny', '', '', 'Martin.Stastny@skoda-auto.cz', '', ''),
+  ('Martin.Cerny2', '', '', 'Martin.Cerny2@skoda-auto.cz', '', ''),
+  ('Gilles.Recher', '', '', 'Gilles.Recher@telene.com', '', '')
 
 
 DELETE FROM [memo].[Offer];
@@ -181,12 +181,18 @@ VALUES
 
 
 -- Změnit sloupec double na decimal
+
 --SELECT
 --	ExchangeRate,
 --	CAST([ExchangeRate] as decimal(18,3)) exchangerate_decimal
 --from [memo].[Order]
 
--- ALTER TABLE
+-- UPDATE
 -- 	[memo].[Order]
--- ALTER COLUMN
--- 	[ExchangeRate] DECIMAL(18,3);
+-- SET
+-- 	[ExchangeRate] = CAST([ExchangeRate] as decimal(18,3));
+
+--  ALTER TABLE
+--  	[memo].[Order]
+--  ALTER COLUMN
+--  	[ExchangeRate] DECIMAL(18,3);

@@ -295,7 +295,8 @@ namespace memo.Controllers
                     }
                 }
 
-                return RedirectToAction(nameof(Index));
+                // return View(vm);
+                return RedirectToAction("Edit", new { id = id, offerId = vm.Order.OfferId });
             }
 
             List<Offer> wonOffersList = _db.Offer
@@ -313,6 +314,26 @@ namespace memo.Controllers
             };
 
             return View(viewModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            Order order = await _db.Order.FirstOrDefaultAsync(m => m.OrderId == id);
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            _db.Order.Remove(order);
+            await _db.SaveChangesAsync();
+
+            return RedirectToAction("Index");
         }
 
         private bool OrderExists(int id)

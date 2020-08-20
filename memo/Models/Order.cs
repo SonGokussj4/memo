@@ -50,7 +50,7 @@ namespace memo.Models
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime? InvoiceDueDate { get; set; }
 
-        [Display(Name = "Kurs")]
+        [Display(Name = "Kurz")]
         [Column(TypeName = "decimal(18,3)")]
         // [DisplayFormat(DataFormatString = "{0:#.000}", ApplyFormatInEditMode = true)]
         [RegularExpression(@"\d+([,.]\d+)?", ErrorMessage = "Pouze čísla s čárkou. Např: 26,49")]

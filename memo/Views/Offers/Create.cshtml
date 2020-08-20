@@ -134,7 +134,7 @@
 
             function changeExchangeRate(curSymbol) {
                 $.ajax({
-                    url: '@Url.Action("getCurrency", "Offers")',
+                    url: '@Url.Action("getCurrencyStr", "Offers")',
                     type: 'GET',
                     //dataType: 'json',
                     // we set cache: false because GET requests are often cached by browsers

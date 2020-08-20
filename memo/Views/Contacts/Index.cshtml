@@ -43,13 +43,14 @@
     >
     <thead>
         <tr>
-            <th scope="col" data-field="0" data-sortable="false" data-filter-control="input">Úprava</th>
+            <th scope="col" data-field="0" data-sortable="false" data-filter-control="input"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></th>
             <th scope="col" data-field="1" data-sortable="true" data-filter-control="input">Jméno</th>
             <th scope="col" data-field="2" data-sortable="true" data-filter-control="input">Firma</th>
             <th scope="col" data-field="3" data-sortable="true" data-filter-control="select">Oddělení</th>
             <th scope="col" data-field="4" data-sortable="true" data-filter-control="input">Telefon</th>
             <th scope="col" data-field="5" data-sortable="true" data-filter-control="input">E-mail</th>
-            <th scope="col" data-field="6" data-sortable="true" data-filter-control="input">Vytvořeno</th>
+            <th scope="col" data-field="6" data-sortable="true" data-filter-control="input">Poznámky</th>
+            <th scope="col" data-field="7" data-sortable="true" data-filter-control="input">Vytvořeno</th>
         </tr>
     </thead>
     <tbody>
@@ -60,11 +61,12 @@
                     <a asp-action="Edit" asp-route-id=@item.ContactId><i class="fa fa-pencil fa-fw" aria-hidden="true"></i></a>
                     <a href="#" onclick="ConfirmDelete(@item.ContactId)"><i class="fa fa-times fa-fw" style="color: red;", aria-hidden="true"></i></a>
                 </th>
-                <th scope="row">@item.PersonName</th>
+                <th scope="row">@item.PersonLastName @item.PersonName @item.PersonTitle</th>
                 <th scope="row">@item.Company?.Name</th>
                 <th scope="row">@item.Department</th>
                 <th scope="row">@item.Phone</th>
                 <th scope="row">@item.Email</th>
+                <th scope="row">@item.Notes</th>
                 <th scope="row">@String.Format("{0:dd.MM.yyyy}", @item.CreateDate)</th>
             </tr>
         }

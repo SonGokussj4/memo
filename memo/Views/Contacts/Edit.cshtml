@@ -21,6 +21,18 @@
             </div>
 
             <div class="form-group">
+                <label asp-for="PersonLastName" class="control-label"></label>
+                <input asp-for="PersonLastName" class="form-control" />
+                <span asp-validation-for="PersonLastName" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="PersonTitle" class="control-label"></label>
+                <input asp-for="PersonTitle" class="form-control" />
+                <span asp-validation-for="PersonTitle" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
                 <label asp-for="CompanyId" class="control-label"></label>
                 @Html.DropDownListFor(model => model.CompanyId, ViewBag.CompanyList as SelectList, "-- Vyber firmu --", new { @class = "form-control selectpicker" })
                 <span asp-validation-for="CompanyId" class="text-danger"></span>
@@ -44,6 +56,14 @@
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
 
+            <div class="form-group row">
+                <label asp-for="Notes" class="col-lg-3 col-form-label form-control-label control-label"></label>
+                <div class="col-lg-9">
+                    <textarea asp-for="Notes" class="form-control"></textarea>
+                    <span asp-validation-for="Notes" class="text-danger"></span>
+                </div>
+            </div>
+
             <div class="form-group">
                 <label asp-for="Active" class="control-label">
                     <input asp-for="Active" class="form-group" type="checkbox" />
@@ -53,7 +73,7 @@
             </div>
 
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <input type="submit" value="Uložit" class="btn btn-primary" />
             </div>
 
         </form>

@@ -39,6 +39,9 @@ namespace memo.Models
         [Display(Name = "Splatnost")]
         public int InvoiceDueDays { get; set; }
 
+        [Display(Name = "Poznámky"), Column(TypeName = "ntext")]
+        public string Notes { get; set; }
+
         [Display(Name = "Aktivní")]
         public bool Active { get; set; }
 

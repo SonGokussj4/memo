@@ -164,7 +164,8 @@
         <div class="form-group row">
             <label asp-for="Order.PriceFinal" class="required col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-3">
-                <input asp-for="Order.PriceFinal" class="form-control" type="text" required="" onchange="changeDiscount(this.value)"/>
+                @* <input asp-for="Order.PriceFinal" class="form-control" type="text" required="" onchange="changeDiscount(this.value)"/> *@
+                <input asp-for="Order.PriceFinal" class="form-control" type="text" required="" />
                 <span asp-validation-for="Order.PriceFinal" class="text-danger"></span>
             </div>
             <div class="col-lg-3">
@@ -233,7 +234,7 @@
             <label class="col-lg-3 col-form-label form-control-label"></label>
             <div class="col-lg-9">
                 <input type="reset" class="btn btn-secondary" value="Resetovat pole" />
-                <input type="submit" class="btn btn-primary" value="Upravit zakázku" />
+                <input type="submit" class="btn btn-primary" value="Uložit" />
             </div>
         </div>
 
@@ -245,6 +246,7 @@
 @section Scripts {
 
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="~/js/CustomValidation.js"></script>
 
     <script>
 
@@ -283,6 +285,19 @@
                     +('0'+(date.getDate())).slice(-2);
                 $('#Order_InvoiceDueDate').val(futureDate);
             });
+
+
+            var var0 = document.getElementById('Order_ExchangeRate')
+            var var1 = document.getElementById('Order_PriceFinal')
+            var storage = document.getElementById('Order_PriceFinalCzk')
+
+            trigFunc = function(){
+                var val1 = parseFloat(var0.value.replace(/,/g, "."))
+                var val2 = parseFloat(var1.value.replace(/,/g, "."))
+                storage.value = parseInt(val1 * val2);
+            }
+            var0.onkeyup = trigFunc;
+            var1.onkeyup = trigFunc;
         })
 
     </script>
