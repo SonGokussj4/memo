@@ -133,7 +133,7 @@
             <div class="form-group row">
                 <label asp-for="Order.ContactId" class="col-lg-3 col-form-label form-control-label control-label"></label>
                 <div class="col-lg-9">
-                    @Html.DropDownListFor(model => model.Order.ContactId, ViewBag.ContactList as SelectList, "-- Vyber kontakt --", new { @class = "form-control selectpicker" })
+                    @Html.DropDownListFor(model => model.Order.ContactId, ViewBag.EveContactList as SelectList, "-- Vyber kontakt --", new { @class = "form-control selectpicker" })
                     <span asp-validation-for="Order.ContactId" class="text-danger"></span>
                 </div>
                 @* <div class="col-lg-3">

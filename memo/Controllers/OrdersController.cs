@@ -364,12 +364,30 @@ namespace memo.Controllers
 
         private SelectList getEveContacts()
         {
-            List<SelectListItem> eveContactsList = new List<SelectListItem>
+            // var allUsers = _eveDb.tUsers
+            //     .Select(p => new tUsers
+            //         {
+            //             Id = p.Id,
+            //             LastName = $"{p.LastName} {p.FirstName}",
+            //         })
+            //     .ToList();
+
+
+            List<SelectListItem> eveContactsList = new List<SelectListItem>();
+            foreach (tUsers item in _eveDb.tUsers)
             {
-                new SelectListItem { Value = "Jan Verner", Text = "Jan Verner" },
-                new SelectListItem { Value = "Michal Jakšík", Text = "Michal Jakšík" },
-                new SelectListItem { Value = "Ivo Grác", Text = "Ivo Grác" },
-            };
+                eveContactsList.Add(new SelectListItem
+                {
+                    Value = item.Id.ToString(),
+                    Text = $"{item.LastName} {item.FirstName}"
+                });
+            }
+
+            // {
+            //     new SelectListItem { Value = "Jan Verner", Text = "Jan Verner" },
+            //     new SelectListItem { Value = "Michal Jakšík", Text = "Michal Jakšík" },
+            //     new SelectListItem { Value = "Ivo Grác", Text = "Ivo Grác" },
+            // };
 
             return new SelectList(eveContactsList, "Value", "Text");
         }
