@@ -114,6 +114,10 @@
     </tbody>
 </table>
 
+@foreach (var user in ViewBag.allUsers)
+{
+    <p>User: @user.FirstName, @user.LastName</p>
+}
 
 <!-- Modal Confirm Delete-->
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">

@@ -63,6 +63,15 @@ namespace memo.Controllers
                 }
             }
 
+            List<tUsers> allUsers = _eveDb.tUsers
+                .Select(p => new tUsers
+                    {
+                        FirstName = p.FirstName,
+                        LastName = p.LastName
+                    })
+                .ToList();
+
+            ViewBag.allUsers = allUsers;
             return View(model);
         }
 
@@ -213,6 +222,7 @@ namespace memo.Controllers
                 return NotFound();
             }
 
+
             List<Offer> wonOffersList = _db.Offer
                 .Where(t => t.OfferStatusId == 2)
                 .OrderBy(t => t.OfferName)
@@ -275,7 +285,7 @@ namespace memo.Controllers
 
             if (!isOrderCodeValid(vm.Order.OrderCode))
             {
-                ModelState.AddModelError("WrongOrderCode", "Číslo výkazu neexistuje nebo je neaktivní.");
+                ModelState.AddModelError("Order.OrderCode", "Neexistuje nebo je neaktivní.");
             }
 
             if (ModelState.IsValid)
@@ -320,7 +330,8 @@ namespace memo.Controllers
             OfferOrderVM viewModel = new OfferOrderVM()
             {
                 Offer = _db.Offer.Find(vm.Order.OfferId),
-                Order = vm.Order
+                Order = vm.Order,
+                OfferId = Convert.ToInt32(vm.Order.OfferId)
             };
 
             return View(viewModel);

@@ -82,6 +82,7 @@ CREATE TABLE [memo].[Order] (
 )
 GO
 
+
 --ALTER TABLE [memo].[Order]
 --  ADD CONSTRAINT UQ_OrderName UNIQUE (OrderName);
 
