@@ -258,6 +258,11 @@ namespace memo.Controllers
             return View(viewModel);
         }
 
+        private bool isOrderCodeValid(string orderCode)
+        {
+            return false;
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Edit(int id, OfferOrderVM vm)
@@ -266,6 +271,11 @@ namespace memo.Controllers
             if (id != vm.Order.OrderId)
             {
                 return NotFound();
+            }
+
+            if (!isOrderCodeValid(vm.Order.OrderCode))
+            {
+                ModelState.AddModelError("WrongOrderCode", "Číslo výkazu neexistuje nebo je neaktivní.");
             }
 
             if (ModelState.IsValid)
