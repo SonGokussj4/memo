@@ -1,0 +1,15 @@
+@{
+    ViewData["Title"] = "Vyhodnocení";
+}
+
+@model memo.ViewModels.DashboardVM
+
+<div class="text-center">
+    <h1 class="display-6">@ViewData["Title"]</h1>
+    <hr />
+</div>
+
+@for (int i = 0; i < @Model.Months.Count; i++)
+{
+    <p>Mesic: @Model.Months[i], Penizky: @Model.PlannedCashPerMonth[i]</p>
+}

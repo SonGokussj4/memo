@@ -1,86 +1,116 @@
 @model memo.Models.Contact
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Úprava kontaktu";
 }
 
-<h1>Edit</h1>
+<div class="text-center">
+    <h1 class="display-6">@ViewData["Title"]</h1>
+    <hr />
+</div>
 
-<h4>Contact</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="ContactId" />
+<style>
+    .cardTitleMerged {
+        display: flex;
+        justify-content: space-between;
+    }
+</style>
 
-            <div class="form-group">
-                <label asp-for="PersonName" class="control-label"></label>
-                <input asp-for="PersonName" class="form-control" />
-                <span asp-validation-for="PersonName" class="text-danger"></span>
-            </div>
+<div class="container d-flex justify-content-center">
+    <div class="col-lg-10 personal-info">
+        <form class="card" role="form" autocomplete="on" asp-action="Edit" method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <input type="hidden" asp-for="ContactId" />
 
-            <div class="form-group">
-                <label asp-for="PersonLastName" class="control-label"></label>
-                <input asp-for="PersonLastName" class="form-control" />
-                <span asp-validation-for="PersonLastName" class="text-danger"></span>
-            </div>
+        <div class="cardTitleMerged">
 
-            <div class="form-group">
-                <label asp-for="PersonTitle" class="control-label"></label>
-                <input asp-for="PersonTitle" class="form-control" />
-                <span asp-validation-for="PersonTitle" class="text-danger"></span>
-            </div>
+            <h5 class="card-title">Upravit kontakt</h5>
 
             <div class="form-group">
-                <label asp-for="CompanyId" class="control-label"></label>
-                @Html.DropDownListFor(model => model.CompanyId, ViewBag.CompanyList as SelectList, "-- Vyber firmu --", new { @class = "form-control selectpicker" })
-                <span asp-validation-for="CompanyId" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="Department" class="control-label"></label>
-                <input asp-for="Department" class="form-control" />
-                <span asp-validation-for="Department" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="Phone" class="control-label"></label>
-                <input asp-for="Phone" class="form-control" />
-                <span asp-validation-for="Phone" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="Email" class="control-label"></label>
-                <input asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
-
-            <div class="form-group row">
-                <label asp-for="Notes" class="col-lg-3 col-form-label form-control-label control-label"></label>
-                <div class="col-lg-9">
-                    <textarea asp-for="Notes" class="form-control"></textarea>
-                    <span asp-validation-for="Notes" class="text-danger"></span>
+                <div class="pretty p-bigger p-default p-curve p-toggle">
+                    <input asp-for="Active" type="checkbox"/>
+                    <div class="state p-success p-on">
+                        <label>Aktivní</label>
+                    </div>
+                    <div class="state p-danger p-off">
+                        <label>Neaktivní </label>
+                    </div>
                 </div>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="Active" class="control-label">
-                    <input asp-for="Active" class="form-group" type="checkbox" />
-                    @Html.DisplayNameFor(m => m.Active)
-                </label>
                 <span asp-validation-for="Active" class="text-danger"></span>
             </div>
 
-            <div class="form-group">
-                <input type="submit" value="Uložit" class="btn btn-primary" />
+        </div>
+        <hr />
+
+        <div class="form-group row">
+            <label asp-for="PersonTitle" class="col-lg-3 col-form-label form-control-label control-label"></label>
+            <div class="col-lg-3">
+                <input asp-for="PersonTitle" class="form-control" type="text" placeholder="Titul"/>
+                <span asp-validation-for="PersonTitle" class="text-danger"></span>
             </div>
+        </div>
+
+        <div class="form-group row">
+            <label asp-for="PersonName" class="required col-lg-3 col-form-label form-control-label control-label">Celé jméno</label>
+            <div class="col-lg-3">
+                <input asp-for="PersonName" class="form-control" type="text" placeholder="Křestní jméno"/>
+                <span asp-validation-for="PersonName" class="text-danger"></span>
+            </div>
+            <div class="col-lg-3">
+                <input asp-for="PersonLastName" class="form-control" type="text" placeholder="Příjmení"/>
+                <span asp-validation-for="PersonLastName" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label asp-for="CompanyId" class="col-lg-3 col-form-label form-control-label control-label"></label>
+            <div class="col-lg-3">
+                @Html.DropDownListFor(model => model.CompanyId, ViewBag.CompanyList as SelectList, "-- Vyber firmu --", new { @class = "form-control selectpicker" })
+                <span asp-validation-for="CompanyId" class="text-danger"></span>
+            </div>
+            @* <label asp-for="Department" class="col-lg-3 col-form-label form-control-label control-label"></label> *@
+            <div class="col-lg-3">
+                <input asp-for="Department" class="form-control" type="text" placeholder="Oddělení"/>
+                <span asp-validation-for="Department" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label asp-for="Email" class="col-lg-3 col-form-label form-control-label control-label"></label>
+            <div class="col-lg-3">
+                <input asp-for="Email" class="form-control" type="text" placeholder="E-mail"/>
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label asp-for="Phone" class="col-lg-3 col-form-label form-control-label control-label"></label>
+            <div class="col-lg-3">
+                <input asp-for="Phone" class="form-control" type="text" placeholder="Telefon"/>
+                <span asp-validation-for="Phone" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label asp-for="Notes" class="col-lg-3 col-form-label form-control-label control-label"></label>
+            <div class="col-lg-9">
+                <textarea asp-for="Notes" class="form-control"></textarea>
+                @* @Html.TextAreaFor(m => m.Notes, additionalViewData: new { htmlAttributes = new { @class = "form-control" }}) *@
+                <span asp-validation-for="Notes" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <div class="col-lg-3">
+                <a asp-action="Index" class="btn btn-light"><i class="fa fa-arrow-left"></i> Zpět</a>
+            </div>
+            <div class="col-lg-9">
+                <input type="reset" class="btn btn-secondary" value="Vyprázdnit pole" />
+                <input type="submit" class="btn btn-primary" value="Uložit" />
+            </div>
+        </div>
+
+        @Html.CheckBoxFor(m => m.Active, new { style = "display:none", @checked="checked" })
 
         </form>
     </div>
 </div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-

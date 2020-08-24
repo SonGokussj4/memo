@@ -144,24 +144,28 @@
     };
 
 
-    // Function to toggle Active/Disabled in table
-    //--------------------------------------------
+    // Function to toggle Active/Disabled Contacts/Companies in table
+    //---------------------------------------------------------------
     function ToggleActive() {
         var btn = document.getElementById("btnToggleActive");
 
         if (btn.children[0].className == "fa fa-eye-slash") {
+            // Change icon and text
             btn.children[0].className = "fa fa-eye"
             btn.lastChild.nodeValue = " Všichni (@Model.Count())"
-            var hiddenRows = document.getElementsByClassName("hide");
-            for(var i=0; i<hiddenRows.length; i++){
+            var hiddenRows = document.querySelectorAll(".hide");
+            console.log(hiddenRows);
+            for(var i = 0; i < hiddenRows.length; i++){
                 hiddenRows[i].className = "show hiddenBefore";
-            };
+            }
+
         }
         else {
+            // Change icon and text
             btn.children[0].className = "fa fa-eye-slash"
             btn.lastChild.nodeValue = " Aktivní (@Model.Count(m => m.Active) / @Model.Count())"
-            var hiddenRows = document.getElementsByClassName("show hiddenBefore");
-            for(var i=0; i<hiddenRows.length; i++){
+            var hiddenRows = document.querySelectorAll(".show.hiddenBefore");
+            for(var i = 0; i < hiddenRows.length; i++){
                 hiddenRows[i].className = "hide";
             }
         }

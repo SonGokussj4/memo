@@ -155,7 +155,7 @@
             <div class="form-group row ">
                 <label asp-for="Order.OrderCode" class="required col-lg-3 col-form-label form-control-label control-label"></label>
                 <div class="col-lg-5">
-                    @Html.DropDownListFor(model => model.Order.OrderCode, ViewBag.EveOrderCodes as SelectList, "-- Vyber kód --", new { @class = "form-control selectpicker" })
+                    @Html.DropDownListFor(model => model.Order.OrderCode, ViewBag.EveOrderCodes as SelectList, "-- Vyber kód --", new { @class = "form-control selectpicker", @style = "min-width: 500px !important" })
                     <span asp-validation-for="Order.OrderCode" class="text-danger"></span>
                     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                 </div>
@@ -266,7 +266,9 @@
         </div>
 
         <div class="form-group row">
-            <label class="col-lg-3 col-form-label form-control-label"></label>
+            <div class="col-lg-3">
+                <a asp-action="Index" class="btn btn-light"><i class="fa fa-arrow-left"></i> Zpět</a>
+            </div>
             <div class="col-lg-9">
                 <input type="reset" class="btn btn-secondary" value="Resetovat pole" />
                 <input type="submit" class="btn btn-primary" value="Uložit" />

@@ -16,8 +16,12 @@
     .centerHeader {
         text-align: center;
     }
-    .container {
+    @* .container {
         max-width: 1680px;
+    } *@
+
+    th {
+        font-weight: 400;
     }
 </style>
 
@@ -121,8 +125,10 @@
 
 
 
+<hr />
 
 
+<!--
 
 <table id="example" class="row-border compact" style="width:100%">
         <thead>
@@ -182,7 +188,7 @@
         </tbody>
     </table>
 
-
+-->
 
 
 
@@ -295,9 +301,9 @@
         console.log(field);
         //var field = parseInt(this.field).val().replace(/[^0-9]/g, '')
         return data.map(function (row) {
-        return +row[field]
+            return +row[field]
         }).reduce(function (sum, i) {
-        return sum + i
+            return sum + i
         }, 0)
     }
 

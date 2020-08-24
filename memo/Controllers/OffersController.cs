@@ -125,39 +125,6 @@ namespace memo.Controllers
         }
 
         [HttpPost]
-        public IActionResult ChangeOfferStatus(int id, int btnOfferStatusId)
-        {
-            Offer offer = _db.Offer.Find(id);
-            offer.OfferStatusId = btnOfferStatusId;
-
-            _db.Update(offer);
-            _db.SaveChanges();
-
-            switch (btnOfferStatusId)
-            {
-                case 1:
-                    // Reason was changes to "Čeká", reset potential `LostReason` value
-                    offer.LostReason = string.Empty;
-                    _db.Update(offer);
-                    _db.SaveChanges();
-                    return RedirectToAction("Edit", "Offers", new {Id = id});
-
-                case 2:
-                    // Reason was changes to "Výhra", reset potential `LostReason` value
-                    offer.LostReason = string.Empty;
-                    _db.Update(offer);
-                    _db.SaveChanges();
-                    return RedirectToAction("Create", "Orders", new {OfferId = id});
-
-                case 3:
-                    return RedirectToAction("Edit", "Offers", new {Id = id});
-
-                default:
-                    return RedirectToAction(nameof(Index));
-            }
-        }
-
-        [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Edit(int id, Offer model)
         // public IActionResult Edit(int id, Offer model, string offerStatusId)
@@ -315,6 +282,39 @@ namespace memo.Controllers
 
         //     return new SelectList(departmentList, "Value", "Text");
         // }
+
+        [HttpPost]
+        public IActionResult ChangeOfferStatus(int id, int btnOfferStatusId)
+        {
+            Offer offer = _db.Offer.Find(id);
+            offer.OfferStatusId = btnOfferStatusId;
+
+            _db.Update(offer);
+            _db.SaveChanges();
+
+            switch (btnOfferStatusId)
+            {
+                case 1:
+                    // Reason was changes to "Čeká", reset potential `LostReason` value
+                    offer.LostReason = string.Empty;
+                    _db.Update(offer);
+                    _db.SaveChanges();
+                    return RedirectToAction("Edit", "Offers", new {Id = id});
+
+                case 2:
+                    // Reason was changes to "Výhra", reset potential `LostReason` value
+                    offer.LostReason = string.Empty;
+                    _db.Update(offer);
+                    _db.SaveChanges();
+                    return RedirectToAction("Create", "Orders", new {OfferId = id});
+
+                case 3:
+                    return RedirectToAction("Edit", "Offers", new {Id = id});
+
+                default:
+                    return RedirectToAction(nameof(Index));
+            }
+        }
 
         private bool OfferExists(int id)
         {

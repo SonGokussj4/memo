@@ -45,7 +45,7 @@
         <div class="form-group row">
             <label asp-for="OfferStatusId" class="col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-2">
-                @Html.TextBox("OfferStatusName", (string)@ViewBag.OfferStatusName, new { @class = "form-control offerStatus_" + Model.OfferStatusId, @readonly = "readonly" })
+                @Html.TextBox("OfferStatusName", (string)@ViewBag.OfferStatusName, new { @class = "form-control btn btn-dark offerStatus_" + Model.OfferStatusId, @readonly = "readonly" })
                 @* <input asp-for="OfferName" class="form-control" type="text" required="" autocomplete="off" readonly/> *@
                 @* @Html.TextBoxFor(m => m.OfferStatus.Status, new { @class = "form-control", @readonly = "readonly" }) *@
                 @* <span asp-validation-for="OfferStatusId" class="text-danger"></span> *@
@@ -204,7 +204,9 @@
         }
 
         <div class="form-group row">
-            <label class="col-lg-3 col-form-label form-control-label"></label>
+            <div class="col-lg-3">
+                <a asp-action="Index" class="btn btn-light"><i class="fa fa-arrow-left"></i> Zpět</a>
+            </div>
             <div class="col-lg-9">
                 <input type="reset" class="btn btn-secondary" value="Resetovat pole" />
                 <input type="submit" class="btn btn-primary" value="Uložit" />

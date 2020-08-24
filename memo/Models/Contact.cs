@@ -17,15 +17,18 @@ namespace memo.Models
         public int ContactId { get; set; }
 
         [Display(Name = "Jméno"), StringLength(50)]
+        [Required(ErrorMessage="Křestní jméno je povinné.")]
         public string PersonName { get; set; }
 
         [Display(Name = "Příjmení"), StringLength(50)]
+        [Required(ErrorMessage="Příjmení je povinné.")]
         public string PersonLastName { get; set; }
 
         [Display(Name = "Titul"), StringLength(20)]
         public string PersonTitle { get; set; }
 
         [Display(Name = "Firma")]
+        [Required(ErrorMessage="Prosím, vyberte firmu (Pokud není, zvolte: 'Neznámá')")]
         public int? CompanyId { get; set; }
         public Company Company { get; set; }
 

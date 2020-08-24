@@ -46,10 +46,13 @@ namespace memo.Controllers
         {
             if (ModelState.IsValid)
             {
+                contact.Phone = contact.Phone?.Replace(" ", "");
+
                 _db.Update(contact);
                 _db.SaveChanges();
                 return RedirectToAction("Index");
             }
+            ViewBag.CompanyList = new SelectList(_db.Company.ToList(), "CompanyId", "Name");
             return View();
         }
 
@@ -84,6 +87,19 @@ namespace memo.Controllers
         [HttpPost]
         public IActionResult Create(Contact model)
         {
+            Contact contact = _db.Contact
+                .Where(x => x.PersonLastName == model.PersonLastName
+                    && x.PersonName == model.PersonName
+                    && x.CompanyId == model.CompanyId)
+                .FirstOrDefault();
+
+            if (contact != null)
+            {
+                ModelState.AddModelError("", "Kontakt se stejným jménem, příjmením a firmou již existuje...");
+                ViewBag.CompanyList = new SelectList(_db.Company.ToList(), "CompanyId", "Name");
+                return View(model);
+            }
+
             if (ModelState.IsValid)
             {
                 model.Active = true;  // default
@@ -92,6 +108,9 @@ namespace memo.Controllers
                 _db.SaveChanges();
                 return RedirectToAction("Index");
             }
+
+            // Fallback
+            ViewBag.CompanyList = new SelectList(_db.Company.ToList(), "CompanyId", "Name");
 
             return View(model);
         }
