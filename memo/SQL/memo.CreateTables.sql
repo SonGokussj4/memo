@@ -69,6 +69,7 @@ CREATE TABLE [memo].[Order] (
   [PriceDiscount] int,
   [OrderCode] nvarchar(50),
   [ContactId] int,
+  [EveContactName] nvarchar(50),
   [HourWage] float,
   [TotalHours] int,
   [InvoiceIssueDate] date,
@@ -101,13 +102,13 @@ GO
 ALTER TABLE [memo].[Offer] ADD FOREIGN KEY ([OfferStatusId]) REFERENCES [memo].[OfferStatus] ([OfferStatusId])
 GO
 
-ALTER TABLE [memo].[Order] ADD FOREIGN KEY ([OfferId]) REFERENCES [memo].[Offer] ([OfferId])
+ALTER TABLE [memo].[Offer] ADD FOREIGN KEY ([CurrencyId]) REFERENCES [memo].[Currency] ([CurrencyId])
 GO
+
+-- ALTER TABLE [memo].[Order] ADD FOREIGN KEY ([OfferId]) REFERENCES [memo].[Offer] ([OfferId])
+-- GO
 
 ALTER TABLE [memo].[Order] ADD FOREIGN KEY ([ContactId]) REFERENCES [memo].[Contact] ([ContactId])
-GO
-
-ALTER TABLE [memo].[Offer] ADD FOREIGN KEY ([CurrencyId]) REFERENCES [memo].[Currency] ([CurrencyId])
 GO
 
 EXEC sp_addextendedproperty

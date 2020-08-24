@@ -16,6 +16,9 @@
     .centerHeader {
         text-align: center;
     }
+    .container {
+        max-width: 1680px;
+    }
 </style>
 
 
@@ -63,16 +66,16 @@
             <th class="text-center" scope="col" data-field="0" data-footer-formatter="idFormatter" data-sortable="true" data-filter-control="input"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></th>
             <th class="text-center" scope="col" data-field="1" data-sortable="true" data-filter-control="input">Objednávka</th>
             <th class="text-center" scope="col" data-field="2" data-sortable="true" data-filter-control="input">Č. obj. zákazníka</th>
-            <th class="text-center" scope="col" data-field="3" data-sortable="true" data-filter-control="select">Měna</th>
-            <th class="text-center" scope="col" data-field="4" data-sortable="true" data-filter-control="input" class="text-wrap">Konečná<br />cena</th>
-            <th class="text-center" scope="col" data-field="5" data-sortable="true" data-filter-control="input">Poskytnutá<br />sleva</th>
+            @* <th class="text-center" scope="col" data-field="4" data-sortable="true" data-filter-control="input" class="text-wrap">Konečná<br />cena</th> *@
+            @* <th class="text-center" scope="col" data-field="5" data-sortable="true" data-filter-control="input">Poskytnutá<br />sleva</th> *@
             <th class="text-center" scope="col" data-field="6" data-sortable="true" data-filter-control="input">Kód EVE<br />vykazování</th>
             <th class="text-center" scope="col" data-field="7" data-sortable="true" data-filter-control="input">Vedoucí<br />projektu</th>
             <th class="text-center" scope="col" data-field="8" data-sortable="true" data-filter-control="input">Plánované<br />[hod]</th>
             <th class="text-center" scope="col" data-field="9" data-sortable="true" data-filter-control="input">Termín vyst.<br />faktury</th>
-            <th class="text-center" scope="col" data-field="10" data-sortable="true" data-filter-control="input">Kurz</th>
+            @* <th class="text-center" scope="col" data-field="10" data-sortable="true" data-filter-control="input">Kurz</th> *@
             <th class="text-center" scope="col" data-field="11" data-footer-formatter="priceFormatter" data-sortable="true" data-filter-control="input">Konečná<br />cena [CZK]</th>
             <th class="text-center" scope="col" data-field="12" data-sortable="true" data-filter-control="input">Poznámky</th>
+            <th class="text-center" scope="col" data-field="3" data-sortable="true" data-filter-control="select">Měna</th>
             <th class="text-center" scope="col" data-field="13" data-footer-formatter="priceFormatter" data-sortable="true" data-filter-control="input">Další<br />náklady</th>
             <th class="text-center" scope="col" data-field="14" data-sortable="true" data-filter-control="input">Hod.<br />sazba</th>
             <th class="text-center" scope="col" data-field="15" data-sortable="true" data-filter-control="input">Spáleno<br />[hod]</th>
@@ -92,16 +95,17 @@
                 </th>
                 <th scope="row" class="text-left">@item.Offer?.OfferName</th>
                 <th scope="row" class="text-left">@item.OrderName</th>
-                <th scope="row" class="text-center">@item.Offer?.Currency.Name</th>
-                <th scope="row" class="text-right">@String.Format("{0:#,0}", @item.PriceFinal)</th>
-                <th scope="row" class="text-right">@String.Format("{0:#,0}", @item.PriceDiscount)</th>
+                @* <th scope="row" class="text-right">@String.Format("{0:#,0}", @item.PriceFinal)</th> *@
+                @* <th scope="row" class="text-right">@String.Format("{0:#,0}", @item.PriceDiscount)</th> *@
                 <th scope="row" class="text-left">@item.OrderCode</th>
-                <th scope="row" class="text-left">@item.Contact?.PersonName</th>
+                @* <th scope="row" class="text-left">@item.Contact?.PersonName</th> *@
+                <th scope="row" class="text-left">@item.EveContactName</th>
                 <th scope="row" class="text-right">@item.TotalHours</th>
                 <th scope="row" class="text-left">@String.Format("{0:dd.MM.yyyy}", @item.InvoiceIssueDate)</th>
-                <th scope="row" class="text-right">@item.ExchangeRate</th>
+                @* <th scope="row" class="text-right">@item.ExchangeRate</th> *@
                 <th scope="row" class="text-right">@String.Format("{0:#0}", @item.PriceFinalCzk)</th>
                 <th scope="row" class="notesWrap" >@item.Notes</th>
+                <th scope="row" class="text-center">@item.Offer?.Currency.Name</th>
                 <th scope="row" class="text-right">@item.OtherCosts</th>
                 <th scope="row" class="text-right">@String.Format("{0:#,0}", @item.HourWage)</th>
                 <th scope="row" class="text-right">@( item.Burned / 60 )</th>
@@ -114,10 +118,84 @@
     </tbody>
 </table>
 
-@foreach (var user in ViewBag.allUsers)
-{
-    <p>User: @user.FirstName, @user.LastName</p>
-}
+
+
+
+
+
+
+<table id="example" class="row-border compact" style="width:100%">
+        <thead>
+            <tr>
+                <th class="text-center" scope="col" data-field="0" data-footer-formatter="idFormatter" data-sortable="true" data-filter-control="input"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></th>
+                <th class="text-center" scope="col" data-field="1" data-sortable="true" data-filter-control="input">Objednávka</th>
+                <th class="text-center" scope="col" data-field="2" data-sortable="true" data-filter-control="input">Č. obj. zákazníka</th>
+                @* <th class="text-center" scope="col" data-field="4" data-sortable="true" data-filter-control="input" class="text-wrap">Konečná<br />cena</th> *@
+                @* <th class="text-center" scope="col" data-field="5" data-sortable="true" data-filter-control="input">Poskytnutá<br />sleva</th> *@
+                <th class="text-center" scope="col" data-field="6" data-sortable="true" data-filter-control="input">Kód EVE<br />vykazování</th>
+                <th class="text-center" scope="col" data-field="7" data-sortable="true" data-filter-control="input">Vedoucí<br />projektu</th>
+                <th class="text-center" scope="col" data-field="8" data-sortable="true" data-filter-control="input">Plánované<br />[hod]</th>
+                <th class="text-center" scope="col" data-field="9" data-sortable="true" data-filter-control="input">Termín vyst.<br />faktury</th>
+                @* <th class="text-center" scope="col" data-field="10" data-sortable="true" data-filter-control="input">Kurz</th> *@
+                <th class="text-center" scope="col" data-field="11" data-footer-formatter="priceFormatter" data-sortable="true" data-filter-control="input">Konečná<br />cena [CZK]</th>
+                <th class="text-center" scope="col" data-field="12" data-sortable="true" data-filter-control="input">Poznámky</th>
+                <th class="text-center" scope="col" data-field="3" data-sortable="true" data-filter-control="select">Měna</th>
+                <th class="text-center" scope="col" data-field="13" data-footer-formatter="priceFormatter" data-sortable="true" data-filter-control="input">Další<br />náklady</th>
+                <th class="text-center" scope="col" data-field="14" data-sortable="true" data-filter-control="input">Hod.<br />sazba</th>
+                <th class="text-center" scope="col" data-field="15" data-sortable="true" data-filter-control="input">Spáleno<br />[hod]</th>
+                <th class="text-center" scope="col" data-field="16" data-footer-formatter="priceFormatter" data-sortable="true" data-filter-control="input">Stav [CZK]</th>
+                <th class="text-center" scope="col" data-field="17" data-sortable="true" data-filter-control="input">Stav<br />plnění</th>
+                <th class="text-center" scope="col" data-field="18" data-sortable="true" data-filter-control="select">Aktivní</th>
+                <th class="text-center" scope="col" data-field="19" data-sortable="true" data-filter-control="input">Datum<br />vytvoření</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr id="row_@item.OrderId" class="@(item.Active ? Html.Raw("show") : Html.Raw("hide")) text-nowrap">
+                    <th scope="row" data-field="0" >
+                        <a asp-action="Edit" asp-route-id=@item.OrderId><i class="fa fa-pencil fa-fw" aria-hidden="true"></i></a>
+                        <a href="#" onclick="ConfirmDelete(@item.OrderId)"><i class="fa fa-times fa-fw" style="color: red;", aria-hidden="true"></i></a>
+                    </th>
+                    <th scope="row" class="text-left">@item.Offer?.OfferName</th>
+                    <th scope="row" class="text-left">@item.OrderName</th>
+                    @* <th scope="row" class="text-right">@String.Format("{0:#,0}", @item.PriceFinal)</th> *@
+                    @* <th scope="row" class="text-right">@String.Format("{0:#,0}", @item.PriceDiscount)</th> *@
+                    <th scope="row" class="text-left">@item.OrderCode</th>
+                    @* <th scope="row" class="text-left">@item.Contact?.PersonName</th> *@
+                    <th scope="row" class="text-left">@item.EveContactName</th>
+                    <th scope="row" class="text-right">@item.TotalHours</th>
+                    <th scope="row" class="text-left">@String.Format("{0:dd.MM.yyyy}", @item.InvoiceIssueDate)</th>
+                    @* <th scope="row" class="text-right">@item.ExchangeRate</th> *@
+                    <th scope="row" class="text-right">@String.Format("{0:#0}", @item.PriceFinalCzk)</th>
+                    <th scope="row" class="notesWrap" >@item.Notes</th>
+                    <th scope="row" class="text-center">@item.Offer?.Currency.Name</th>
+                    <th scope="row" class="text-right">@item.OtherCosts</th>
+                    <th scope="row" class="text-right">@String.Format("{0:#,0}", @item.HourWage)</th>
+                    <th scope="row" class="text-right">@( item.Burned / 60 )</th>
+                    <th scope="row" class="text-right">@( String.Format("{0:0}", item.Burned * @item.HourWage / 60 ))</th>
+                    <th scope="row" class="text-right">@( String.Format("{0:0.00}", (float)item.Burned / 60 / item.TotalHours * 100) ) %</th>
+                    <th scope="row" class="text-left">@item.Active</th>
+                    <th scope="row" class="text-left">@String.Format("{0:dd.MM.yyyy}", @item.CreateDate)</th>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 <!-- Modal Confirm Delete-->
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
@@ -183,18 +261,22 @@
         var btn = document.getElementById("btnToggleActive");
 
         if (btn.children[0].className == "fa fa-eye-slash") {
+            // Change icon and text
             btn.children[0].className = "fa fa-eye"
             btn.lastChild.nodeValue = " Všichni (@Model.Count())"
-            var hiddenRows = document.getElementsByClassName("hide");
-            for(var i=0; i<hiddenRows.length; i++){
+            var hiddenRows = document.querySelectorAll(".hide");
+            console.log(hiddenRows);
+            for(var i = 0; i < hiddenRows.length; i++){
                 hiddenRows[i].className = "show hiddenBefore";
-            };
+            }
+
         }
         else {
+            // Change icon and text
             btn.children[0].className = "fa fa-eye-slash"
             btn.lastChild.nodeValue = " Aktivní (@Model.Count(m => m.Active) / @Model.Count())"
-            var hiddenRows = document.getElementsByClassName("show hiddenBefore");
-            for(var i=0; i<hiddenRows.length; i++){
+            var hiddenRows = document.querySelectorAll(".show.hiddenBefore");
+            for(var i = 0; i < hiddenRows.length; i++){
                 hiddenRows[i].className = "hide";
             }
         }
@@ -218,6 +300,10 @@
         return sum + i
         }, 0)
     }
+
+    $(document).ready(function() {
+        $('#example').DataTable();
+    } );
 
 </script>
 }

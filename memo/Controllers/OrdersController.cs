@@ -27,19 +27,11 @@ namespace memo.Controllers
             _eveDb = eveDb;
         }
 
-        public SumMinutesSP GetSumMinutes(string orderName)
-        {
-            return _db.SumMinutesSP
-                .FromSqlRaw<SumMinutesSP>("spSumMinutesByOrderName {0}", orderName)
-                .ToList()
-                .SingleOrDefault();
-        }
-
         public IActionResult Index()
         {
             IList<Order> model = _db.Order
                 .Include(x => x.Offer)
-                .Include(y => y.Contact)
+                // .Include(y => y.Contact)
                 .Include(z => z.Offer.Currency)
                 // .Include(z => z.cOrders)
                 // .Include(a => a.cProjects)
@@ -63,49 +55,40 @@ namespace memo.Controllers
                 }
             }
 
-            List<tUsers> allUsers = _eveDb.tUsers
-                .Select(p => new tUsers
-                    {
-                        FirstName = p.FirstName,
-                        LastName = p.LastName
-                    })
-                .ToList();
-
-            ViewBag.allUsers = allUsers;
             return View(model);
         }
 
-        [HttpGet]
-        public IActionResult Select(int? offerId)
-        {
-            Order model = new Order();
+        // [HttpGet]
+        // public IActionResult Select(int? offerId)
+        // {
+        //     Order model = new Order();
 
-            List<Offer> wonOffersList = _db.Offer
-                .Where(t => t.OfferStatusId == 2)
-                .OrderBy(t => t.OfferName)
-                .ToList();
-            ViewBag.WonOffersList = new SelectList(wonOffersList, "OfferId", "OfferName");
+        //     List<Offer> wonOffersList = _db.Offer
+        //         .Where(t => t.OfferStatusId == 2)
+        //         .OrderBy(t => t.OfferName)
+        //         .ToList();
+        //     ViewBag.WonOffersList = new SelectList(wonOffersList, "OfferId", "OfferName");
 
-            return View(model);
-        }
+        //     return View(model);
+        // }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Select(Order model)
-        {
-            List<Offer> wonOffersList = _db.Offer
-                .Where(t => t.OfferStatusId == 2)
-                .OrderBy(t => t.OfferName)
-                .ToList();
-            ViewBag.WonOffersList = new SelectList(wonOffersList, "OfferId", "OfferName");
+        // [HttpPost]
+        // [ValidateAntiForgeryToken]
+        // public IActionResult Select(Order model)
+        // {
+        //     List<Offer> wonOffersList = _db.Offer
+        //         .Where(t => t.OfferStatusId == 2)
+        //         .OrderBy(t => t.OfferName)
+        //         .ToList();
+        //     ViewBag.WonOffersList = new SelectList(wonOffersList, "OfferId", "OfferName");
 
-            if (model != null)
-            {
-                return RedirectToAction("Create", model);
-            }
+        //     if (model != null)
+        //     {
+        //         return RedirectToAction("Create", model);
+        //     }
 
-            return View();
-        }
+        //     return View();
+        // }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -127,16 +110,6 @@ namespace memo.Controllers
             return View();
         }
 
-        public IActionResult CreateEveProject()
-        {
-            return Redirect("http://intranet/apps/works/admin/cindex.asp");
-        }
-
-        public IActionResult CreateEveProjectM()
-        {
-            return Redirect("http://intranet/apps/works/moduls/levels.asp");
-        }
-
 
         [HttpGet]
         public IActionResult Create(int? id, Order model)
@@ -147,15 +120,16 @@ namespace memo.Controllers
                 .ToList();
             ViewBag.WonOffersList = new SelectList(wonOffersList, "OfferId", "OfferName");
             ViewBag.CurrencyList = new SelectList(_db.Currency.ToList(), "CurrencyId", "Name");
-            ViewBag.ContactList = new SelectList(_db.Contact.Where(m => m.CompanyId == 45).ToList(), "ContactId", "PersonName");
-            ViewBag.EveContactList = getEveContacts();
+            // ViewBag.ContactList = new SelectList(_db.Contact.Where(m => m.CompanyId == 45).ToList(), "ContactId", "PersonName");
+            ViewBag.EveContactList = getEveContacts(_eveDb);
+            ViewBag.EveOrderCodes = getOrderCodes(_eveDb);
 
             Offer offer = new Offer();
             string offerCompanyName = string.Empty;
             int invoiceDueDays = 0;
             string curSymbol = "CZK";
 
-            if (model.OfferId != null)
+            if (model.OfferId != null && model.OfferId != 0)
             {
                 offer = _db.Offer.Find(model.OfferId);
                 curSymbol = _db.Currency.Find(offer.CurrencyId).Name;
@@ -176,6 +150,7 @@ namespace memo.Controllers
                 Order = model,
                 OfferCompanyName = offerCompanyName,
                 InvoiceDueDays = invoiceDueDays,
+                CurrencyName = curSymbol,
             };
 
             return View(viewModel);
@@ -208,6 +183,8 @@ namespace memo.Controllers
                 .OrderBy(t => t.OfferName)
                 .ToList();
             ViewBag.WonOffersList = new SelectList(wonOffersList, "OfferId", "OfferName");
+            ViewBag.EveContactList = getEveContacts(_eveDb);
+            ViewBag.EveOrderCodes = getOrderCodes(_eveDb);
 
             return View(vm);
         }
@@ -229,14 +206,9 @@ namespace memo.Controllers
                 .ToList();
             ViewBag.WonOffersList = new SelectList(wonOffersList, "OfferId", "OfferName");
             ViewBag.CurrencyList = new SelectList(_db.Currency.ToList(), "CurrencyId", "Name");
-            ViewBag.ContactList = new SelectList(_db.Contact.ToList(), "ContactId", "PersonName");
-            ViewBag.EveContactList = getEveContacts();
-
-            if (offerId == 0)
-            {
-                ModelState.AddModelError(string.Empty, "Nelze vybrat prázdnou objednávku");
-                return View();
-            }
+            // ViewBag.ContactList = new SelectList(_db.Contact.ToList(), "ContactId", "PersonName");
+            ViewBag.EveContactList = getEveContacts(_eveDb);
+            ViewBag.EveOrderCodes = getOrderCodes(_eveDb);
 
             Order order = _db.Order.Find(id);
             if (order == null)
@@ -262,15 +234,17 @@ namespace memo.Controllers
                 OfferId = (int)order.OfferId,
                 OfferCompanyName = _db.Company.Find(offer.CompanyId).Name,
                 InvoiceDueDays = _db.Company.Find(offer.CompanyId).InvoiceDueDays,
+                CurrencyName = _db.Currency.Find(offer.CurrencyId).Name,
                 // TotalHours = totalHours
             };
 
-            return View(viewModel);
-        }
+            if (offerId == 0 && viewModel.Edit != "true")
+            {
+                ModelState.AddModelError(string.Empty, "Nelze vybrat prázdnou objednávku");
+                return View();
+            }
 
-        private bool isOrderCodeValid(string orderCode)
-        {
-            return false;
+            return View(viewModel);
         }
 
         [HttpPost]
@@ -325,13 +299,25 @@ namespace memo.Controllers
                 .ToList();
             ViewBag.WonOffersList = new SelectList(wonOffersList, "OfferId", "OfferName");
             ViewBag.CurrencyList = new SelectList(_db.Currency.ToList(), "CurrencyId", "Name");
-            ViewBag.ContactList = new SelectList(_db.Contact.ToList(), "ContactId", "PersonName");
+            // ViewBag.ContactList = new SelectList(_db.Contact.ToList(), "ContactId", "PersonName");
+            ViewBag.EveContactList = getEveContacts(_eveDb);
+            ViewBag.EveOrderCodes = getOrderCodes(_eveDb);
+
+            var offer = _db.Offer.Find(vm.Order.OfferId);
+            var order = vm.Order;
+            var offerid = Convert.ToInt32(vm.Order.OfferId);
+            var offercompanyname = _db.Company.Find(offer.CompanyId).Name;
+            var invoiceduedays = _db.Company.Find(offer.CompanyId).InvoiceDueDays;
+            var currencyname = _db.Currency.Find(offer.CurrencyId).Name;
 
             OfferOrderVM viewModel = new OfferOrderVM()
             {
-                Offer = _db.Offer.Find(vm.Order.OfferId),
-                Order = vm.Order,
-                OfferId = Convert.ToInt32(vm.Order.OfferId)
+                Offer = offer,
+                Order = order,
+                OfferId = offerid,
+                OfferCompanyName = offercompanyname,
+                InvoiceDueDays = invoiceduedays,
+                CurrencyName = currencyname,
             };
 
             return View(viewModel);
@@ -357,39 +343,42 @@ namespace memo.Controllers
             return RedirectToAction("Index");
         }
 
+        public SumMinutesSP GetSumMinutes(string orderName)
+        {
+            return _db.SumMinutesSP
+                .FromSqlRaw<SumMinutesSP>("spSumMinutesByOrderName {0}", orderName)
+                .ToList()
+                .SingleOrDefault();
+        }
+
         private bool OrderExists(int id)
         {
             return _db.Order.Any(e => e.OrderId == id);
         }
 
-        private SelectList getEveContacts()
+        private bool isOrderCodeValid(string orderCode)
         {
-            // var allUsers = _eveDb.tUsers
-            //     .Select(p => new tUsers
-            //         {
-            //             Id = p.Id,
-            //             LastName = $"{p.LastName} {p.FirstName}",
-            //         })
-            //     .ToList();
+            cOrders cOrder = _eveDb.cOrders
+                .Where(x => x.OrderCode == orderCode && x.Active == 1)
+                .FirstOrDefault();
 
-
-            List<SelectListItem> eveContactsList = new List<SelectListItem>();
-            foreach (tUsers item in _eveDb.tUsers)
+            if (cOrder == null)
             {
-                eveContactsList.Add(new SelectListItem
-                {
-                    Value = item.Id.ToString(),
-                    Text = $"{item.LastName} {item.FirstName}"
-                });
+                return false;
             }
 
-            // {
-            //     new SelectListItem { Value = "Jan Verner", Text = "Jan Verner" },
-            //     new SelectListItem { Value = "Michal Jakšík", Text = "Michal Jakšík" },
-            //     new SelectListItem { Value = "Ivo Grác", Text = "Ivo Grác" },
-            // };
+            System.Console.WriteLine(cOrder?.OrderCode + " " + cOrder?.OrderName);
+            return true;
+        }
 
-            return new SelectList(eveContactsList, "Value", "Text");
+        public IActionResult CreateEveProject()
+        {
+            return Redirect("http://intranet/apps/works/admin/cindex.asp");
+        }
+
+        public IActionResult CreateEveProjectM()
+        {
+            return Redirect("http://intranet/apps/works/moduls/levels.asp");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

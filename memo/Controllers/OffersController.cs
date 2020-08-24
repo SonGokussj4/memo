@@ -17,10 +17,12 @@ namespace memo.Controllers
     public class OffersController : ControllerBase
     {
         public ApplicationDbContext _db { get; }
+        public EvektorDbContext _eveDb { get; }
 
-        public OffersController(ApplicationDbContext db)
+        public OffersController(ApplicationDbContext db, EvektorDbContext eveDb)
         {
             _db = db;
+            _eveDb = eveDb;
         }
 
         public IActionResult Index()
@@ -42,8 +44,8 @@ namespace memo.Controllers
 
             ViewBag.CompanyList = new SelectList(_db.Company.ToList(), "CompanyId", "Name");
             ViewBag.ContactList = new SelectList(_db.Contact.ToList(), "ContactId", "PersonName");
-            ViewBag.DepartmentList = getDepartmentList();
-            ViewBag.EveContactList = getEveContacts();
+            ViewBag.DepartmentList = getDepartmentList(_eveDb);
+            ViewBag.EveContactList = getEveContacts(_eveDb);
             ViewBag.CurrencyList = new SelectList(_db.Currency.ToList(), "CurrencyId", "Name");
             ViewBag.OfferStatusList = new SelectList(_db.OfferStatus.ToList(), "OfferStatusId", "Status");
 
@@ -87,10 +89,10 @@ namespace memo.Controllers
                 return RedirectToAction("Index");
             }
 
-            ViewBag.DepartmentList = getDepartmentList();
+            ViewBag.DepartmentList = getDepartmentList(_eveDb);
             ViewBag.CompanyList = new SelectList(_db.Company.ToList(), "CompanyId", "Name");
             ViewBag.ContactList = new SelectList(_db.Contact.ToList(), "ContactId", "PersonName");
-            ViewBag.EveContactList = getEveContacts();
+            ViewBag.EveContactList = getEveContacts(_eveDb);
             ViewBag.CurrencyList = new SelectList(_db.Currency.ToList(), "CurrencyId", "Name");
             ViewBag.OfferStatusList = new SelectList(_db.OfferStatus.ToList(), "OfferStatusId", "Status");
 
@@ -111,10 +113,10 @@ namespace memo.Controllers
                 return NotFound();
             }
 
-            ViewBag.DepartmentList = getDepartmentList();
+            ViewBag.DepartmentList = getDepartmentList(_eveDb);
             ViewBag.CompanyList = new SelectList( _db.Company.ToList(), "CompanyId", "Name");
             ViewBag.ContactList = new SelectList(_db.Contact.ToList(), "ContactId", "PersonName");
-            ViewBag.EveContactList = getEveContacts();
+            ViewBag.EveContactList = getEveContacts(_eveDb);
             ViewBag.CurrencyList = new SelectList( _db.Currency.ToList(), "CurrencyId", "Name");
             ViewBag.OfferStatusList = new SelectList( _db.OfferStatus.ToList(), "OfferStatusId", "Status");
             ViewBag.OfferStatusName = offer.OfferStatus.Name;
@@ -201,10 +203,10 @@ namespace memo.Controllers
             // Console.WriteLine(errors.ToString());
 
             // Populate
-            ViewBag.DepartmentList = getDepartmentList();
+            ViewBag.DepartmentList = getDepartmentList(_eveDb);
             ViewBag.CompanyList = new SelectList(_db.Company.ToList(), "CompanyId", "Name");
             ViewBag.ContactList = new SelectList(_db.Contact.ToList(), "ContactId", "PersonName");
-            ViewBag.EveContactList = getEveContacts();
+            ViewBag.EveContactList = getEveContacts(_eveDb);
             ViewBag.CurrencyList = new SelectList(_db.Currency.ToList(), "CurrencyId", "Name");
             // ViewBag.OfferStatusList = new SelectList(_db.OfferStatus.ToList(), "OfferStatusId", "Status");
             ViewBag.OfferStatusName = _db.OfferStatus.Find(model.OfferStatusId).Name;;
@@ -284,47 +286,35 @@ namespace memo.Controllers
         //     return 0;
         // }
 
-        private SelectList getDepartmentList()
-        {
-            List<SelectListItem> departmentList = new List<SelectListItem>
-            {
-                new SelectListItem { Value = "O1", Text = "O1 Management" },
-                new SelectListItem { Value = "A0", Text = "A0 Marketing" },
-                new SelectListItem { Value = "A1", Text = "A1 Konstrukce" },
-                new SelectListItem { Value = "A2", Text = "A2 Výpočty" },
-                new SelectListItem { Value = "A3", Text = "A3 Technická podpora" },
-                new SelectListItem { Value = "A4", Text = "A4 TPV" },
-                new SelectListItem { Value = "A5", Text = "A5 Dokumentace" },
-                new SelectListItem { Value = "A6", Text = "A6 Letecké služby" },
-                new SelectListItem { Value = "O2", Text = "O2 Airworthiness" },
-                new SelectListItem { Value = "O3", Text = "O3 ICT" },
-                new SelectListItem { Value = "O4", Text = "O4 HR" },
-                new SelectListItem { Value = "O6", Text = "O6 Business Develop." },
-                new SelectListItem { Value = "P135", Text = "P135 Zodiac" },
-                new SelectListItem { Value = "C0", Text = "C0 Správa" },
-                new SelectListItem { Value = "C1", Text = "C1 Vývoj aut" },
-                new SelectListItem { Value = "C2", Text = "C2 Analýzy" },
-                new SelectListItem { Value = "C3", Text = "C3 STIHL" },
-                new SelectListItem { Value = "C4", Text = "C4 EKONOMIKA" },
-                new SelectListItem { Value = "C5", Text = "C5 Design" },
-                new SelectListItem { Value = "C6", Text = "C6 Aerodynamika" },
-                new SelectListItem { Value = "C7", Text = "C7 Vývoj aut Kvasiny" },
-            };
+        // private SelectList getDepartmentList()
+        // {
+        //     List<SelectListItem> departmentList = new List<SelectListItem>
+        //     {
+        //         new SelectListItem { Value = "O1", Text = "O1 Management" },
+        //         new SelectListItem { Value = "A0", Text = "A0 Marketing" },
+        //         new SelectListItem { Value = "A1", Text = "A1 Konstrukce" },
+        //         new SelectListItem { Value = "A2", Text = "A2 Výpočty" },
+        //         new SelectListItem { Value = "A3", Text = "A3 Technická podpora" },
+        //         new SelectListItem { Value = "A4", Text = "A4 TPV" },
+        //         new SelectListItem { Value = "A5", Text = "A5 Dokumentace" },
+        //         new SelectListItem { Value = "A6", Text = "A6 Letecké služby" },
+        //         new SelectListItem { Value = "O2", Text = "O2 Airworthiness" },
+        //         new SelectListItem { Value = "O3", Text = "O3 ICT" },
+        //         new SelectListItem { Value = "O4", Text = "O4 HR" },
+        //         new SelectListItem { Value = "O6", Text = "O6 Business Develop." },
+        //         new SelectListItem { Value = "P135", Text = "P135 Zodiac" },
+        //         new SelectListItem { Value = "C0", Text = "C0 Správa" },
+        //         new SelectListItem { Value = "C1", Text = "C1 Vývoj aut" },
+        //         new SelectListItem { Value = "C2", Text = "C2 Analýzy" },
+        //         new SelectListItem { Value = "C3", Text = "C3 STIHL" },
+        //         new SelectListItem { Value = "C4", Text = "C4 EKONOMIKA" },
+        //         new SelectListItem { Value = "C5", Text = "C5 Design" },
+        //         new SelectListItem { Value = "C6", Text = "C6 Aerodynamika" },
+        //         new SelectListItem { Value = "C7", Text = "C7 Vývoj aut Kvasiny" },
+        //     };
 
-            return new SelectList(departmentList, "Value", "Text");
-        }
-
-        private SelectList getEveContacts()
-        {
-            List<SelectListItem> eveContactsList = new List<SelectListItem>
-            {
-                new SelectListItem { Value = "Jan Verner", Text = "Jan Verner" },
-                new SelectListItem { Value = "Michal Jakšík", Text = "Michal Jakšík" },
-                new SelectListItem { Value = "Ivo Grác", Text = "Ivo Grác" },
-            };
-
-            return new SelectList(eveContactsList, "Value", "Text");
-        }
+        //     return new SelectList(departmentList, "Value", "Text");
+        // }
 
         private bool OfferExists(int id)
         {
