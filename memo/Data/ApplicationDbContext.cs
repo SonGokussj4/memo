@@ -26,6 +26,7 @@ namespace memo.Data
 
         // PROCEDURES
         public virtual DbSet<SumMinutesSP> SumMinutesSP { get; set; }
+        // public virtual DbSet<DashboardVM> DashboardVM { get; set; }
 
         // EVE
         public virtual DbSet<tWorks> tWorks { get; set; }

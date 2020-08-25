@@ -20,3 +20,23 @@ BEGIN
 	GROUP BY cOrders.OrderCode
 	--ORDER BY cOrders.OrderCode
 END
+
+GO
+
+CREATE PROCEDURE [dbo].[spGetPlannedCash]
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT
+		MONTH(InvoiceDueDate),
+		SUM(PriceFinalCzk)
+	FROM
+		[MemoDB].[memo].[Order]
+	WHERE
+		YEAR(InvoiceDueDate) = '2020'
+	GROUP BY
+		MONTH(InvoiceDueDate)
+END
+
+

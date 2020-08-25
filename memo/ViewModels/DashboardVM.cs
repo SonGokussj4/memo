@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using memo.Models;
@@ -6,9 +7,11 @@ namespace memo.ViewModels
 {
     public class DashboardVM
     {
-        public List<string> Months { get; set; }
-        public List<string> PlannedCashPerMonth { get; set; }
+        public List<DateTime?> Months { get; set; }
+        public List<int?> PlannedCashPerMonth { get; set; }
 
+        public int Cash { get; set; }
+        public DateTime Month { get; set; }
         // public Offer Offer { get; set; }
         // public Order Order { get; set; }
 
