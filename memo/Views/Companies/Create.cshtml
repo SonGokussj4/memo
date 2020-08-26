@@ -1,65 +1,83 @@
 @model memo.Models.Company
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Nová firma";
 }
 
-<h1>Nová firma</h1>
+<div class="text-center">
+    <h1 class="display-6">@ViewData["Title"]</h1>
+    <hr />
+</div>
 
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
+
+<div class="container d-flex justify-content-center">
+    <div class="col-lg-10 personal-info">
+        <form class="card" role="form" autocomplete="on" asp-action="Create" method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        @* <input type="hidden" asp-for="CompanyId" /> *@
+
+        <div class="form-group row">
+            <label asp-for="Name" class="col-lg-3 col-form-label form-control-label control-label"></label>
+            <div class="col-lg-4">
+                <input asp-for="Name" class="form-control" type="text" placeholder="Název firmy"/>
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="City" class="control-label"></label>
-                <input asp-for="City" class="form-control" />
+        </div>
+
+        <div class="form-group row">
+            <label asp-for="City" class="col-lg-3 col-form-label form-control-label control-label">Adresa</label>
+            <div class="col-lg-4">
+                <input asp-for="City" class="form-control" type="text" placeholder="Město"/>
                 <span asp-validation-for="City" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Address" class="control-label"></label>
-                <input asp-for="Address" class="form-control" />
+            <div class="col-lg-5">
+                <input asp-for="Address" class="form-control" type="text" placeholder="Ulice"/>
                 <span asp-validation-for="Address" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Phone" class="control-label"></label>
-                <input asp-for="Phone" class="form-control" />
+        </div>
+
+        <div class="form-group row">
+            <label asp-for="Phone" class="col-lg-3 col-form-label form-control-label control-label">Kontakt</label>
+            <div class="col-lg-4">
+                <input asp-for="Phone" class="form-control" type="text" placeholder="Telefoní číslo"/>
                 <span asp-validation-for="Phone" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Web" class="control-label"></label>
-                <input asp-for="Web" class="form-control" />
+            <div class="col-lg-5">
+                <input asp-for="Web" class="form-control" type="text" placeholder="https://"/>
                 <span asp-validation-for="Web" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="InvoiceDueDays" class="control-label"></label>
-                <input asp-for="InvoiceDueDays" class="form-control" />
+        </div>
+
+        <div class="form-group row">
+            <label asp-for="InvoiceDueDays" class="col-lg-3 col-form-label form-control-label control-label">Splatnost faktury</label>
+            <div class="col-lg-3">
+                <input asp-for="InvoiceDueDays" class="form-control" type="text" placeholder="Ve dnech"/>
                 <span asp-validation-for="InvoiceDueDays" class="text-danger"></span>
             </div>
+        </div>
 
-            <div class="form-group row">
-                <label asp-for="Notes" class="col-lg-3 col-form-label form-control-label control-label"></label>
-                <div class="col-lg-9">
-                    <textarea asp-for="Notes" class="form-control"></textarea>
-                    <span asp-validation-for="Notes" class="text-danger"></span>
-                </div>
+        <div class="form-group row">
+            <label asp-for="Notes" class="col-lg-3 col-form-label form-control-label control-label"></label>
+            <div class="col-lg-9">
+                <textarea asp-for="Notes" class="form-control"></textarea>
+                @* @Html.TextAreaFor(m => m.Notes, additionalViewData: new { htmlAttributes = new { @class = "form-control" }}) *@
+                <span asp-validation-for="Notes" class="text-danger"></span>
             </div>
+        </div>
 
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+        <div class="form-group row">
+            <div class="col-lg-3">
+                <a asp-action="Index" class="btn btn-light"><i class="fa fa-arrow-left"></i> Zpět</a>
             </div>
+            <div class="col-lg-9">
+                <input type="reset" class="btn btn-secondary" value="Vyprázdnit pole" />
+                <input type="submit" class="btn btn-primary" value="Vytvořit firmu" />
+            </div>
+        </div>
 
-            @Html.CheckBoxFor(m => m.Active, new { style = "display:none", @checked="checked" })
+        @Html.CheckBoxFor(m => m.Active, new { style = "display:none", @checked="checked" })
 
         </form>
     </div>
-</div>
-<div>
-    <a asp-action="Index">Back to List</a>
 </div>
 
