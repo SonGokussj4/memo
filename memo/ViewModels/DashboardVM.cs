@@ -7,11 +7,11 @@ namespace memo.ViewModels
 {
     public class DashboardVM
     {
-        public List<DateTime?> Months { get; set; }
-        public List<int?> PlannedCashPerMonth { get; set; }
+        // public List<DateTime?> Months { get; set; }
+        // public List<int?> PlannedCashPerMonth { get; set; }
 
-        public int Cash { get; set; }
         public DateTime Month { get; set; }
+        public int Cash { get; set; }
         // public Offer Offer { get; set; }
         // public Order Order { get; set; }
 

@@ -1,70 +1,88 @@
+@using System.Globalization;
+
 @{
+
     ViewData["Title"] = "Vyhodnocení";
 }
 
-@model memo.ViewModels.DashboardVM
+@model IEnumerable<memo.ViewModels.DashboardVM>
 
 <div class="text-center">
     <h1 class="display-6">@ViewData["Title"]</h1>
     <hr />
 </div>
 
+@* @foreach (var item in @Model)
+{
+    <p>Item: @item.Month, Penizky: @string.Format(CultureInfo.CreateSpecificCulture("cs-CZ"), "{0:C}", item.Cash)</p>
+    <p>Item: @item.Month, Penizky: @item.Cash.ToString("C", CultureInfo.CreateSpecificCulture("ja-JP"))</p>
+} *@
+@*string.Format("{0:#.00}", Convert.ToDecimal(g.Sum(gi => gi.PriceFinalCzk))),
 @for (int i = 0; i < @Model.Months.Count; i++)
 {
     <p>Mesic: @Model.Months[i], Penizky: @Model.PlannedCashPerMonth[i]</p>
 }
+*@
 
-<hr />
-
-<div id="chart_container">
-    <canvas id="bar_chart" width="400" height="400"></canvas>
+<div style="display: flex; align-items: center; justify-content: center;">
+    <div id="chart_container" style="width: 400px;">
+        <canvas id="bar_chart" width="400" height="400"></canvas>
+    </div>
 </div>
 
 @section scripts{
 <script>
 
-    //var monthArray = Json.Parse('@Html.Raw(Json.Serialize(@Model.Months))');
-    //var cashArray = Json.Parse('@Html.Raw(Json.Serialize(@Model.PlannedCashPerMonth))');
+    @* var monthArray = @Json.Serialize(Model.Months); *@
+    @* var cashArray = @Json.Serialize(Model.PlannedCashPerMonth); *@
+    @* var monthArray = @Json.Serialize(Model.Months); *@
+    @* var cashArray = @Json.Serialize(Model.PlannedCashPerMonth); *@
 
-    var monthArray = @Json.Serialize(Model.Months);
-    var cashArray = @Json.Serialize(Model.PlannedCashPerMonth);
+    var items = @Html.Raw(Json.Serialize(Model));
+    //var monthArray = items.map(a => new Date(a.month).getMonth());
+    var monthArray = items.map(a => new Date(a.month).toLocaleString('cs-CZ', { month: 'long' }));
+    var cashArray = items.map(a => a.cash);
 
     var ctx = document.getElementById('bar_chart');
+
     var barChart = new Chart(ctx, {
         type: 'bar',
         data: {
             labels: monthArray,
-            //labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
             datasets: [{
-                label: 'Penez prijde',
+                label: 'Evektor In',
                 data: cashArray,
-                //data: [12, 19, 3, 5, 2, 3],
-                //backgroundColor: [
-                //    'rgba(255, 99, 132, 0.2)',
-                //    'rgba(54, 162, 235, 0.2)',
-                //    'rgba(255, 206, 86, 0.2)',
-                //    'rgba(75, 192, 192, 0.2)',
-                //    'rgba(153, 102, 255, 0.2)',
-                //    'rgba(255, 159, 64, 0.2)'
-                //],
-                //borderColor: [
-                //    'rgba(255, 99, 132, 1)',
-                //    'rgba(54, 162, 235, 1)',
-                //    'rgba(255, 206, 86, 1)',
-                //    'rgba(75, 192, 192, 1)',
-                //    'rgba(153, 102, 255, 1)',
-                //    'rgba(255, 159, 64, 1)'
-                //],
+                fillColor: "#79D1CF",
+                backgroundColor: 'rgba(99, 240, 132, 0.4)',
+                borderColor: 'rgba(99, 240, 132, 1)',
                 borderWidth: 1
             }]
         },
         options: {
+            title: {
+                display: true,
+                text: 'Finance do Eve v průběhu měsíců roku 2020',
+            },
             scales: {
                 yAxes: [{
+                    //display: true,
                     ticks: {
-                        beginAtZero: true
+                        beginAtZero: true,
+                        //steps: 5,
+                        //stepValue: 200000,
+                        //max: 1000000,
+                        callback: function(value, index, values) {
+                            return value.toLocaleString('cs-CZ') + ' Kč';
+                        }
                     }
                 }]
+            },
+            tooltips: {
+                callbacks: {
+                    label: function(tooltipItem, data) {
+                        return tooltipItem.yLabel.toLocaleString('cs-CZ') + ' Kč';
+                    }
+                }
             }
         }
     });

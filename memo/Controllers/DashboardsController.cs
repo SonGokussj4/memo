@@ -24,10 +24,10 @@ namespace memo.Controllers
 
         public IActionResult Index()
         {
-            DashboardVM viewModel = new DashboardVM();
+            // DashboardVM viewModel = new DashboardVM();
 
-            viewModel.Months = _db.Order.Select(x => x.InvoiceDueDate).ToList();
-            viewModel.PlannedCashPerMonth = _db.Order.Select(x => x.PriceFinalCzk).ToList();
+            // viewModel.Months = _db.Order.Select(x => x.InvoiceDueDate).ToList();
+            // viewModel.PlannedCashPerMonth = _db.Order.Select(x => x.PriceFinalCzk).ToList();
 
             // DashboardVM dashboardVM = _db.Order
             //     .Where(x => x.InvoiceDueDate.Value.Year == 2020)
@@ -38,18 +38,20 @@ namespace memo.Controllers
             //         }
             //     ).ToList();
 
-            var result = _db.Order
+            List<DashboardVM> viewModel = _db.Order
                 .Where(a => a.InvoiceDueDate.Value.Year == 2020)
                 .GroupBy(b => b.InvoiceDueDate.Value.Month)
-                .Select(g => new
+                .Select(g => new DashboardVM
                 {
-                    Month2020 = g.Key,
-                    TotalCount = g.Count(),
-                    SumaNormal = g.Sum(gi => gi.PriceFinalCzk),
-                    Suma = string.Format("{0:#.00}", Convert.ToDecimal(g.Sum(gi => gi.PriceFinalCzk))),
-                    SumaC = string.Format("{0:C}", Convert.ToDecimal(g.Sum(gi => gi.PriceFinalCzk))),
-                    TotalHours = $"{g.Sum(gi => gi.TotalHours)} hod",
-                    AvgHourWage = $"{string.Format("{0:C}", g.Average(gi => gi.HourWage))}/hod",
+                    // Month2020 = g.Key,
+                    // TotalCount = g.Count(),
+                    // SumaNormal = g.Sum(gi => gi.PriceFinalCzk),
+                    // Suma = string.Format("{0:#.00}", Convert.ToDecimal(g.Sum(gi => gi.PriceFinalCzk))),
+                    // SumaC = string.Format("{0:C}", Convert.ToDecimal(g.Sum(gi => gi.PriceFinalCzk))),
+                    // TotalHours = $"{g.Sum(gi => gi.TotalHours)} hod",
+                    // AvgHourWage = $"{string.Format("{0:C}", g.Average(gi => gi.HourWage))}/hod",
+                    Month = new DateTime(2020, g.Key, 1),
+                    Cash = (int)g.Sum(gi => gi.PriceFinalCzk),
                 })
                 .ToList();
 

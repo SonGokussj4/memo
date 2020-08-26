@@ -1,3 +1,5 @@
+@using System.Globalization;
+
 @{
     ViewData["Title"] = "Zakázky";
 }
@@ -107,7 +109,8 @@
                 <th scope="row" class="text-right">@item.TotalHours</th>
                 <th scope="row" class="text-left">@String.Format("{0:dd.MM.yyyy}", @item.InvoiceIssueDate)</th>
                 @* <th scope="row" class="text-right">@item.ExchangeRate</th> *@
-                <th scope="row" class="text-right">@String.Format("{0:#0}", @item.PriceFinalCzk)</th>
+                @* <th scope="row" class="text-right">@String.Format("{0:#0}", @item.PriceFinalCzk)</th> *@
+                <th scope="row" class="text-right">@string.Format(CultureInfo.CreateSpecificCulture("cs-CZ"), "{0:C0}", @item.PriceFinalCzk)</th>
                 <th scope="row" class="notesWrap" >@item.Notes</th>
                 <th scope="row" class="text-center">@item.Offer?.Currency.Name</th>
                 <th scope="row" class="text-right">@item.OtherCosts</th>
@@ -297,14 +300,21 @@
     }
 
     function priceFormatter(data) {
-        var field = parseInt(this.field.replace(",", ""));
+        var field = parseInt(this.field.replace(",", "").replace("&nbsp;", "").replace(" ", "").replace("Kč", ""));
         console.log(field);
         //var field = parseInt(this.field).val().replace(/[^0-9]/g, '')
-        return data.map(function (row) {
-            return +row[field]
+        var vysledek = data.map(function (row) {
+            var cost = parseInt(row[field]
+                //.replace(/, (Kč)(&nbsp);/g, ''));
+                .replace(",", "")
+                .replace("&nbsp;", "")
+                .replace(" ", "")
+                .replace("Kč", ""));
+            return + cost
         }).reduce(function (sum, i) {
             return sum + i
         }, 0)
+        return vysledek.toLocaleString('cs-CZ') + ' Kč'
     }
 
     $(document).ready(function() {
