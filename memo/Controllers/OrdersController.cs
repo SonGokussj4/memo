@@ -124,15 +124,17 @@ namespace memo.Controllers
             ViewBag.EveContactList = getEveContacts(_eveDb);
             ViewBag.EveOrderCodes = getOrderCodes(_eveDb);
 
-            Offer offer = new Offer();
             string offerCompanyName = string.Empty;
             int invoiceDueDays = 0;
             string curSymbol = "CZK";
+            int offerFinalPrice = 0;
 
+            Offer offer = new Offer();
             if (model.OfferId != null && model.OfferId != 0)
             {
                 offer = _db.Offer.Find(model.OfferId);
                 curSymbol = _db.Currency.Find(offer.CurrencyId).Name;
+                offerFinalPrice = (int)offer.Price;
 
                 Company company = _db.Company.Find(offer.CompanyId);
                 if (company != null)
@@ -143,6 +145,7 @@ namespace memo.Controllers
             }
 
             model.ExchangeRate = Decimal.Parse(getCurrencyStr(curSymbol).Replace(",", "."), CultureInfo.InvariantCulture);
+            model.PriceFinal = offerFinalPrice;
 
             OfferOrderVM viewModel = new OfferOrderVM()
             {
