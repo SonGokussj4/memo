@@ -53,15 +53,16 @@
                 label: 'Evektor In',
                 data: cashArray,
                 fillColor: "#79D1CF",
-                backgroundColor: 'rgba(99, 240, 132, 0.4)',
-                borderColor: 'rgba(99, 240, 132, 1)',
-                borderWidth: 1
+                backgroundColor: 'rgba(0, 123, 255, 0.4)',
+                borderColor: 'rgba(0, 123, 255, 0.8)',
+                borderWidth: 1,
+
             }]
         },
         options: {
             title: {
                 display: true,
-                text: 'Finance do Eve v průběhu měsíců roku 2020',
+                text: 'Finance Eve v měsících roku 2020',
             },
             scales: {
                 yAxes: [{
@@ -75,6 +76,9 @@
                             return value.toLocaleString('cs-CZ') + ' Kč';
                         }
                     }
+                }],
+                xAxes: [{
+                    barPercentage: 0.5,
                 }]
             },
             tooltips: {
