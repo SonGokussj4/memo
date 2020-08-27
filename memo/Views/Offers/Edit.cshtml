@@ -18,6 +18,11 @@
         color: red;
         text-align: center;
     }
+
+    .cardTitleMerged {
+        display: flex;
+        justify-content: space-between;
+    }
 </style>
 
 <div class="text-center">
@@ -27,12 +32,32 @@
 
 
 <div class="container d-flex justify-content-center">
-    <div class="col-lg-10 personal-info">
+    <div class="col-lg-10 push-lg-2 ">
         <form class="card" role="form" autocomplete="on" asp-action="Edit" method="post">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
         <input type="hidden" asp-for="OfferId" />
         <input type="hidden" asp-for="OfferStatusId" />
+
+        <div class="cardTitleMerged">
+
+            <h5 class="card-title">Upravit informace o nabídce</h5>
+
+            <div class="form-group">
+                <div class="pretty p-bigger p-default p-curve p-toggle">
+                    <input asp-for="Active" type="checkbox"/>
+                    <div class="state p-success p-on">
+                        <label>Aktivní</label>
+                    </div>
+                    <div class="state p-danger p-off">
+                        <label>Neaktivní </label>
+                    </div>
+                </div>
+                <span asp-validation-for="Active" class="text-danger"></span>
+            </div>
+
+        </div>
+        <hr />
 
         <div class="form-group row">
             <label asp-for="OfferName" class="col-lg-3 col-form-label form-control-label control-label"></label>
@@ -94,20 +119,6 @@
                     <i class="fa fa-frown-o"></i> Prohra
                 </button>
             </div>
-        </div>
-
-        <div class="form-group">
-            <label class="col-lg-3 col-form-label form-control-label control-label">Aktivita</label>
-            <div class="pretty p-bigger p-default p-curve p-toggle">
-                <input asp-for="Active" type="checkbox"/>
-                <div class="state p-success p-on">
-                    <label>Aktivní</label>
-                </div>
-                <div class="state p-danger p-off">
-                    <label>Neaktivní </label>
-                </div>
-            </div>
-            <span asp-validation-for="Active" class="text-danger"></span>
         </div>
 
         <hr />

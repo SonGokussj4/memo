@@ -24,11 +24,19 @@
 }
 *@
 
-<div style="display: flex; align-items: center; justify-content: center;">
-    <div id="chart_container" style="width: 400px;">
-        <canvas id="bar_chart" width="400" height="400"></canvas>
+<div class="container d-flex justify-content-center">
+    <div class="card">
+        <div class="card-title text-center">
+            <h5>Finance Eve v měsících roku 2020</h5>
+        </div>
+        <div style="display: flex; align-items: center; justify-content: center;">
+            <div id="chart_container" style="width: 400px;">
+                <canvas id="bar_chart" width="400" height="400"></canvas>
+            </div>
+        </div>
     </div>
 </div>
+
 
 @section scripts{
 <script>
@@ -39,7 +47,6 @@
     @* var cashArray = @Json.Serialize(Model.PlannedCashPerMonth); *@
 
     var items = @Html.Raw(Json.Serialize(Model));
-    //var monthArray = items.map(a => new Date(a.month).getMonth());
     var monthArray = items.map(a => new Date(a.month).toLocaleString('cs-CZ', { month: 'long' }));
     var cashArray = items.map(a => a.cash);
 
@@ -60,10 +67,10 @@
             }]
         },
         options: {
-            title: {
-                display: true,
-                text: 'Finance Eve v měsících roku 2020',
-            },
+            //title: {
+            //    display: true,
+            //    text: 'Finance Eve v měsících roku 2020',
+            //},
             scales: {
                 yAxes: [{
                     //display: true,
