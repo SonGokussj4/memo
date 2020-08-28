@@ -265,6 +265,13 @@ namespace memo.Controllers
                 ModelState.AddModelError("Order.OrderCode", "Neexistuje nebo je neaktivní.");
             }
 
+            // TODO: Zkontrolovat, pokud editace 'Cislo objednavky zakaznika - Order.OrderName' uz existuje, tak smula
+            // if (OrderNameExists(vm.Order.OrderName))
+            // {
+
+            //     ModelState.AddModelError("Order.OrderName", "Číslo objednávky zákazníka již existuje");
+            // }
+
             if (ModelState.IsValid)
             {
                 try

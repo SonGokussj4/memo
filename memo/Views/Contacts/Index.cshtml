@@ -65,7 +65,7 @@
                 <th scope="row">@item.Company?.Name</th>
                 <th scope="row">@item.Department</th>
                 <th scope="row">@item.Phone</th>
-                <th scope="row">@item.Email</th>
+                <th scope="row"><a href="mailto:@item.Email">@item.Email</a></th>
                 <th scope="row">@item.Notes</th>
                 <th scope="row">@String.Format("{0:dd.MM.yyyy}", @item.CreateDate)</th>
             </tr>

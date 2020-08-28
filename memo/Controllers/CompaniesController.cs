@@ -40,7 +40,7 @@ namespace memo.Controllers
         {
             if (ModelState.IsValid)
             {
-                company.Phone = company.Phone.Replace(" ", "");
+                company.Phone = company.Phone?.Replace(" ", "");
 
                 _db.Update(company);
                 _db.SaveChanges();
