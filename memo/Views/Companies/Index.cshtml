@@ -20,31 +20,33 @@
 
 <table
     id="table"
-    data-filter-control="false"
-    data-show-search-clear-button="true"
-    data-show-toggle="true"
     data-cookie="true"
     data-cookie-id-table="saveId"
+    data-filter-control="false"
+    data-search="true"
+    data-show-search-clear-button="true"
+    data-show-toggle="true"
     data-show-columns-toggle-all="true"
     data-show-columns="true"
     data-show-export="true"
-    data-toolbar="#toolbar"
+    data-sort-name="Name"
+    data-sort-order="asc"
     data-toggle="table"
-    data-search="true"
+    data-toolbar="#toolbar"
     class="table table-sm text-nowrap text-xsmall"
     style="width:100%"
     >
     <thead>
         <tr>
-            <th scope="col" data-field="0" data-sortable="false" data-filter-control="input"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></th>
-            <th scope="col" data-field="1" data-sortable="true" data-filter-control="input">Název</th>
-            <th scope="col" data-field="2" data-sortable="true" data-filter-control="input">Město</th>
-            <th scope="col" data-field="3" data-sortable="true" data-filter-control="input">Adresa</th>
-            <th scope="col" data-field="4" data-sortable="true" data-filter-control="input">Telefon</th>
-            <th scope="col" data-field="5" data-sortable="true" data-filter-control="input">Web</th>
-            <th scope="col" data-field="6" data-sortable="true" data-filter-control="input">Splatnost<br />[dny]</th>
-            <th scope="col" data-field="7" data-sortable="true" data-filter-control="input">Poznámky</th>
-            <th scope="col" data-field="8" data-sortable="true" data-filter-control="input">Vytvořeno</th>
+            <th scope="col" data-field="Id" data-sortable="false" data-filter-control="input"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></th>
+            <th scope="col" data-field="Name" data-sortable="true" data-filter-control="input">Název</th>
+            <th scope="col" data-field="City" data-sortable="true" data-filter-control="input">Město</th>
+            <th scope="col" data-field="Address" data-sortable="true" data-filter-control="input">Adresa</th>
+            <th scope="col" data-field="Telephone" data-sortable="true" data-filter-control="input">Telefon</th>
+            <th scope="col" data-field="Web" data-sortable="true" data-filter-control="input">Web</th>
+            <th scope="col" data-field="InvoiceDueDays" data-sortable="true" data-filter-control="input">Splatnost<br />[dny]</th>
+            <th scope="col" data-field="Notes" data-sortable="true" data-filter-control="input">Poznámky</th>
+            <th scope="col" data-field="CreateDate" data-sortable="true" data-filter-control="input">Vytvořeno</th>
         </tr>
     </thead>
     <tbody>
