@@ -132,6 +132,15 @@ body {
 
 /* User modifications
 -------------------------------------------------- */
+
+/* Form width */
+/* @media (min-width: 992px) */
+.col-lg-8 {
+    -ms-flex: 0 0 85%;
+    flex: 0 0 85%;
+    max-width: 85%;
+}
+
 .hide {
   display: none;
 }
@@ -178,6 +187,7 @@ form.myform {
     border-right: 0px;
     border-bottom: 0px;
 }
+
 /* Bootstrap-Select fixes
 -------------------------------------------------- */
 .bootstrap-select .no-results {
