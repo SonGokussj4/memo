@@ -54,7 +54,7 @@
     data-show-columns-toggle-all="true"
     data-show-columns="true"
     data-show-fullscreen="true"
-    data-sort-name="0"
+    data-sort-name="ReceiveDate"
     data-sort-order="desc"
     data-search="true"
     data-silent-sort="true"
@@ -71,17 +71,17 @@
     >
     <thead>
         <tr>
-            <th class="text-center" scope="col" data-field="0" data-sortable="true" data-filter-control="input" data-footer-formatter="idFormatter"  ><i class="fa fa-arrows-v" aria-hidden="true"></i> Id</th>
-            <th class="text-center" scope="col" data-field="1" data-sortable="true" data-filter-control="input">Status</th>
-            <th class="text-center" scope="col" data-field="2" data-sortable="true" data-filter-control="input">Název</th>
-            <th class="text-center" scope="col" data-field="3" data-sortable="true" data-filter-control="input">Přijato</th>
-            <th class="text-center" scope="col" data-field="4" data-sortable="true" data-filter-control="input">Firma</th>
-            <th class="text-center" scope="col" data-field="5" data-sortable="true" data-filter-control="input">Kontakt</th>
-            <th class="text-center" scope="col" data-field="6" data-sortable="true" data-filter-control="input">Předmět</th>
-            <th class="text-center" scope="col" data-field="7" data-sortable="true" data-filter-control="input">Cena</th>
-            <th class="text-center" scope="col" data-field="8" data-sortable="true" data-filter-control="input">Měna</th>
-            <th class="text-center" scope="col" data-field="9" data-sortable="true" data-filter-control="input">Poznámky</th>
-            <th class="text-center" scope="col" data-field="10" data-sortable="true" data-filter-control="select">Aktivní</th>
+            <th class="text-center" scope="col" data-field="Id" data-sortable="true" data-filter-control="input" data-footer-formatter="idFormatter"  ><i class="fa fa-arrows-v" aria-hidden="true"></i> Id</th>
+            <th class="text-center" scope="col" data-field="Status" data-sortable="true" data-filter-control="input">Status</th>
+            <th class="text-center" scope="col" data-field="Name" data-sortable="true" data-filter-control="input">Název</th>
+            <th class="text-center" scope="col" data-field="ReceiveDate" data-sortable="true" data-filter-control="input">Přijato</th>
+            <th class="text-center" scope="col" data-field="Company" data-sortable="true" data-filter-control="input">Firma</th>
+            <th class="text-center" scope="col" data-field="Contact" data-sortable="true" data-filter-control="input">Kontakt</th>
+            <th class="text-center" scope="col" data-field="Subject" data-sortable="true" data-filter-control="input">Předmět</th>
+            <th class="text-center" scope="col" data-field="Price" data-sortable="true" data-filter-control="input">Cena</th>
+            <th class="text-center" scope="col" data-field="Currency" data-sortable="true" data-filter-control="input">Měna</th>
+            <th class="text-center" scope="col" data-field="Notes" data-sortable="true" data-filter-control="input">Poznámky</th>
+            <th class="text-center" scope="col" data-field="Active" data-sortable="true" data-filter-control="select">Aktivní</th>
         </tr>
     </thead>
     <tbody>
@@ -107,7 +107,7 @@
                     <th scope="row" class="text-left" ><span class="badge badge-danger">@item.OfferStatus?.Name</span></th>
                 }
                 <th scope="row" class="text-left">@item.OfferName</th>
-                <th scope="row" class="text-left">@item.ReceiveDate.Value.ToString("dd.MM.yyyy")</th>
+                <th scope="row" class="text-left">@item.ReceiveDate.Value.ToString("yyyy-MM-dd")</th>
                 <th scope="row" class="text-left">@item.Company?.Name</th>
                 <th scope="row" class="text-left">@item.Contact?.PersonName</th>
                 <th scope="row" class="notesWrap" data-toggle="tooltip" data-placement="top" data-html="true" title="@item.Subject">
