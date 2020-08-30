@@ -5,7 +5,7 @@ using memo.Models;
 
 namespace memo.ViewModels
 {
-    public class DashboardVM
+    public class DashboardCashVM
     {
         // public List<DateTime?> Months { get; set; }
         // public List<int?> PlannedCashPerMonth { get; set; }

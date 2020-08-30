@@ -121,12 +121,15 @@ namespace memo.Controllers
             ViewBag.OfferStatusList = new SelectList( _db.OfferStatus.ToList(), "OfferStatusId", "Status");
             ViewBag.OfferStatusName = offer.OfferStatus.Name;
 
+            List<Order> createdOrders = _db.Order.Where(x => x.OfferId == id).ToList();
+            ViewBag.CreatedOrders = createdOrders;
+
             return View(offer);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(int id, Offer model)
+        public IActionResult Edit(string actionType, int id, Offer model)
         // public IActionResult Edit(int id, Offer model, string offerStatusId)
         {
             if (id != model.OfferId)
@@ -161,7 +164,24 @@ namespace memo.Controllers
                 //     return RedirectToAction("Select", "Orders", order);
                 // }
 
-                return RedirectToAction(nameof(Index));
+                // Populate
+                ViewBag.DepartmentList = getDepartmentList(_eveDb);
+                ViewBag.CompanyList = new SelectList(_db.Company.ToList(), "CompanyId", "Name");
+                ViewBag.ContactList = new SelectList(_db.Contact.ToList(), "ContactId", "PersonName");
+                ViewBag.EveContactList = getEveContacts(_eveDb);
+                ViewBag.CurrencyList = new SelectList(_db.Currency.ToList(), "CurrencyId", "Name");
+                // ViewBag.OfferStatusList = new SelectList(_db.OfferStatus.ToList(), "OfferStatusId", "Status");
+                ViewBag.OfferStatusName = _db.OfferStatus.Find(model.OfferStatusId).Name;
+                ViewBag.CreatedOrders = _db.Order.Where(x => x.OfferId == id).ToList();
+
+                if (actionType == "Uložit")
+                {
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction(nameof(Index));
+                }
             }
 
             // // Errors
@@ -176,7 +196,8 @@ namespace memo.Controllers
             ViewBag.EveContactList = getEveContacts(_eveDb);
             ViewBag.CurrencyList = new SelectList(_db.Currency.ToList(), "CurrencyId", "Name");
             // ViewBag.OfferStatusList = new SelectList(_db.OfferStatus.ToList(), "OfferStatusId", "Status");
-            ViewBag.OfferStatusName = _db.OfferStatus.Find(model.OfferStatusId).Name;;
+            ViewBag.OfferStatusName = _db.OfferStatus.Find(model.OfferStatusId).Name;
+            ViewBag.CreatedOrders = _db.Order.Where(x => x.OfferId == id).ToList();
 
             return View(model);
         }
@@ -207,85 +228,15 @@ namespace memo.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        // public decimal getCurrency(string symbol, string separator = "") {
-
-        //     // CZK is missing from list, return 1, no conversion needed
-        //     if (symbol.ToUpper() == "CZK")
-        //     {
-        //         return 1;
-        //     }
-
-        //     string URL = @"https://www.cnb.cz/cs/financni-trhy/devizovy-trh/kurzy-devizoveho-trhu/kurzy-devizoveho-trhu/denni_kurz.txt";
-
-        //     WebClient client = new WebClient();
-        //     string text = client.DownloadString(URL);
-
-        //     String[] lines = text.Split("\n");
-
-        //     // 31.07.2020 #147
-        //     // země|měna|množství|kód|kurz
-        //     // Austrálie|dolar|1|AUD|15,872
-        //     // Brazílie|real|1|BRL|4,276
-        //     foreach (string line in lines.Skip(1))
-        //     {
-        //         if (line.Contains("|") == false)
-        //             continue;
-
-        //         string[] splitted = line.Split("|");
-        //         string iterSymbol = splitted[splitted.Count() - 2];
-
-        //         if (iterSymbol == symbol)
-        //         {
-        //             return Decimal.Parse(splitted.Last().Replace(",", "."), CultureInfo.InvariantCulture);
-        //             // return Convert.ToDouble(splitted.Last());
-        //             // if (separator != "")
-        //             // {
-        //             //     //CultureInfo.InvariantCulture.NumberFormat.CurrencyDecimalSeparator = separator;
-        //             //     //CultureInfo.InvariantCulture.NumberFormat.NumberDecimalSeparator = separator;
-        //             //     return Decimal.Parse(splitted.Last().Replace(",", separator), CultureInfo.CurrentCulture);
-        //             // }
-        //             // else
-        //             // {
-        //             //     return Decimal.Parse(splitted.Last().Replace(",", "."), CultureInfo.InvariantCulture);
-        //             // }
-        //         }
-        //     }
-        //     return 0;
-        // }
-
-        // private SelectList getDepartmentList()
-        // {
-        //     List<SelectListItem> departmentList = new List<SelectListItem>
-        //     {
-        //         new SelectListItem { Value = "O1", Text = "O1 Management" },
-        //         new SelectListItem { Value = "A0", Text = "A0 Marketing" },
-        //         new SelectListItem { Value = "A1", Text = "A1 Konstrukce" },
-        //         new SelectListItem { Value = "A2", Text = "A2 Výpočty" },
-        //         new SelectListItem { Value = "A3", Text = "A3 Technická podpora" },
-        //         new SelectListItem { Value = "A4", Text = "A4 TPV" },
-        //         new SelectListItem { Value = "A5", Text = "A5 Dokumentace" },
-        //         new SelectListItem { Value = "A6", Text = "A6 Letecké služby" },
-        //         new SelectListItem { Value = "O2", Text = "O2 Airworthiness" },
-        //         new SelectListItem { Value = "O3", Text = "O3 ICT" },
-        //         new SelectListItem { Value = "O4", Text = "O4 HR" },
-        //         new SelectListItem { Value = "O6", Text = "O6 Business Develop." },
-        //         new SelectListItem { Value = "P135", Text = "P135 Zodiac" },
-        //         new SelectListItem { Value = "C0", Text = "C0 Správa" },
-        //         new SelectListItem { Value = "C1", Text = "C1 Vývoj aut" },
-        //         new SelectListItem { Value = "C2", Text = "C2 Analýzy" },
-        //         new SelectListItem { Value = "C3", Text = "C3 STIHL" },
-        //         new SelectListItem { Value = "C4", Text = "C4 EKONOMIKA" },
-        //         new SelectListItem { Value = "C5", Text = "C5 Design" },
-        //         new SelectListItem { Value = "C6", Text = "C6 Aerodynamika" },
-        //         new SelectListItem { Value = "C7", Text = "C7 Vývoj aut Kvasiny" },
-        //     };
-
-        //     return new SelectList(departmentList, "Value", "Text");
-        // }
-
         [HttpPost]
         public IActionResult ChangeOfferStatus(int id, int btnOfferStatusId)
         {
+            // No status change, uses pushes "Create new Order"
+            if (btnOfferStatusId == 0)
+            {
+                return RedirectToAction("Create", "Orders", new { OfferId = id });
+            }
+
             Offer offer = _db.Offer.Find(id);
             offer.OfferStatusId = btnOfferStatusId;
 
@@ -295,20 +246,21 @@ namespace memo.Controllers
             switch (btnOfferStatusId)
             {
                 case 1:
-                    // Reason was changes to "Čeká", reset potential `LostReason` value
+                    // Status changes to Wait, reset potential `LostReason` value
                     offer.LostReason = string.Empty;
                     _db.Update(offer);
                     _db.SaveChanges();
                     return RedirectToAction("Edit", "Offers", new {Id = id});
 
                 case 2:
-                    // Reason was changes to "Výhra", reset potential `LostReason` value
+                    // Status changes to Won, reset potential `LostReason` value
                     offer.LostReason = string.Empty;
                     _db.Update(offer);
                     _db.SaveChanges();
-                    return RedirectToAction("Create", "Orders", new {OfferId = id});
+                    return RedirectToAction("Edit", "Offers", new {Id = id});
 
                 case 3:
+                    // Status changes to Lost
                     return RedirectToAction("Edit", "Offers", new {Id = id});
 
                 default:

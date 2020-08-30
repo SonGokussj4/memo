@@ -38,10 +38,10 @@ namespace memo.Controllers
             //         }
             //     ).ToList();
 
-            List<DashboardVM> viewModel = _db.Order
+            List<DashboardCashVM> viewModelCash = _db.Order
                 .Where(a => a.InvoiceDueDate.Value.Year == 2020)
                 .GroupBy(b => b.InvoiceDueDate.Value.Month)
-                .Select(g => new DashboardVM
+                .Select(g => new DashboardCashVM
                 {
                     // Month2020 = g.Key,
                     // TotalCount = g.Count(),
@@ -55,6 +55,32 @@ namespace memo.Controllers
                 })
                 .ToList();
 
+            List<DashboardWonOffersVM> viewModelWonOffers = _db.Offer
+                // .Where(a => a.InvoiceDueDate.Value.Year == 2020)
+                .AsEnumerable()
+                .GroupBy(b => b.ReceiveDate.Value.Month)
+                .Select(g => new DashboardWonOffersVM
+                {
+                    // Month2020 = g.Key,
+                    // TotalCount = g.Count(),
+                    // SumaNormal = g.Sum(gi => gi.PriceFinalCzk),
+                    // Suma = string.Format("{0:#.00}", Convert.ToDecimal(g.Sum(gi => gi.PriceFinalCzk))),
+                    // SumaC = string.Format("{0:C}", Convert.ToDecimal(g.Sum(gi => gi.PriceFinalCzk))),
+                    // TotalHours = $"{g.Sum(gi => gi.TotalHours)} hod",
+                    // AvgHourWage = $"{string.Format("{0:C}", g.Average(gi => gi.HourWage))}/hod",
+                    Month = new DateTime(2020, g.Key, 1),
+                    All = (int)g.Count(),
+                    Wait = (int)g.Count(row => row.OfferStatusId == 1),
+                    Won = (int)g.Count(row => row.OfferStatusId == 2),
+                    Lost = (int)g.Count(row => row.OfferStatusId == 3),
+                })
+                .ToList();
+
+            DashboardVM viewModel = new DashboardVM
+            {
+                DashboardCashVM = viewModelCash,
+                DashboardWonOffersVM = viewModelWonOffers,
+            };
             // decimal num = 169465.684M;
 
             // Console.WriteLine(num);

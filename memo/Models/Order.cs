@@ -41,7 +41,7 @@ namespace memo.Models
         // public Contact Contact { get; set; }
 
         [Required]
-        [Display(Name = "Hodinová sazba komerční")]
+        [Display(Name = "Hod. sazba komerční")]
         public double? HourWage { get; set; }
 
         [Display(Name = "Celkem hodin plánovaných")]
@@ -62,7 +62,7 @@ namespace memo.Models
         [RegularExpression(@"\d+([,.]\d+)?", ErrorMessage = "Pouze čísla s čárkou. Např: 26,49")]
         public decimal ExchangeRate { get; set; }
 
-        [Display(Name = "Konečná cena bez DPH [CZK]")]
+        [Display(Name = "Konečná cena v Kč")]
         // [DisplayFormat(DataFormatString = "{0:#,0}", ApplyFormatInEditMode = true)]
         public int? PriceFinalCzk { get; set; }
 

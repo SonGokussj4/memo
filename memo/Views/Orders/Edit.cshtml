@@ -6,12 +6,13 @@
 @model memo.ViewModels.OfferOrderVM
 
 <style>
+    /*
     .money-label::after {
         content: " [@Model.CurrencyName]";
         color: black;
         font-size: 1em;
     }
-
+    */
     .cardTitleMerged {
         display: flex;
         justify-content: space-between;
@@ -33,7 +34,18 @@
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <input type="hidden" asp-for="Edit" value="true" />
 
+        @* <div class="cardTitleMerged">
+
+            <h5 class="card-title">Detaily objednávky</h5>
+
+            <div class="form-group">
+                @Html.ActionLink(" Přejít na objednávku", "Edit", "Offers", new { id = Model.Offer.OfferId }, new { @class = "btn btn-primary fa fa-list-alt" })
+            </div>
+
+        </div> *@
+
         <h5 class="card-title">Detaily objednávky</h5>
+
         <hr />
 
         <div class="form-group row">
@@ -41,8 +53,8 @@
             <div class="col-lg-4">
                 <input type="hidden" asp-for="Order.OfferId" />
                 <input type="hidden" asp-for="Order.OrderId" />
-                @* @Html.DropDownListFor(model => model.Order.OfferId, ViewBag.WonOffersList as SelectList, "-- Vyber Objednávku --", new { @class = "form-control", onchange = @"this.form.submit();" }) *@
-                @Html.DropDownList("OfferId", ViewBag.WonOffersList as SelectList, "-- Vyber objednávku --", new { @class = "form-control selectpicker", onchange = @"this.form.submit();" })
+                @* @Html.DropDownList("OfferId", ViewBag.WonOffersList as SelectList, "-- Vyber objednávku --", new { @class = "form-control selectpicker", onchange = @"this.form.submit();" }) *@
+                <input asp-for="Offer.OfferName" class="form-control" type="text" readonly />
                 <span asp-validation-for="Order.OfferId" class="text-danger"></span>
             </div>
             <div class="col-lg-1">
@@ -112,9 +124,13 @@
 
         </div>  <!-- END collapse -->
 
-        <div class="form-group row">
-            <div class="col-lg-3">
+        <div class="cardTitleMerged">
+            <div class="">
                 <a asp-action="Index" class="btn btn-light"><i class="fa fa-arrow-left"></i> Zpět</a>
+            </div>
+
+            <div class="">
+                @Html.ActionLink(" Přejít na objednávku", "Edit", "Offers", new { id = Model.Offer.OfferId }, new { @class = "btn btn-primary fa fa-list-alt" })
             </div>
         </div>
 
@@ -213,30 +229,49 @@
         </div>
 
         <div class="form-group row">
-            <label asp-for="Order.PriceFinal" class="required col-lg-3 col-form-label form-control-label control-label money-label"></label>
+            <label asp-for="Order.PriceFinal" class="required col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-3">
-                @* <input asp-for="Order.PriceFinal" class="form-control" type="text" required="" onchange="changeDiscount(this.value)"/> *@
-                <input asp-for="Order.PriceFinal" class="form-control" type="text" required="" />
+                <div class="input-group mb-2 mr-sm-2">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text">@Model.CurrencyName</div>
+                    </div>
+                    <input asp-for="Order.PriceFinal" class="form-control" type="text" required="" />
+                </div>
                 <span asp-validation-for="Order.PriceFinal" class="text-danger"></span>
             </div>
             <div class="col-lg-3">
-                <label asp-for="Order.PriceDiscount" class="col-form-label form-control-label control-label money-label"></label>
+                <label asp-for="Order.PriceDiscount" class="col-form-label form-control-label control-label"></label>
             </div>
             <div class="col-lg-3">
-                <input asp-for="Order.PriceDiscount" class="form-control" type="text" required="" readonly />
+                <div class="input-group mb-2 mr-sm-2">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text">@Model.CurrencyName</div>
+                    </div>
+                    <input asp-for="Order.PriceDiscount" class="form-control" type="text" required="" readonly />
+                </div>
                 <span asp-validation-for="Order.PriceDiscount" class="text-danger"></span>
             </div>
         </div>
 
         <div class="form-group row">
-            <label asp-for="Order.OtherCosts" class="col-lg-3 col-form-label form-control-label control-label money-label" ></label>
+            <label asp-for="Order.OtherCosts" class="col-lg-3 col-form-label form-control-label control-label" ></label>
             <div class="col-lg-3">
-                <input asp-for="Order.OtherCosts" class="form-control" type="text" />
-                <span asp-validation-for="Order.OtherCosts" class="text-danger"></span>
+                <div class="input-group mb-2 mr-sm-2">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text">@Model.CurrencyName</div>
+                    </div>
+                    <input asp-for="Order.OtherCosts" class="form-control" type="text" />
+                </div>
             </div>
-            <label asp-for="Order.HourWage" class="required col-lg-3 col-form-label form-control-label control-label money-label"></label>
+            <span asp-validation-for="Order.OtherCosts" class="text-danger"></span>
+            <label asp-for="Order.HourWage" class="required col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-3">
-                <input asp-for="Order.HourWage" class="form-control" type="text" onchange="this.value = this.value.replace(/,/g, '.')"/>
+                 <div class="input-group mb-2 mr-sm-2">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text">@Model.CurrencyName</div>
+                    </div>
+                    <input asp-for="Order.HourWage" class="form-control" type="text" onchange="this.value = this.value.replace(/,/g, '.')"/>
+                 </div>
                 <span asp-validation-for="Order.HourWage" class="text-danger"></span>
             </div>
         </div>
@@ -244,13 +279,22 @@
         <div class="form-group row">
             <label asp-for="Order.PriceFinalCzk" class="col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-3">
-                <input asp-for="Order.PriceFinalCzk" class="form-control" type="text" readonly />
+                <div class="input-group mb-2 mr-sm-2">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text">Kč</div>
+                    </div>
+                    <input asp-for="Order.PriceFinalCzk" class="form-control" type="text" readonly />
+                </div>
                 <span asp-validation-for="Order.PriceFinalCzk" class="text-danger"></span>
             </div>
-            <label asp-for="Order.ExchangeRate" class="col-lg-3 col-form-label form-control-label control-label money-label"></label>
+            <label asp-for="Order.ExchangeRate" class="col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-3">
-                @* <input asp-for="Order.ExchangeRate" class="form-control" type="text" onchange="this.value = this.value.replace(/,/g, '.')"/> *@
-                <input asp-for="Order.ExchangeRate" class="form-control" type="text" />
+                 <div class="input-group mb-2 mr-sm-2">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text">@Model.CurrencyName</div>
+                    </div>
+                    <input asp-for="Order.ExchangeRate" class="form-control" type="text" />
+                 </div>
                 <span asp-validation-for="Order.ExchangeRate" class="text-danger"></span>
             </div>
         </div>
@@ -277,8 +321,9 @@
                 <a asp-action="Index" class="btn btn-light"><i class="fa fa-arrow-left"></i> Zpět</a>
             </div>
             <div class="col-lg-9">
-                <input type="reset" class="btn btn-secondary" value="Resetovat pole" />
-                <input type="submit" class="btn btn-primary" value="Uložit" />
+                <input type="reset" class="btn btn-secondary"  value="Resetovat pole" data-toggle="tooltip" title="Vrátí neuložené úpravy" />
+                <input type="submit" class="btn btn-primary" name="actionType" value="Uložit" />
+                <input type="submit" class="btn btn-primary" name="actionType" value="Uložit a vrátit se" />
             </div>
         </div>
 

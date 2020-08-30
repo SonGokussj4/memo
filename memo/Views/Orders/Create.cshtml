@@ -6,11 +6,11 @@
 @model memo.ViewModels.OfferOrderVM
 
 <style>
-    .money-label::after {
+    @* .money-label::after {
         content: " [@Model.CurrencyName]";
         color: black;
         font-size: 1em;
-    }
+    } *@
 </style>
 
 <div class="text-center">
@@ -164,12 +164,6 @@
                     @Html.DropDownListFor(model => model.Order.EveContactName, ViewBag.EveContactList as SelectList, "-- Vyber kontakt --", new { @class = "form-control selectpicker" })
                     <span asp-validation-for="Order.EveContactName" class="text-danger"></span>
                 </div>
-                @* <div class="col-lg-3">
-                    <a href="@Url.Action("Create", "Contacts")" target="_blank" class="btn btn-outline-success form-control"
-                    data-toggle="tooltip" data-placement="top" title="Přidat kontakt">
-                        <i class="fa fa-plus-square"> Přidat kontakt</i>
-                    </a>
-                </div> *@
             </div>
 
         </div>
@@ -191,29 +185,49 @@
         </div>
 
         <div class="form-group row">
-            <label asp-for="Order.PriceFinal" class="required col-lg-3 col-form-label form-control-label control-label money-label"></label>
+            <label asp-for="Order.PriceFinal" class="required col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-3">
-                <input asp-for="Order.PriceFinal" class="form-control" type="text" required="" onchange="changeDiscount(this.value)"/>
+                <div class="input-group mb-2 mr-sm-2">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text">@Model.CurrencyName</div>
+                    </div>
+                    <input asp-for="Order.PriceFinal" class="form-control" type="text" required="" />
+                </div>
                 <span asp-validation-for="Order.PriceFinal" class="text-danger"></span>
             </div>
             <div class="col-lg-3">
-                <label asp-for="Order.PriceDiscount" class="col-form-label form-control-label control-label money-label"></label>
+                <label asp-for="Order.PriceDiscount" class="col-form-label form-control-label control-label"></label>
             </div>
             <div class="col-lg-3">
-                <input asp-for="Order.PriceDiscount" class="form-control" type="text" required="" readonly />
+                <div class="input-group mb-2 mr-sm-2">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text">@Model.CurrencyName</div>
+                    </div>
+                    <input asp-for="Order.PriceDiscount" class="form-control" type="text" required="" readonly />
+                </div>
                 <span asp-validation-for="Order.PriceDiscount" class="text-danger"></span>
             </div>
         </div>
 
         <div class="form-group row">
-            <label asp-for="Order.OtherCosts" class="col-lg-3 col-form-label form-control-label control-label money-label"></label>
+            <label asp-for="Order.OtherCosts" class="col-lg-3 col-form-label form-control-label control-label" ></label>
             <div class="col-lg-3">
-                <input asp-for="Order.OtherCosts" class="form-control" type="text" />
-                <span asp-validation-for="Order.OtherCosts" class="text-danger"></span>
+                <div class="input-group mb-2 mr-sm-2">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text">@Model.CurrencyName</div>
+                    </div>
+                    <input asp-for="Order.OtherCosts" class="form-control" type="text" />
+                </div>
             </div>
-            <label asp-for="Order.HourWage" class="required col-lg-3 col-form-label form-control-label control-label money-label"></label>
+            <span asp-validation-for="Order.OtherCosts" class="text-danger"></span>
+            <label asp-for="Order.HourWage" class="required col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-3">
-                <input asp-for="Order.HourWage" class="form-control" type="text" onchange="this.value = this.value.replace(/,/g, '.')"/>
+                 <div class="input-group mb-2 mr-sm-2">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text">@Model.CurrencyName</div>
+                    </div>
+                    <input asp-for="Order.HourWage" class="form-control" type="text" onchange="this.value = this.value.replace(/,/g, '.')"/>
+                 </div>
                 <span asp-validation-for="Order.HourWage" class="text-danger"></span>
             </div>
         </div>
@@ -221,12 +235,22 @@
         <div class="form-group row">
             <label asp-for="Order.PriceFinalCzk" class="col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-3">
-                <input asp-for="Order.PriceFinalCzk" class="form-control" type="text" readonly />
+                <div class="input-group mb-2 mr-sm-2">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text">Kč</div>
+                    </div>
+                    <input asp-for="Order.PriceFinalCzk" class="form-control" type="text" readonly />
+                </div>
                 <span asp-validation-for="Order.PriceFinalCzk" class="text-danger"></span>
             </div>
-            <label asp-for="Order.ExchangeRate" class="col-lg-3 col-form-label form-control-label control-label money-label"></label>
+            <label asp-for="Order.ExchangeRate" class="col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-3">
-                <input asp-for="Order.ExchangeRate" class="form-control" type="text" onchange="this.value = this.value.replace(/,/g, '.')"/>
+                 <div class="input-group mb-2 mr-sm-2">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text">@Model.CurrencyName</div>
+                    </div>
+                    <input asp-for="Order.ExchangeRate" class="form-control" type="text" />
+                 </div>
                 <span asp-validation-for="Order.ExchangeRate" class="text-danger"></span>
             </div>
         </div>
@@ -245,7 +269,7 @@
                 <a asp-action="Index" class="btn btn-light"><i class="fa fa-arrow-left"></i> Zpět</a>
             </div>
             <div class="col-lg-9">
-                <input type="reset" class="btn btn-secondary" value="Resetovat pole" />
+                <input type="reset" class="btn btn-secondary" value="Vyprázdnit pole" data-toggle="tooltip" title="Vyprázdní všechna pole" />
                 <input type="submit" class="btn btn-primary" value="Vytvořit zakázku" />
             </div>
         </div>

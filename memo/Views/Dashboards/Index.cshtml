@@ -5,7 +5,7 @@
     ViewData["Title"] = "Vyhodnocení";
 }
 
-@model IEnumerable<memo.ViewModels.DashboardVM>
+@model memo.ViewModels.DashboardVM
 
 <div class="text-center">
     <h1 class="display-6">@ViewData["Title"]</h1>
@@ -25,16 +25,50 @@
 *@
 
 <div class="container d-flex justify-content-center">
-    <div class="card">
-        <div class="card-title text-center">
-            <h5>Očekávaný příjem</h5>
-        </div>
-        <div style="display: flex; align-items: center; justify-content: center;">
-            <div id="chart_container" style="width: 400px;">
-                <canvas id="bar_chart" width="400" height="400"></canvas>
+    <form class="form-inline">
+        <label class="border-right pr-3">Filtrování: </label>
+        <a href="#" data-toggle="tooltip" title="PROZATÍM NEFUNGUJE" class="btn btn-primary ml-2 mr-2">Týdny</a>
+        <a href="#" data-toggle="tooltip" title="PROZATÍM NEFUNGUJE" class="btn btn-primary ml-2 mr-2">Měsíce</a>
+        <select data-toggle="tooltip" title="PROZATÍM NEFUNGUJE" class="form-control" name="SelectedYear">
+            <option value="2019">2019</option>
+            <option value="2020" selected="selected">2020</option>
+            <option value="2021">2021</option>
+        </select>
+        @* <button class="btn btn-primary ml-2 mr-2">Something</button> *@
+    </form>
+</div>
+
+<hr />
+
+<div class="container d-flex justify-content-center">
+
+    <div class="container d-flex justify-content-center">
+        <div class="card">
+            <div class="card-title text-center">
+                <h5>Očekávaný příjem</h5>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: center;">
+                <div id="chart_container" style="width: 400px;">
+                    <canvas id="bar_chart" width="400" height="400"></canvas>
+                </div>
             </div>
         </div>
     </div>
+
+    <div class="container d-flex justify-content-center">
+        <div class="card">
+            <div class="card-title text-center">
+                <h5>Status nabídek</h5>
+                <h6>(Dle data přijení poptávky)</h6>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: center;">
+                <div id="chart_container" style="width: 400px;">
+                    <canvas id="chart_wonOffers" width="400" height="400"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 
@@ -46,7 +80,11 @@
     @* var monthArray = @Json.Serialize(Model.Months); *@
     @* var cashArray = @Json.Serialize(Model.PlannedCashPerMonth); *@
 
-    var items = @Html.Raw(Json.Serialize(Model));
+    // -----------------------------------------
+    // Graf - Očekávaný příjem v průběhu měsíců
+    // -----------------------------------------
+
+    var items = @Html.Raw(Json.Serialize(Model.DashboardCashVM));
     var monthArray = items.map(a => new Date(a.month).toLocaleString('cs-CZ', { month: 'long' }));
     var cashArray = items.map(a => a.cash);
 
@@ -97,5 +135,93 @@
             }
         }
     });
+
+    // ------------------------------------------------------
+    // Graf - Vyhrané/celkem zadané nabídky v průběhu měsíců
+    // ------------------------------------------------------
+    var ctx = document.getElementById('chart_wonOffers');
+
+    var items = @Html.Raw(Json.Serialize(Model.DashboardWonOffersVM));
+    var monthArray = items.map(a => new Date(a.month).toLocaleString('cs-CZ', { month: 'long' }));
+    var allArray = items.map(a => a.all);
+    var waitArray = items.map(a => a.wait);
+    var wonArray = items.map(a => a.won);
+    var lostArray = items.map(a => a.lost);
+
+    var barChart = new Chart(ctx, {
+        type: 'horizontalBar',
+        data: {
+            labels: monthArray,
+            datasets: [
+                //{
+                //    label: 'Celkem',
+                //    data: allArray,
+                //    fillColor: "#79D1CF",
+                //    backgroundColor: 'rgba(206, 212, 218, 0.6)',
+                //    borderColor: 'rgba(206, 212, 218, 0.9)',
+                //    borderWidth: 1,
+                //
+                //},
+                {
+                    label: 'Čekají',
+                    data: waitArray,
+                    fillColor: "#79D1CF",
+                    backgroundColor: 'rgba(0, 0, 255, 0.6)',
+                    borderColor: 'rgba(20, 20, 235, 0.9)',
+                    borderWidth: 1,
+
+                },
+                {
+                    label: 'Vyhrané',
+                    data: wonArray,
+                    fillColor: "#79D1CF",
+                    backgroundColor: 'rgba(0, 255, 0, 0.6)',
+                    borderColor: 'rgba(20, 235, 20, 0.9)',
+                    borderWidth: 1,
+                },
+                {
+                    label: 'Prohrané',
+                    data: lostArray,
+                    fillColor: "#79D1CF",
+                    backgroundColor: 'rgba(255, 0, 0, 0.6)',
+                    borderColor: 'rgba(230, 20, 20, 0.9)',
+                    borderWidth: 1,
+                }
+            ]
+        },
+        options: {
+            //title: {
+            //    display: true,
+            //    text: 'Finance Eve v měsících roku 2020',
+            //},
+            scales: {
+                xAxes: [{
+                    //display: true,
+                    ticks: {
+                        beginAtZero: true,
+                        steps: 1,
+                        stepValue: 1,
+                        min: 0,
+                        //max: 1000000,
+                        callback: function(value, index, values) {
+                            return value.toLocaleString('cs-CZ');
+                        }
+                    }
+                }],
+                yAxes: [{
+                    barPercentage: 0.7,
+                }]
+            },
+            tooltips: {
+                callbacks: {
+                    label: function(tooltipItem, data) {
+                        return ' ' + tooltipItem.xLabel.toLocaleString('cs-CZ') + ' / ' + allArray[tooltipItem.index];
+                        //return tooltipItem.xLabel.toLocaleString('cs-CZ');
+                    }
+                }
+            }
+        }
+    });
+
 </script>
 }

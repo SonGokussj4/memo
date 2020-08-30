@@ -58,38 +58,6 @@ namespace memo.Controllers
             return View(model);
         }
 
-        // [HttpGet]
-        // public IActionResult Select(int? offerId)
-        // {
-        //     Order model = new Order();
-
-        //     List<Offer> wonOffersList = _db.Offer
-        //         .Where(t => t.OfferStatusId == 2)
-        //         .OrderBy(t => t.OfferName)
-        //         .ToList();
-        //     ViewBag.WonOffersList = new SelectList(wonOffersList, "OfferId", "OfferName");
-
-        //     return View(model);
-        // }
-
-        // [HttpPost]
-        // [ValidateAntiForgeryToken]
-        // public IActionResult Select(Order model)
-        // {
-        //     List<Offer> wonOffersList = _db.Offer
-        //         .Where(t => t.OfferStatusId == 2)
-        //         .OrderBy(t => t.OfferName)
-        //         .ToList();
-        //     ViewBag.WonOffersList = new SelectList(wonOffersList, "OfferId", "OfferName");
-
-        //     if (model != null)
-        //     {
-        //         return RedirectToAction("Create", model);
-        //     }
-
-        //     return View();
-        // }
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Refresh(int? offerId, OfferOrderVM vm)
@@ -128,6 +96,8 @@ namespace memo.Controllers
             int invoiceDueDays = 0;
             string curSymbol = "CZK";
             int offerFinalPrice = 0;
+            int offerPriceDiscount = 0;
+            int finalPriceCzk = 0;
 
             Offer offer = new Offer();
             if (model.OfferId != null && model.OfferId != 0)
@@ -135,6 +105,7 @@ namespace memo.Controllers
                 offer = _db.Offer.Find(model.OfferId);
                 curSymbol = _db.Currency.Find(offer.CurrencyId).Name;
                 offerFinalPrice = (int)offer.Price;
+                finalPriceCzk = Convert.ToInt32(offerFinalPrice * offer.ExchangeRate);
 
                 Company company = _db.Company.Find(offer.CompanyId);
                 if (company != null)
@@ -146,6 +117,8 @@ namespace memo.Controllers
 
             model.ExchangeRate = Decimal.Parse(getCurrencyStr(curSymbol).Replace(",", "."), CultureInfo.InvariantCulture);
             model.PriceFinal = offerFinalPrice;
+            model.PriceDiscount = offerPriceDiscount;
+            model.PriceFinalCzk = finalPriceCzk;
 
             OfferOrderVM viewModel = new OfferOrderVM()
             {
@@ -173,6 +146,7 @@ namespace memo.Controllers
                 vm.Order.TotalHours = totalHours;
                 vm.Order.PriceFinalCzk = Convert.ToInt32(
                     (vm.Order.PriceFinal + vm.Order.OtherCosts) * vm.Order.ExchangeRate);
+                vm.Order.PriceDiscount = 0;
 
                 _db.Add(vm.Order);
                 _db.SaveChanges();
@@ -203,11 +177,12 @@ namespace memo.Controllers
             }
 
 
-            List<Offer> wonOffersList = _db.Offer
-                .Where(t => t.OfferStatusId == 2)
-                .OrderBy(t => t.OfferName)
-                .ToList();
-            ViewBag.WonOffersList = new SelectList(wonOffersList, "OfferId", "OfferName");
+            // List<Offer> wonOffersList = _db.Offer
+            //     .Where(t => t.OfferStatusId == 2)
+            //     .OrderBy(t => t.OfferName)
+            //     .ToList();
+            // ViewBag.WonOffersList = new SelectList(wonOffersList, "OfferId", "OfferName");
+
             ViewBag.CurrencyList = new SelectList(_db.Currency.ToList(), "CurrencyId", "Name");
             // ViewBag.ContactList = new SelectList(_db.Contact.ToList(), "ContactId", "PersonName");
             ViewBag.EveContactList = getEveContacts(_eveDb);
@@ -252,7 +227,7 @@ namespace memo.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(int id, OfferOrderVM vm)
+        public IActionResult Edit(string actionType, int id, OfferOrderVM vm)
         {
 
             if (id != vm.Order.OrderId)
@@ -299,8 +274,14 @@ namespace memo.Controllers
                     }
                 }
 
-                // return View(vm);
-                return RedirectToAction("Edit", new { id = id, offerId = vm.Order.OfferId });
+                if (actionType == "Uložit")
+                {
+                    return RedirectToAction("Edit", new { id = id, offerId = vm.Order.OfferId });
+                }
+                else
+                {
+                    return RedirectToAction(nameof(Index));
+                }
             }
 
             List<Offer> wonOffersList = _db.Offer
