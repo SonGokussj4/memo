@@ -33,6 +33,7 @@
     data-sort-order="asc"
     data-toggle="table"
     data-toolbar="#toolbar"
+    data-visible-search="true"
     class="table table-sm text-nowrap text-xsmall"
     style="width:100%"
     >
@@ -64,7 +65,7 @@
                 <th scope="row"><a href="http://@item.Web" target="_blank">@item.Web</a></th>
                 <th scope="row">@item.InvoiceDueDays</th>
                 <th scope="row">@item.Notes</th>
-                <th scope="row">@String.Format("{0:dd.MM.yyyy}", @item.CreateDate)</th>
+                <th scope="row">@String.Format("{0:yyyy-MM-dd}", @item.CreateDate)</th>
             </tr>
         }
     </tbody>

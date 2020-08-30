@@ -34,9 +34,9 @@
 
 <div id="toolbar" style="padding-bottom: 10px;">
     <a asp-action="Create" class="btn btn-outline-success"><i class="fa fa-plus-square-o"></i> Nová zakázka</a>
-    @* <a id="btnToggleActive" class="btn btn-outline-primary pull-right" onclick="ToggleActive()"> *@
-        @* <i class="fa fa-eye-slash"></i> Aktivní (@Model.Count(m => m.Active) / @Model.Count()) *@
-    @* </a> *@
+    @* <a id="btnToggleActive" class="btn btn-outline-primary pull-right" onclick="ToggleActive()">
+        <i class="fa fa-eye-slash"></i> Aktivní (@Model.Count(m => m.Active) / @Model.Count())
+    </a> *@
     <button style="margin-right: 5px;" class="btn btn-outline-info" name="BtnMujFilter" id="BtnMujFilter" type="button">
         <i class="fa fa-filter"> Filter</i>
     </button>
@@ -55,13 +55,14 @@
     data-show-columns-toggle-all="true"
     data-show-columns="true"
     data-show-fullscreen="true"
-    data-sort-name="0"
+    data-sort-name="DateCreated"
     data-sort-order="desc"
     data-search="true"
     data-silent-sort="true"
     data-show-footer="true"
     data-toolbar="#toolbar"
     data-toggle="table"
+    data-visible-search="true"
     @* data-reorderable-columns="true" *@
     @* data-show-pagination-switch="true" *@
     @* data-pagination="true" *@
@@ -72,24 +73,24 @@
     >
     <thead>
         <tr>
-            <th class="text-center" scope="col" data-field="0" data-footer-formatter="idFormatter" data-sortable="true" data-filter-control="input"><i class="fa fa-arrows-v" aria-hidden="true"></i> Id</th>
-            <th class="text-center" scope="col" data-field="1" data-sortable="true" data-filter-control="input">Objednávka</th>
-            <th class="text-center" scope="col" data-field="2" data-sortable="true" data-filter-control="input">Č. obj. zákazníka</th>
-            <th class="text-center" scope="col" data-field="3" data-sortable="true" data-filter-control="input">Kód EVE<br />vykazování</th>
-            <th class="text-center" scope="col" data-field="4" data-sortable="true" data-filter-control="input">Vedoucí<br />projektu</th>
-            <th class="text-center" scope="col" data-field="5" data-sortable="true" data-filter-control="input">Plánované<br />hod</th>
-            <th class="text-center" scope="col" data-field="6" data-sortable="true" data-filter-control="input">Termín vyst.<br />faktury</th>
+            <th class="text-center" scope="col" data-field="id" data-footer-formatter="idFormatter" data-sortable="true" data-filter-control="input"><i class="fa fa-arrows-v" aria-hidden="true"></i> Id</th>
+            <th class="text-center" scope="col" data-field="Offer" data-sortable="true" data-filter-control="input">Objednávka</th>
+            <th class="text-center" scope="col" data-field="OrderName" data-sortable="true" data-filter-control="input">Č. obj. zákazníka</th>
+            <th class="text-center" scope="col" data-field="OrderCode" data-sortable="true" data-filter-control="input">Kód EVE<br />vykazování</th>
+            <th class="text-center" scope="col" data-field="EveContactName" data-sortable="true" data-filter-control="input">Vedoucí<br />projektu</th>
+            <th class="text-center" scope="col" data-field="TotalHours" data-sortable="true" data-filter-control="input">Plánované<br />hod</th>
+            <th class="text-center" scope="col" data-field="InvoiceIssueDate" data-sortable="true" data-filter-control="input">Termín vyst.<br />faktury</th>
             <th class="text-center" scope="col" data-field="7" data-footer-formatter="priceFormatterCz" data-sortable="true" data-filter-control="input">Konečná<br />cena v Kč</th>
-            <th class="text-center" scope="col" data-field="8" data-sortable="true" data-filter-control="input">Poznámky</th>
-            <th class="text-center" scope="col" data-field="9" data-sortable="true" data-filter-control="select">Měna</th>
-            <th class="text-center" scope="col" data-field="10" data-sortable="true" data-filter-control="input">Další<br />náklady</th>
-            <th class="text-center" scope="col" data-field="11" data-sortable="true" data-filter-control="input">Hod.<br />sazba</th>
-            <th class="text-center" scope="col" data-field="12" data-sortable="true" data-filter-control="input">Vyčerpáno</th>
+            <th class="text-center" scope="col" data-field="Notes" data-sortable="true" data-filter-control="input">Poznámky</th>
+            <th class="text-center" scope="col" data-field="Currency" data-sortable="true" data-filter-control="select">Měna</th>
+            <th class="text-center" scope="col" data-field="OtherCosts" data-sortable="true" data-filter-control="input">Další<br />náklady</th>
+            <th class="text-center" scope="col" data-field="HourWage" data-sortable="true" data-filter-control="input">Hod.<br />sazba</th>
+            <th class="text-center" scope="col" data-field="Burned" data-sortable="true" data-filter-control="input">Vyčerpáno</th>
             <th class="text-center" scope="col" data-field="13" data-footer-formatter="priceFormatterCz" data-sortable="true" data-filter-control="input">Stav v Kč</th>
             @* <th class="text-center" scope="col" data-field="14" data-sortable="true" data-filter-control="input">Stav<br />plnění</th> *@
-            <th class="text-center" scope="col" data-field="15" data-sortable="true" data-filter-control="input">Datum<br />vytvoření</th>
-            <th class="text-center" scope="col" data-field="16" data-sortable="true" data-filter-control="input">Využito</th>
-            <th class="text-center" scope="col" data-field="17" data-sortable="true" data-filter-control="input">Aktivní</th>
+            <th class="text-center" scope="col" data-field="DateCreated" data-sortable="true" data-filter-control="input">Datum<br />vytvoření</th>
+            <th class="text-center" scope="col" data-field="Progress" data-sortable="true" data-filter-control="input">Využito</th>
+            <th class="text-center" scope="col" data-field="Active" data-sortable="true" data-filter-control="input">Aktivní</th>
         </tr>
     </thead>
     <tbody>
@@ -110,7 +111,7 @@
                     <th scope="row" class="text-right">@totalHoursText</th>
                 }
                 @* <th scope="row" class="text-right">@String.Format("{0:# 000}", item.TotalHours) hod</th> *@
-                <th scope="row" class="text-center">@String.Format("{0:dd.MM.yyyy}", @item.InvoiceIssueDate)</th>
+                <th scope="row" class="text-center">@String.Format("{0:yyyy-MM-dd}", @item.InvoiceIssueDate)</th>
                 <th scope="row" class="text-right">@string.Format(CultureInfo.CreateSpecificCulture("cs-CZ"), "{0:C0}", @item.PriceFinalCzk)</th>
                 <th scope="row" class="notesWrap" data-toggle="tooltip" data-placement="top" data-html="true" title="@item.Notes">
                     @item.Notes
@@ -125,7 +126,7 @@
                 }
                 <th scope="row" class="text-right">@string.Format(CultureInfo.CreateSpecificCulture("cs-CZ"), "{0:C0}", @item.Burned * @item.HourWage / 60 )</th>
                 @* <th scope="row" class="text-right">@( String.Format("{0:0.00}", (float)item.Burned / 60 / item.TotalHours * 100) ) %</th> *@
-                <th scope="row" class="text-left">@String.Format("{0:dd.MM.yyyy}", @item.CreateDate)</th>
+                <th scope="row" class="text-left">@String.Format("{0:yyyy-MM-dd}", @item.CreateDate)</th>
                 @{
                     float? currentVal = (float)item.Burned / 60 / item.TotalHours * 100;
                     currentVal = currentVal is null ? 0 : currentVal;

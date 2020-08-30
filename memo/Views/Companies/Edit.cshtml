@@ -42,6 +42,15 @@
             </div>
         </div>
 
+        <div class="form-group row">
+            <span class="col-lg-6"></span>
+            <label asp-for="CreateDate" class="col-lg-3 text-right col-form-label form-control-label control-label">Datum vytvoření</label>
+            <div class="col-lg-3 text-right">
+                <input asp-for="CreateDate" class="form-control" type="text" readonly />
+                <span asp-validation-for="CreateDate" class="text-danger"></span>
+            </div>
+        </div>
+
         <hr />
 
         <div class="form-group row">
