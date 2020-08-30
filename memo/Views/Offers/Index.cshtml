@@ -80,6 +80,7 @@
             <th class="text-center" scope="col" data-field="Subject" data-sortable="true" data-filter-control="input">Předmět</th>
             <th class="text-center" scope="col" data-field="Price" data-sortable="true" data-filter-control="input">Cena</th>
             <th class="text-center" scope="col" data-field="Currency" data-sortable="true" data-filter-control="input">Měna</th>
+            <th class="text-center" scope="col" data-field="PriceCzk" data-sortable="true" data-filter-control="input">Cena<br/>[CZK]</th>
             <th class="text-center" scope="col" data-field="Notes" data-sortable="true" data-filter-control="input">Poznámky</th>
             <th class="text-center" scope="col" data-field="Active" data-sortable="true" data-filter-control="select">Aktivní</th>
         </tr>
@@ -116,6 +117,7 @@
                 @* <th scope="row" class="text-left" >@item.Price</th> *@
                 <th scope="row" class="text-right">@String.Format(CultureInfo.CreateSpecificCulture(@item.Currency.CultureCode), "{0:C0}", @item.Price)</th>
                 <th scope="row" class="text-center" >@item.Currency?.Name</th>
+                <th scope="row" class="text-right">@String.Format(CultureInfo.CreateSpecificCulture("cs-CZ"), "{0:C0}", @item.PriceCzk)</th>
                 <th scope="row" class="notesWrap" data-toggle="tooltip" data-placement="top" data-html="true" title="@item.Notes">
                     @item.Notes
                 </th>
