@@ -8,9 +8,11 @@ using Microsoft.Extensions.Logging;
 using memo.Models;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace memo.Controllers
 {
+    [AllowAnonymous]
     public class HomeController : Controller
     {
         // private readonly RoleManager<IdentityRole> roleManager;

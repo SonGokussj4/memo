@@ -36,7 +36,8 @@
                 <input type="hidden" asp-for="Order.OfferId" />
                 <input type="hidden" asp-for="Order.OrderId" />
                 @* @Html.DropDownListFor(model => model.Order.OfferId, ViewBag.WonOffersList as SelectList, "-- Vyber Objednávku --", new { @class = "form-control", onchange = @"this.form.submit();" }) *@
-                @Html.DropDownList("OfferId", ViewBag.WonOffersList as SelectList, "-- Vyber objednávku --", new { @class = "form-control selectpicker", onchange = @"this.form.submit();" })
+                @* @Html.DropDownList("OfferId", ViewBag.WonOffersList as SelectList, "-- Vyber objednávku --", new { @class = "form-control selectpicker", onchange = @"this.form.submit();" }) *@
+                <input asp-for="Offer.OfferName" class="form-control" type="text" readonly />
                 <span asp-validation-for="Order.OfferId" class="text-danger"></span>
             </div>
             <div class="col-lg-1">
