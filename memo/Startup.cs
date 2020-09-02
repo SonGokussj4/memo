@@ -15,6 +15,7 @@ using Microsoft.Extensions.Hosting;
 using System.Globalization;
 using Microsoft.AspNetCore.Localization;
 using System.Threading;
+using Microsoft.AspNetCore.Authorization;
 
 namespace memo
 {
@@ -38,6 +39,15 @@ namespace memo
 
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
+
+            services.AddAuthorization(options =>
+            {
+                options.FallbackPolicy = new AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    .Build();
+
+                // Register other policies here
+            });
 
             services.AddControllersWithViews();
 
@@ -84,10 +94,12 @@ namespace memo
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
-                endpoints.MapRazorPages();
+                endpoints
+                    .MapControllerRoute(
+                        name: "default",
+                        pattern: "{controller=Home}/{action=Index}/{id?}");
+                endpoints
+                    .MapRazorPages();
             });
         }
     }
