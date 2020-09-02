@@ -136,6 +136,21 @@ namespace memo.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create(OfferOrderVM vm)
         {
+            List<Offer> wonOffersList = _db.Offer
+                .Where(t => t.OfferStatusId == 2)
+                .OrderBy(t => t.OfferName)
+                .ToList();
+            ViewBag.WonOffersList = new SelectList(wonOffersList, "OfferId", "OfferName");
+            ViewBag.EveContactList = getEveContacts(_eveDb);
+            ViewBag.EveOrderCodes = getOrderCodes(_eveDb);
+            ViewBag.CurrencyList = new SelectList(_db.Currency.ToList(), "CurrencyId", "Name");
+
+            if (vm.OfferId == 0)
+            {
+                ModelState.AddModelError(string.Empty, "Nelze vybrat prázdnou objednávku");
+                return View(vm);
+            }
+
             if (ModelState.IsValid)
             {
                 int? totalHours = _db.cOrders
@@ -147,6 +162,7 @@ namespace memo.Controllers
                 vm.Order.PriceFinalCzk = Convert.ToInt32(
                     (vm.Order.PriceFinal + vm.Order.OtherCosts) * vm.Order.ExchangeRate);
                 vm.Order.PriceDiscount = 0;
+                vm.Order.OfferId = vm.OfferId;  // TODO: tohle by tu nemelo vubec by, proc to neprebira Order_OfferId pole...
 
                 _db.Add(vm.Order);
                 _db.SaveChanges();
@@ -155,13 +171,6 @@ namespace memo.Controllers
 
             // Order model = new Order();
 
-            List<Offer> wonOffersList = _db.Offer
-                .Where(t => t.OfferStatusId == 2)
-                .OrderBy(t => t.OfferName)
-                .ToList();
-            ViewBag.WonOffersList = new SelectList(wonOffersList, "OfferId", "OfferName");
-            ViewBag.EveContactList = getEveContacts(_eveDb);
-            ViewBag.EveOrderCodes = getOrderCodes(_eveDb);
 
             return View(vm);
         }

@@ -17,6 +17,9 @@
         display: flex;
         justify-content: space-between;
     }
+    .input-group-text {
+        font-size: 0.9rem;
+    }
 </style>
 
 <div class="text-center">
@@ -291,10 +294,15 @@
             <div class="col-lg-3">
                  <div class="input-group mb-2 mr-sm-2">
                     <div class="input-group-prepend">
-                        <div class="input-group-text">@Model.CurrencyName</div>
+                        <div class="input-group-text"><span>@Model.CurrencyName</span></div>
                     </div>
                     <input asp-for="Order.ExchangeRate" class="form-control" type="text" />
-                 </div>
+                    <div class="input-group-append">
+                        <div class="input-group-text" data-toggle="tooltip" title="Vložit dnešní kurz" onclick="changeExchangeRate('@Model.CurrencyName');" style="cursor: pointer;">
+                            <i class="fa fa-caret-left">&nbsp;<i class="fa fa-cloud-download"></i></i>
+                        </div>
+                    </div>
+                </div>
                 <span asp-validation-for="Order.ExchangeRate" class="text-danger"></span>
             </div>
         </div>
@@ -338,6 +346,22 @@
     <script src="~/js/CustomValidation.js"></script>
 
     <script>
+
+        function changeExchangeRate(curSymbol) {
+            $.ajax({
+                url: '@Url.Action("getCurrencyStr", "Orders")',
+                type: 'GET',
+                //dataType: 'json',
+                // we set cache: false because GET requests are often cached by browsers
+                // IE is particularly aggressive in that respect
+                cache: false,
+                data: { symbol: curSymbol },
+                success: function(res) {
+                    //$('#Order_ExchangeRate').val(res).focus().keyup().blur();
+                    $('#Order_ExchangeRate').val(res).keyup();
+                }
+            });
+        }
 
         $(document).ready(function(){
 

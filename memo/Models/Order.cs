@@ -26,6 +26,7 @@ namespace memo.Models
         [Display(Name = "Poskytnutá sleva")]
         public int? PriceDiscount { get; set; }
 
+        [Required]
         [Display(Name = "Kód vykazování EVE"), StringLength(50)]
         [RegularExpression(@"\d{3}[.]\d{4}", ErrorMessage = "Kód ve formátu xxx.xxxx")]
         public string OrderCode { get; set; }
@@ -62,6 +63,7 @@ namespace memo.Models
         [RegularExpression(@"\d+([,.]\d+)?", ErrorMessage = "Pouze čísla s čárkou. Např: 26,49")]
         public decimal ExchangeRate { get; set; }
 
+        [Required]
         [Display(Name = "Konečná cena v Kč")]
         // [DisplayFormat(DataFormatString = "{0:#,0}", ApplyFormatInEditMode = true)]
         public int? PriceFinalCzk { get; set; }

@@ -15,6 +15,7 @@ namespace memo.ViewModels
         public int IDOrder { get; set; }
         public int Minutes { get; set; }
 
+        [Required]
         public int OfferId { get; set; }
         public string Edit { get; set; }
 

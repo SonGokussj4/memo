@@ -11,6 +11,9 @@
         color: black;
         font-size: 1em;
     } *@
+    .input-group-text {
+        font-size: 0.9rem;
+    }
 </style>
 
 <div class="text-center">
@@ -36,8 +39,8 @@
                 <input type="hidden" asp-for="Order.OfferId" />
                 <input type="hidden" asp-for="Order.OrderId" />
                 @* @Html.DropDownListFor(model => model.Order.OfferId, ViewBag.WonOffersList as SelectList, "-- Vyber Objednávku --", new { @class = "form-control", onchange = @"this.form.submit();" }) *@
-                @* @Html.DropDownList("OfferId", ViewBag.WonOffersList as SelectList, "-- Vyber objednávku --", new { @class = "form-control selectpicker", onchange = @"this.form.submit();" }) *@
-                <input asp-for="Offer.OfferName" class="form-control" type="text" readonly />
+                @Html.DropDownList("OfferId", ViewBag.WonOffersList as SelectList, "-- Vyber objednávku --", new { @class = "form-control selectpicker", onchange = @"this.form.submit();" })
+                @* <input asp-for="Offer.OfferName" class="form-control" type="text" readonly /> *@
                 <span asp-validation-for="Order.OfferId" class="text-danger"></span>
             </div>
             <div class="col-lg-1">
@@ -88,7 +91,7 @@
                 </div>
                 <div class="col-lg-2">
                     @Html.DropDownListFor(model => model.Offer.CurrencyId, ViewBag.CurrencyList as SelectList, new { @class = "form-control", @disabled = "disabled" })
-                    @Html.HiddenFor(model => model.Offer.CurrencyId)
+                    @* @Html.HiddenFor(model => model.Offer.CurrencyId) *@
                     <span asp-validation-for="Offer.Currency" class="text-danger"></span>
                 </div>
                 <div class="col-lg-2">
@@ -119,9 +122,9 @@
         <!--------------------------------------------------------------------------------------
             FORM - ZAKAZKA
         --------------------------------------------------------------------------------------->
-        <form class="card" role="form" autocomplete="on" asp-action="Create" method="post">
+        <form id="orderForm" class="card" role="form" autocomplete="on" asp-action="Create" method="post" style="visibility: hidden;">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-        <input type="hidden" asp-for="Order.OfferId" />
+        <input type="hidden" asp-for="OfferId" />
 
         <h5 class="card-title">Vyplnit novou zakázku</h5>
         <hr />
@@ -248,9 +251,14 @@
             <div class="col-lg-3">
                  <div class="input-group mb-2 mr-sm-2">
                     <div class="input-group-prepend">
-                        <div class="input-group-text">@Model.CurrencyName</div>
+                        <div class="input-group-text"><span>@Model.CurrencyName</span></div>
                     </div>
                     <input asp-for="Order.ExchangeRate" class="form-control" type="text" />
+                    <div class="input-group-append">
+                        <div class="input-group-text" data-toggle="tooltip" title="Vložit dnešní kurz" onclick="changeExchangeRate('@Model.CurrencyName');" style="cursor: pointer;">
+                            <i class="fa fa-caret-left">&nbsp;<i class="fa fa-cloud-download"></i></i>
+                        </div>
+                    </div>
                  </div>
                 <span asp-validation-for="Order.ExchangeRate" class="text-danger"></span>
             </div>
@@ -288,7 +296,29 @@
 
     <script>
 
+        function changeExchangeRate(curSymbol) {
+            $.ajax({
+                url: '@Url.Action("getCurrencyStr", "Orders")',
+                type: 'GET',
+                //dataType: 'json',
+                // we set cache: false because GET requests are often cached by browsers
+                // IE is particularly aggressive in that respect
+                cache: false,
+                data: { symbol: curSymbol },
+                success: function(res) {
+                    //$('#Order_ExchangeRate').val(res).focus().keyup().blur();
+                    $('#Order_ExchangeRate').val(res).keyup();
+                }
+            });
+        }
+
         $(document).ready(function(){
+
+            //var offerId = document.getElementById("#Order_OfferId").value;
+            console.log("OfferId: " + @Model.Order.OfferId);
+            if (@Model.Order.OfferId != "0") {
+                document.getElementById("orderForm").style.visibility = "visible";
+            }
 
             $('.mycalendar input').datepicker({
                 // format: "dd.mm.yyyy",
