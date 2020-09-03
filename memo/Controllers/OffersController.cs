@@ -43,7 +43,11 @@ namespace memo.Controllers
             Offer model = new Offer();
 
             ViewBag.CompanyList = new SelectList(_db.Company.ToList(), "CompanyId", "Name");
-            ViewBag.ContactList = new SelectList(_db.Contact.ToList(), "ContactId", "PersonName");
+            // ViewBag.ContactList = new SelectList(_db.Contact.ToList(), "ContactId", "PersonName");
+            ViewBag.ContactList = new SelectList((from s in _db.Contact.ToList() select new {
+                ContactId = s.ContactId,
+                FullName = s.PersonName + " " + s.PersonLastName
+            }), "ContactId", "FullName");
             ViewBag.DepartmentList = getDepartmentList(_eveDb);
             ViewBag.EveContactList = getEveContacts(_eveDb);
             ViewBag.CurrencyList = new SelectList(_db.Currency.ToList(), "CurrencyId", "Name");
@@ -91,7 +95,10 @@ namespace memo.Controllers
 
             ViewBag.DepartmentList = getDepartmentList(_eveDb);
             ViewBag.CompanyList = new SelectList(_db.Company.ToList(), "CompanyId", "Name");
-            ViewBag.ContactList = new SelectList(_db.Contact.ToList(), "ContactId", "PersonName");
+            ViewBag.ContactList = new SelectList((from s in _db.Contact.ToList() select new {
+                ContactId = s.ContactId,
+                FullName = s.PersonName + " " + s.PersonLastName
+            }), "ContactId", "FullName");
             ViewBag.EveContactList = getEveContacts(_eveDb);
             ViewBag.CurrencyList = new SelectList(_db.Currency.ToList(), "CurrencyId", "Name");
             ViewBag.OfferStatusList = new SelectList(_db.OfferStatus.ToList(), "OfferStatusId", "Status");
@@ -115,7 +122,10 @@ namespace memo.Controllers
 
             ViewBag.DepartmentList = getDepartmentList(_eveDb);
             ViewBag.CompanyList = new SelectList( _db.Company.ToList(), "CompanyId", "Name");
-            ViewBag.ContactList = new SelectList(_db.Contact.ToList(), "ContactId", "PersonName");
+            ViewBag.ContactList = new SelectList((from s in _db.Contact.ToList() select new {
+                ContactId = s.ContactId,
+                FullName = s.PersonName + " " + s.PersonLastName
+            }), "ContactId", "FullName");
             ViewBag.EveContactList = getEveContacts(_eveDb);
             ViewBag.CurrencyList = new SelectList( _db.Currency.ToList(), "CurrencyId", "Name");
             ViewBag.OfferStatusList = new SelectList( _db.OfferStatus.ToList(), "OfferStatusId", "Status");
@@ -167,7 +177,10 @@ namespace memo.Controllers
                 // Populate
                 ViewBag.DepartmentList = getDepartmentList(_eveDb);
                 ViewBag.CompanyList = new SelectList(_db.Company.ToList(), "CompanyId", "Name");
-                ViewBag.ContactList = new SelectList(_db.Contact.ToList(), "ContactId", "PersonName");
+                ViewBag.ContactList = new SelectList((from s in _db.Contact.ToList() select new {
+                    ContactId = s.ContactId,
+                    FullName = s.PersonName + " " + s.PersonLastName
+                }), "ContactId", "FullName");
                 ViewBag.EveContactList = getEveContacts(_eveDb);
                 ViewBag.CurrencyList = new SelectList(_db.Currency.ToList(), "CurrencyId", "Name");
                 // ViewBag.OfferStatusList = new SelectList(_db.OfferStatus.ToList(), "OfferStatusId", "Status");
@@ -192,7 +205,10 @@ namespace memo.Controllers
             // Populate
             ViewBag.DepartmentList = getDepartmentList(_eveDb);
             ViewBag.CompanyList = new SelectList(_db.Company.ToList(), "CompanyId", "Name");
-            ViewBag.ContactList = new SelectList(_db.Contact.ToList(), "ContactId", "PersonName");
+            ViewBag.ContactList = new SelectList((from s in _db.Contact.ToList() select new {
+                ContactId = s.ContactId,
+                FullName = s.PersonName + " " + s.PersonLastName
+            }), "ContactId", "FullName");
             ViewBag.EveContactList = getEveContacts(_eveDb);
             ViewBag.CurrencyList = new SelectList(_db.Currency.ToList(), "CurrencyId", "Name");
             // ViewBag.OfferStatusList = new SelectList(_db.OfferStatus.ToList(), "OfferStatusId", "Status");

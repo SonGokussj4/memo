@@ -22,6 +22,7 @@ namespace memo.Models
         [Display(Name = "Datum odeslání nabídky"), Column(TypeName = "date"), DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime? SentDate { get; set; }
 
+        [Required]
         [Display(Name = "Předmět nabídky"), Column(TypeName = "ntext")]
         public string Subject { get; set; }
 
