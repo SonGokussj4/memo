@@ -111,7 +111,7 @@ namespace memo.Controllers
                 if (company != null)
                 {
                     offerCompanyName = company.Name;
-                    invoiceDueDays = company.InvoiceDueDays;
+                    invoiceDueDays = (int)company.InvoiceDueDays;
                 }
             }
 
@@ -220,7 +220,7 @@ namespace memo.Controllers
                 Order = order,
                 OfferId = (int)order.OfferId,
                 OfferCompanyName = _db.Company.Find(offer.CompanyId).Name,
-                InvoiceDueDays = _db.Company.Find(offer.CompanyId).InvoiceDueDays,
+                InvoiceDueDays = (int)_db.Company.Find(offer.CompanyId).InvoiceDueDays,
                 CurrencyName = _db.Currency.Find(offer.CurrencyId).Name,
                 // TotalHours = totalHours
             };
@@ -316,7 +316,7 @@ namespace memo.Controllers
                 Order = order,
                 OfferId = offerid,
                 OfferCompanyName = offercompanyname,
-                InvoiceDueDays = invoiceduedays,
+                InvoiceDueDays = (int)invoiceduedays,
                 CurrencyName = currencyname,
             };
 

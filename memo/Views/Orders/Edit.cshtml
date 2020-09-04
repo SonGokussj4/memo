@@ -200,7 +200,7 @@
             </div>
 
             <div class="form-group row">
-                <label asp-for="Order.EveContactName" class="col-lg-3 col-form-label form-control-label control-label"></label>
+                <label asp-for="Order.EveContactName" class="required col-lg-3 col-form-label form-control-label control-label"></label>
                 <div class="col-lg-9">
                     @Html.DropDownListFor(model => model.Order.EveContactName, ViewBag.EveContactList as SelectList, "-- Vyber kontakt --", new { @class = "form-control selectpicker" })
                     <span asp-validation-for="Order.EveContactName" class="text-danger"></span>
@@ -213,6 +213,14 @@
                 </div> *@
             </div>
 
+        </div>
+
+        <div class="form-group row">
+            <label asp-for="Order.BillOfDelivery" class="col-lg-3 col-form-label form-control-label control-label"></label>
+            <div class="col-lg-9">
+                <input asp-for="Order.BillOfDelivery" class="form-control" type="text" />
+                <span asp-validation-for="Order.BillOfDelivery" class="text-danger"></span>
+            </div>
         </div>
 
         <div class="form-group row">

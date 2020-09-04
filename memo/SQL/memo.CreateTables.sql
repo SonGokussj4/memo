@@ -8,7 +8,7 @@ CREATE TABLE [memo].[Company] (
   [Phone] nvarchar(50),
   [Web] nvarchar(50),
   [CreateDate] date DEFAULT GETDATE(),
-  [InvoiceDueDays] int DEFAULT 0,
+  [InvoiceDueDays] int,
   [Notes] ntext,
   [Active] bit DEFAULT 1
 )
@@ -70,6 +70,7 @@ CREATE TABLE [memo].[Order] (
   [OrderCode] nvarchar(50),
   [ContactId] int,
   [EveContactName] nvarchar(50),
+  [BillOfDelivery] nvarchar(255),
   [HourWage] float,
   [TotalHours] int,
   [InvoiceIssueDate] date,
@@ -89,7 +90,8 @@ GO
 
 CREATE TABLE [memo].[Currency] (
   [CurrencyId] int PRIMARY KEY IDENTITY(1, 1),
-  [Name] nvarchar(10)
+  [Name] nvarchar(10),
+  [CultureCode] nvarchar(10)
 )
 GO
 

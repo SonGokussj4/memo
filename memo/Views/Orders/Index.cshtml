@@ -82,6 +82,7 @@
             <th class="text-center" scope="col" data-field="InvoiceIssueDate" data-sortable="true" data-filter-control="input">Termín vyst.<br />faktury</th>
             <th class="text-center" scope="col" data-field="7" data-footer-formatter="priceFormatterCz" data-sortable="true" data-filter-control="input">Konečná<br />cena v Kč</th>
             <th class="text-center" scope="col" data-field="Notes" data-sortable="true" data-filter-control="input">Poznámky</th>
+            <th class="text-center" scope="col" data-field="BillOfDelivery" data-sortable="true" data-filter-control="input">Dodací list</th>
             <th class="text-center" scope="col" data-field="Currency" data-sortable="true" data-filter-control="select">Měna</th>
             <th class="text-center" scope="col" data-field="OtherCosts" data-sortable="true" data-filter-control="input">Další<br />náklady</th>
             <th class="text-center" scope="col" data-field="HourWage" data-sortable="true" data-filter-control="input">Hod.<br />sazba</th>
@@ -113,9 +114,10 @@
                 @* <th scope="row" class="text-right">@String.Format("{0:# 000}", item.TotalHours) hod</th> *@
                 <th scope="row" class="text-center">@String.Format("{0:yyyy-MM-dd}", @item.InvoiceIssueDate)</th>
                 <th scope="row" class="text-right">@string.Format(CultureInfo.CreateSpecificCulture("cs-CZ"), "{0:C0}", @item.PriceFinalCzk)</th>
-                <th scope="row" class="notesWrap" data-toggle="tooltip" data-placement="top" data-html="true" title="@item.Notes">
+                <th scope="row" class="notesWrap" data-toggle="tooltip" data-html="true" title="@item.Notes">
                     @item.Notes
                 </th>
+                <th scope="row" class="text-center notesWrap" data-toggle="tooltip" title="@item.BillOfDelivery">@item.BillOfDelivery</th>
                 <th scope="row" class="text-center">@item.Offer?.Currency.Name</th>
                 <th scope="row" class="text-right">@String.Format(CultureInfo.CreateSpecificCulture(@item.Offer?.Currency.CultureCode), "{0:C0}", @item.OtherCosts)</th>
                 <th scope="row" class="text-right">@String.Format(CultureInfo.CreateSpecificCulture(@item.Offer?.Currency.CultureCode), "{0:C0}", @item.HourWage)</th>
@@ -133,7 +135,7 @@
                     string backgroundClass = Convert.ToDecimal(currentVal) < 10 ? "bg-success" : "bg-danger";
                     string currentValStr = String.Format("{0:0.00}", currentVal);
                     string tooltipText = $"Využito: {currentValStr} % </br> Hodin: {item.Burned / 60} / {item.TotalHours}";
-                    <th scope="row" data-toggle="tooltip" data-placement="top" data-html="true" title="@tooltipText">
+                    <th scope="row" data-toggle="tooltip" data-html="true" title="@tooltipText">
                         <div class="progress">
                             <div class="progress-bar @backgroundClass" role="progressbar" style="width: @currentValStr%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
                                 @currentValStr %

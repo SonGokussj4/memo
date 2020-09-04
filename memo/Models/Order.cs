@@ -13,7 +13,7 @@ namespace memo.Models
         public int OrderId { get; set; }
 
         // [Required]
-        [Display(Name = "Objednávka")]
+        [Display(Name = "Evektor nabídka")]
         public int? OfferId { get; set; }
         public Offer Offer { get; set; }
 
@@ -35,6 +35,7 @@ namespace memo.Models
         [Display(Name = "Vedoucí projektu v EVEKTORu")]
         public int? ContactId { get; set; }
 
+        [Required]
         [Display(Name = "Vedoucí projektu v EVEKTORu")]
         public string EveContactName { get; set; }
         // [Display(Name = "Vedoucí projektu v EVEKTORu")]
@@ -47,6 +48,9 @@ namespace memo.Models
 
         [Display(Name = "Celkem hodin plánovaných")]
         public int? TotalHours { get; set; }
+
+        [Display(Name = "Dodací list")]
+        public string BillOfDelivery { get; set; }
 
         [Required]
         [Display(Name = "Předp. termín vystavení faktury"), Column(TypeName = "date")]

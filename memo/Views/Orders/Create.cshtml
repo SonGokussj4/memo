@@ -14,6 +14,9 @@
     .input-group-text {
         font-size: 0.9rem;
     }
+    .input-validation-error {
+        border-color: red;
+    }
 </style>
 
 <div class="text-center">
@@ -161,15 +164,29 @@
                     </a>
                 </div>
             </div>
-
             <div class="form-group row">
-                <label asp-for="Order.EveContactName" class="col-lg-3 col-form-label form-control-label control-label"></label>
+                <label asp-for="Order.EveContactName" class="required col-lg-3 col-form-label form-control-label control-label"></label>
                 <div class="col-lg-9">
                     @Html.DropDownListFor(model => model.Order.EveContactName, ViewBag.EveContactList as SelectList, "-- Vyber kontakt --", new { @class = "form-control selectpicker" })
                     <span asp-validation-for="Order.EveContactName" class="text-danger"></span>
                 </div>
             </div>
+        </div>
 
+        <div class="form-group row">
+            <label asp-for="Order.BillOfDelivery" class="col-lg-3 col-form-label form-control-label control-label"></label>
+            <div class="col-lg-9">
+                @* <div class="custom-file"> *@
+                <input asp-for="Order.BillOfDelivery" class="form-control" type="text" />
+                    @* <input type="file" class="custom-file-input" id="customFile"> *@
+                    @* <label class="custom-file-label" for="customFile">Choose file</label> *@
+                @* </div> *@
+                @* <div class="custom-file">
+                    <input type="file" class="custom-file-input" name="Order.BillOfDelivery" id="Order.BillOfDelivery" aria-describedby="inputGroupFileAddon04">
+                    <label class="custom-file-label" for="Order.BillOfDelivery">Choose file</label>
+                </div> *@
+                <span asp-validation-for="Order.BillOfDelivery" class="text-danger"></span>
+            </div>
         </div>
 
         <div class="form-group row">
@@ -222,8 +239,8 @@
                     </div>
                     <input asp-for="Order.OtherCosts" class="form-control" type="text" />
                 </div>
+                <span asp-validation-for="Order.OtherCosts" class="text-danger"></span>
             </div>
-            <span asp-validation-for="Order.OtherCosts" class="text-danger"></span>
             <label asp-for="Order.HourWage" class="required col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-3">
                  <div class="input-group mb-2 mr-sm-2">
@@ -319,6 +336,14 @@
             if (@Model.Order.OfferId != "0") {
                 document.getElementById("orderForm").style.visibility = "visible";
             }
+
+            //$('#Order_BillOfDelivery').on('change',
+            //    function() {
+            //        //get the file name
+            //        var fileName = $(this).val();
+            //        //replace the "Choose a file" label
+            //        $(this).next('.custom-file-label').html(fileName);
+            //    })
 
             $('.mycalendar input').datepicker({
                 // format: "dd.mm.yyyy",

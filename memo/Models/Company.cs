@@ -16,7 +16,7 @@ namespace memo.Models
         [Key]
         public int CompanyId { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Prosím vyplňte název firmy.")]
         [Display(Name = "Název"), StringLength(50)]
         public string Name { get; set; }
 
@@ -36,8 +36,9 @@ namespace memo.Models
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime? CreateDate { get; set; }
 
+        [Required(ErrorMessage = "Prosím uveďte splatnost faktury (v celých dnech).")]
         [Display(Name = "Splatnost")]
-        public int InvoiceDueDays { get; set; }
+        public int? InvoiceDueDays { get; set; }
 
         [Display(Name = "Poznámky"), Column(TypeName = "ntext")]
         public string Notes { get; set; }

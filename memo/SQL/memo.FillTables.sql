@@ -168,11 +168,11 @@ VALUES
 DELETE FROM [memo].[Currency];
 
 INSERT INTO [memo].[Currency]
-  (Name)
+  ([Name], [CultureCode])
 VALUES
-  ('CZK'),
-  ('EUR'),
-  ('USD')
+  ('CZK', 'cs-CZ'),
+  ('EUR', 'de-DE'),
+  ('USD', 'en-US')
 
 -- CREATE TABLE [memo].[Currency] (
 --   [CurrencyId] int PRIMARY KEY IDENTITY(1, 1),

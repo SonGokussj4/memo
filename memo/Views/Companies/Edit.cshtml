@@ -54,7 +54,7 @@
         <hr />
 
         <div class="form-group row">
-            <label asp-for="Name" class="col-lg-3 col-form-label form-control-label control-label"></label>
+            <label asp-for="Name" class="required col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-4">
                 <input asp-for="Name" class="form-control" type="text" placeholder="Název firmy"/>
                 <span asp-validation-for="Name" class="text-danger"></span>
@@ -86,9 +86,14 @@
         </div>
 
         <div class="form-group row">
-            <label asp-for="InvoiceDueDays" class="col-lg-3 col-form-label form-control-label control-label">Splatnost faktury</label>
+            <label asp-for="InvoiceDueDays" class="required col-lg-3 col-form-label form-control-label control-label">Splatnost faktury</label>
             <div class="col-lg-3">
-                <input asp-for="InvoiceDueDays" class="form-control" type="text" placeholder="Ve dnech"/>
+                <div class="input-group mb-2 mr-sm-2">
+                    <input asp-for="InvoiceDueDays" class="form-control" type="text" required="" />
+                    <div class="input-group-append">
+                        <div class="input-group-text">dní</div>
+                    </div>
+                </div>
                 <span asp-validation-for="InvoiceDueDays" class="text-danger"></span>
             </div>
         </div>

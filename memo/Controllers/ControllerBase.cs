@@ -98,10 +98,14 @@ namespace memo.Controllers
 
         public SelectList getEveContacts(EvektorDbContext _eveDb)
         {
+
+            // EVE - Del = 1 and nemáš TxAccount a nejsi IntAccType == 1 -> nepracuješ
+	        // EVAT - Del = 0 and máš BranchID 1 a zároveň WorkMask non NULL -> pracuješ v EVATu
+
             List<SelectListItem> eveContactsList = new List<SelectListItem>();
             foreach (tUsers item in _eveDb.tUsers)
             {
-                if (item.IdworkTime == 0)
+                if (item.TxAccount == "" || item.Del == 1 || item.IntAccType != 1)
                 {
                     continue;
                 }
