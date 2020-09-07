@@ -39,6 +39,15 @@
         display: flex;
         justify-content: space-between;
     }
+
+    .wonOffer {
+        border: 1px solid #ced4da;
+        margin: 0px -15px;
+        padding: 8px 0px;
+        margin-bottom: 10px;
+        background-color: #00ff0d21;
+        border-radius: .25rem;
+    }
 </style>
 
 <div class="text-center">
@@ -120,6 +129,7 @@
         </div>
 
         <div class="createOffer" style="display: none;">
+
             <hr />
             <h5>Stávající zakázky</h5>
             <div class="form-group row">
@@ -278,6 +288,8 @@
                 <input type="reset" class="btn btn-secondary" value="Resetovat pole" data-toggle="tooltip" title="Vrátí neuložené úpravy"/>
                 <input type="submit" class="btn btn-primary" name="actionType" value="Uložit" />
                 <input type="submit" class="btn btn-primary" name="actionType" value="Uložit a zavřít" />
+                @* <input type="submit" class="btn btn-primary" name="actionType" value="Smazat" /> *@
+                <a href="#" class="btn btn-danger pull-right" onclick="ConfirmDelete(@Model.OfferId)">Smazat</a>
             </div>
         </div>
 
@@ -285,12 +297,81 @@
     </div>
 </div>
 
+
+<!-- Modal Confirm Delete-->
+<div class="modal fade" id="deleteConfirmModal" tabindex="-1" role="dialog" aria-labelledby="deleteConfirmModalLabel">
+    <div class="modal-dialog modal-md" role="document">
+        <div class="modal-content">
+            <!-- header -->
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteConfirmModalLabel">Smazání nabídky</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <!-- body -->
+            <div class="modal-body">
+                Opravdu smazat?<br />
+                Ev. Číslo: <b>@Model.OfferName</b><br />
+                Předmět: <b>@Model.Subject</b>
+            </div>
+            <!-- footer -->
+            <div class="modal-footer">
+                <a href="#" class="btn btn-info" data-dismiss="modal">Zpět</a>
+                <a href="#" class="btn btn-warning" onclick="DeactivateItem()">Deaktivovat</a>
+                <a href="#" class="btn btn-danger" onclick="DeleteItem()">Smazat</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 @section Scripts {
 
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     <script src="~/js/CustomValidation.js"></script>
 
     <script>
+
+        // MODAL dialog for delete confirmation
+        //-------------------------------------
+        var ConfirmDelete = function (ItemId) {
+            $("#deleteConfirmModal").modal('show');
+        };
+
+        // POST delete command to controller
+        //----------------------------------
+        function DeleteItem() {
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("Delete")',
+                data: { Id: @Model.OfferId },
+                success: function () {
+                    $("#deleteConfirmModal").modal("hide")
+                    window.location.href = '../'
+                },
+                error: function() {
+                    alert("Nelze z nějakého důvodu odstranit...");
+                    $("#deleteConfirmModal").modal("hide");
+                }
+            })
+        }
+
+        // POST deactivate command to controller
+        //----------------------------------
+        function DeactivateItem() {
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("Deactivate")',
+                data: { Id: @Model.OfferId },
+                success: function () {
+                    $("#deleteConfirmModal").modal("hide")
+                    window.location.href = './' + @Model.OfferId
+                },
+                error: function() {
+                    alert("Nelze z nějakého důvodu deaktivovat...");
+                    $("#deleteConfirmModal").modal("hide");
+                }
+            })
+        }
 
         $(document).ready(function(){
 
