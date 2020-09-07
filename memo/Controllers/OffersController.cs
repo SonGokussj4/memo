@@ -238,6 +238,28 @@ namespace memo.Controllers
             return RedirectToAction("Index");
         }
 
+        [HttpPost]
+        public async Task<IActionResult> Deactivate(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            Offer offer = await _db.Offer.FirstOrDefaultAsync(m => m.OfferId == id);
+            if (offer == null)
+            {
+                return NotFound();
+            }
+
+            offer.Active = false;
+
+            _db.Offer.Update(offer);
+            await _db.SaveChangesAsync();
+
+            return RedirectToAction("Index");
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

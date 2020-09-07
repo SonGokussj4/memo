@@ -21,21 +21,29 @@ namespace memo
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             Configuration = configuration;
+            Env = env;
         }
 
+        public IWebHostEnvironment Env { get; set; }
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            IMvcBuilder builder = services.AddRazorPages();
+            if (Env.IsDevelopment())
+            {
+                builder.AddRazorRuntimeCompilation();
+            }
+
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+                options.UseSqlServer(Configuration.GetConnectionString("LocalConnection")));
 
             services.AddDbContext<EvektorDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("EvektorDbConnection")));
+                options.UseSqlServer(Configuration.GetConnectionString("LocalConnection")));
 
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
@@ -51,6 +59,8 @@ namespace memo
 
             services.AddControllersWithViews();
 
+            // services.AddRazorPages();
+                // .AddRazorRuntimeCompilation();
             // services.AddRazorPages();
         }
 
