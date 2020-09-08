@@ -25,6 +25,14 @@
     th {
         font-weight: 400;
     }
+
+    .bootstrap-table .fixed-table-container .table thead th .sortable {
+        padding-right: 20px!important;
+    }
+
+    .itemInactive {
+        color: #7c878f;
+    }
 </style>
 
 
@@ -47,7 +55,7 @@
     class="table table-sm text-xsmall text-nowrap"
     @* style="width:100%" *@
     data-cookie="true"
-    data-cookie-id-table="saveId"
+    data-cookie-id-table="ordersTableCookie"
     data-filter-control="false"
     data-footer-style="footerStyle"
     data-show-search-clear-button="true"
@@ -73,36 +81,52 @@
     >
     <thead>
         <tr>
-            <th class="text-center" scope="col" data-field="id" data-footer-formatter="idFormatter" data-sortable="true" data-filter-control="input"><i class="fa fa-arrows-v" aria-hidden="true"></i> Id</th>
-            <th class="text-center" scope="col" data-field="Offer" data-sortable="true" data-filter-control="input">Objednávka</th>
-            <th class="text-center" scope="col" data-field="OrderName" data-sortable="true" data-filter-control="input">Č. obj. zákazníka</th>
-            <th class="text-center" scope="col" data-field="OrderCode" data-sortable="true" data-filter-control="input">Kód EVE<br />vykazování</th>
-            <th class="text-center" scope="col" data-field="EveContactName" data-sortable="true" data-filter-control="input">Vedoucí<br />projektu</th>
-            <th class="text-center" scope="col" data-field="TotalHours" data-sortable="true" data-filter-control="input">Plánované<br />hod</th>
-            <th class="text-center" scope="col" data-field="InvoiceIssueDate" data-sortable="true" data-filter-control="input">Termín vyst.<br />faktury</th>
-            <th class="text-center" scope="col" data-field="7" data-footer-formatter="priceFormatterCz" data-sortable="true" data-filter-control="input">Konečná<br />cena v Kč</th>
-            <th class="text-center" scope="col" data-field="Notes" data-sortable="true" data-filter-control="input">Poznámky</th>
-            <th class="text-center" scope="col" data-field="BillOfDelivery" data-sortable="true" data-filter-control="input">Dodací list</th>
-            <th class="text-center" scope="col" data-field="Currency" data-sortable="true" data-filter-control="select">Měna</th>
-            <th class="text-center" scope="col" data-field="OtherCosts" data-sortable="true" data-filter-control="input">Další<br />náklady</th>
-            <th class="text-center" scope="col" data-field="HourWage" data-sortable="true" data-filter-control="input">Hod.<br />sazba</th>
-            <th class="text-center" scope="col" data-field="Burned" data-sortable="true" data-filter-control="input">Vyčerpáno</th>
-            <th class="text-center" scope="col" data-field="13" data-footer-formatter="priceFormatterCz" data-sortable="true" data-filter-control="input">Stav v Kč</th>
+            <th class="text-center" scope="col" data-field="0" data-footer-formatter="idFormatter" data-sortable="true" data-filter-control="input"><i class="fa fa-arrows-v" aria-hidden="true"></i> Id</th>
+            <th class="text-center" scope="col" data-field="1" data-sortable="true" data-filter-control="input"><span data-toggle="tooltip" title="Aktivní / Neaktivní">A/N</span></th>
+            <th class="text-center" scope="col" data-field="2" data-sortable="true" data-filter-control="input">Vytvořeno</th>
+            <th class="text-center" scope="col" data-field="3" data-sortable="true" data-filter-control="input">Objednávka</th>
+            <th class="text-center" scope="col" data-field="4" data-sortable="true" data-filter-control="input">Č. obj. zákazníka</th>
+            <th class="text-center" scope="col" data-field="5" data-sortable="true" data-filter-control="input">Kód EVE<br />vykazování</th>
+            <th class="text-center" scope="col" data-field="6" data-sortable="true" data-filter-control="input">Vedoucí<br />projektu</th>
+            <th class="text-center" scope="col" data-field="7" data-sortable="true" data-filter-control="input">Plánované<br />hod</th>
+            <th class="text-center" scope="col" data-field="8" data-sortable="true" data-filter-control="input">Termín vyst.<br />faktury</th>
+            <th class="text-center" scope="col" data-field="9" data-footer-formatter="priceFormatterCz" data-sortable="true" data-filter-control="input">Konečná<br />cena v Kč</th>
+            <th class="text-center" scope="col" data-field="10" data-sortable="true" data-filter-control="input">Poznámky</th>
+            <th class="text-center" scope="col" data-field="11" data-sortable="true" data-filter-control="input">Dodací list</th>
+            <th class="text-center" scope="col" data-field="12" data-sortable="true" data-filter-control="select">Měna</th>
+            <th class="text-center" scope="col" data-field="13" data-sortable="true" data-filter-control="input">Další<br />náklady</th>
+            <th class="text-center" scope="col" data-field="14" data-sortable="true" data-filter-control="input">Hod.<br />sazba</th>
+            <th class="text-center" scope="col" data-field="15" data-sortable="true" data-filter-control="input">Vyčerpáno</th>
+            <th class="text-center" scope="col" data-field="16" data-footer-formatter="priceFormatterCz" data-sortable="true" data-filter-control="input">Stav v Kč</th>
             @* <th class="text-center" scope="col" data-field="14" data-sortable="true" data-filter-control="input">Stav<br />plnění</th> *@
-            <th class="text-center" scope="col" data-field="DateCreated" data-sortable="true" data-filter-control="input">Datum<br />vytvoření</th>
-            <th class="text-center" scope="col" data-field="Progress" data-sortable="true" data-filter-control="input">Využito</th>
-            <th class="text-center" scope="col" data-field="Active" data-sortable="true" data-filter-control="input">Aktivní</th>
+            <th class="text-center" scope="col" data-field="17" data-sortable="true" data-filter-control="input">Využito</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model)
         {
-            @* <tr id="row_@item.OrderId" class="@(item.Active ? Html.Raw("show") : Html.Raw("hide"))"> *@
+            @* <tr id="row_@item.OrderId" class="@(item.Active ? Html.Raw("itemActive") : Html.Raw("itemInactive"))"> *@
             <tr id="row_@item.OrderId">
-                <th scope="row" data-field="0" >
+                <th scope="row" data-field="0">
                     <a asp-action="Edit" asp-route-id=@item.OrderId><i class="fa fa-pencil fa-fw" aria-hidden="true"></i></a>
                     <a href="#" onclick="ConfirmDelete(@item.OrderId)"><i class="fa fa-times fa-fw" style="color: red;", aria-hidden="true"></i></a>
                 </th>
+
+                @* Status *@
+                @if (item.Active is true)
+                {
+                    <th scope="row" class="text-center" data-toggle="tooltip" title="Aktivní">
+                        <i class="fa fa-check-circle" style="color: #5abe58;" aria-hidden="true"></i>
+                    </th>
+                }
+                else if (item.Active is false)
+                {
+                    <th scope="row" class="text-center" data-toggle="tooltip" title="Neaktivní">
+                        <i class="fa fa-eye-slash" style="color: #8a97a2;" aria-hidden="true"></i>
+                    </th>
+                }
+
+                <th scope="row" class="text-left">@String.Format("{0:yyyy-MM-dd}", @item.CreateDate)</th>
                 <th scope="row" class="text-left">@item.Offer?.OfferName</th>
                 <th scope="row" class="text-left">@item.OrderName</th>
                 <th scope="row" class="text-center">@item.OrderCode</th>
@@ -128,7 +152,6 @@
                 }
                 <th scope="row" class="text-right">@string.Format(CultureInfo.CreateSpecificCulture("cs-CZ"), "{0:C0}", @item.Burned * @item.HourWage / 60 )</th>
                 @* <th scope="row" class="text-right">@( String.Format("{0:0.00}", (float)item.Burned / 60 / item.TotalHours * 100) ) %</th> *@
-                <th scope="row" class="text-left">@String.Format("{0:yyyy-MM-dd}", @item.CreateDate)</th>
                 @{
                     float? currentVal = (float)item.Burned / 60 / item.TotalHours * 100;
                     currentVal = currentVal is null ? 0 : currentVal;
@@ -144,14 +167,6 @@
                     </th>
                 }
 
-                @if (item.Active is true)
-                {
-                    <th scope="row" class="text-center" ><span class="badge badge-info">Aktivní</span></th>
-                }
-                else if (item.Active is false)
-                {
-                    <th scope="row" class="text-center" ><span class="badge badge-secondary">Neaktivní</span></th>
-                }
             </tr>
         }
     </tbody>
