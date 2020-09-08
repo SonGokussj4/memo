@@ -45,11 +45,14 @@
     <button style="margin-right: 5px;" class="btn btn-outline-info" name="BtnMujFilter" id="BtnMujFilter" type="button">
         <i class="fa fa-filter"> Filter</i>
     </button>
+    <a asp-action="index" class="btn btn-outline-info" asp-route-ShowInactive="true" id="btnToggleActive" onclick="ShowInactive()>
+        <i class="fa fa-eye-slash"> Aktivní (@Model.Count())</i>
+    </a>
 
-    @using (Html.BeginForm())
+    @* @using (Html.BeginForm())
     {
         <input type="submit" name="response" value="Zobraz neaktivní" formaction=@Url.Action("ShowInactive") formmethod="post" class="btn btn-primary" />
-    }
+    } *@
 </div>
 
 <table
