@@ -21,15 +21,28 @@ namespace memo.Controllers
             _db = db;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(bool showInactive = false)
         {
-            var model = _db.Contact
-                .Include(x => x.Company)
-                .ToList();
+            List<Contact> model = new List<Contact>();
+
+            if (showInactive is false)
+            {
+                model = _db.Contact
+                    .Include(x => x.Company)
+                    .Where(x => x.Active == true)
+                    .ToList();
+            }
+            else
+            {
+                model = _db.Contact
+                    .Include(x => x.Company)
+                    .ToList();
+            }
             // var model = _db.Contact.ToList();
             return View(model);
         }
 
+        [HttpGet]
         public IActionResult Edit(int? id)
         {
             Contact model = _db.Contact.Find(id);
@@ -42,21 +55,33 @@ namespace memo.Controllers
         }
 
         [HttpPost]
-        public IActionResult Edit(Contact contact)
+        [ValidateAntiForgeryToken]
+        public IActionResult Edit(string actionType, Contact model)
         {
             if (ModelState.IsValid)
             {
-                contact.Phone = contact.Phone?.Replace(" ", "");
+                model.Phone = model.Phone?.Replace(" ", "");
 
-                _db.Update(contact);
+                _db.Update(model);
                 _db.SaveChanges();
-                return RedirectToAction("Index");
+
+                ViewBag.CompanyList = new SelectList(_db.Company.ToList(), "CompanyId", "Name");
+
+                if (actionType == "Uložit")
+                {
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction(nameof(Index));
+                }
             }
             ViewBag.CompanyList = new SelectList(_db.Company.ToList(), "CompanyId", "Name");
             return View();
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<ActionResult> Delete(int? id)
         {
             if (id == null)
@@ -77,6 +102,7 @@ namespace memo.Controllers
             return RedirectToAction("Index");
         }
 
+        [HttpGet]
         public IActionResult Create()
         {
             Contact model = new Contact();
@@ -85,6 +111,7 @@ namespace memo.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult Create(Contact model)
         {
             Contact contact = _db.Contact
@@ -119,6 +146,18 @@ namespace memo.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult ShowInactive()
+        {
+            if (ModelState.IsValid)
+            {
+                // user.TermsAcceptedOn = DateTime.Now;
+                // company.Active = "Accepted";
+            }
+            return RedirectToAction("Index", new { showInactive = true });
         }
     }
 }

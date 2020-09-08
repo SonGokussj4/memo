@@ -4,6 +4,34 @@
 
 @model IEnumerable<memo.Models.Company>
 
+<style>
+    .notesWrap {
+        max-width: 200px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .centerHeader {
+        text-align: center;
+    }
+    @* .container {
+        max-width: 1680px;
+    } *@
+
+    @* th {
+        font-weight: 400;
+    } *@
+
+    .bootstrap-table .fixed-table-container .table thead th .sortable {
+        padding-right: 20px!important;
+    }
+
+    .itemInactive {
+        color: #7c878f;
+    }
+</style>
+
+
 <div class="text-center">
     <h1 class="display-4">Firmy</h1>
 </div>
@@ -24,48 +52,63 @@
     data-cookie-id-table="companiesTableCookie"
     data-filter-control="false"
     data-search="true"
+    data-show-columns="true"
+    data-show-columns-toggle-all="true"
+    data-show-export="true"
     data-show-search-clear-button="true"
     data-show-toggle="true"
-    data-show-columns-toggle-all="true"
-    data-show-columns="true"
-    data-show-export="true"
     data-sort-name="Name"
     data-sort-order="asc"
     data-toggle="table"
     data-toolbar="#toolbar"
     data-visible-search="true"
     class="table table-sm text-nowrap text-xsmall"
-    style="width:100%"
+    style="font-size: 0.9em;"
     >
     <thead>
         <tr>
-            <th scope="col" data-field="0" data-sortable="false" data-filter-control="input"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></th>
-            <th scope="col" data-field="1" data-sortable="true" data-filter-control="input">Název</th>
-            <th scope="col" data-field="2" data-sortable="true" data-filter-control="input">Město</th>
-            <th scope="col" data-field="3" data-sortable="true" data-filter-control="input">Adresa</th>
-            <th scope="col" data-field="4" data-sortable="true" data-filter-control="input">Telefon</th>
-            <th scope="col" data-field="5" data-sortable="true" data-filter-control="input">Web</th>
-            <th scope="col" data-field="6" data-sortable="true" data-filter-control="input">Splatnost<br />[dny]</th>
-            <th scope="col" data-field="7" data-sortable="true" data-filter-control="input">Poznámky</th>
-            <th scope="col" data-field="8" data-sortable="true" data-filter-control="input">Vytvořeno</th>
+            <th class="text-center" scope="col" data-field="0" data-sortable="true" data-filter-control="input" data-footer-formatter="idFormatter"  ><i class="fa fa-fw fa-ellipsis-v " aria-hidden="true"></i>Edit</th>
+            <th class="text-center" scope="col" data-field="1" data-sortable="true" data-filter-control="input"><span data-toggle="tooltip" title="Aktivní / Neaktivní">A/N</span></th>
+            <th class="text-center" scope="col" data-field="2" data-sortable="true" data-filter-control="input">Název</th>
+            <th class="text-center" scope="col" data-field="3" data-sortable="true" data-filter-control="input">Město</th>
+            <th class="text-center" scope="col" data-field="4" data-sortable="true" data-filter-control="input">Adresa</th>
+            <th class="text-center" scope="col" data-field="5" data-sortable="true" data-filter-control="input">Telefon</th>
+            <th class="text-center" scope="col" data-field="6" data-sortable="true" data-filter-control="input">Web</th>
+            <th class="text-center" scope="col" data-field="7" data-sortable="true" data-filter-control="input">Splatnost [dny]</th>
+            <th class="text-center" scope="col" data-field="8" data-sortable="true" data-filter-control="input">Poznámky</th>
+            <th class="text-center" scope="col" data-field="9" data-sortable="true" data-filter-control="input">Vytvořeno</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model)
         {
-            <tr id="row_@item.CompanyId" class="@(item.Active ? Html.Raw("show") : Html.Raw("hide"))">
-                <th scope="row" style="width: 10px;">
+            <tr id="row_@item.CompanyId" class="@(item.Active ? Html.Raw("itemActive") : Html.Raw("itemInactive"))">
+                <th scope="row">
                     <a asp-action="Edit" asp-route-id=@item.CompanyId><i class="fa fa-pencil fa-fw" aria-hidden="true"></i></a>
                     <a href="#" onclick="ConfirmDelete(@item.CompanyId)"><i class="fa fa-times fa-fw" style="color: red;", aria-hidden="true"></i></a>
                 </th>
-                <th scope="row">@item.Name</th>
-                <th scope="row">@item.City</th>
-                <th scope="row">@item.Address</th>
-                <th scope="row">@item.Phone</th>
-                <th scope="row"><a href="http://@item.Web" target="_blank">@item.Web</a></th>
-                <th scope="row">@item.InvoiceDueDays</th>
-                <th scope="row">@item.Notes</th>
-                <th scope="row">@String.Format("{0:yyyy-MM-dd}", @item.CreateDate)</th>
+
+                @if (item.Active is true)
+                {
+                    <th scope="row" class="text-center" data-toggle="tooltip" title="Aktivní">
+                        <i class="fa fa-check-circle" style="color: #5abe58;" aria-hidden="true"></i>
+                    </th>
+                }
+                else if (item.Active is false)
+                {
+                    <th scope="row" class="text-center" data-toggle="tooltip" title="Neaktivní">
+                        <i class="fa fa-eye-slash" style="color: #8a97a2;" aria-hidden="true"></i>
+                    </th>
+                }
+
+                <th class="text-left" scope="row">@item.Name</th>
+                <th class="text-left" scope="row">@item.City</th>
+                <th class="text-left" scope="row">@item.Address</th>
+                <th class="text-left" scope="row">@item.Phone</th>
+                <th class="text-left" scope="row"><a href="http://@item.Web" target="_blank">@item.Web</a></th>
+                <th class="text-right" scope="row">@item.InvoiceDueDays</th>
+                <th class="text-left notesWrap" scope="row" data-toggle="tooltip" title="@item.Notes">@item.Notes</th>
+                <th class="text-left" scope="row">@String.Format("{0:yyyy-MM-dd}", @item.CreateDate)</th>
             </tr>
         }
     </tbody>

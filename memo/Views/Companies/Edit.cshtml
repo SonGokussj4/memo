@@ -21,103 +21,103 @@
 <div class="container d-flex justify-content-center">
     <div class="col-lg-10 personal-info">
         <form class="card" role="form" autocomplete="on" asp-action="Edit" method="post">
-        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-        <input type="hidden" asp-for="CompanyId" />
 
-        <div class="cardTitleMerged">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="CompanyId" />
 
-            <h5 class="card-title">Upravit firmu</h5>
+            <div class="cardTitleMerged">
 
-            <div class="form-group">
-                <div class="pretty p-bigger p-default p-curve p-toggle">
-                    <input asp-for="Active" type="checkbox"/>
-                    <div class="state p-success p-on">
-                        <label>Aktivní</label>
+                <h5 class="card-title">Upravit firmu</h5>
+
+                <div class="form-group">
+                    <div class="pretty p-bigger p-default p-curve p-toggle">
+                        <input asp-for="Active" type="checkbox"/>
+                        <div class="state p-success p-on">
+                            <label>Aktivní</label>
+                        </div>
+                        <div class="state p-danger p-off">
+                            <label>Neaktivní </label>
+                        </div>
                     </div>
-                    <div class="state p-danger p-off">
-                        <label>Neaktivní </label>
-                    </div>
+                    <span asp-validation-for="Active" class="text-danger"></span>
                 </div>
-                <span asp-validation-for="Active" class="text-danger"></span>
             </div>
-        </div>
 
-        <div class="form-group row">
-            <span class="col-lg-6"></span>
-            <label asp-for="CreateDate" class="col-lg-3 text-right col-form-label form-control-label control-label">Datum vytvoření</label>
-            <div class="col-lg-3 text-right">
-                <input asp-for="CreateDate" class="form-control" type="text" readonly />
-                <span asp-validation-for="CreateDate" class="text-danger"></span>
-            </div>
-        </div>
+            <hr />
 
-        <hr />
-
-        <div class="form-group row">
-            <label asp-for="Name" class="required col-lg-3 col-form-label form-control-label control-label"></label>
-            <div class="col-lg-4">
-                <input asp-for="Name" class="form-control" type="text" placeholder="Název firmy"/>
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-        </div>
-
-        <div class="form-group row">
-            <label asp-for="City" class="col-lg-3 col-form-label form-control-label control-label">Adresa</label>
-            <div class="col-lg-4">
-                <input asp-for="City" class="form-control" type="text" placeholder="Město"/>
-                <span asp-validation-for="City" class="text-danger"></span>
-            </div>
-            <div class="col-lg-5">
-                <input asp-for="Address" class="form-control" type="text" placeholder="Ulice"/>
-                <span asp-validation-for="Address" class="text-danger"></span>
-            </div>
-        </div>
-
-        <div class="form-group row">
-            <label asp-for="Phone" class="col-lg-3 col-form-label form-control-label control-label">Kontakt</label>
-            <div class="col-lg-4">
-                <input asp-for="Phone" class="form-control" type="text" placeholder="Telefoní číslo"/>
-                <span asp-validation-for="Phone" class="text-danger"></span>
-            </div>
-            <div class="col-lg-5">
-                <input asp-for="Web" class="form-control" type="text" placeholder="https://"/>
-                <span asp-validation-for="Web" class="text-danger"></span>
-            </div>
-        </div>
-
-        <div class="form-group row">
-            <label asp-for="InvoiceDueDays" class="required col-lg-3 col-form-label form-control-label control-label">Splatnost faktury</label>
-            <div class="col-lg-3">
-                <div class="input-group mb-2 mr-sm-2">
-                    <input asp-for="InvoiceDueDays" class="form-control" type="text" required="" />
-                    <div class="input-group-append">
-                        <div class="input-group-text">dní</div>
-                    </div>
+            <div class="form-group row">
+                <label asp-for="Name" class="required col-lg-3 col-form-label form-control-label control-label"></label>
+                <div class="col-lg-4">
+                    <input asp-for="Name" class="form-control" type="text" placeholder="Název firmy"/>
+                    <span asp-validation-for="Name" class="text-danger"></span>
                 </div>
-                <span asp-validation-for="InvoiceDueDays" class="text-danger"></span>
             </div>
-        </div>
 
-        <div class="form-group row">
-            <label asp-for="Notes" class="col-lg-3 col-form-label form-control-label control-label"></label>
-            <div class="col-lg-9">
-                <textarea asp-for="Notes" class="form-control"></textarea>
-                @* @Html.TextAreaFor(m => m.Notes, additionalViewData: new { htmlAttributes = new { @class = "form-control" }}) *@
-                <span asp-validation-for="Notes" class="text-danger"></span>
+            <div class="form-group row">
+                <label asp-for="City" class="col-lg-3 col-form-label form-control-label control-label">Adresa</label>
+                <div class="col-lg-4">
+                    <input asp-for="City" class="form-control" type="text" placeholder="Město"/>
+                    <span asp-validation-for="City" class="text-danger"></span>
+                </div>
+                <div class="col-lg-5">
+                    <input asp-for="Address" class="form-control" type="text" placeholder="Ulice"/>
+                    <span asp-validation-for="Address" class="text-danger"></span>
+                </div>
             </div>
-        </div>
 
-        <div class="form-group row">
-            <div class="col-lg-3">
-                <a asp-action="Index" class="btn btn-light"><i class="fa fa-arrow-left"></i> Zpět</a>
+            <div class="form-group row">
+                <label asp-for="Phone" class="col-lg-3 col-form-label form-control-label control-label">Kontakt</label>
+                <div class="col-lg-4">
+                    <input asp-for="Phone" class="form-control" type="text" placeholder="Telefoní číslo"/>
+                    <span asp-validation-for="Phone" class="text-danger"></span>
+                </div>
+                <div class="col-lg-5">
+                    <input asp-for="Web" class="form-control" type="text" placeholder="https://"/>
+                    <span asp-validation-for="Web" class="text-danger"></span>
+                </div>
             </div>
-            <div class="col-lg-9">
-                <input type="reset" class="btn btn-secondary" value="Vyprázdnit pole" />
-                <input type="submit" class="btn btn-primary" value="Uložit" />
-            </div>
-        </div>
 
-        @Html.CheckBoxFor(m => m.Active, new { style = "display:none", @checked="checked" })
+            <div class="form-group row">
+                <label asp-for="InvoiceDueDays" class="required col-lg-3 col-form-label form-control-label control-label">Splatnost faktury</label>
+                <div class="col-lg-3">
+                    <div class="input-group mb-2 mr-sm-2">
+                        <input asp-for="InvoiceDueDays" class="form-control" type="text" required="" />
+                        <div class="input-group-append">
+                            <div class="input-group-text">dní</div>
+                        </div>
+                    </div>
+                    <span asp-validation-for="InvoiceDueDays" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label asp-for="Notes" class="col-lg-3 col-form-label form-control-label control-label"></label>
+                <div class="col-lg-9">
+                    <textarea asp-for="Notes" class="form-control"></textarea>
+                    @* @Html.TextAreaFor(m => m.Notes, additionalViewData: new { htmlAttributes = new { @class = "form-control" }}) *@
+                    <span asp-validation-for="Notes" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label asp-for="CreateDate" class="col-lg-3 col-form-label form-control-label control-label"></label>
+                <div class="col-lg-3 mycalendar">
+                    <input asp-for="CreateDate" class="form-control" type="text" readonly/>
+                    <span asp-validation-for="CreateDate" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <div class="col-lg-3">
+                    <a asp-action="Index" class="btn btn-light"><i class="fa fa-arrow-left"></i> Zpět</a>
+                </div>
+                <div class="col-lg-9">
+                    <input type="reset" class="btn btn-secondary" value="Resetovat pole" data-toggle="tooltip" title="Vrátí neuložené úpravy"/>
+                    <input type="submit" class="btn btn-primary" name="actionType" value="Uložit" />
+                    <input type="submit" class="btn btn-primary" name="actionType" value="Uložit a zavřít" />
+                    <a href="#" class="btn btn-danger pull-right" onclick="ConfirmDelete(@Model.CompanyId)">Smazat</a>
+                </div>
+            </div>
 
         </form>
     </div>

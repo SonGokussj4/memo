@@ -38,15 +38,24 @@ namespace memo.Controllers
         }
 
         [HttpPost]
-        public IActionResult Edit(Company company)
+        public IActionResult Edit(string actionType, Company model)
         {
             if (ModelState.IsValid)
             {
-                company.Phone = company.Phone?.Replace(" ", "");
+                model.Phone = model.Phone?.Replace(" ", "");
 
-                _db.Update(company);
+                _db.Update(model);
                 _db.SaveChanges();
-                return RedirectToAction("Index");
+
+                if (actionType == "Uložit")
+                {
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+
             }
             return View();
         }

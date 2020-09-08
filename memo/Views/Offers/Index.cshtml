@@ -20,12 +20,16 @@
         max-width: 1680px;
     } *@
 
-    th {
+    @* th {
         font-weight: 400;
-    }
+    } *@
 
     .bootstrap-table .fixed-table-container .table thead th .sortable {
         padding-right: 20px!important;
+    }
+
+    .itemInactive {
+        color: #7c878f;
     }
 </style>
 
@@ -105,7 +109,7 @@
     >
     <thead>
         <tr>
-            <th class="text-center" scope="col" data-field="0" data-sortable="true" data-filter-control="input" data-footer-formatter="idFormatter"  ><i class="fa fa-arrows-v" aria-hidden="true"></i> Id</th>
+            <th class="text-center" scope="col" data-field="0" data-sortable="true" data-filter-control="input" data-footer-formatter="idFormatter"  ><i class="fa fa-fw fa-ellipsis-v " aria-hidden="true"></i>Edit</th>
             <th class="text-center" scope="col" data-field="1" data-sortable="true" data-filter-control="select"><span data-toggle="tooltip" title="Aktivní / Neaktivní">A/N</span></th>
             <th class="text-center" scope="col" data-field="2" data-sortable="true" data-filter-control="input">Status</th>
             <th class="text-center" scope="col" data-field="3" data-sortable="true" data-filter-control="input">Vytvořeno</th>
@@ -116,21 +120,21 @@
             <th class="text-center" scope="col" data-field="8" data-sortable="true" data-filter-control="input">Předmět</th>
             <th class="text-center" scope="col" data-field="9" data-sortable="true" data-filter-control="input">Cena</th>
             <th class="text-center" scope="col" data-field="10" data-sortable="true" data-filter-control="input">Měna</th>
-            <th class="text-center" scope="col" data-field="11" data-sortable="true" data-filter-control="input">Cena<br/>[CZK]</th>
+            <th class="text-center" scope="col" data-field="11" data-sortable="true" data-filter-control="input">Cena [Kč]</th>
             <th class="text-center" scope="col" data-field="12" data-sortable="true" data-filter-control="input">Poznámky</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model)
         {
-            @* <tr id="row_@item.OfferId" class="@(item.Active ? Html.Raw("show") : Html.Raw("hide"))"> *@
-            <tr id="row_@item.OfferId">
+            <tr id="row_@item.OfferId" class="@(item.Active ? Html.Raw("itemActive") : Html.Raw("itemInactive"))">
+            @* <tr id="row_@item.OfferId"> *@
                 <th scope="row" data-field="0">
                     <a asp-action="Edit" asp-route-id=@item.OfferId><i class="fa fa-pencil fa-fw" aria-hidden="true"></i></a>
                     <a href="#" onclick="ConfirmDelete(@item.OfferId)"><i class="fa fa-times fa-fw" style="color: red;", aria-hidden="true"></i></a>
                 </th>
 
-                @* Status *@
+                @* Status
                 @if (item.Active is true)
                 {
                     <th scope="row" class="text-center" data-toggle="tooltip" title="Aktivní"><span class="badge badge-info">A</span></th>
@@ -138,21 +142,44 @@
                 else if (item.Active is false)
                 {
                     <th scope="row" class="text-center" data-toggle="tooltip" title="Neaktivní"><span class="badge badge-secondary">N</span></th>
+                } *@
+
+                @if (item.Active is true)
+                {
+                    <th scope="row" class="text-center" data-toggle="tooltip" title="Aktivní">
+                        <i class="fa fa-check-circle" style="color: #5abe58;" aria-hidden="true"></i>
+                    </th>
+                }
+                else if (item.Active is false)
+                {
+                    <th scope="row" class="text-center" data-toggle="tooltip" title="Neaktivní">
+                        <i class="fa fa-eye-slash" style="color: #8a97a2;" aria-hidden="true"></i>
+                    </th>
                 }
 
                 @* OfferStatus - VyhraProhra *@
                 @if (item.OfferStatusId == 1)
                 {
-                    <th scope="row" class="text-left" ><span class="badge badge-secondary">@item.OfferStatus?.Name</span></th>
+                    @* <th scope="row" class="text-left" ><span class="badge badge-secondary">@item.OfferStatus?.Name</span></th> *@
+                    <th scope="row" class="text-center" data-toggle="tooltip" title="V řešení">
+                        <span class="badge badge-secondary"><i class="fa fa-fw fa-question"></i></span>
+                    </th>
                 }
                 else if (item.OfferStatusId == 2)
                 {
-                    <th scope="row" class="text-left" ><span class="badge badge-success">@item.OfferStatus?.Name</span></th>
+                    @* <th scope="row" class="text-left" ><span class="badge badge-success">@item.OfferStatus?.Name</span></th> *@
+                    <th scope="row" class="text-center" data-toggle="tooltip" title="Vyhraná nabídka -> objednávka">
+                        <span class="badge badge-success"><i class="fa fa-fw fa-check"></i></span>
+                    </th>
                 }
                 else
                 {
-                    <th scope="row" class="text-left" ><span class="badge badge-danger">@item.OfferStatus?.Name</span></th>
+                    @* <th scope="row" class="text-left" ><span class="badge badge-danger">@item.OfferStatus?.Name</span></th> *@
+                    <th scope="row" class="text-center" data-toggle="tooltip" title="Prohraná nabídka">
+                        <span class="badge badge-danger"><i class="fa fa-fw fa-times"></i></span>
+                    </th>
                 }
+
                 @{ string dateText = item.CreateDate.HasValue != false ? item.CreateDate.Value.ToString("yyyy-MM-dd") : ""; }
                 <th scope="row" class="text-left">@dateText</th>
                 <th scope="row" class="text-left">@item.OfferName</th>
