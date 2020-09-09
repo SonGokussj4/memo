@@ -53,15 +53,23 @@
     <div class="pl-5">
 
         <div class="form-group"><input type="checkbox" class="form-check-input">
-            <label class="form-check-label">Login systém</label>
+            <label class="form-check-label">Bug: Při aktivaci (a následné deaktivaci) filtru se nezobrazuje správně tooltip v tabulkách</label>
         </div>
 
         <div class="form-group"><input type="checkbox" class="form-check-input">
-            <label class="form-check-label">Popup okna, která budou informovat o úspěšnosti/neúspěšnosti operací</label>
+            <label class="form-check-label">Globální: Login systém</label>
         </div>
 
         <div class="form-group"><input type="checkbox" class="form-check-input">
-            <label class="form-check-label">Filtování Aktivní (default) / Neaktivní Nabídky/Zakázky/Kontakty/Firmy</label>
+            <label class="form-check-label">Globální: Popup okna, která budou informovat o úspěšnosti/neúspěšnosti operací</label>
+        </div>
+
+        <div class="form-group"><input type="checkbox" class="form-check-input">
+            <label class="form-check-label">Globální: Filtování Aktivní (default) / Neaktivní Nabídky/Zakázky/Kontakty/Firmy</label>
+        </div>
+
+        <div class="form-group"><input type="checkbox" class="form-check-input">
+            <label class="form-check-label">Globální: Přidat "info" modaly ke všem záznamům</label>
         </div>
 
         <div class="form-group"><input type="checkbox" class="form-check-input">
@@ -77,10 +85,6 @@
         </div>
 
         <div class="form-group"><input type="checkbox" class="form-check-input">
-            <label class="form-check-label">Nabídka/Objednávka: Rozšifrovat terminologii</label>
-        </div>
-
-        <div class="form-group"><input type="checkbox" class="form-check-input">
             <label class="form-check-label">Zakázka: Doplnit možnost více [Termín] [Cena] [Fakturace]</label>
         </div>
 
@@ -93,15 +97,11 @@
         </div>
 
         <div class="form-group"><input type="checkbox" class="form-check-input">
-            <label class="form-check-label">Daleká budoucnost: funkce připomenutí, že se má fakturovat</label>
+            <label class="form-check-label">Zakázka: "Další náklady" odečítat, ne přičítat.</label>
         </div>
 
         <div class="form-group"><input type="checkbox" class="form-check-input">
-            <label class="form-check-label">Zakázka: "Další náklady" odečítat, ne přičítat. Přidat "Aktuální bilance", kde budu vědět "Objem zakázky" - "Jiné náklady" = "Aktuální bilance"</label>
-        </div>
-
-        <div class="form-group"><input type="checkbox" class="form-check-input">
-            <label class="form-check-label">Modul pohledávek: Fakturace - čísla "Kolik jsme nafakturovali" - Pozn. ???</label>
+            <label class="form-check-label">Zakázka: Přidat "Aktuální bilance", kde budu vědět "Objem zakázky" - "Jiné náklady" = "Aktuální bilance"</label>
         </div>
 
         <div class="form-group"><input type="checkbox" class="form-check-input">
@@ -109,15 +109,23 @@
         </div>
 
         <div class="form-group"><input type="checkbox" class="form-check-input">
+            <label class="form-check-label">Nabídka/Objednávka: Rozšifrovat terminologii</label>
+        </div>
+
+        <div class="form-group"><input type="checkbox" class="form-check-input">
+            <label class="form-check-label">Modul pohledávek: Fakturace - čísla "Kolik jsme nafakturovali" - Pozn. ???</label>
+        </div>
+
+        <div class="form-group"><input type="checkbox" class="form-check-input">
             <label class="form-check-label">Dashboard: Přidat filtr [Celá firma] / [Oddělení] + další [Po zákaznících]</label>
         </div>
 
         <div class="form-group"><input type="checkbox" class="form-check-input">
-            <label class="form-check-label">Přidat "info" modaly ke všem záznamům</label>
+            <label class="form-check-label">Daleká budoucnost: funkce připomenutí, že se má fakturovat</label>
         </div>
 
-        <div class="form-group"><input type="checkbox" class="form-check-input">
-            <label class="form-check-label">Možnost smazat záznam z Edit pohledu</label>
+        <div class="form-group"><input type="checkbox" class="form-check-input" checked>
+            <label class="form-check-label"><del>Možnost smazat záznam z Edit pohledu</del></label>
         </div>
 
         <div class="form-group"><input type="checkbox" class="form-check-input" checked>
@@ -159,15 +167,17 @@
     <div class="pl-5">
 
         <h6>
-            <i class="fa fa-calendar"></i> 2020-09-08
+            <i class="fa fa-calendar"></i> 2020-09-09
             <a class="btn btn-light btn-sm" href="#show20200908" data-toggle="collapse" role="button" >
                 <i class="fa fa-chevron-down if-collapsed"></i><i class="fa fa-chevron-up if-not-collapsed"></i>
             </a>
         </h6>
         <div class="collapse show" id="show20200908">
             <ul style="list-style-type:none">
+                <li class="new">Globální: Přidána možnost mazat záznamy z "edit" karty</li>
                 <li class="new">Globální: Přidáno logo Eve, odstraněno <i class="fa fa-info-circle" style="color: grey;"></i></li>
                 <li class="new">Zakázky: Přidáno pole pro dodací list</li>
+                <li class="fix">Globální: Opravy chyb v ukládání Firem/Kontektů, grafická vylepšení</li>
                 <li class="fix">Globální: Pole FILTRU se již nepropisuje do jiných tabulek</li>
                 <li class="fix">Globální: Pár polí změněno na "povinné" a přejmenováno</li>
                 <li class="fix">Globální: Evektor lidé jsou nyní správně načítáni a mají správnou gramatiku</li>

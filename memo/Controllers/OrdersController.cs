@@ -381,6 +381,28 @@ namespace memo.Controllers
             return Redirect("http://intranet/apps/works/moduls/levels.asp");
         }
 
+        [HttpPost]
+        public async Task<IActionResult> Deactivate(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            Order order = await _db.Order.FirstOrDefaultAsync(m => m.OrderId == id);
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            order.Active = false;
+
+            _db.Order.Update(order);
+            await _db.SaveChangesAsync();
+
+            return RedirectToAction("Index");
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

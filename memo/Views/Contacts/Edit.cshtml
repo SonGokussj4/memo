@@ -125,3 +125,81 @@
         </form>
     </div>
 </div>
+
+
+<!-- Modal Confirm Delete-->
+<div class="modal fade" id="deleteConfirmModal" tabindex="-1" role="dialog" aria-labelledby="deleteConfirmModalLabel">
+    <div class="modal-dialog modal-md" role="document">
+        <div class="modal-content">
+            <!-- header -->
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteConfirmModalLabel">Smazání nabídky</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <!-- body -->
+            <div class="modal-body">
+                Opravdu smazat?<br />
+                Jméno: <b>@Model.PersonLastName @Model.PersonName @Model.PersonTitle</b><br />
+                Email: <b>@Model.Email</b>
+            </div>
+            <!-- footer -->
+            <div class="modal-footer">
+                <a href="#" class="btn btn-info" data-dismiss="modal">Zpět</a>
+                <a href="#" class="btn btn-warning" onclick="DeactivateItem()">Deaktivovat</a>
+                <a href="#" class="btn btn-danger" onclick="DeleteItem()">Smazat</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="~/js/CustomValidation.js"></script>
+
+    <script>
+
+        // MODAL dialog for delete confirmation
+        //-------------------------------------
+        var ConfirmDelete = function (ItemId) {
+            $("#deleteConfirmModal").modal('show');
+        };
+
+        // POST delete command to controller
+        //----------------------------------
+        function DeleteItem() {
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("Delete")',
+                data: { Id: @Model.ContactId },
+                success: function () {
+                    $("#deleteConfirmModal").modal("hide")
+                    window.location.href = '../'
+                },
+                error: function() {
+                    alert("Nelze z nějakého důvodu odstranit...");
+                    $("#deleteConfirmModal").modal("hide");
+                }
+            })
+        }
+
+        // POST deactivate command to controller
+        //----------------------------------
+        function DeactivateItem() {
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("Deactivate")',
+                data: { Id: @Model.ContactId },
+                success: function () {
+                    $("#deleteConfirmModal").modal("hide")
+                    window.location.href = './' + @Model.ContactId
+                },
+                error: function() {
+                    alert("Nelze z nějakého důvodu deaktivovat...");
+                    $("#deleteConfirmModal").modal("hide");
+                }
+            })
+        }
+    </script>
+}

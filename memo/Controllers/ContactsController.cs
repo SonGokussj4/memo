@@ -23,6 +23,8 @@ namespace memo.Controllers
 
         public IActionResult Index(bool showInactive = false)
         {
+            ViewBag.showInactive = showInactive;
+
             List<Contact> model = new List<Contact>();
 
             if (showInactive is false)
@@ -38,7 +40,7 @@ namespace memo.Controllers
                     .Include(x => x.Company)
                     .ToList();
             }
-            // var model = _db.Contact.ToList();
+
             return View(model);
         }
 
@@ -158,6 +160,28 @@ namespace memo.Controllers
                 // company.Active = "Accepted";
             }
             return RedirectToAction("Index", new { showInactive = true });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Deactivate(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            Contact contact = await _db.Contact.FirstOrDefaultAsync(m => m.ContactId == id);
+            if (contact == null)
+            {
+                return NotFound();
+            }
+
+            contact.Active = false;
+
+            _db.Contact.Update(contact);
+            await _db.SaveChangesAsync();
+
+            return RedirectToAction("Index");
         }
     }
 }

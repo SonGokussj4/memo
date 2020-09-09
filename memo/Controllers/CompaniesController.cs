@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using memo.Models;
 using memo.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace memo.Controllers
 {
@@ -20,9 +21,24 @@ namespace memo.Controllers
         }
 
         [HttpGet]
-        public IActionResult Index()
+        public IActionResult Index(bool showInactive = false)
         {
-            IEnumerable<Company> model = _db.Company.ToList();
+            ViewBag.showInactive = showInactive;
+
+            List<Company> model = new List<Company>();
+
+            if (showInactive is false)
+            {
+                model = _db.Company
+                    .Where(x => x.Active == true)
+                    .ToList();
+            }
+            else
+            {
+                model = _db.Company
+                    .ToList();
+            }
+
             return View(model);
         }
 
@@ -112,6 +128,40 @@ namespace memo.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult ShowInactive()
+        {
+            if (ModelState.IsValid)
+            {
+                // user.TermsAcceptedOn = DateTime.Now;
+                // company.Active = "Accepted";
+            }
+            return RedirectToAction("Index", new { showInactive = true });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Deactivate(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            Company company = await _db.Company.FirstOrDefaultAsync(m => m.CompanyId == id);
+            if (company == null)
+            {
+                return NotFound();
+            }
+
+            company.Active = false;
+
+            _db.Company.Update(company);
+            await _db.SaveChangesAsync();
+
+            return RedirectToAction("Index");
         }
     }
 }

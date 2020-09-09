@@ -29,7 +29,7 @@
     }
 
     .itemInactive {
-        color: #7c878f;
+        color: #9ba8b1;
     }
 </style>
 
@@ -134,20 +134,11 @@
                     <a href="#" onclick="ConfirmDelete(@item.OfferId)"><i class="fa fa-times fa-fw" style="color: red;", aria-hidden="true"></i></a>
                 </th>
 
-                @* Status
-                @if (item.Active is true)
-                {
-                    <th scope="row" class="text-center" data-toggle="tooltip" title="Aktivní"><span class="badge badge-info">A</span></th>
-                }
-                else if (item.Active is false)
-                {
-                    <th scope="row" class="text-center" data-toggle="tooltip" title="Neaktivní"><span class="badge badge-secondary">N</span></th>
-                } *@
-
                 @if (item.Active is true)
                 {
                     <th scope="row" class="text-center" data-toggle="tooltip" title="Aktivní">
-                        <i class="fa fa-check-circle" style="color: #5abe58;" aria-hidden="true"></i>
+                        @* <i class="fa fa-check-circle" style="color: #5abe58;" aria-hidden="true"></i> *@
+                        <i class="fa fa-eye text-success" aria-hidden="true"></i>
                     </th>
                 }
                 else if (item.Active is false)

@@ -340,10 +340,36 @@
                 <input type="reset" class="btn btn-secondary"  value="Resetovat pole" data-toggle="tooltip" title="Vrátí neuložené úpravy" />
                 <input type="submit" class="btn btn-primary" name="actionType" value="Uložit" />
                 <input type="submit" class="btn btn-primary" name="actionType" value="Uložit a zavřít" />
+                <a href="#" class="btn btn-danger pull-right" onclick="ConfirmDelete(@Model.OfferId)">Smazat</a>
             </div>
         </div>
 
         </form>
+    </div>
+</div>
+
+
+<!-- Modal Confirm Delete-->
+<div class="modal fade" id="deleteConfirmModal" tabindex="-1" role="dialog" aria-labelledby="deleteConfirmModalLabel">
+    <div class="modal-dialog modal-md" role="document">
+        <div class="modal-content">
+            <!-- header -->
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteConfirmModalLabel">Smazání nabídky</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <!-- body -->
+            <div class="modal-body">
+                Opravdu smazat?<br />
+                Ev. Číslo: <b>@Model.Order.OrderName</b>
+            </div>
+            <!-- footer -->
+            <div class="modal-footer">
+                <a href="#" class="btn btn-info" data-dismiss="modal">Zpět</a>
+                <a href="#" class="btn btn-warning" onclick="DeactivateItem()">Deaktivovat</a>
+                <a href="#" class="btn btn-danger" onclick="DeleteItem()">Smazat</a>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -354,6 +380,48 @@
     <script src="~/js/CustomValidation.js"></script>
 
     <script>
+
+        // MODAL dialog for delete confirmation
+        //-------------------------------------
+        var ConfirmDelete = function (ItemId) {
+            $("#deleteConfirmModal").modal('show');
+        };
+
+        // POST delete command to controller
+        //----------------------------------
+        function DeleteItem() {
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("Delete")',
+                data: { Id: @Model.Order.OrderId },
+                success: function () {
+                    $("#deleteConfirmModal").modal("hide")
+                    window.location.href = '../'
+                },
+                error: function() {
+                    alert("Nelze z nějakého důvodu odstranit...");
+                    $("#deleteConfirmModal").modal("hide");
+                }
+            })
+        }
+
+        // POST deactivate command to controller
+        //----------------------------------
+        function DeactivateItem() {
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("Deactivate")',
+                data: { Id: @Model.Order.OrderId },
+                success: function () {
+                    $("#deleteConfirmModal").modal("hide")
+                    window.location.href = './' + @Model.Order.OrderId
+                },
+                error: function() {
+                    alert("Nelze z nějakého důvodu deaktivovat...");
+                    $("#deleteConfirmModal").modal("hide");
+                }
+            })
+        }
 
         function changeExchangeRate(curSymbol) {
             $.ajax({

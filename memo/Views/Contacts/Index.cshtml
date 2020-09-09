@@ -27,7 +27,7 @@
     }
 
     .itemInactive {
-        color: #7c878f;
+        color: #9ba8b1;
     }
 </style>
 
@@ -36,23 +36,22 @@
     <h1 class="display-4">Kontakty</h1>
 </div>
 
+
 <div id="toolbar" style="padding-bottom: 10px;">
     <a asp-action="Create" class="btn btn-outline-success"><i class="fa fa-plus-square-o"></i> Nový kontakt</a>
-    @* <a id="btnToggleActive" class="btn btn-outline-primary pull-right" onclick="ShowInactive()">
-        <i class="fa fa-eye-slash"></i> Aktivní (@Model.Count(m => m.Active) / @Model.Count())
-    </a> *@
 
     <button style="margin-right: 5px;" class="btn btn-outline-info" name="BtnMujFilter" id="BtnMujFilter" type="button">
         <i class="fa fa-filter"> Filter</i>
     </button>
-    <a asp-action="index" class="btn btn-outline-info" asp-route-ShowInactive="true" id="btnToggleActive" onclick="ShowInactive()>
-        <i class="fa fa-eye-slash"> Aktivní (@Model.Count())</i>
-    </a>
 
-    @* @using (Html.BeginForm())
+    @if (ViewBag.ShowInactive == true)
     {
-        <input type="submit" name="response" value="Zobraz neaktivní" formaction=@Url.Action("ShowInactive") formmethod="post" class="btn btn-primary" />
-    } *@
+        <a asp-action="index" class="btn btn-outline-secondary" data-toggle="tooltip" title="Zobrazit pouze aktivní"><i class="fa fa-eye"> Vše (@Model.Count())</i></a>
+    }
+    else
+    {
+        <a asp-action="index" class="btn btn-outline-secondary" asp-route-ShowInactive="true" data-toggle="tooltip" title="Zobrazit vše"><i class="fa fa-eye-slash"> Aktivní (@Model.Count())</i></a>
+    }
 </div>
 
 <table
@@ -81,8 +80,8 @@
     >
     <thead>
         <tr>
-            <th class="text-center" scope="col" data-field="0" data-sortable="true" data-filter-control="input" data-footer-formatter="idFormatter"  ><i class="fa fa-fw fa-ellipsis-v " aria-hidden="true"></i>Edit</th>
-            <th class="text-center" scope="col" data-field="1" data-sortable="true" data-filter-control="select"><span data-toggle="tooltip" title="Aktivní / Neaktivní">A/N</span></th>
+            <th class="text-center" scope="col" data-field="0" data-sortable="true" data-filter-control="input" data-footer-formatter="idFormatter">Edit</th>
+            <th class="text-center" scope="col" data-field="1" data-sortable="false"><span data-toggle="tooltip" title="Aktivní / Neaktivní"><i class="fa fa-eye text-secondary"></i></span></th>
             <th class="text-center" scope="col" data-field="2" data-sortable="true" data-filter-control="input">Jméno</th>
             <th class="text-center" scope="col" data-field="3" data-sortable="true" data-filter-control="input">Firma</th>
             <th class="text-center" scope="col" data-field="4" data-sortable="true" data-filter-control="select">Oddělení</th>
@@ -105,7 +104,8 @@
                 @if (item.Active is true)
                 {
                     <th scope="row" class="text-center" data-toggle="tooltip" title="Aktivní">
-                        <i class="fa fa-check-circle" style="color: #5abe58;" aria-hidden="true"></i>
+                        @* <i class="fa fa-check-circle" style="color: #5abe58;" aria-hidden="true"></i> *@
+                        <i class="fa fa-eye text-success" aria-hidden="true"></i>
                     </th>
                 }
                 else if (item.Active is false)
@@ -200,31 +200,31 @@
 
     // Function to toggle Active/Disabled Contacts/Companies in table
     //---------------------------------------------------------------
-    function ShowInactive() {
-        var btn = document.getElementById("btnToggleActive");
-
-        if (btn.children[0].className == "fa fa-eye-slash") {
-            // Change icon and text
-            btn.children[0].className = "fa fa-eye"
-            btn.lastChild.nodeValue = " Všichni (@Model.Count())"
-            var hiddenRows = document.querySelectorAll(".hide");
-            //console.log(hiddenRows);
-            for(var i = 0; i < hiddenRows.length; i++){
-                hiddenRows[i].className = "show hiddenBefore";
-            }
-
-
-        }
-        else {
-            // Change icon and text
-            btn.children[0].className = "fa fa-eye-slash"
-            btn.lastChild.nodeValue = " Aktivní (@Model.Count(m => m.Active) / @Model.Count())"
-            var hiddenRows = document.querySelectorAll(".show.hiddenBefore");
-            for(var i = 0; i < hiddenRows.length; i++){
-                hiddenRows[i].className = "hide";
-            }
-        }
-    };
+//    function ShowInactive() {
+//        var btn = document.getElementById("btnToggleActive");
+//
+//        if (btn.children[0].className == "fa fa-eye-slash") {
+//            // Change icon and text
+//            btn.children[0].className = "fa fa-eye"
+//            btn.lastChild.nodeValue = " Všichni (@Model.Count())"
+//            var hiddenRows = document.querySelectorAll(".hide");
+//            //console.log(hiddenRows);
+//            for(var i = 0; i < hiddenRows.length; i++){
+//                hiddenRows[i].className = "show hiddenBefore";
+//            }
+//
+//
+//        }
+//        else {
+//            // Change icon and text
+//            btn.children[0].className = "fa fa-eye-slash"
+//            btn.lastChild.nodeValue = " Aktivní (@Model.Count(m => m.Active) / @Model.Count())"
+//            var hiddenRows = document.querySelectorAll(".show.hiddenBefore");
+//            for(var i = 0; i < hiddenRows.length; i++){
+//                hiddenRows[i].className = "hide";
+//            }
+//        }
+//    };
 
 
 
