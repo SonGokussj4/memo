@@ -39,15 +39,15 @@
 <div id="toolbar" style="padding-bottom: 10px;">
     <a asp-action="Create" class="btn btn-outline-success"><i class="fa fa-plus-square-o"></i> Nová firma</a>
     <button style="margin-right: 5px;" class="btn btn-outline-info" name="BtnMujFilter" id="BtnMujFilter" type="button">
-        <i class="fa fa-filter"> Filter</i>
+        <i class="fa fa-filter"></i> Filter
     </button>
     @if (ViewBag.ShowInactive == true)
     {
-        <a asp-action="index" class="btn btn-outline-secondary" data-toggle="tooltip" title="Zobrazit pouze aktivní"><i class="fa fa-eye"> Vše (@Model.Count())</i></a>
+        <a asp-action="index" class="btn btn-outline-secondary" data-toggle="tooltip" title="Zobrazit pouze aktivní"><i class="fa fa-eye"></i> Vše (@Model.Count())</a>
     }
     else
     {
-        <a asp-action="index" class="btn btn-outline-secondary" asp-route-ShowInactive="true" data-toggle="tooltip" title="Zobrazit vše"><i class="fa fa-eye-slash"> Aktivní (@Model.Count())</i></a>
+        <a asp-action="index" class="btn btn-outline-secondary" asp-route-ShowInactive="true" data-toggle="tooltip" title="Zobrazit vše"><i class="fa fa-eye-slash"></i> Aktivní (@Model.Count())</a>
     }
 </div>
 
