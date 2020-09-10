@@ -160,7 +160,7 @@
                 <div class="col-lg-2">
                     <a href="@Url.Action("CreateEveProjectM")" target="_blank" class="btn btn-outline-success form-control"
                     data-toggle="tooltip" data-placement="top" title="Nová EVE modulová zakázka">
-                        <i class="fa fa-plus-square"></i> [ M ]
+                        <i class="fa fa-plus-square"></i> [M]
                     </a>
                 </div>
             </div>
@@ -380,20 +380,20 @@
             });
 
             // PriceFinalCzk realtime refresh
-            var var0 = document.getElementById('Order_ExchangeRate')
-            var var1 = document.getElementById('Order_PriceFinal')
-            var var2 = document.getElementById('Order_OtherCosts')
-            var storage = document.getElementById('Order_PriceFinalCzk')
+            var exchangeRate = document.getElementById('Order_ExchangeRate')
+            var priceFinal = document.getElementById('Order_PriceFinal')
+            var otherCosts = document.getElementById('Order_OtherCosts')
+            var priceFinalCzk = document.getElementById('Order_PriceFinalCzk')
 
             trigFunc = function(){
-                var val1 = parseFloat(var0.value.replace(/,/g, "."))
-                var val2 = parseFloat(var1.value.replace(/,/g, "."))
-                var val3 = parseFloat(var2.value.replace(/,/g, "."))
-                storage.value = parseInt(val1 * (val2 + val3));
+                var exchangeRateNum = parseFloat(exchangeRate.value.replace(/,/g, "."))
+                var priceFinalNum = parseFloat(priceFinal.value.replace(/,/g, "."))
+                var otherCostsNum = parseFloat(otherCosts.value.replace(/,/g, "."))
+                priceFinalCzk.value = parseInt(exchangeRateNum * (priceFinalNum - otherCostsNum));
             }
-            var0.onkeyup = trigFunc;
-            var1.onkeyup = trigFunc;
-            var2.onkeyup = trigFunc;
+            exchangeRate.onkeyup = trigFunc;
+            priceFinal.onkeyup = trigFunc;
+            otherCosts.onkeyup = trigFunc;
         })
 
     </script>

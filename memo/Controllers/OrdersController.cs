@@ -175,7 +175,7 @@ namespace memo.Controllers
                 vm.Order.Active = true;
                 vm.Order.TotalHours = totalHours;
                 vm.Order.PriceFinalCzk = Convert.ToInt32(
-                    (vm.Order.PriceFinal + vm.Order.OtherCosts) * vm.Order.ExchangeRate);
+                    (vm.Order.PriceFinal - vm.Order.OtherCosts) * vm.Order.ExchangeRate);
                 vm.Order.PriceDiscount = 0;
                 vm.Order.OfferId = vm.OfferId;  // TODO: tohle by tu nemelo vubec by, proc to neprebira Order_OfferId pole...
 
@@ -208,7 +208,6 @@ namespace memo.Controllers
             // ViewBag.WonOffersList = new SelectList(wonOffersList, "OfferId", "OfferName");
 
             ViewBag.CurrencyList = new SelectList(_db.Currency.ToList(), "CurrencyId", "Name");
-            // ViewBag.ContactList = new SelectList(_db.Contact.ToList(), "ContactId", "PersonName");
             ViewBag.EveContactList = getEveContacts(_eveDb);
             ViewBag.EveOrderCodes = getOrderCodes(_eveDb);
 
@@ -281,7 +280,7 @@ namespace memo.Controllers
 
                     vm.Order.TotalHours = totalHours;
                     vm.Order.PriceFinalCzk = Convert.ToInt32(
-                        (vm.Order.PriceFinal + vm.Order.OtherCosts) * vm.Order.ExchangeRate);
+                        (vm.Order.PriceFinal - vm.Order.OtherCosts) * vm.Order.ExchangeRate);
 
                     _db.Update(vm.Order);
                     _db.SaveChanges();
@@ -314,7 +313,6 @@ namespace memo.Controllers
                 .ToList();
             ViewBag.WonOffersList = new SelectList(wonOffersList, "OfferId", "OfferName");
             ViewBag.CurrencyList = new SelectList(_db.Currency.ToList(), "CurrencyId", "Name");
-            // ViewBag.ContactList = new SelectList(_db.Contact.ToList(), "ContactId", "PersonName");
             ViewBag.EveContactList = getEveContacts(_eveDb);
             ViewBag.EveOrderCodes = getOrderCodes(_eveDb);
 
@@ -339,6 +337,7 @@ namespace memo.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -422,6 +421,40 @@ namespace memo.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Deactivate(int id, string showInactive)
+        {
+            Order model = await _db.Order.FirstOrDefaultAsync(m => m.OrderId == id);
+            if (model == null)
+            {
+                return NotFound();
+            }
+
+            model.Active = false;
+
+            _db.Order.Update(model);
+            await _db.SaveChangesAsync();
+
+            return RedirectToAction("Index", new { showInactive });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Activate(int id, string showInactive)
+        {
+            Order model = await _db.Order.FirstOrDefaultAsync(m => m.OrderId == id);
+            if (model == null)
+            {
+                return NotFound();
+            }
+
+            model.Active = true;
+
+            _db.Order.Update(model);
+            await _db.SaveChangesAsync();
+
+            return RedirectToAction("Index", new { showInactive });
         }
     }
 }

@@ -195,7 +195,7 @@
                 <div class="col-lg-2">
                     <a href="@Url.Action("CreateEveProject")" target="_blank" class="btn btn-outline-success form-control"
                     data-toggle="tooltip" data-placement="top" title="Nová EVE modulová zakázka">
-                        <i class="fa fa-plus-square"> [M]</i>
+                        <i class="fa fa-plus-square"></i> [M]
                     </a>
                 </div>
             </div>
@@ -238,6 +238,37 @@
                 <input asp-for="Order.InvoiceDueDate" class="form-control" type="text" autocomplete="off"/>
                 <span asp-validation-for="Order.InvoiceDueDate" class="text-danger"></span>
             </div>
+        </div>
+
+        @* <div class="form-group row border-top">
+            <label class="col-lg-3 col-form-label form-control-label control-label"></label>
+            <label class="col-lg-3 col-form-label form-control-label control-label">Termín vystavení</label>
+            <label class="col-lg-3 col-form-label form-control-label control-label">Termín splanosti</label>
+            <label class="col-lg-3 col-form-label form-control-label control-label">Cena</label>
+        </div> *@
+
+        <div class="form-group row border-top pt-2">
+            <label asp-for="Order.InvoiceIssueDate" class="col-lg-3 col-form-label form-control-label control-label">Faktura</label>
+            <div class="col-lg-3 mycalendar">
+                <input class="form-control" type="text" autocomplete="off" placeholder="Termín vystavení" />
+            </div>
+            <div class="col-lg-3 mycalendar">
+                <input class="form-control" type="text" autocomplete="off" placeholder="Splatnost faktury" />
+            </div>
+            <div class="col-lg-3">
+                <div class="input-group mb-2 mr-sm-2">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text">@Model.CurrencyName</div>
+                    </div>
+                    <input class="form-control" type="text" placeholder="Částka" />
+                </div>
+                <span asp-validation-for="Order.PriceFinal" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-group row border-bottom pb-2">
+            <label class="col-lg-7 col-form-label form-control-label control-label"></label>
+            <a href="#" class="btn btn-success btn-sm col-lg-1"><i class="fa fa-plus"></i></a>
         </div>
 
         <div class="form-group row">
@@ -477,20 +508,20 @@
             });
 
             // PriceFinalCzk realtime refresh
-            var var0 = document.getElementById('Order_ExchangeRate')
-            var var1 = document.getElementById('Order_PriceFinal')
-            var var2 = document.getElementById('Order_OtherCosts')
-            var storage = document.getElementById('Order_PriceFinalCzk')
+            var exchangeRate = document.getElementById('Order_ExchangeRate')
+            var priceFinal = document.getElementById('Order_PriceFinal')
+            var otherCosts = document.getElementById('Order_OtherCosts')
+            var priceFinalCzk = document.getElementById('Order_PriceFinalCzk')
 
             trigFunc = function(){
-                var val1 = parseFloat(var0.value.replace(/,/g, "."))
-                var val2 = parseFloat(var1.value.replace(/,/g, "."))
-                var val3 = parseFloat(var2.value.replace(/,/g, "."))
-                storage.value = parseInt(val1 * (val2 + val3));
+                var exchangeRateNum = parseFloat(exchangeRate.value.replace(/,/g, "."))
+                var priceFinalNum = parseFloat(priceFinal.value.replace(/,/g, "."))
+                var otherCostsNum = parseFloat(otherCosts.value.replace(/,/g, "."))
+                priceFinalCzk.value = parseInt(exchangeRateNum * (priceFinalNum - otherCostsNum));
             }
-            var0.onkeyup = trigFunc;
-            var1.onkeyup = trigFunc;
-            var2.onkeyup = trigFunc;
+            exchangeRate.onkeyup = trigFunc;
+            priceFinal.onkeyup = trigFunc;
+            otherCosts.onkeyup = trigFunc;
         })
 
     </script>

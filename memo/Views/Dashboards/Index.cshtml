@@ -83,9 +83,9 @@
     // -----------------------------------------
     // Graf - Očekávaný příjem v průběhu měsíců
     // -----------------------------------------
-    var filter = @Model.filter;
-
+    var filter = @Html.Raw(Json.Serialize(Model.filter))
     var items = @Html.Raw(Json.Serialize(Model.DashboardCashVM));
+
     if (filter == "months")
     {
         var monthArray = items.map(a => new Date(a.month).toLocaleString('cs-CZ', { month: 'long' }));
