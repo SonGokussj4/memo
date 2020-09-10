@@ -11,7 +11,10 @@ namespace memo.ViewModels
         // public List<int?> PlannedCashPerMonth { get; set; }
 
         public DateTime Month { get; set; }
+        public int Week { get; set; }
+
         public int Cash { get; set; }
+
         // public Offer Offer { get; set; }
         // public Order Order { get; set; }
 

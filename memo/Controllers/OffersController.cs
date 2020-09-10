@@ -327,5 +327,39 @@ namespace memo.Controllers
         {
             return _db.Offer.Any(e => e.OfferId == id);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> Deactivate(int id, string showInactive)
+        {
+            Offer model = await _db.Offer.FirstOrDefaultAsync(m => m.OfferId == id);
+            if (model == null)
+            {
+                return NotFound();
+            }
+
+            model.Active = false;
+
+            _db.Offer.Update(model);
+            await _db.SaveChangesAsync();
+
+            return RedirectToAction("Index", new { showInactive });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Activate(int id, string showInactive)
+        {
+            Offer model = await _db.Offer.FirstOrDefaultAsync(m => m.OfferId == id);
+            if (model == null)
+            {
+                return NotFound();
+            }
+
+            model.Active = true;
+
+            _db.Offer.Update(model);
+            await _db.SaveChangesAsync();
+
+            return RedirectToAction("Index", new { showInactive });
+        }
     }
 }

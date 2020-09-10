@@ -9,6 +9,6 @@ namespace memo.ViewModels
     {
         public List<DashboardCashVM> DashboardCashVM { get; set; }
         public List<DashboardWonOffersVM> DashboardWonOffersVM { get; set; }
-
+        public string filter { get; set; }
     }
 }

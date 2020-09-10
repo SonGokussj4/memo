@@ -96,13 +96,13 @@
                 @if (item.Active is true)
                 {
                     <th scope="row" class="text-center" data-toggle="tooltip" title="Aktivní">
-                        <i class="fa fa-eye text-success" aria-hidden="true"></i>
+                        <a asp-action="Deactivate" asp-route-id="@item.CompanyId" asp-route-showInactive="@ViewBag.showInactive"><i class="fa fa-eye text-success" aria-hidden="true"></i></a>
                     </th>
                 }
                 else if (item.Active is false)
                 {
                     <th scope="row" class="text-center" data-toggle="tooltip" title="Neaktivní">
-                        <i class="fa fa-eye-slash" style="color: #8a97a2;" aria-hidden="true"></i>
+                        <a asp-action="Activate" asp-route-id="@item.CompanyId" asp-route-showInactive="@ViewBag.showInactive"><i class="fa fa-eye-slash" style="color: #8a97a2;" aria-hidden="true"></i></a>
                     </th>
                 }
 

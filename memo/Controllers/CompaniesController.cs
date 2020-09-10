@@ -163,5 +163,39 @@ namespace memo.Controllers
 
             return RedirectToAction("Index");
         }
+
+        [HttpGet]
+        public async Task<IActionResult> Deactivate(int id, string showInactive)
+        {
+            Company model = await _db.Company.FirstOrDefaultAsync(m => m.CompanyId == id);
+            if (model == null)
+            {
+                return NotFound();
+            }
+
+            model.Active = false;
+
+            _db.Company.Update(model);
+            await _db.SaveChangesAsync();
+
+            return RedirectToAction("Index", new { showInactive });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Activate(int id, string showInactive)
+        {
+            Company model = await _db.Company.FirstOrDefaultAsync(m => m.CompanyId == id);
+            if (model == null)
+            {
+                return NotFound();
+            }
+
+            model.Active = true;
+
+            _db.Company.Update(model);
+            await _db.SaveChangesAsync();
+
+            return RedirectToAction("Index", new { showInactive });
+        }
     }
 }

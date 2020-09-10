@@ -10,6 +10,8 @@ using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 using memo.ViewModels;
 using memo.Data;
+using System.Globalization;
+using Microsoft.EntityFrameworkCore.SqlServer;
 
 namespace memo.Controllers
 {
@@ -22,7 +24,7 @@ namespace memo.Controllers
             _db = db;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(string filter = "months")
         {
             // DashboardVM viewModel = new DashboardVM();
 
@@ -38,22 +40,51 @@ namespace memo.Controllers
             //         }
             //     ).ToList();
 
-            List<DashboardCashVM> viewModelCash = _db.Order
-                .Where(a => a.InvoiceDueDate.Value.Year == 2020)
-                .GroupBy(b => b.InvoiceDueDate.Value.Month)
-                .Select(g => new DashboardCashVM
-                {
-                    // Month2020 = g.Key,
-                    // TotalCount = g.Count(),
-                    // SumaNormal = g.Sum(gi => gi.PriceFinalCzk),
-                    // Suma = string.Format("{0:#.00}", Convert.ToDecimal(g.Sum(gi => gi.PriceFinalCzk))),
-                    // SumaC = string.Format("{0:C}", Convert.ToDecimal(g.Sum(gi => gi.PriceFinalCzk))),
-                    // TotalHours = $"{g.Sum(gi => gi.TotalHours)} hod",
-                    // AvgHourWage = $"{string.Format("{0:C}", g.Average(gi => gi.HourWage))}/hod",
-                    Month = new DateTime(2020, g.Key, 1),
-                    Cash = (int)g.Sum(gi => gi.PriceFinalCzk),
-                })
-                .ToList();
+            List<DashboardCashVM> viewModelCash = new List<DashboardCashVM>();
+            if (filter == "months")
+            {
+                viewModelCash = _db.Order
+                    .Where(a => a.InvoiceDueDate.Value.Year == 2020)
+                    .GroupBy(b => b.InvoiceDueDate.Value.Month)
+                    .Select(g => new DashboardCashVM
+                    {
+                        // Month2020 = g.Key,
+                        // TotalCount = g.Count(),
+                        // SumaNormal = g.Sum(gi => gi.PriceFinalCzk),
+                        // Suma = string.Format("{0:#.00}", Convert.ToDecimal(g.Sum(gi => gi.PriceFinalCzk))),
+                        // SumaC = string.Format("{0:C}", Convert.ToDecimal(g.Sum(gi => gi.PriceFinalCzk))),
+                        // TotalHours = $"{g.Sum(gi => gi.TotalHours)} hod",
+                        // AvgHourWage = $"{string.Format("{0:C}", g.Average(gi => gi.HourWage))}/hod",
+                        Month = new DateTime(2020, g.Key, 1),
+                        Cash = (int)g.Sum(gi => gi.PriceFinalCzk),
+                    })
+                    .ToList();
+            }
+            else
+            {
+                viewModelCash = _db.Order
+                    .Where(a => a.InvoiceDueDate.Value.Year == 2020)
+                    // .GroupBy(b => b.InvoiceDueDate.Value.Month)
+                    .GroupBy(b => b.InvoiceDueDate.Value.DayOfYear / 7)
+                    .Select(g => new DashboardCashVM
+                    {
+                        // Month2020 = g.Key,
+                        // TotalCount = g.Count(),
+                        // SumaNormal = g.Sum(gi => gi.PriceFinalCzk),
+                        // Suma = string.Format("{0:#.00}", Convert.ToDecimal(g.Sum(gi => gi.PriceFinalCzk))),
+                        // SumaC = string.Format("{0:C}", Convert.ToDecimal(g.Sum(gi => gi.PriceFinalCzk))),
+                        // TotalHours = $"{g.Sum(gi => gi.TotalHours)} hod",
+                        // AvgHourWage = $"{string.Format("{0:C}", g.Average(gi => gi.HourWage))}/hod",
+                        Week = g.Key,
+                        Cash = (int)g.Sum(gi => gi.PriceFinalCzk),
+                    })
+                    .ToList();
+            }
+            // DateTimeFormatInfo dfi = DateTimeFormatInfo.CurrentInfo;
+            // Calendar cal = dfi.Calendar;
+            // var res = dfi.FirstDayOfWeek;
+            // var res2 = cal.GetWeekOfYear(DateTime.Today, dfi.CalendarWeekRule, dfi.FirstDayOfWeek);
+
 
             List<DashboardWonOffersVM> viewModelWonOffers = _db.Offer
                 // .Where(a => a.InvoiceDueDate.Value.Year == 2020)
@@ -80,17 +111,8 @@ namespace memo.Controllers
             {
                 DashboardCashVM = viewModelCash,
                 DashboardWonOffersVM = viewModelWonOffers,
+                filter = filter,
             };
-            // decimal num = 169465.684M;
-
-            // Console.WriteLine(num);
-            // Console.WriteLine(num.ToString("C", CultureInfo.CurrentCulture));
-            // Console.WriteLine(num.ToString("C", CultureInfo.CreateSpecificCulture("ja-JP")));
-            // Console.WriteLine(num.ToString("C", CultureInfo.CreateSpecificCulture("cs-CZ")));
-            // Console.WriteLine(num.ToString("C", CultureInfo.CreateSpecificCulture("de-DE")));
-
-            // var czech = num.ToString("C", CultureInfo.CreateSpecificCulture("cs-CZ"));
-            // System.Console.WriteLine(Convert.ToDecimal(czech, CultureInfo.CreateSpecificCulture("cs-CZ")));
 
             return View(viewModel);
         }
