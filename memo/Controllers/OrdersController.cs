@@ -27,18 +27,33 @@ namespace memo.Controllers
             _eveDb = eveDb;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(bool showInactive = false)
         {
-            IList<Order> model = _db.Order
-                .Include(x => x.Offer)
-                // .Include(y => y.Contact)
-                .Include(z => z.Offer.Currency)
-                // .Include(z => z.cOrders)
-                // .Include(a => a.cProjects)
-                // .Include(x => x.Company)
-                // .Include(z => z.Currency)
-                // .Include(a => a.OfferStatus)
-                .ToList();
+            ViewBag.showInactive = showInactive;
+
+            List<Order> model = new List<Order>();
+
+            if (showInactive is false)
+            {
+                model = _db.Order
+                    .Include(x => x.Offer)
+                    .Include(z => z.Offer.Currency)
+                    .Where(x => x.Active == true)
+                    .ToList();
+            }
+            else
+            {
+                model = _db.Order
+                    .Include(x => x.Offer)
+                    // .Include(y => y.Contact)
+                    .Include(z => z.Offer.Currency)
+                    // .Include(z => z.cOrders)
+                    // .Include(a => a.cProjects)
+                    // .Include(x => x.Company)
+                    // .Include(z => z.Currency)
+                    // .Include(a => a.OfferStatus)
+                    .ToList();
+            }
 
             foreach (Order order in model)
             {

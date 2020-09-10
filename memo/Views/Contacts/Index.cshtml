@@ -41,16 +41,16 @@
     <a asp-action="Create" class="btn btn-outline-success"><i class="fa fa-plus-square-o"></i> Nový kontakt</a>
 
     <button style="margin-right: 5px;" class="btn btn-outline-info" name="BtnMujFilter" id="BtnMujFilter" type="button">
-        <i class="fa fa-filter"> Filter</i>
+        <i class="fa fa-filter"></i> Filter
     </button>
 
     @if (ViewBag.ShowInactive == true)
     {
-        <a asp-action="index" class="btn btn-outline-secondary" data-toggle="tooltip" title="Zobrazit pouze aktivní"><i class="fa fa-eye"> Vše (@Model.Count())</i></a>
+        <a asp-action="index" class="btn btn-outline-secondary" data-toggle="tooltip" title="Zobrazit pouze aktivní"><i class="fa fa-eye"></i> Vše (@Model.Count())</a>
     }
     else
     {
-        <a asp-action="index" class="btn btn-outline-secondary" asp-route-ShowInactive="true" data-toggle="tooltip" title="Zobrazit vše"><i class="fa fa-eye-slash"> Aktivní (@Model.Count())</i></a>
+        <a asp-action="index" class="btn btn-outline-secondary" asp-route-ShowInactive="true" data-toggle="tooltip" title="Zobrazit vše"><i class="fa fa-eye-slash"></i> Aktivní (@Model.Count())</a>
     }
 </div>
 
@@ -81,7 +81,7 @@
     <thead>
         <tr>
             <th class="text-center" scope="col" data-field="0" data-sortable="true" data-filter-control="input" data-footer-formatter="idFormatter">Edit</th>
-            <th class="text-center" scope="col" data-field="1" data-sortable="false"><span data-toggle="tooltip" title="Aktivní / Neaktivní"><i class="fa fa-eye text-secondary"></i></span></th>
+            <th class="text-center" scope="col" data-field="1" data-sortable="true"><span data-toggle="tooltip" title="Aktivní / Neaktivní"><i class="fa fa-eye text-secondary"></i></span></th>
             <th class="text-center" scope="col" data-field="2" data-sortable="true" data-filter-control="input">Jméno</th>
             <th class="text-center" scope="col" data-field="3" data-sortable="true" data-filter-control="input">Firma</th>
             <th class="text-center" scope="col" data-field="4" data-sortable="true" data-filter-control="select">Oddělení</th>

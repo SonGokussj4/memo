@@ -39,13 +39,20 @@
 </div>
 
 <div id="toolbar" style="padding-bottom: 10px;">
-    <a asp-action="Create" class="btn btn-outline-success"><i class="fa fa-plus-square-o"></i> Nová zakázka</a>
-    @* <a id="btnToggleActive" class="btn btn-outline-primary pull-right" onclick="ToggleActive()">
-        <i class="fa fa-eye-slash"></i> Aktivní (@Model.Count(m => m.Active) / @Model.Count())
-    </a> *@
+    <a asp-action="Create" class="btn btn-outline-success">
+        <i class="fa fa-plus-square-o"></i> Nová zakázka
+    </a>
     <button style="margin-right: 5px;" class="btn btn-outline-info" name="BtnMujFilter" id="BtnMujFilter" type="button">
-        <i class="fa fa-filter"> Filter</i>
+        <i class="fa fa-filter"></i> Filter
     </button>
+    @if (ViewBag.ShowInactive == true)
+    {
+        <a asp-action="index" class="btn btn-outline-secondary" data-toggle="tooltip" title="Zobrazit pouze aktivní"><i class="fa fa-eye"></i> Vše (@Model.Count())</a>
+    }
+    else
+    {
+        <a asp-action="index" class="btn btn-outline-secondary" asp-route-ShowInactive="true" data-toggle="tooltip" title="Zobrazit vše"><i class="fa fa-eye-slash"></i> Aktivní (@Model.Count())</a>
+    }
 </div>
 
 <table
@@ -79,25 +86,25 @@
     >
     <thead>
         <tr>
-            <th class="text-center" scope="col" data-field="0" data-sortable="true" data-filter-control="input" data-footer-formatter="idFormatter"  ><i class="fa fa-fw fa-ellipsis-v " aria-hidden="true"></i>Edit</th>
-            <th class="text-center" scope="col" data-field="1" data-sortable="true" data-filter-control="input"><span data-toggle="tooltip" title="Aktivní / Neaktivní">A/N</span></th>
-            <th class="text-center" scope="col" data-field="2" data-sortable="true" data-filter-control="input">Vytvořeno</th>
-            <th class="text-center" scope="col" data-field="3" data-sortable="true" data-filter-control="input">Objednávka</th>
-            <th class="text-center" scope="col" data-field="4" data-sortable="true" data-filter-control="input">Č. obj. zákazníka</th>
-            <th class="text-center" scope="col" data-field="5" data-sortable="true" data-filter-control="input">Kód EVE<br />vykazování</th>
-            <th class="text-center" scope="col" data-field="6" data-sortable="true" data-filter-control="input">Vedoucí<br />projektu</th>
-            <th class="text-center" scope="col" data-field="7" data-sortable="true" data-filter-control="input">Plánované<br />hod</th>
-            <th class="text-center" scope="col" data-field="8" data-sortable="true" data-filter-control="input">Termín vyst.<br />faktury</th>
-            <th class="text-center" scope="col" data-field="9" data-footer-formatter="priceFormatterCz" data-sortable="true" data-filter-control="input">Konečná<br />cena [CZK]</th>
-            <th class="text-center" scope="col" data-field="10" data-sortable="true" data-filter-control="input">Poznámky</th>
-            <th class="text-center" scope="col" data-field="11" data-sortable="true" data-filter-control="input">Dodací list</th>
-            <th class="text-center" scope="col" data-field="12" data-sortable="true" data-filter-control="select">Měna</th>
-            <th class="text-center" scope="col" data-field="13" data-sortable="true" data-filter-control="input">Další<br />náklady</th>
-            <th class="text-center" scope="col" data-field="14" data-sortable="true" data-filter-control="input">Hod.<br />sazba</th>
-            <th class="text-center" scope="col" data-field="15" data-sortable="true" data-filter-control="input">Vyčerpáno</th>
-            <th class="text-center" scope="col" data-field="16" data-footer-formatter="priceFormatterCz" data-sortable="true" data-filter-control="input">Přepočet [CZK]</th>
+            <th scope="col" class="text-center" data-field="0" data-sortable="true" data-filter-control="input" data-footer-formatter="idFormatter"></i>Edit</th>
+            <th scope="col" class="text-center" data-field="1" data-sortable="true"><span data-toggle="tooltip" title="Aktivní / Neaktivní"><i class="fa fa-eye text-secondary"></i></span></th>
+            <th scope="col" class="text-center" data-field="2" data-sortable="true" data-filter-control="input">Vytvořeno</th>
+            <th scope="col" class="text-center" data-field="3" data-sortable="true" data-filter-control="input">Objednávka</th>
+            <th scope="col" class="text-center" data-field="4" data-sortable="true" data-filter-control="input">Č. obj. zákazníka</th>
+            <th scope="col" class="text-center" data-field="5" data-sortable="true" data-filter-control="input">Kód EVE<br />vykazování</th>
+            <th scope="col" class="text-center" data-field="6" data-sortable="true" data-filter-control="input">Vedoucí<br />projektu</th>
+            <th scope="col" class="text-center" data-field="7" data-sortable="true" data-filter-control="input">Plánované<br />hod</th>
+            <th scope="col" class="text-center" data-field="8" data-sortable="true" data-filter-control="input">Termín vyst.<br />faktury</th>
+            <th scope="col" class="text-center" data-field="9" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatterCz">Konečná<br />cena [CZK]</th>
+            <th scope="col" class="text-center" data-field="10" data-sortable="true" data-filter-control="input">Poznámky</th>
+            <th scope="col" class="text-center" data-field="11" data-sortable="true" data-filter-control="input">Dodací list</th>
+            <th scope="col" class="text-center" data-field="12" data-sortable="true" data-filter-control="select">Měna</th>
+            <th scope="col" class="text-center" data-field="13" data-sortable="true" data-filter-control="input">Další<br />náklady</th>
+            <th scope="col" class="text-center" data-field="14" data-sortable="true" data-filter-control="input">Hod.<br />sazba</th>
+            <th scope="col" class="text-center" data-field="15" data-sortable="true" data-filter-control="input">Vyčerpáno</th>
+            <th scope="col" class="text-center" data-field="16" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatterCz">Přepočet [CZK]</th>
             @* <th class="text-center" scope="col" data-field="14" data-sortable="true" data-filter-control="input">Stav<br />plnění</th> *@
-            <th class="text-center" scope="col" data-field="17" data-sortable="true" data-filter-control="input">Využito</th>
+            <th scope="col" class="text-center" data-field="17" data-sortable="true" data-filter-control="input">Využito</th>
         </tr>
     </thead>
     <tbody>

@@ -72,16 +72,16 @@
     >
     <thead>
         <tr>
-            <th class="text-center" scope="col" data-field="0" data-sortable="true" data-filter-control="input" data-footer-formatter="idFormatter"  ><i class="fa fa-fw fa-ellipsis-v " aria-hidden="true"></i>Edit</th>
-            <th class="text-center" scope="col" data-field="1" data-sortable="true"><span data-toggle="tooltip" title="Aktivní / Neaktivní"><i class="fa fa-eye text-secondary"></i></span></th>
-            <th class="text-center" scope="col" data-field="2" data-sortable="true" data-filter-control="input">Název</th>
-            <th class="text-center" scope="col" data-field="3" data-sortable="true" data-filter-control="input">Město</th>
-            <th class="text-center" scope="col" data-field="4" data-sortable="true" data-filter-control="input">Adresa</th>
-            <th class="text-center" scope="col" data-field="5" data-sortable="true" data-filter-control="input">Telefon</th>
-            <th class="text-center" scope="col" data-field="6" data-sortable="true" data-filter-control="input">Web</th>
-            <th class="text-center" scope="col" data-field="7" data-sortable="true" data-filter-control="input">Splatnost [dny]</th>
-            <th class="text-center" scope="col" data-field="8" data-sortable="true" data-filter-control="input">Poznámky</th>
-            <th class="text-center" scope="col" data-field="9" data-sortable="true" data-filter-control="input">Vytvořeno</th>
+            <th scope="col" class="text-center" data-field="0" data-sortable="true" data-filter-control="input" data-footer-formatter="idFormatter">Edit</th>
+            <th scope="col" class="text-center" data-field="1" data-sortable="true"><span data-toggle="tooltip" title="Aktivní / Neaktivní"><i class="fa fa-eye text-secondary"></i></span></th>
+            <th scope="col" class="text-center" data-field="2" data-sortable="true" data-filter-control="input">Název</th>
+            <th scope="col" class="text-center" data-field="3" data-sortable="true" data-filter-control="input">Město</th>
+            <th scope="col" class="text-center" data-field="4" data-sortable="true" data-filter-control="input">Adresa</th>
+            <th scope="col" class="text-center" data-field="5" data-sortable="true" data-filter-control="input">Telefon</th>
+            <th scope="col" class="text-center" data-field="6" data-sortable="true" data-filter-control="input">Web</th>
+            <th scope="col" class="text-center" data-field="7" data-sortable="true" data-filter-control="input">Splatnost [dny]</th>
+            <th scope="col" class="text-center" data-field="8" data-sortable="true" data-filter-control="input">Poznámky</th>
+            <th scope="col" class="text-center" data-field="9" data-sortable="true" data-filter-control="input">Vytvořeno</th>
         </tr>
     </thead>
     <tbody>
@@ -106,14 +106,14 @@
                     </th>
                 }
 
-                <th class="text-left" scope="row">@item.Name</th>
-                <th class="text-left" scope="row">@item.City</th>
-                <th class="text-left" scope="row">@item.Address</th>
-                <th class="text-left" scope="row">@item.Phone</th>
-                <th class="text-left" scope="row"><a href="http://@item.Web" target="_blank">@item.Web</a></th>
-                <th class="text-right" scope="row">@item.InvoiceDueDays</th>
-                <th class="text-left notesWrap" scope="row" data-toggle="tooltip" title="@item.Notes">@item.Notes</th>
-                <th class="text-left" scope="row">@String.Format("{0:yyyy-MM-dd}", @item.CreateDate)</th>
+                <th scope="row" class="text-left">@item.Name</th>
+                <th scope="row" class="text-left">@item.City</th>
+                <th scope="row" class="text-left">@item.Address</th>
+                <th scope="row" class="text-left">@item.Phone</th>
+                <th scope="row" class="text-left"><a href="http://@item.Web" target="_blank">@item.Web</a></th>
+                <th scope="row" class="text-right">@item.InvoiceDueDays</th>
+                <th scope="row" class="text-left notesWrap" data-toggle="tooltip" title="@item.Notes">@item.Notes</th>
+                <th scope="row" class="text-left">@String.Format("{0:yyyy-MM-dd}", @item.CreateDate)</th>
             </tr>
         }
     </tbody>

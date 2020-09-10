@@ -38,13 +38,13 @@
     <h1 class="display-4">@ViewData["Title"]</h1>
 </div>
 
-<div class="text-center">
+@* <div class="text-center">
     <span data-toggle="tooltip" title="Zobrazit legendu">
         <a class="btn btn-light" href="#showLegend" data-toggle="collapse" role="button">
             <i class="fa fa-question-circle-o"></i>
         </a>
     </span>
-</div>
+</div> *@
 
 <div class="card collapse text-center" id="showLegend">
     <h4 class="pb-2">Legenda</h4>
@@ -67,13 +67,25 @@
 </div>
 
 <div id="toolbar" style="padding-bottom: 10px;">
-    <a asp-action="Create" class="btn btn-outline-success"><i class="fa fa-plus-square-o"></i> Nová nabídka</a>
-    @* <a id="btnToggleActive" class="btn btn-outline-primary pull-right" onclick="ToggleActive()">
-        <i class="fa fa-eye-slash"></i> Aktivní (@Model.Count(m => m.Active) / @Model.Count())
-    </a> *@
+    <a asp-action="Create" class="btn btn-outline-success">
+        <i class="fa fa-plus-square-o"></i> Nová nabídka
+    </a>
     <button style="margin-right: 5px;" class="btn btn-outline-info" name="BtnMujFilter" id="BtnMujFilter" type="button">
-        <i class="fa fa-filter"> Filter</i>
+        <i class="fa fa-filter"></i> Filter
     </button>
+    @if (ViewBag.ShowInactive == true)
+    {
+        <a asp-action="index" class="btn btn-outline-secondary" data-toggle="tooltip" title="Zobrazit pouze aktivní"><i class="fa fa-eye"></i> Vše (@Model.Count())</a>
+    }
+    else
+    {
+        <a asp-action="index" class="btn btn-outline-secondary" asp-route-ShowInactive="true" data-toggle="tooltip" title="Zobrazit vše"><i class="fa fa-eye-slash"></i> Aktivní (@Model.Count())</a>
+    }
+    <span data-toggle="tooltip" title="Zobrazit legendu">
+        <a class="btn btn-light border" href="#showLegend" data-toggle="collapse" role="button">
+            <i class="fa fa-question-circle-o"></i>
+        </a>
+    </span>
 </div>
 
 
@@ -109,19 +121,19 @@
     >
     <thead>
         <tr>
-            <th class="text-center" scope="col" data-field="0" data-sortable="true" data-filter-control="input" data-footer-formatter="idFormatter"  ><i class="fa fa-fw fa-ellipsis-v " aria-hidden="true"></i>Edit</th>
-            <th class="text-center" scope="col" data-field="1" data-sortable="true" data-filter-control="select"><span data-toggle="tooltip" title="Aktivní / Neaktivní">A/N</span></th>
-            <th class="text-center" scope="col" data-field="2" data-sortable="true" data-filter-control="input">Status</th>
-            <th class="text-center" scope="col" data-field="3" data-sortable="true" data-filter-control="input">Vytvořeno</th>
-            <th class="text-center" scope="col" data-field="4" data-sortable="true" data-filter-control="input">Název</th>
-            <th class="text-center" scope="col" data-field="5" data-sortable="true" data-filter-control="input">Přijato</th>
-            <th class="text-center" scope="col" data-field="6" data-sortable="true" data-filter-control="input">Firma</th>
-            <th class="text-center" scope="col" data-field="7" data-sortable="true" data-filter-control="input">Kontakt</th>
-            <th class="text-center" scope="col" data-field="8" data-sortable="true" data-filter-control="input">Předmět</th>
-            <th class="text-center" scope="col" data-field="9" data-sortable="true" data-filter-control="input">Cena</th>
-            <th class="text-center" scope="col" data-field="10" data-sortable="true" data-filter-control="input">Měna</th>
-            <th class="text-center" scope="col" data-field="11" data-sortable="true" data-filter-control="input">Cena [Kč]</th>
-            <th class="text-center" scope="col" data-field="12" data-sortable="true" data-filter-control="input">Poznámky</th>
+            <th scope="col" class="text-center" data-field="0" data-sortable="true" data-filter-control="input" data-footer-formatter="idFormatter"  >Edit</th>
+            <th scope="col" class="text-center" data-field="1" data-sortable="true"><span data-toggle="tooltip" title="Aktivní / Neaktivní"><i class="fa fa-eye text-secondary"></i></span></th>
+            <th scope="col" class="text-center" data-field="2" data-sortable="true" data-filter-control="input">Status</th>
+            <th scope="col" class="text-center" data-field="3" data-sortable="true" data-filter-control="input">Vytvořeno</th>
+            <th scope="col" class="text-center" data-field="4" data-sortable="true" data-filter-control="input">Název</th>
+            <th scope="col" class="text-center" data-field="5" data-sortable="true" data-filter-control="input">Přijato</th>
+            <th scope="col" class="text-center" data-field="6" data-sortable="true" data-filter-control="input">Firma</th>
+            <th scope="col" class="text-center" data-field="7" data-sortable="true" data-filter-control="input">Kontakt</th>
+            <th scope="col" class="text-center" data-field="8" data-sortable="true" data-filter-control="input">Předmět</th>
+            <th scope="col" class="text-center" data-field="9" data-sortable="true" data-filter-control="input">Cena</th>
+            <th scope="col" class="text-center" data-field="10" data-sortable="true" data-filter-control="input">Měna</th>
+            <th scope="col" class="text-center" data-field="11" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatterCz">Cena [Kč]</th>
+            <th scope="col" class="text-center" data-field="12" data-sortable="true" data-filter-control="input">Poznámky</th>
         </tr>
     </thead>
     <tbody>

@@ -25,14 +25,31 @@ namespace memo.Controllers
             _eveDb = eveDb;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(bool showInactive = false)
         {
-            IList<Offer> model = _db.Offer
-                .Include(x => x.Company)
-                .Include(y => y.Contact)
-                .Include(z => z.Currency)
-                .Include(a => a.OfferStatus)
-                .ToList();
+            ViewBag.showInactive = showInactive;
+
+            List<Offer> model = new List<Offer>();
+
+            if (showInactive is false)
+            {
+                model = _db.Offer
+                    .Include(x => x.Company)
+                    .Include(y => y.Contact)
+                    .Include(z => z.Currency)
+                    .Include(a => a.OfferStatus)
+                    .Where(x => x.Active == true)
+                    .ToList();
+            }
+            else
+            {
+                model = _db.Offer
+                    .Include(x => x.Company)
+                    .Include(y => y.Contact)
+                    .Include(z => z.Currency)
+                    .Include(a => a.OfferStatus)
+                    .ToList();
+            }
 
             return View(model);
         }
