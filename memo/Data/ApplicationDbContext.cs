@@ -23,6 +23,7 @@ namespace memo.Data
         public virtual DbSet<Offer> Offer { get; set; }
         public virtual DbSet<OfferStatus> OfferStatus { get; set; }
         public virtual DbSet<Order> Order { get; set; }
+        public virtual DbSet<Invoice> Invoice { get; set; }
 
         // PROCEDURES
         public virtual DbSet<SumMinutesSP> SumMinutesSP { get; set; }

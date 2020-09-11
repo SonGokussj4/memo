@@ -55,6 +55,18 @@ GO
 --ALTER TABLE [memo].[Offer]
 --  ADD CONSTRAINT UQ_OfferName UNIQUE (OfferName);
 
+CREATE TABLE [memo].[Invoice] (
+  [InvoiceId] int PRIMARY KEY IDENTITY(1, 1),
+  [OrderId] int,
+  [InvoiceDueDate] date,
+  [InvoiceIssueDate] date,
+  [Cost] decimal(18,3)
+)
+GO
+
+ALTER TABLE [memo].[Invoice] ADD FOREIGN KEY ([OrderId]) REFERENCES [memo].[Order] ([OrderId])
+GO
+
 CREATE TABLE [memo].[OfferStatus] (
   [OfferStatusId] int PRIMARY KEY IDENTITY(1, 1),
   [Name] nvarchar(20)

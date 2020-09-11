@@ -224,46 +224,66 @@
             </div>
         </div>
 
-        <div class="form-group row">
+        @* <div class="form-group row">
             <label asp-for="Order.InvoiceIssueDate" class="required col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-9 mycalendar">
                 <input asp-for="Order.InvoiceIssueDate" class="form-control" type="text" autocomplete="off"/>
                 <span asp-validation-for="Order.InvoiceIssueDate" class="text-danger"></span>
             </div>
         </div>
-        @* TODO: pridat zde navaznost na Offer.Company.InvoiceDueDays a pri onchange() InvoiceIssueDate pridat dny, pokud prazdne*@
+
         <div class="form-group row">
             <label asp-for="Order.InvoiceDueDate" class="col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-9 mycalendar">
                 <input asp-for="Order.InvoiceDueDate" class="form-control" type="text" autocomplete="off"/>
                 <span asp-validation-for="Order.InvoiceDueDate" class="text-danger"></span>
             </div>
-        </div>
-
-        @* <div class="form-group row border-top">
-            <label class="col-lg-3 col-form-label form-control-label control-label"></label>
-            <label class="col-lg-3 col-form-label form-control-label control-label">Termín vystavení</label>
-            <label class="col-lg-3 col-form-label form-control-label control-label">Termín splanosti</label>
-            <label class="col-lg-3 col-form-label form-control-label control-label">Cena</label>
         </div> *@
 
         <div class="form-group row border-top pt-2">
-            <label asp-for="Order.InvoiceIssueDate" class="col-lg-3 col-form-label form-control-label control-label">Faktura</label>
-            <div class="col-lg-3 mycalendar">
-                <input class="form-control" type="text" autocomplete="off" placeholder="Termín vystavení" />
-            </div>
-            <div class="col-lg-3 mycalendar">
-                <input class="form-control" type="text" autocomplete="off" placeholder="Splatnost faktury" />
-            </div>
-            <div class="col-lg-3">
-                <div class="input-group mb-2 mr-sm-2">
-                    <div class="input-group-prepend">
-                        <div class="input-group-text">@Model.CurrencyName</div>
-                    </div>
-                    <input class="form-control" type="text" placeholder="Částka" />
+            <label asp-for="Order.InvoiceIssueDate" class="col-lg-3 col-form-label form-control-label control-label">Faktury</label>
+        </div>
+
+        <div class="form-group row">
+            @* <label asp-for="Order.InvoiceIssueDate" class="col-lg-3 col-form-label form-control-label control-label">Faktura</label> *@
+            @for (int i = 0; i < Model.Order.Invoices.Count(); i++)
+            {
+                <input type="hidden" asp-for="@Model.Order.Invoices[i].InvoiceId" />
+                <div class="col-lg-3"></div>
+                <div class="col-lg-3 mycalendar">
+                    <input asp-for="@Model.Order.Invoices[i].InvoiceIssueDate" class="form-control" type="text" autocomplete="off" placeholder="Termín vystavení" />
                 </div>
-                <span asp-validation-for="Order.PriceFinal" class="text-danger"></span>
-            </div>
+                <div class="col-lg-3 mycalendar">
+                    <input asp-for="@Model.Order.Invoices[i].InvoiceDueDate" class="form-control" type="text" autocomplete="off" placeholder="Splatnost faktury" />
+                </div>
+                <div class="col-lg-3">
+                    <div class="input-group mb-2 mr-sm-2">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">@Model.CurrencyName</div>
+                        </div>
+                        <input asp-for="@Model.Order.Invoices[i].Cost" class="form-control" type="text" placeholder="Částka" />
+                    </div>
+                </div>
+            }
+            @* @foreach (Invoice item in Model.Order.Invoices)
+            {
+                <input type="hidden" asp-for="@item.InvoiceId" />
+                <div class="col-lg-3"></div>
+                <div class="col-lg-3 mycalendar">
+                    <input asp-for="@item.InvoiceIssueDate" class="form-control" type="text" autocomplete="off" placeholder="Termín vystavení" />
+                </div>
+                <div class="col-lg-3 mycalendar">
+                    <input asp-for="@item.InvoiceDueDate" class="form-control" type="text" autocomplete="off" placeholder="Splatnost faktury" />
+                </div>
+                <div class="col-lg-3">
+                    <div class="input-group mb-2 mr-sm-2">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">@Model.CurrencyName</div>
+                        </div>
+                        <input asp-for="@item.Cost" class="form-control" type="text" placeholder="Částka" />
+                    </div>
+                </div>
+            } *@
         </div>
 
         <div class="form-group row border-bottom pb-2">

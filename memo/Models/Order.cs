@@ -9,6 +9,11 @@ namespace memo.Models
     [Table("Order", Schema = "memo")]
     public partial class Order
     {
+        // public Order()
+        // {
+        //     Invoices = new HashSet<Invoice>();
+        // }
+
         [Key]
         public int OrderId { get; set; }
 
@@ -52,7 +57,7 @@ namespace memo.Models
         [Display(Name = "Dodací list")]
         public string BillOfDelivery { get; set; }
 
-        [Required]
+        // [Required]
         [Display(Name = "Předp. termín vystavení faktury"), Column(TypeName = "date")]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime? InvoiceIssueDate { get; set; }
@@ -88,5 +93,8 @@ namespace memo.Models
         [NotMapped]
         [Display(Name = "Spáleno")]
         public int Burned { get; set; }
+
+        // [InverseProperty("Invoice")]
+        public virtual List<Invoice> Invoices { get; set; }
     }
 }

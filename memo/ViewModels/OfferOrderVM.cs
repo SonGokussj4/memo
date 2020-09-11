@@ -12,6 +12,8 @@ namespace memo.ViewModels
         public IEnumerable<Offer> Offers { get; set; }
         public IEnumerable<Order> Orders { get; set; }
 
+        // public IEnumerable<Invoice> Invoices { get; set; }
+
         public int IDOrder { get; set; }
         public int Minutes { get; set; }
 

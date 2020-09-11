@@ -33,11 +33,18 @@ namespace memo
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            object p = services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("evememo")));  // DefaultConnection
+            IMvcBuilder builder = services.AddRazorPages();
+            if (Env.IsDevelopment())
+            {
+                builder.AddRazorRuntimeCompilation();
+            }
+
+            services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddDbContext<EvektorDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("evememo")));  // EvektorDbConnection
+                // options.UseSqlServer(Configuration.GetConnectionString("EvektorDbConnection")));
+                options.UseSqlServer(Configuration.GetConnectionString("EvektorDbConnectionMock")));
 
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();

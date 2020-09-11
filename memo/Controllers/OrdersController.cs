@@ -221,6 +221,7 @@ namespace memo.Controllers
             {
                 order.OfferId = offerId;
             }
+            order.Invoices = _db.Invoice.Where(x => x.OrderId == id).ToList();
 
             Offer offer = _db.Offer.Find(order.OfferId);
             if (offer == null)
@@ -323,6 +324,7 @@ namespace memo.Controllers
             var invoiceduedays = _db.Company.Find(offer.CompanyId).InvoiceDueDays;
             var currencyname = _db.Currency.Find(offer.CurrencyId).Name;
 
+            order.Invoices = _db.Invoice.Where(x => x.OrderId == id).ToList();
             OfferOrderVM viewModel = new OfferOrderVM()
             {
                 Offer = offer,
