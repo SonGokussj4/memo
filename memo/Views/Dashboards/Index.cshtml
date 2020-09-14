@@ -29,10 +29,18 @@
         <label class="border-right pr-3">Filtrování: </label>
         <a asp-action="Index" asp-route-filter="weeks" data-toggle="tooltip" title="Finance v rozmezí týdnů" class="btn btn-primary ml-2 mr-2">Týdny</a>
         <a asp-action="Index" asp-route-filter="months" data-toggle="tooltip" title="Finance v rozmezí měsíců" class="btn btn-primary ml-2 mr-2">Měsíce</a>
-        <select data-toggle="tooltip" title="PROZATÍM NEFUNGUJE" class="form-control" name="SelectedYear">
+        <select data-toggle="tooltip" title="PROZATÍM NEFUNGUJE" class="form-control" id="SelectedYear" name="SelectedYear">
             <option value="2019">2019</option>
-            <option value="2020" selected="selected">2020</option>
+            <option value="2020" selected>2020</option>
             <option value="2021">2021</option>
+        </select>
+        <select data-toggle="tooltip" title="PROZATÍM NEFUNGUJE" class="form-control" id="SelectedDepartment" name="SelectedDepartment">
+            <option value="C1">C1</option>
+            <option value="C2" selected>C2</option>
+            <option value="C3">C3</option>
+            <option value="C4">C4</option>
+            <option value="C5">C5</option>
+            <option value="C6">C6</option>
         </select>
         @* <button class="btn btn-primary ml-2 mr-2">Something</button> *@
     </form>
