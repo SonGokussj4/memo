@@ -488,15 +488,13 @@
         });
 
         function AddInvoice(i) {
-
             console.log("Adding Invoice for OrderId: @Model.Order.OrderId")
 
-            var data = new Array();
-
+            //var data = new Array();
             var Invoice = {};
             //Invoice.InvoiceIssueDate = "2020-12-24";
             //Invoice.InvoiceDueDate = "2020-12-31";
-            Invoice.Cost = parseFloat("0");
+            //Invoice.Cost = parseFloat("0");
             Invoice.OrderId = @Model.Order.OrderId
 
             $.ajax({
@@ -507,6 +505,17 @@
                 url: '@Url.Action("AddInvoice")',
                 data: { invoice: Invoice },
                 cache: false,
+                beforeSend:function(){
+                    //bootbox.alert({
+                    //    centerVertical: true,
+                    //    message:
+                    //        "Prosím vyplňte pole: <br>"+
+                    //        "  - Termín vystavení <br>"+
+                    //        "  - Splatnost faktury <br>"+
+                    //        "  - Částka",
+                    //    backgrop: true
+                    //});
+                },
                 success: function(data) {
                     window.location = "@Model.Order.OrderId";
                     alert("Prosím vyplňte pole: \n"+
@@ -530,7 +539,9 @@
                 data: { id: invoiceId },
                 cache: false,
                 beforeSend:function(){
-                    return confirm("Jste si jisti??? Tento úkon smaže označenou fakturaci!");
+                    return confirm(
+                        "Jste si jisti??? Tento úkon smaže označenou fakturaci!"
+                    );
                 },
                 success: function(data) {
                     window.location = "@Model.Order.OrderId";
@@ -538,6 +549,7 @@
                 error: function(data) { alert("Ajta krajta...") }
             });
         }
+
         function changeExchangeRate(curSymbol) {
             $.ajax({
                 url: '@Url.Action("getCurrencyStr", "Orders")',
