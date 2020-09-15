@@ -458,5 +458,31 @@ namespace memo.Controllers
 
             return RedirectToAction("Index", new { showInactive });
         }
+
+        [HttpPost]
+        public ActionResult AddInvoice(IEnumerable<Invoice> listOfInvoices)
+        {
+            System.Console.WriteLine(listOfInvoices);
+            // if (id == null)
+            // {
+            //     return NotFound();
+            // }
+
+            // Order order = await _db.Order.FirstOrDefaultAsync(m => m.OrderId == id);
+            // if (order == null)
+            // {
+            //     return NotFound();
+            // }
+
+            // order.Active = false;
+
+            // _db.Order.Update(order);
+            // await _db.SaveChangesAsync();
+
+            // _db.Add(vm.Order);
+            // _db.SaveChanges();
+            return View();
+            // return Json("Invoices Successfully Added.", JsonRequestBehavior.AllowGet);
+        }
     }
 }

@@ -449,7 +449,7 @@
                         '</div>'+
                     '</div>'+
                     '<div class="col-lg-1">'+
-                        '<a href="#" class="btn btn-danger btn-sm mt-1" data-toggle="tooltip" title="" data-original-title="Odstranit záznam"><i class="fa fa-trash"></i></a>'+
+                        '<a href="#" class="btn btn-danger btn-sm mt-1" data-toggle="tooltip" title="" data-original-title="Odstranit záznam" onclick="AddInvoice()"><i class="fa fa-trash"></i></a>'+
                     '</div>'+
                 '</div>';
             $("tbody").append($(html).clone(true))
@@ -459,6 +459,69 @@
             i = i + 1;
             return false;
         });
+
+        function AddInvoice() {
+
+            console.log("Adding Invoice")
+
+            var data = new Array();
+
+            var Invoice = {};
+            Invoice.InvoiceIssueDate = "2020-12-24";
+            Invoice.InvoiceDueDate = "2020-12-31";
+            Invoice.Cost = parseFloat("300.00");
+            Invoice.OrderId = 1
+            Invoice.InvoiceId = 16
+            data.push(Invoice);
+
+            Invoice = {};
+            Invoice.InvoiceIssueDate = "2021-12-24";
+            Invoice.InvoiceDueDate = "2021-12-31";
+            Invoice.Cost = parseFloat("150.00");
+            Invoice.OrderId = 2
+            Invoice.InvoiceId = 17
+            data.push(Invoice);
+
+            //alert(JSON.stringify(data))
+            //data.forEach(function(item) {
+            //    alert(item.Cost);
+            //});
+
+            //var jsonData = JSON.stringify(data);
+
+            $.ajax({
+                //async: true,
+                type: 'POST',
+                dataType: 'JSON',
+                ContentType: 'application/json; charset=utf-8',
+                url: '@Url.Action("AddInvoice")',
+                data: { listOfInvoices: data },
+                cache: false,
+                sucess: function(data) {
+                    alert(data)
+                },
+                error: function(data) {
+                    alert("Ajta krajta...")
+                    alert("hmm" + data)
+                }
+            });
+        };
+
+        function changeExchangeRate(curSymbol) {
+            $.ajax({
+                url: '@Url.Action("getCurrencyStr", "Orders")',
+                type: 'GET',
+                //dataType: 'json',
+                // we set cache: false because GET requests are often cached by browsers
+                // IE is particularly aggressive in that respect
+                cache: false,
+                data: { symbol: curSymbol },
+                success: function(res) {
+                    //$('#Order_ExchangeRate').val(res).focus().keyup().blur();
+                    $('#Order_ExchangeRate').val(res).keyup();
+                }
+            });
+        }
 
         // MODAL dialog for delete confirmation
         //-------------------------------------
