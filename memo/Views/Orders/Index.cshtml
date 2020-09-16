@@ -94,7 +94,7 @@
             <th scope="col" class="text-center" data-field="5" data-sortable="true" data-filter-control="input">Kód EVE<br />vykazování</th>
             <th scope="col" class="text-center" data-field="6" data-sortable="true" data-filter-control="input">Vedoucí<br />projektu</th>
             <th scope="col" class="text-center" data-field="7" data-sortable="true" data-filter-control="input">Plánované<br />hod</th>
-            <th scope="col" class="text-center" data-field="8" data-sortable="true" data-filter-control="input">Termín vyst.<br />faktury</th>
+            @* <th scope="col" class="text-center" data-field="8" data-sortable="true" data-filter-control="input">Termín vyst.<br />faktury</th> *@
             <th scope="col" class="text-center" data-field="9" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatterCz">Konečná<br />cena [CZK]</th>
             <th scope="col" class="text-center" data-field="10" data-sortable="true" data-filter-control="input">Poznámky</th>
             <th scope="col" class="text-center" data-field="11" data-sortable="true" data-filter-control="input">Dodací list</th>
@@ -141,7 +141,7 @@
                     <th scope="row" class="text-right">@totalHoursText</th>
                 }
                 @* <th scope="row" class="text-right">@String.Format("{0:# 000}", item.TotalHours) hod</th> *@
-                <th scope="row" class="text-center">@String.Format("{0:yyyy-MM-dd}", @item.InvoiceIssueDate)</th>
+                @* <th scope="row" class="text-center">@String.Format("{0:yyyy-MM-dd}", @item.InvoiceIssueDate)</th> *@
                 <th scope="row" class="text-right">@string.Format(CultureInfo.CreateSpecificCulture("cs-CZ"), "{0:C0}", @item.PriceFinalCzk)</th>
                 <th scope="row" class="notesWrap" data-toggle="tooltip" data-html="true" title="@item.Notes">
                     @item.Notes

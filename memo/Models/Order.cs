@@ -57,14 +57,14 @@ namespace memo.Models
         [Display(Name = "Dodací list")]
         public string BillOfDelivery { get; set; }
 
-        // [Required]
-        [Display(Name = "Předp. termín vystavení faktury"), Column(TypeName = "date")]
-        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
-        public DateTime? InvoiceIssueDate { get; set; }
+        // // [Required]
+        // [Display(Name = "Předp. termín vystavení faktury"), Column(TypeName = "date")]
+        // [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+        // public DateTime? InvoiceIssueDate { get; set; }
 
-        [Display(Name = "Datum splatnosti faktury"), Column(TypeName = "date")]
-        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
-        public DateTime? InvoiceDueDate { get; set; }
+        // [Display(Name = "Datum splatnosti faktury"), Column(TypeName = "date")]
+        // [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+        // public DateTime? InvoiceDueDate { get; set; }
 
         [Display(Name = "Kurz")]
         [Column(TypeName = "decimal(18,3)")]

@@ -44,7 +44,7 @@ namespace memo.Controllers
             List<DashboardCashVM> viewModelCash = new List<DashboardCashVM>();
             if (filter == "months")
             {
-                viewModelCash = _db.Order
+                viewModelCash = _db.Invoice
                     .Where(a => a.InvoiceDueDate.Value.Year == selectedYear)
                     .GroupBy(b => b.InvoiceDueDate.Value.Month)
                     .Select(g => new DashboardCashVM
@@ -57,20 +57,22 @@ namespace memo.Controllers
                         // TotalHours = $"{g.Sum(gi => gi.TotalHours)} hod",
                         // AvgHourWage = $"{string.Format("{0:C}", g.Average(gi => gi.HourWage))}/hod",
                         Month = new DateTime(selectedYear, g.Key, 1),
-                        Cash = (int)g.Sum(gi => gi.PriceFinalCzk),
+                        Cash = (int)g.Sum(gi => gi.Cost),
+                        // Cash = (int)g.Sum(gi => gi.PriceFinalCzk),
                     })
                     .ToList();
             }
             else
             {
-                viewModelCash = _db.Order
+                viewModelCash = _db.Invoice
                     .Where(a => a.InvoiceDueDate.Value.Year == selectedYear)
                     .AsEnumerable()
                     .GroupBy(b => ISOWeek.GetWeekOfYear((DateTime)b.InvoiceDueDate))
                     .Select(g => new DashboardCashVM
                     {
                         Week = g.Key,
-                        Cash = (int)g.Sum(gi => gi.PriceFinalCzk),
+                        Cash = (int)g.Sum(gi => gi.Cost),
+                        // Cash = (int)g.Sum(gi => gi.PriceFinalCzk),
                     })
                     .OrderBy(x => x.Week)
                     .ToList();
