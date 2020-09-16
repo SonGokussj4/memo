@@ -279,7 +279,6 @@
 
     function priceFormatterCz(data) {
         var field = parseInt(this.field.replace(",", "").replace("&nbsp;", "").replace(" ", "").replace("Kč", ""));
-        console.log(field);
         //var field = parseInt(this.field).val().replace(/[^0-9]/g, '')
         var vysledek = data.map(function (row) {
             var cost = parseInt(row[field]

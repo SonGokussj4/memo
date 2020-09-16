@@ -1,3 +1,5 @@
+@using System.Globalization;
+
 @{
     ViewData["Title"] = "Úprava zakázky";
 }
@@ -60,16 +62,22 @@
                 <input asp-for="Offer.OfferName" class="form-control" type="text" readonly />
                 <span asp-validation-for="Order.OfferId" class="text-danger"></span>
             </div>
-            <div class="col-lg-1">
+            @* <div class="col-lg-1">
                 <label asp-for="OfferCompanyName" class="col-form-label form-control-label control-label"></label>
             </div>
             <div class="col-lg-4">
                 <input asp-for="OfferCompanyName" class="form-control" type="text" readonly />
                 <span asp-validation-for="OfferCompanyName" class="text-danger"></span>
-            </div>
+            </div> *@
         </div>
 
-        <div class="form-group row">
+        <ul>
+            <li><b>Předmět:</b> @Model.Offer.Subject - <b>@String.Format(CultureInfo.CreateSpecificCulture(Model.Offer?.Currency.CultureCode), "{0:C0}", @Model.Offer.Price)</b> (@String.Format(CultureInfo.CreateSpecificCulture("cs-CZ"), "{0:C0}", Model.Offer.PriceCzk))</li>
+            <li><b>Zákazník:</b> @Model.OfferCompanyName (<b>Splatnost faktury:</b> @Model.InvoiceDueDays dní)</li>
+            <li><b>Přijetí poptávky:</b> @String.Format("{0:dd.MM.yyyy}", @Model.Offer.ReceiveDate) / <b>Odeslání nabídky:</b> @String.Format("{0:dd.MM.yyyy}", @Model.Offer.SentDate)</li>
+        </ul>
+
+        @* <div class="form-group row">
             <div class="col-lg-5"></div>
             <div class="col-lg-2 align-self-center">
                 <button class="btn btn-sm btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
@@ -77,7 +85,7 @@
                 </button>
             </div>
             <div class="col-lg-5"></div>
-        </div>
+        </div> *@
 
         <div class="collapse" id="collapseExample">
 
@@ -133,8 +141,7 @@
             </div>
 
             <div class="">
-                @* TODO: Zmenit font z FA na normalni button *@
-                @Html.ActionLink(" Přejít na objednávku", "Edit", "Offers", new { id = Model.Offer.OfferId }, new { @class = "btn btn-primary fa fa-list-alt" })
+                <a asp-action="Edit" asp-controller="Offers" asp-route-id="@Model.Offer.OfferId" class="btn btn-primary"><i class="fa fa-list-alt"></i> Přejít na objednávku</a>
             </div>
         </div>
 
@@ -224,28 +231,12 @@
             </div>
         </div>
 
-        @* <div class="form-group row">
-            <label asp-for="Order.InvoiceIssueDate" class="required col-lg-3 col-form-label form-control-label control-label"></label>
-            <div class="col-lg-9 mycalendar">
-                <input asp-for="Order.InvoiceIssueDate" class="form-control" type="text" autocomplete="off"/>
-                <span asp-validation-for="Order.InvoiceIssueDate" class="text-danger"></span>
-            </div>
-        </div>
-
-        <div class="form-group row">
-            <label asp-for="Order.InvoiceDueDate" class="col-lg-3 col-form-label form-control-label control-label"></label>
-            <div class="col-lg-9 mycalendar">
-                <input asp-for="Order.InvoiceDueDate" class="form-control" type="text" autocomplete="off"/>
-                <span asp-validation-for="Order.InvoiceDueDate" class="text-danger"></span>
-            </div>
-        </div> *@
-
         <div class="form-group row border-top pt-2">
             <div class="col-lg-2 col-form-label d-flex justify-content-left">
                 <label asp-for="Order.InvoiceIssueDate" class="form-control-label control-label">Faktury</label>
             </div>
             <div class="col-lg-10">
-                <a href="#" class="btn btn-success btn-sm col-lg-1 add-row mt-1" data-toggle="tooltip" title="Přidat záznam"><i class="fa fa-plus"></i></a>
+                <a href="#" class="btn btn-success col-lg-3 add-row mt-1" data-toggle="tooltip" title="Přidat fakturaci"><i class="fa fa-plus"></i> Přidat fakturaci</a>
             </div>
         </div>
 
@@ -503,27 +494,23 @@
                 dataType: 'JSON',
                 ContentType: 'application/json; charset=utf-8',
                 url: '@Url.Action("AddInvoice")',
-                data: { invoice: Invoice },
+                data: { invoice: Invoice, mode: "create" },
                 cache: false,
-                beforeSend:function(){
-                    //bootbox.alert({
-                    //    centerVertical: true,
-                    //    message:
-                    //        "Prosím vyplňte pole: <br>"+
-                    //        "  - Termín vystavení <br>"+
-                    //        "  - Splatnost faktury <br>"+
-                    //        "  - Částka",
-                    //    backgrop: true
-                    //});
-                },
                 success: function(data) {
-                    window.location = "@Model.Order.OrderId";
+                    //window.location = "@Model.Order.OrderId";
                     alert("Prosím vyplňte pole: \n"+
                            "- Termín vystavení \n"+
                            "- Splatnost faktury \n"+
-                           "- Částka")
+                           "- Částka");
+                    location.reload(true);
+
                 },
-                error: function(data) { alert("Ajta krajta...") }
+                error: function(data) { alert("Ajta krajta...") },
+            })
+                .done(function(response) {
+                    $('#Order_Invoices_' + i + '__InvoiceIssueDate').focus();
+                    console.log("Focusuji?" + i);
+                    //setTimeout(function(){ alert("Hmm"); }, 1000);
             });
         };
 

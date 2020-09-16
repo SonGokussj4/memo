@@ -124,6 +124,7 @@ namespace memo.Controllers
         }
 
         // GET: Offer/Edit/5
+        [HttpGet]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)

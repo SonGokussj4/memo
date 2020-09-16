@@ -95,6 +95,6 @@ namespace memo.Models
         public int Burned { get; set; }
 
         // [InverseProperty("Invoice")]
-        public virtual List<Invoice> Invoices { get; set; }
+        public virtual List<Invoice> Invoices { get; set; } = new List<Invoice>();
     }
 }

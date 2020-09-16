@@ -17,18 +17,26 @@ namespace memo.Models
         public int? OrderId { get; set; }
         public Order Order { get; set; }
 
-        // [Required]
+        [Required]
         [Display(Name = "Částka")]
+        [Column(TypeName = "decimal(18,3)")]
         public decimal Cost { get; set; }
 
-        // [Required]
+        [Required]
         [Display(Name = "Předp. termín vystavení faktury"), Column(TypeName = "date")]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime? InvoiceIssueDate { get; set; }
 
-        // [Required]
+        [Required]
         [Display(Name = "Datum splatnosti faktury"), Column(TypeName = "date")]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime? InvoiceDueDate { get; set; }
+
+        // public Invoice()
+        // {
+        //     Cost = 0;
+        //     InvoiceIssueDate = DateTime.Now;
+        //     InvoiceDueDate = DateTime.Now;
+        // }
     }
 }

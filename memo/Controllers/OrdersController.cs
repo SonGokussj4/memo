@@ -169,7 +169,7 @@ namespace memo.Controllers
 
             if (ModelState.IsValid)
             {
-                int? totalHours = _db.cOrders
+                int? totalHours = _db.cOrders  // Planned
                     .Where(t => t.OrderCode == vm.Order.OrderCode)
                     .Select(t => t.Planned).FirstOrDefault();
 
@@ -177,7 +177,7 @@ namespace memo.Controllers
                 vm.Order.TotalHours = totalHours;
                 vm.Order.PriceFinalCzk = Convert.ToInt32(
                     (vm.Order.PriceFinal - vm.Order.OtherCosts) * vm.Order.ExchangeRate);
-                vm.Order.PriceDiscount = 0;
+                // vm.Order.PriceDiscount = 0;
                 vm.Order.OfferId = vm.OfferId;  // TODO: tohle by tu nemelo vubec by, proc to neprebira Order_OfferId pole...
 
                 _db.Add(vm.Order);
@@ -461,7 +461,7 @@ namespace memo.Controllers
         }
 
         [HttpPost]
-        public ActionResult AddInvoice(Invoice invoice)
+        public ActionResult AddInvoice(Invoice invoice, string mode = "edit")
         {
             Invoice newInvoice = new Invoice();
             newInvoice.OrderId = invoice.OrderId;
