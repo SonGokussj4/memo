@@ -9,3 +9,4 @@ memo/Properties/PublishProfiles/FolderProfile.pubxml.user
 memo/Properties/serviceDependencies.json
 memo/memo.csproj.user
 memo/.config/dotnet-tools.json
+memo/Startup.cs
