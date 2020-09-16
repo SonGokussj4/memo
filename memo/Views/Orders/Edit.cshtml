@@ -129,7 +129,7 @@
 
         <div class="cardTitleMerged">
             <div class="">
-                <a asp-action="Index" class="btn btn-light"><i class="fa fa-arrow-left"></i> Zpět</a>
+                <a asp-action="Index" class="btn btn-light border"><i class="fa fa-arrow-left"></i> Zpět</a>
             </div>
 
             <div class="">
@@ -241,8 +241,11 @@
         </div> *@
 
         <div class="form-group row border-top pt-2">
-            <div class="col-lg-12 col-form-label d-flex justify-content-left">
+            <div class="col-lg-2 col-form-label d-flex justify-content-left">
                 <label asp-for="Order.InvoiceIssueDate" class="form-control-label control-label">Faktury</label>
+            </div>
+            <div class="col-lg-10">
+                <a href="#" class="btn btn-success btn-sm col-lg-1 add-row mt-1" data-toggle="tooltip" title="Přidat záznam"><i class="fa fa-plus"></i></a>
             </div>
         </div>
 
@@ -270,16 +273,10 @@
                     </div>
                 </div>
                 <div class="col-lg-1">
-                    <a href="#" class="btn btn-danger btn-sm mt-1" data-toggle="tooltip" title="Odstranit záznam"><i class="fa fa-trash"></i></a>
+                    <a href="#" class="btn btn-danger btn-sm mt-1" data-toggle="tooltip" title="Odstranit záznam" onclick="DeleteInvoice(@Model.Order.Invoices[i].InvoiceId)"><i class="fa fa-trash"></i></a>
                 </div>
             </div>
         }
-        </div>
-
-        <div class="form-group row">
-            <div class="col-lg-12 offset-lg-2">
-                <a href="#" class="btn btn-success btn-sm col-lg-1 add-row" data-toggle="tooltip" title="Přidat záznam"><i class="fa fa-plus"></i></a>
-            </div>
         </div>
 
         <div class="form-group row border-top pt-2">
@@ -377,7 +374,7 @@
 
         <div class="form-group row">
             <div class="col-lg-3">
-                <a asp-action="Index" class="btn btn-light"><i class="fa fa-arrow-left"></i> Zpět</a>
+                <a asp-action="Index" class="btn btn-light border"><i class="fa fa-arrow-left"></i> Zpět</a>
             </div>
             <div class="col-lg-9">
                 <input type="reset" class="btn btn-secondary"  value="Resetovat pole" data-toggle="tooltip" title="Vrátí neuložené úpravy" />
@@ -391,6 +388,34 @@
     </div>
 </div>
 
+
+
+<!-----------------------------------------------  M O D A L S  ----------------------------------------------->
+@*
+<!---------------------------
+    Modal: Add Invoice
+---------------------------->
+<div class="modal fade" id="addInvoiceModal" tabindex="-1" role="dialog" aria-labelledby="addInvoiceModalLabel">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <!-- header -->
+            <div class="modal-header">
+                <h5 class="modal-title" id="addInvoiceModalLabel">Přidat fakturaci</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <!-- body -->
+            <div class="modal-body">
+                Opravdu smazat?
+                <span id="modalItemId"></span>
+            </div>
+            <!-- footer -->
+            <div class="modal-footer">
+                <a href="#" class="btn btn-default" data-dismiss="modal">Zpět</a>
+                <a href="#" class="btn btn-danger" onclick="DeleteItem()">Smazat</a>
+            </div>
+        </div>
+    </div>
+</div> *@
 
 <!-- Modal Confirm Delete-->
 <div class="modal fade" id="deleteConfirmModal" tabindex="-1" role="dialog" aria-labelledby="deleteConfirmModalLabel">
@@ -415,7 +440,6 @@
         </div>
     </div>
 </div>
-
 
 @section Scripts {
 
@@ -449,45 +473,29 @@
                         '</div>'+
                     '</div>'+
                     '<div class="col-lg-1">'+
-                        '<a href="#" class="btn btn-danger btn-sm mt-1" data-toggle="tooltip" title="" data-original-title="Odstranit záznam" onclick="AddInvoice()"><i class="fa fa-trash"></i></a>'+
+                        '<a href="#" class="btn btn-danger btn-sm mt-1" data-toggle="tooltip" title="" data-original-title="Odstranit záznam" onclick="DeleteInvoice(' + i + ')"><i class="fa fa-trash"></i></a>'+
                     '</div>'+
                 '</div>';
-            $("tbody").append($(html).clone(true))
+            //$("tbody").append($(html).clone(true))
             var _formTemp = $("#template").clone(true)
             var _targetForm = $(".dynamic-rows")
             _targetForm.append(html)
+
+            AddInvoice(i)
+
             i = i + 1;
             return false;
         });
 
-        function AddInvoice() {
+        function AddInvoice(i) {
+            console.log("Adding Invoice for OrderId: @Model.Order.OrderId")
 
-            console.log("Adding Invoice")
-
-            var data = new Array();
-
+            //var data = new Array();
             var Invoice = {};
-            Invoice.InvoiceIssueDate = "2020-12-24";
-            Invoice.InvoiceDueDate = "2020-12-31";
-            Invoice.Cost = parseFloat("300.00");
-            Invoice.OrderId = 1
-            Invoice.InvoiceId = 16
-            data.push(Invoice);
-
-            Invoice = {};
-            Invoice.InvoiceIssueDate = "2021-12-24";
-            Invoice.InvoiceDueDate = "2021-12-31";
-            Invoice.Cost = parseFloat("150.00");
-            Invoice.OrderId = 2
-            Invoice.InvoiceId = 17
-            data.push(Invoice);
-
-            //alert(JSON.stringify(data))
-            //data.forEach(function(item) {
-            //    alert(item.Cost);
-            //});
-
-            //var jsonData = JSON.stringify(data);
+            //Invoice.InvoiceIssueDate = "2020-12-24";
+            //Invoice.InvoiceDueDate = "2020-12-31";
+            //Invoice.Cost = parseFloat("0");
+            Invoice.OrderId = @Model.Order.OrderId
 
             $.ajax({
                 //async: true,
@@ -495,17 +503,52 @@
                 dataType: 'JSON',
                 ContentType: 'application/json; charset=utf-8',
                 url: '@Url.Action("AddInvoice")',
-                data: { listOfInvoices: data },
+                data: { invoice: Invoice },
                 cache: false,
-                sucess: function(data) {
-                    alert(data)
+                beforeSend:function(){
+                    //bootbox.alert({
+                    //    centerVertical: true,
+                    //    message:
+                    //        "Prosím vyplňte pole: <br>"+
+                    //        "  - Termín vystavení <br>"+
+                    //        "  - Splatnost faktury <br>"+
+                    //        "  - Částka",
+                    //    backgrop: true
+                    //});
                 },
-                error: function(data) {
-                    alert("Ajta krajta...")
-                    alert("hmm" + data)
-                }
+                success: function(data) {
+                    window.location = "@Model.Order.OrderId";
+                    alert("Prosím vyplňte pole: \n"+
+                           "- Termín vystavení \n"+
+                           "- Splatnost faktury \n"+
+                           "- Částka")
+                },
+                error: function(data) { alert("Ajta krajta...") }
             });
         };
+
+        function DeleteInvoice(invoiceId) {
+            console.log(`Deleting invoice id: ${invoiceId}`);
+
+            $.ajax({
+                //async: true,
+                type: 'POST',
+                dataType: 'JSON',
+                ContentType: 'application/json; charset=utf-8',
+                url: '@Url.Action("DeleteInvoice")',
+                data: { id: invoiceId },
+                cache: false,
+                beforeSend:function(){
+                    return confirm(
+                        "Jste si jisti??? Tento úkon smaže označenou fakturaci!"
+                    );
+                },
+                success: function(data) {
+                    window.location = "@Model.Order.OrderId";
+                },
+                error: function(data) { alert("Ajta krajta...") }
+            });
+        }
 
         function changeExchangeRate(curSymbol) {
             $.ajax({

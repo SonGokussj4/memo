@@ -13,6 +13,7 @@ using System.Globalization;
 using memo.ViewModels;
 using Microsoft.Data.SqlClient;
 using System.Data;
+using Microsoft.AspNetCore.Mvc.Routing;
 
 namespace memo.Controllers
 {
@@ -460,29 +461,27 @@ namespace memo.Controllers
         }
 
         [HttpPost]
-        public ActionResult AddInvoice(IEnumerable<Invoice> listOfInvoices)
+        public ActionResult AddInvoice(Invoice invoice)
         {
-            System.Console.WriteLine(listOfInvoices);
-            // if (id == null)
-            // {
-            //     return NotFound();
-            // }
+            Invoice newInvoice = new Invoice();
+            newInvoice.OrderId = invoice.OrderId;
+            newInvoice.Cost = invoice.Cost;
 
-            // Order order = await _db.Order.FirstOrDefaultAsync(m => m.OrderId == id);
-            // if (order == null)
-            // {
-            //     return NotFound();
-            // }
+            _db.Add(newInvoice);
+            _db.SaveChanges();
 
-            // order.Active = false;
+            return Json(new { success = true });
+        }
 
-            // _db.Order.Update(order);
-            // await _db.SaveChangesAsync();
+        [HttpPost]
+        public ActionResult DeleteInvoice(int id)
+        {
+            Invoice invoice = _db.Invoice.Find(id);
 
-            // _db.Add(vm.Order);
-            // _db.SaveChanges();
-            return View();
-            // return Json("Invoices Successfully Added.", JsonRequestBehavior.AllowGet);
+            _db.Invoice.Remove(invoice);
+            _db.SaveChanges();
+
+            return Json(new { success = true });
         }
     }
 }
