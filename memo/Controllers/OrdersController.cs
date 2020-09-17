@@ -205,6 +205,15 @@ namespace memo.Controllers
             vm.InvoiceDueDays = invoiceDueDays;
             vm.CurrencyName = curSymbol;
 
+            // Order existingOrder = _db.Order.Where(x => x.OrderName == vm.Order.OrderName);
+            Order row = _db.Order.SingleOrDefault(x => x.OrderName == vm.Order.OrderName);
+            string orderName = row != null ? row.OrderName : String.Empty;
+            if (orderName != String.Empty)
+            {
+                ModelState.AddModelError("Order.OrderName", "Číslo objednávky zákazníka již existuje");
+                return View(vm);
+            }
+
             if (ModelState.IsValid)
             {
                 int? totalHours = _db.cOrders  // Planned
@@ -296,13 +305,6 @@ namespace memo.Controllers
             // if (!isOrderCodeValid(vm.Order.OrderCode))
             // {
             //     ModelState.AddModelError("Order.OrderCode", "Neexistuje nebo je neaktivní.");
-            // }
-
-            // TODO: Zkontrolovat, pokud editace 'Cislo objednavky zakaznika - Order.OrderName' uz existuje, tak smula
-            // if (OrderNameExists(vm.Order.OrderName))
-            // {
-
-            //     ModelState.AddModelError("Order.OrderName", "Číslo objednávky zákazníka již existuje");
             // }
 
             if (ModelState.IsValid)
