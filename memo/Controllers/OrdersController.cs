@@ -76,27 +76,39 @@ namespace memo.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Refresh(int? offerId, OfferOrderVM vm)
+        // public IActionResult Refresh(int? offerId, OfferOrderVM vm)
+        public IActionResult Refresh(int offerId)
         {
-            // ? Kdyz to zmenim z EDITU, tak mam offerId i vm prazdny...
-            // ? Z Create je to v klidu...
-            if (vm != null)
-            {
-                vm.Order.OfferId = vm.OfferId;
+            // Offer offer = _db.Offer.Find(offerId);
+            Order order = new Order { OfferId = offerId };
+            // OfferOrderVM vm = new OfferOrderVM {
+            //     Offer = offer,
+            //     Order = order,
+            //     OfferId = offerId,
+            // };
 
-                if (vm.Edit == "true")
-                {
-                    return RedirectToAction("Edit", "Orders", new { @id=vm.Order.OrderId, @offerId=vm.OfferId } );
-                }
-                return RedirectToAction("Create", vm.Order);
-            }
+            return RedirectToAction("Create", order);
 
-            return View();
+            // if (vm != null)
+            // {
+            //     vm.Order.OfferId = vm.OfferId;
+
+            //     if (vm.Edit == "true")
+            //     {
+            //         return RedirectToAction("Edit", "Orders", new { @id=vm.Order.OrderId, @offerId=vm.OfferId } );
+            //     }
+            //     return RedirectToAction("Create", vm.Order);
+            // }
+
+            // return View();
+
+
         }
 
 
         [HttpGet]
-        public IActionResult Create(int? id, Order model)
+        // public IActionResult Create(int? id, Order model)
+        public IActionResult Create(Order model)  // TODO: Predelat z model<Order> na OfferId
         {
             List<Offer> wonOffersList = _db.Offer
                 .Where(t => t.OfferStatusId == 2)
@@ -104,7 +116,6 @@ namespace memo.Controllers
                 .ToList();
             ViewBag.WonOffersList = new SelectList(wonOffersList, "OfferId", "OfferName");
             ViewBag.CurrencyList = new SelectList(_db.Currency.ToList(), "CurrencyId", "Name");
-            // ViewBag.ContactList = new SelectList(_db.Contact.Where(m => m.CompanyId == 45).ToList(), "ContactId", "PersonName");
             ViewBag.EveContactList = getEveContacts(_eveDb);
             ViewBag.EveOrderCodes = getOrderCodes(_eveDb);
 
@@ -157,15 +168,42 @@ namespace memo.Controllers
                 .OrderBy(t => t.OfferName)
                 .ToList();
             ViewBag.WonOffersList = new SelectList(wonOffersList, "OfferId", "OfferName");
+            ViewBag.CurrencyList = new SelectList(_db.Currency.ToList(), "CurrencyId", "Name");
             ViewBag.EveContactList = getEveContacts(_eveDb);
             ViewBag.EveOrderCodes = getOrderCodes(_eveDb);
-            ViewBag.CurrencyList = new SelectList(_db.Currency.ToList(), "CurrencyId", "Name");
 
-            if (vm.OfferId == 0)
+            string offerCompanyName = string.Empty;
+            int invoiceDueDays = 0;
+            string curSymbol = "CZK";
+            int offerFinalPrice = 0;
+            int offerPriceDiscount = 0;
+            int finalPriceCzk = 0;
+
+            Offer offer = new Offer();
+            if (vm.Order.OfferId != null && vm.Order.OfferId != 0)
             {
-                ModelState.AddModelError(string.Empty, "Nelze vybrat prázdnou objednávku");
-                return View(vm);
+                offer = _db.Offer.Find(vm.Order.OfferId);
+                curSymbol = _db.Currency.Find(offer.CurrencyId).Name;
+                offerFinalPrice = (int)offer.Price;
+                finalPriceCzk = Convert.ToInt32(offerFinalPrice * offer.ExchangeRate);
+
+                Company company = _db.Company.Find(offer.CompanyId);
+                if (company != null)
+                {
+                    offerCompanyName = company.Name;
+                    invoiceDueDays = (int)company.InvoiceDueDays;
+                }
             }
+
+            vm.Order.ExchangeRate = Decimal.Parse(getCurrencyStr(curSymbol).Replace(",", "."), CultureInfo.InvariantCulture);
+            vm.Order.PriceFinal = offerFinalPrice;
+            vm.Order.PriceDiscount = offerPriceDiscount;
+            vm.Order.PriceFinalCzk = finalPriceCzk;
+
+            vm.Offer = offer;
+            vm.OfferCompanyName = offerCompanyName;
+            vm.InvoiceDueDays = invoiceDueDays;
+            vm.CurrencyName = curSymbol;
 
             if (ModelState.IsValid)
             {
@@ -177,18 +215,13 @@ namespace memo.Controllers
                 vm.Order.TotalHours = totalHours;
                 vm.Order.PriceFinalCzk = Convert.ToInt32(
                     (vm.Order.PriceFinal - vm.Order.OtherCosts) * vm.Order.ExchangeRate);
-                // vm.Order.PriceDiscount = 0;
-                vm.Order.OfferId = vm.OfferId;  // TODO: tohle by tu nemelo vubec by, proc to neprebira Order_OfferId pole...
 
                 _db.Add(vm.Order);
                 _db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            // Order model = new Order();
-
-
-            return View(vm);
+            return View("Create", vm);
         }
 
         // GET: Order/Edit/5
@@ -260,10 +293,10 @@ namespace memo.Controllers
                 return NotFound();
             }
 
-            if (!isOrderCodeValid(vm.Order.OrderCode))
-            {
-                ModelState.AddModelError("Order.OrderCode", "Neexistuje nebo je neaktivní.");
-            }
+            // if (!isOrderCodeValid(vm.Order.OrderCode))
+            // {
+            //     ModelState.AddModelError("Order.OrderCode", "Neexistuje nebo je neaktivní.");
+            // }
 
             // TODO: Zkontrolovat, pokud editace 'Cislo objednavky zakaznika - Order.OrderName' uz existuje, tak smula
             // if (OrderNameExists(vm.Order.OrderName))
@@ -320,7 +353,7 @@ namespace memo.Controllers
 
             var offer = _db.Offer.Find(vm.Order.OfferId);
             var order = vm.Order;
-            var offerid = Convert.ToInt32(vm.Order.OfferId);
+            var offerId = Convert.ToInt32(vm.Order.OfferId);
             var offercompanyname = _db.Company.Find(offer.CompanyId).Name;
             var invoiceduedays = _db.Company.Find(offer.CompanyId).InvoiceDueDays;
             var currencyname = _db.Currency.Find(offer.CurrencyId).Name;
@@ -330,7 +363,7 @@ namespace memo.Controllers
             {
                 Offer = offer,
                 Order = order,
-                OfferId = offerid,
+                OfferId = offerId,
                 OfferCompanyName = offercompanyname,
                 InvoiceDueDays = (int)invoiceduedays,
                 CurrencyName = currencyname,
@@ -477,6 +510,19 @@ namespace memo.Controllers
         public ActionResult DeleteInvoice(int id)
         {
             Invoice invoice = _db.Invoice.Find(id);
+
+            List<Invoice> thisOrderInvoices = _db.Invoice.Where(x => x.OrderId == invoice.OrderId).ToList();
+
+            if (thisOrderInvoices.Count() <= 1)
+            {
+                // throw new Exception("ERROR!");
+                // Dictionary<string, object> error = new Dictionary<string, object>();
+                // error.Add("ErrorCode", -1);
+                // error.Add("ErrorMessage", "Nelze odstranit všechny fakturace");
+                // return Json(error);
+                Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                return Json(new { errorMessage = "Nelze odstranit všechny fakturace" });
+            }
 
             _db.Invoice.Remove(invoice);
             _db.SaveChanges();

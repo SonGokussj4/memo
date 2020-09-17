@@ -28,5 +28,7 @@ namespace memo.ViewModels
         public int InvoiceDueDays { get; set; }
 
         public string CurrencyName { get; set; }
+
+        public string ReturnUrl {get;set;}
     }
 }

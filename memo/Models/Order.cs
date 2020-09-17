@@ -94,6 +94,7 @@ namespace memo.Models
         [Display(Name = "Spáleno")]
         public int Burned { get; set; }
 
+        [Required, MinLength(1, ErrorMessage="Musíte přidat alespoň jednu fakturaci.")]
         // [InverseProperty("Invoice")]
         public virtual List<Invoice> Invoices { get; set; } = new List<Invoice>();
     }

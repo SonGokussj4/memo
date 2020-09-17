@@ -71,11 +71,14 @@
             </div> *@
         </div>
 
-        <ul>
-            <li><b>Předmět:</b> @Model.Offer.Subject - <b>@String.Format(CultureInfo.CreateSpecificCulture(Model.Offer?.Currency.CultureCode), "{0:C0}", @Model.Offer.Price)</b> (@String.Format(CultureInfo.CreateSpecificCulture("cs-CZ"), "{0:C0}", Model.Offer.PriceCzk))</li>
-            <li><b>Zákazník:</b> @Model.OfferCompanyName (<b>Splatnost faktury:</b> @Model.InvoiceDueDays dní)</li>
-            <li><b>Přijetí poptávky:</b> @String.Format("{0:dd.MM.yyyy}", @Model.Offer.ReceiveDate) / <b>Odeslání nabídky:</b> @String.Format("{0:dd.MM.yyyy}", @Model.Offer.SentDate)</li>
-        </ul>
+        @if (@Model.Offer?.OfferId != 0 && @Model.Offer?.OfferId != null)
+        {
+            <ul>
+                <li><b>Předmět:</b> @Model.Offer?.Subject - <b>@String.Format(CultureInfo.CreateSpecificCulture(Model.Offer?.Currency.CultureCode), "{0:C0}", @Model.Offer?.Price)</b> (@String.Format(CultureInfo.CreateSpecificCulture("cs-CZ"), "{0:C0}", Model.Offer?.PriceCzk))</li>
+                <li><b>Zákazník:</b> @Model.OfferCompanyName (<b>Splatnost faktury:</b> @Model.InvoiceDueDays dní)</li>
+                <li><b>Přijetí poptávky:</b> @String.Format("{0:dd.MM.yyyy}", @Model.Offer.ReceiveDate) / <b>Odeslání nabídky:</b> @String.Format("{0:dd.MM.yyyy}", @Model.Offer.SentDate)</li>
+            </ul>
+        }
 
         @* <div class="form-group row">
             <div class="col-lg-5"></div>
@@ -140,9 +143,12 @@
                 <a asp-action="Index" class="btn btn-light border"><i class="fa fa-arrow-left"></i> Zpět</a>
             </div>
 
-            <div class="">
-                <a asp-action="Edit" asp-controller="Offers" asp-route-id="@Model.Offer.OfferId" class="btn btn-primary"><i class="fa fa-list-alt"></i> Přejít na objednávku</a>
-            </div>
+            @if (@Model.Offer?.OfferId != 0 && @Model.Offer?.OfferId != null)
+            {
+                <div class="">
+                    <a asp-action="Edit" asp-controller="Offers" asp-route-id="@Model.Offer.OfferId" class="btn btn-primary"><i class="fa fa-list-alt"></i> Přejít na objednávku</a>
+                </div>
+            }
         </div>
 
         </form>
@@ -242,33 +248,34 @@
         </div>
 
         <div class="dynamic-rows" id="template" data-order="@Model.Order.Invoices.Count()">
-        @for (int i = 0; i < Model.Order.Invoices.Count(); i++)
-        {
-            <div class="row form-group justify-content-end">
-                <input hidden="true" asp-for="@Model.Order.Invoices[i].InvoiceId" />
-                <div class="col-lg-3 mycalendar">
-                    @* @Html.TextBoxFor(m => m.Order.Invoices[i].InvoiceIssueDate, new { @class = "form-control", type="text", autocomplete="off", placeholder="Termín vystavení"} ) *@
-                    <input asp-for="@Model.Order.Invoices[i].InvoiceIssueDate" class="form-control" type="text" autocomplete="off" placeholder="Termín vystavení" />
-                    <span asp-validation-for="@Model.Order.Invoices[i].InvoiceIssueDate" class="text-danger"></span>
-                </div>
-                <div class="col-lg-3 mycalendar">
-                    <input asp-for="@Model.Order.Invoices[i].InvoiceDueDate" class="form-control" type="text" autocomplete="off" placeholder="Splatnost faktury" />
-                    <span asp-validation-for="@Model.Order.Invoices[i].InvoiceDueDate" class="text-danger"></span>
-                </div>
-                <div class="col-lg-3">
-                    <div class="input-group mb-2 mr-sm-2">
-                        <div class="input-group-prepend">
-                            <div class="input-group-text">@Model.CurrencyName</div>
+            @for (int i = 0; i < Model.Order.Invoices.Count(); i++)
+            {
+                <div class="row form-group justify-content-end">
+                    <input hidden="true" asp-for="@Model.Order.Invoices[i].InvoiceId" />
+                    <div class="col-lg-3 mycalendar">
+                        @* @Html.TextBoxFor(m => m.Order.Invoices[i].InvoiceIssueDate, new { @class = "form-control", type="text", autocomplete="off", placeholder="Termín vystavení"} ) *@
+                        <input asp-for="@Model.Order.Invoices[i].InvoiceIssueDate" class="form-control" type="text" autocomplete="off" placeholder="Termín vystavení" />
+                        <span asp-validation-for="@Model.Order.Invoices[i].InvoiceIssueDate" class="text-danger"></span>
+                    </div>
+                    <div class="col-lg-3 mycalendar">
+                        <input asp-for="@Model.Order.Invoices[i].InvoiceDueDate" class="form-control" type="text" autocomplete="off" placeholder="Splatnost faktury" />
+                        <span asp-validation-for="@Model.Order.Invoices[i].InvoiceDueDate" class="text-danger"></span>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="input-group mb-2 mr-sm-2">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text">@Model.CurrencyName</div>
+                            </div>
+                            <input asp-for="@Model.Order.Invoices[i].Cost" class="form-control" type="text" placeholder="Částka" />
+                            <span asp-validation-for="@Model.Order.Invoices[i].Cost" class="text-danger"></span>
                         </div>
-                        <input asp-for="@Model.Order.Invoices[i].Cost" class="form-control" type="text" placeholder="Částka" />
-                        <span asp-validation-for="@Model.Order.Invoices[i].Cost" class="text-danger"></span>
+                    </div>
+                    <div class="col-lg-1">
+                        <a href="#" class="btn btn-danger btn-sm mt-1" data-toggle="tooltip" title="Odstranit záznam" onclick="DeleteInvoice(@Model.Order.Invoices[i].InvoiceId)"><i class="fa fa-trash"></i></a>
                     </div>
                 </div>
-                <div class="col-lg-1">
-                    <a href="#" class="btn btn-danger btn-sm mt-1" data-toggle="tooltip" title="Odstranit záznam" onclick="DeleteInvoice(@Model.Order.Invoices[i].InvoiceId)"><i class="fa fa-trash"></i></a>
-                </div>
-            </div>
-        }
+            }
+            <span asp-validation-for="Order.Invoices" class="text-danger"></span>
         </div>
 
         <div class="form-group row border-top pt-2">
@@ -490,7 +497,6 @@
 
         function DeleteInvoice(invoiceId) {
             console.log(`Deleting invoice id: ${invoiceId}`);
-
             $.ajax({
                 //async: true,
                 type: 'POST',
@@ -505,9 +511,12 @@
                     );
                 },
                 success: function(data) {
-                    window.location = "@Model.Order.OrderId";
+                    window.location = "@Model.Order.OrderId";  // return Orders/Edit/{OrderId}
                 },
-                error: function(data) { alert("Ajta krajta...") }
+                error: function(data) {
+                     //alert(JSON.stringify(data.responseJSON.errorMessage));
+                     alert(data.responseJSON.errorMessage);
+                }
             });
         }
 

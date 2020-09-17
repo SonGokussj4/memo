@@ -36,6 +36,8 @@
 <div class="container d-flex justify-content-center">
     <div class="col-lg-8 push-lg-4 personal-info">
 
+        @* @Html.HiddenFor(model => model.ReturnUrl) *@
+
         <!--------------------------------------------------------------------------------------
             FORM - OBJEDNAVKA
         --------------------------------------------------------------------------------------->
@@ -48,7 +50,7 @@
         <div class="form-group row">
             <label asp-for="Order.OfferId" class="required col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-4">
-                <input type="hidden" asp-for="Order.OfferId" />
+                @* <input type="hidden" asp-for="Order.OfferId" /> *@
                 <input type="hidden" asp-for="Order.OrderId" />
                 @* <input asp-for="Order.OrderId" /> *@
                 @* @Html.DropDownListFor(model => model.Order.OfferId, ViewBag.WonOffersList as SelectList, "-- Vyber Objednávku --", new { @class = "form-control", onchange = @"this.form.submit();" }) *@
@@ -65,7 +67,7 @@
             </div> *@
         </div>
 
-        @if (@Model.Offer?.OfferId != 0)
+        @if (@Model.Offer?.OfferId != 0 && @Model.Offer?.OfferId != null)
         {
             <ul>
                 <li><b>Předmět:</b> @Model.Offer?.Subject - <b>@String.Format(CultureInfo.CreateSpecificCulture(Model.Offer?.Currency.CultureCode), "{0:C0}", @Model.Offer?.Price)</b> (@String.Format(CultureInfo.CreateSpecificCulture("cs-CZ"), "{0:C0}", Model.Offer?.PriceCzk))</li>
@@ -136,9 +138,12 @@
                 <a asp-action="Index" class="btn btn-light border"><i class="fa fa-arrow-left"></i> Zpět</a>
             </div>
 
-            <div class="">
-                <a asp-action="Edit" asp-controller="Offers" asp-route-id="@Model.Offer.OfferId" class="btn btn-primary"><i class="fa fa-list-alt"></i> Přejít na objednávku</a>
-            </div>
+            @if (@Model.Offer?.OfferId != 0 && @Model.Offer?.OfferId != null)
+            {
+                <div class="">
+                    <a asp-action="Edit" asp-controller="Offers" asp-route-id="@Model.Offer.OfferId" class="btn btn-primary"><i class="fa fa-list-alt"></i> Přejít na objednávku</a>
+                </div>
+            }
         </div>
 
         </form>
@@ -151,6 +156,7 @@
         <form id="orderForm" class="card" role="form" autocomplete="on" asp-action="Create" method="post" style="visibility: hidden;">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <input type="hidden" asp-for="OfferId" />
+        <input type="hidden" asp-for="Order.OfferId" />
 
         <h5 class="card-title">Vyplnit novou zakázku</h5>
         <hr />
@@ -215,34 +221,35 @@
             </div>
         </div>
 
+        @Html.ValidationMessage("InvoiceMissing", "", new { @class = "text-danger" })
         <div class="dynamic-rows" id="template" data-order="@Model.Order.Invoices.Count()">
-        @for (int i = 0; i < Model.Order.Invoices.Count(); i++)
-        {
-            <div class="row form-group justify-content-end">
-                <input hidden="true" asp-for="@Model.Order.Invoices[i].InvoiceId" />
-                <div class="col-lg-3 mycalendar">
-                    @* @Html.TextBoxFor(m => m.Order.Invoices[i].InvoiceIssueDate, new { @class = "form-control", type="text", autocomplete="off", placeholder="Termín vystavení"} ) *@
-                    <input asp-for="@Model.Order.Invoices[i].InvoiceIssueDate" class="form-control" type="text" autocomplete="off" placeholder="Termín vystavení" />
-                    <span asp-validation-for="@Model.Order.Invoices[i].InvoiceIssueDate" class="text-danger"></span>
-                </div>
-                <div class="col-lg-3 mycalendar">
-                    <input asp-for="@Model.Order.Invoices[i].InvoiceDueDate" class="form-control" type="text" autocomplete="off" placeholder="Splatnost faktury" />
-                    <span asp-validation-for="@Model.Order.Invoices[i].InvoiceDueDate" class="text-danger"></span>
-                </div>
-                <div class="col-lg-3">
-                    <div class="input-group mb-2 mr-sm-2">
-                        <div class="input-group-prepend">
-                            <div class="input-group-text">@Model.CurrencyName</div>
+            @for (int i = 0; i < Model.Order.Invoices.Count(); i++)
+            {
+                <div class="row form-group justify-content-end">
+                    <input hidden="true" asp-for="@Model.Order.Invoices[i].InvoiceId" />
+                    <div class="col-lg-3 mycalendar">
+                        <input asp-for="@Model.Order.Invoices[i].InvoiceIssueDate" class="form-control" type="text" autocomplete="off" placeholder="Termín vystavení" />
+                        <span asp-validation-for="@Model.Order.Invoices[i].InvoiceIssueDate" class="text-danger"></span>
+                    </div>
+                    <div class="col-lg-3 mycalendar">
+                        <input asp-for="@Model.Order.Invoices[i].InvoiceDueDate" class="form-control" type="text" autocomplete="off" placeholder="Splatnost faktury" />
+                        <span asp-validation-for="@Model.Order.Invoices[i].InvoiceDueDate" class="text-danger"></span>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="input-group mb-2 mr-sm-2">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text">@Model.CurrencyName</div>
+                            </div>
+                            <input asp-for="@Model.Order.Invoices[i].Cost" class="form-control" type="text" placeholder="Částka" />
+                            <span asp-validation-for="@Model.Order.Invoices[i].Cost" class="text-danger"></span>
                         </div>
-                        <input asp-for="@Model.Order.Invoices[i].Cost" class="form-control" type="text" placeholder="Částka" />
-                        <span asp-validation-for="@Model.Order.Invoices[i].Cost" class="text-danger"></span>
+                    </div>
+                    <div class="col-lg-1">
+                        <a href="#" class="btn btn-danger btn-sm mt-1" data-toggle="tooltip" title="Odstranit záznam" onclick="DeleteInvoice(@Model.Order.Invoices[i].InvoiceId)"><i class="fa fa-trash"></i></a>
                     </div>
                 </div>
-                <div class="col-lg-1">
-                    <a href="#" class="btn btn-danger btn-sm mt-1" data-toggle="tooltip" title="Odstranit záznam" onclick="DeleteInvoice(@Model.Order.Invoices[i].InvoiceId)"><i class="fa fa-trash"></i></a>
-                </div>
-            </div>
-        }
+            }
+            <span asp-validation-for="Order.Invoices" class="text-danger"></span>
         </div>
 
         @* <div class="form-group row">
@@ -369,63 +376,33 @@
 
     <script>
 
-//        function AddInvoice(i) {
-//            console.log("Adding Invoice for OrderId: @Model.Order.OrderId")
-//
-//            //var data = new Array();
-//            var Invoice = {};
-//            //Invoice.InvoiceIssueDate = "2020-12-24";
-//            //Invoice.InvoiceDueDate = "2020-12-31";
-//            //Invoice.Cost = parseFloat("0");
-//            Invoice.OrderId = @Model.Order.OrderId
-//
-//            $.ajax({
-//                //async: true,
-//                type: 'POST',
-//                dataType: 'JSON',
-//                ContentType: 'application/json; charset=utf-8',
-//                url: '@Url.Action("AddInvoice")',
-//                data: { invoice: Invoice },
-//                cache: false,
-//                success: function(data) {
-//                    //window.location = "@Model.Order.OrderId";
-//                    alert("Prosím vyplňte pole: \n"+
-//                           "- Termín vystavení \n"+
-//                           "- Splatnost faktury \n"+
-//                           "- Částka");
-//                    location.reload(true);
-//
-//                },
-//                error: function(data) { alert("Ajta krajta...") },
-//            })
-//                .done(function(response) {
-//                    $('#Order_Invoices_' + i + '__InvoiceIssueDate').focus();
-//                    console.log("Focusuji?" + i);
-//                    //setTimeout(function(){ alert("Hmm"); }, 1000);
-//            });
-//        };
-
         function DeleteInvoice(invoiceId) {
             console.log(`Deleting invoice id: ${invoiceId}`);
+            var row = document.getElementById(`dynamic-row-${invoiceId}`);
+            //row.querySelectorAll('*').forEach(n => n.remove());
+            row.remove();
 
-            $.ajax({
-                //async: true,
-                type: 'POST',
-                dataType: 'JSON',
-                ContentType: 'application/json; charset=utf-8',
-                url: '@Url.Action("DeleteInvoice")',
-                data: { id: invoiceId },
-                cache: false,
-                beforeSend:function(){
-                    return confirm(
-                        "Jste si jisti??? Tento úkon smaže označenou fakturaci!"
-                    );
-                },
-                success: function(data) {
-                    window.location = "@Model.Order.OrderId";
-                },
-                error: function(data) { alert("Ajta krajta...") }
-            });
+            //$.ajax({
+            //    //async: true,
+            //    type: 'POST',
+            //    dataType: 'JSON',
+            //    ContentType: 'application/json; charset=utf-8',
+            //    url: '@Url.Action("DeleteInvoice")',
+            //    data: { id: invoiceId },
+            //    cache: false,
+            //    beforeSend:function(){
+            //        return confirm(
+            //            "Jste si jisti??? Tento úkon smaže označenou fakturaci!"
+            //        );
+            //    },
+            //    success: function(data) {
+            //        window.location = "@Model.Order.OrderId";  // return Orders/Edit/{OrderId}
+            //    },
+            //    error: function(data) {
+            //         //alert(JSON.stringify(data.responseJSON.errorMessage));
+            //         alert(data.responseJSON.errorMessage);
+            //    }
+            //});
         }
 
         function changeExchangeRate(curSymbol) {
@@ -459,8 +436,8 @@
             });
 
             //var offerId = document.getElementById("#Order_OfferId").value;
-            console.log("OfferId: " + @Model.Order.OfferId);
-            if (@Model.Order.OfferId != "0") {
+            if (@Model.Order.OfferId != 0) {
+                console.log("OfferId: " + @Model.Order.OfferId);
                 document.getElementById("orderForm").style.visibility = "visible";
             }
 
@@ -527,7 +504,7 @@
             $('.add-row').click(function () {
                 var idNum = i + 1;
                 var html =
-                    '<div class="row form-group justify-content-end">'+
+                    '<div class="row form-group justify-content-end" id="dynamic-row-' + i + '">'+
                         '<input type="number" hidden="true" data-val="true" data-val-required="The InvoiceId field is required." id="Order_Invoices_' + i + '__InvoiceId" name="Order.Invoices[' + i + '].InvoiceId" value="0">'+
                         //'<input type="number" hidden="true" data-val="true" data-val-required="The OfferId field is required." id="Order_Invoices_' + i + '__OrderId" name="Order.Invoices[' + i + '].OrderId" value="' + idNum + '">'+
                         '<div class="col-lg-3 mycalendar">'+
@@ -548,7 +525,7 @@
                             '</div>'+
                         '</div>'+
                         '<div class="col-lg-1">'+
-                            '<a href="#" class="btn btn-danger btn-sm mt-1" data-toggle="tooltip" title="" data-original-title="Odstranit záznam" onclick="DeleteInvoice(' + i + ')"><i class="fa fa-trash"></i></a>'+
+                            '<a href="#" class="btn btn-danger btn-sm mt-1" data-toggle="tooltip" title="" data-original-title="Odstranit záznam" onclick="DeleteInvoice(' + i + ')"><i class="fa fa-trash white"></i></a>'+
                         '</div>'+
                     '</div>';
                 //$("tbody").append($(html).clone(true))
