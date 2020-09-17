@@ -52,6 +52,18 @@ CREATE TABLE [memo].[Offer] (
 )
 GO
 
+ALTER TABLE [memo].[Offer] ADD FOREIGN KEY ([ContactId]) REFERENCES [memo].[Contact] ([ContactId])
+GO
+
+ALTER TABLE [memo].[Offer] ADD FOREIGN KEY ([CompanyId]) REFERENCES [memo].[Company] ([CompanyId])
+GO
+
+ALTER TABLE [memo].[Offer] ADD FOREIGN KEY ([OfferStatusId]) REFERENCES [memo].[OfferStatus] ([OfferStatusId])
+GO
+
+ALTER TABLE [memo].[Offer] ADD FOREIGN KEY ([CurrencyId]) REFERENCES [memo].[Currency] ([CurrencyId])
+GO
+
 --ALTER TABLE [memo].[Offer]
 --  ADD CONSTRAINT UQ_OfferName UNIQUE (OfferName);
 
@@ -85,8 +97,6 @@ CREATE TABLE [memo].[Order] (
   [BillOfDelivery] nvarchar(255),
   [HourWage] float,
   [TotalHours] int,
-  [InvoiceIssueDate] date,
-  [InvoiceDueDate] date,
   [ExchangeRate] decimal(18,3),
   [PriceFinalCzk] int,
   [Notes] ntext,
@@ -96,6 +106,8 @@ CREATE TABLE [memo].[Order] (
 )
 GO
 
+ALTER TABLE [memo].[Order] ADD FOREIGN KEY ([ContactId]) REFERENCES [memo].[Contact] ([ContactId])
+GO
 
 --ALTER TABLE [memo].[Order]
 --  ADD CONSTRAINT UQ_OrderName UNIQUE (OrderName);
@@ -107,23 +119,9 @@ CREATE TABLE [memo].[Currency] (
 )
 GO
 
-ALTER TABLE [memo].[Offer] ADD FOREIGN KEY ([ContactId]) REFERENCES [memo].[Contact] ([ContactId])
-GO
-
-ALTER TABLE [memo].[Offer] ADD FOREIGN KEY ([CompanyId]) REFERENCES [memo].[Company] ([CompanyId])
-GO
-
-ALTER TABLE [memo].[Offer] ADD FOREIGN KEY ([OfferStatusId]) REFERENCES [memo].[OfferStatus] ([OfferStatusId])
-GO
-
-ALTER TABLE [memo].[Offer] ADD FOREIGN KEY ([CurrencyId]) REFERENCES [memo].[Currency] ([CurrencyId])
-GO
-
 -- ALTER TABLE [memo].[Order] ADD FOREIGN KEY ([OfferId]) REFERENCES [memo].[Offer] ([OfferId])
 -- GO
 
-ALTER TABLE [memo].[Order] ADD FOREIGN KEY ([ContactId]) REFERENCES [memo].[Contact] ([ContactId])
-GO
 
 EXEC sp_addextendedproperty
 @name = N'Column_Description',
