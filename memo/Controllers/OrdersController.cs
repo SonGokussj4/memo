@@ -205,13 +205,21 @@ namespace memo.Controllers
             vm.InvoiceDueDays = invoiceDueDays;
             vm.CurrencyName = curSymbol;
 
-            // Order existingOrder = _db.Order.Where(x => x.OrderName == vm.Order.OrderName);
-            Order row = _db.Order.SingleOrDefault(x => x.OrderName == vm.Order.OrderName);
-            string orderName = row != null ? row.OrderName : String.Empty;
-            if (orderName != String.Empty)
+            // ==== INFO START ====
+            // NON-LAMBDA SYNTAX
+            // var name = from i in DataContext.MyTable
+            //     where i.ID == 0
+            //     select i.Name
+            // LAMBDA SYNTAX
+            // var name = DataContext.MyTable.Where(i => i.ID == 0)
+            //     .Select(i => new { Name = i.Name });
+            // ===== INFO END =====
+            // Order row = _db.Order.SingleOrDefault(x => x.OrderName == vm.Order.OrderName);
+            // string orderName = row != null ? row.OrderName : String.Empty;
+            string orderName = _db.Order.Where(x => x.OrderName == vm.Order.OrderName).Select(x => x.OrderName).FirstOrDefault();
+            if (orderName != null)
             {
                 ModelState.AddModelError("Order.OrderName", "Číslo objednávky zákazníka již existuje");
-                return View(vm);
             }
 
             if (ModelState.IsValid)

@@ -18,11 +18,6 @@ namespace memo.Models
         public Order Order { get; set; }
 
         [Required]
-        [Display(Name = "Částka")]
-        [Column(TypeName = "decimal(18,3)")]
-        public decimal Cost { get; set; }
-
-        [Required]
         [Display(Name = "Předp. termín vystavení faktury"), Column(TypeName = "date")]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime? InvoiceIssueDate { get; set; }
@@ -31,6 +26,16 @@ namespace memo.Models
         [Display(Name = "Datum splatnosti faktury"), Column(TypeName = "date")]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime? InvoiceDueDate { get; set; }
+
+        [Required]
+        [Display(Name = "Částka")]
+        [Column(TypeName = "decimal(18,3)")]
+        public decimal Cost { get; set; }
+        [Required]
+
+        [Display(Name = "ČástkaCzk")]
+        [Column(TypeName = "decimal(18,3)")]
+        public decimal CostCzk { get; set; }
 
         // public Invoice()
         // {

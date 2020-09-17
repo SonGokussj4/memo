@@ -72,7 +72,8 @@ CREATE TABLE [memo].[Invoice] (
   [OrderId] int,
   [InvoiceDueDate] date,
   [InvoiceIssueDate] date,
-  [Cost] decimal(18,3)
+  [Cost] decimal(18,3),
+  [CostCzk] decimal(18,3)
 )
 GO
 

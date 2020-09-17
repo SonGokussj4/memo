@@ -41,6 +41,35 @@ namespace memo.Controllers
             //         }
             //     ).ToList();
 
+            // List<DashboardCashVM> mylist = new List<DashboardCashVM>();
+
+
+            // IQueryable<Invoice> mylist = _db.Invoice.Where(a => a.InvoiceDueDate.Value.Year == selectedYear);
+
+
+            // if (filter == "months")
+            // {
+            //     IQueryable<DashboardCashVM> filtered = mylist
+            //         .GroupBy(b => b.InvoiceDueDate.Value.Month)
+            //         .Select(g => new DashboardCashVM {
+            //             Month = new DateTime(selectedYear, g.Key, 1),
+            //             Cash = (int)g.Sum(gi => gi.CostCzk),
+            //         });
+            // }
+            // else
+            // {
+            //     IQueryable<DashboardCashVM> filtered = (IQueryable<DashboardCashVM>)mylist
+            //         .AsEnumerable()
+            //         .GroupBy(b => ISOWeek.GetWeekOfYear((DateTime)b.InvoiceDueDate))
+            //         .Select(g => new DashboardCashVM {
+            //             Week = g.Key,
+            //             Cash = (int)g.Sum(gi => gi.CostCzk),
+            //         })
+            //         .OrderBy(x => x.Week);
+            // }
+
+            // List<DashboardCashVM> viewModelCash2 = filtered.ToList();
+
             List<DashboardCashVM> viewModelCash = new List<DashboardCashVM>();
             if (filter == "months")
             {
@@ -57,7 +86,7 @@ namespace memo.Controllers
                         // TotalHours = $"{g.Sum(gi => gi.TotalHours)} hod",
                         // AvgHourWage = $"{string.Format("{0:C}", g.Average(gi => gi.HourWage))}/hod",
                         Month = new DateTime(selectedYear, g.Key, 1),
-                        Cash = (int)g.Sum(gi => gi.Cost),
+                        Cash = (int)g.Sum(gi => gi.CostCzk),
                         // Cash = (int)g.Sum(gi => gi.PriceFinalCzk),
                     })
                     .ToList();
@@ -71,7 +100,7 @@ namespace memo.Controllers
                     .Select(g => new DashboardCashVM
                     {
                         Week = g.Key,
-                        Cash = (int)g.Sum(gi => gi.Cost),
+                        Cash = (int)g.Sum(gi => gi.CostCzk),
                         // Cash = (int)g.Sum(gi => gi.PriceFinalCzk),
                     })
                     .OrderBy(x => x.Week)
