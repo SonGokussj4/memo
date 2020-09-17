@@ -80,6 +80,19 @@ GO
 ALTER TABLE [memo].[Invoice] ADD FOREIGN KEY ([OrderId]) REFERENCES [memo].[Order] ([OrderId])
 GO
 
+CREATE TABLE [memo].[OtherCost]
+(
+  [OtherCostId] int PRIMARY KEY IDENTITY(1, 1),
+  [OrderId] int,
+  [Subject] ntext,
+  [Cost] decimal(18,3),
+  [CostCzk] decimal(18,3)
+)
+GO
+
+ALTER TABLE [memo].[OtherCost] ADD FOREIGN KEY ([OrderId]) REFERENCES [memo].[Order] ([OrderId])
+GO
+
 CREATE TABLE [memo].[OfferStatus] (
   [OfferStatusId] int PRIMARY KEY IDENTITY(1, 1),
   [Name] nvarchar(20)

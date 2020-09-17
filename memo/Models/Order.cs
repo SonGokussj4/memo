@@ -66,8 +66,8 @@ namespace memo.Models
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime? CreateDate { get; set; }
 
-        [Display(Name = "Další náklady")]
-        public int OtherCosts { get; set; }
+        // [Display(Name = "Další náklady")]
+        // public int OtherCosts { get; set; }
 
         [Display(Name = "Aktivní")]
         public Boolean Active { get; set; }
@@ -79,5 +79,7 @@ namespace memo.Models
         [Required, MinLength(1, ErrorMessage="Musíte přidat alespoň jednu fakturaci.")]
         // [InverseProperty("Invoice")]
         public virtual List<Invoice> Invoices { get; set; } = new List<Invoice>();
+
+        public virtual List<OtherCost> OtherCosts { get; set; } = new List<OtherCost>();
     }
 }
