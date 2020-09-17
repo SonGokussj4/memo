@@ -310,11 +310,6 @@ namespace memo.Controllers
                 return NotFound();
             }
 
-            // if (!isOrderCodeValid(vm.Order.OrderCode))
-            // {
-            //     ModelState.AddModelError("Order.OrderCode", "Neexistuje nebo je neaktivní.");
-            // }
-
             if (ModelState.IsValid)
             {
                 try
@@ -327,6 +322,10 @@ namespace memo.Controllers
                     vm.Order.PriceFinalCzk = Convert.ToInt32(
                         (vm.Order.PriceFinal - vm.Order.OtherCosts) * vm.Order.ExchangeRate);
 
+                    foreach (var item in vm.Order.Invoices)
+                    {
+                        item.CostCzk = Convert.ToInt32(item.Cost * vm.Order.ExchangeRate);
+                    }
                     _db.Update(vm.Order);
                     _db.SaveChanges();
                 }

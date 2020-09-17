@@ -165,10 +165,6 @@ namespace memo.Controllers
                 return NotFound();
             }
 
-            // Offer offer = _db.Offer.Find(id);
-            // model.OfferStatusId = offer.OfferStatusId;
-            // _db.Entry(offer).State = EntityState.Detached;
-
             if (ModelState.IsValid)
             {
                 try
@@ -183,25 +179,18 @@ namespace memo.Controllers
                                              "see your system administrator.");
                 }
 
-                // string oldStatus = _db.OfferStatus.Find(_db.Offer.Find(id).OfferStatusId).Status;
-                // // if (model.Status == 2 && model.Status != oldOffer.Status)  // model.OfferStatus.Status == "Won"
-                // if (model.OfferStatusId == 2 && oldStatus != "Won")  // model.OfferStatus.Status == "Won"
-                // {
-                //     Order order = new Order();
-                //     order.OfferId = model.OfferId;
-                //     return RedirectToAction("Select", "Orders", order);
-                // }
-
                 // Populate
                 ViewBag.DepartmentList = getDepartmentList(_eveDb);
                 ViewBag.CompanyList = new SelectList(_db.Company.ToList(), "CompanyId", "Name");
-                ViewBag.ContactList = new SelectList((from s in _db.Contact.ToList() select new {
-                    ContactId = s.ContactId,
-                    FullName = s.PersonName + " " + s.PersonLastName
-                }), "ContactId", "FullName");
+                ViewBag.ContactList = new SelectList((
+                    from s in _db.Contact.ToList()
+                    select new {
+                        ContactId = s.ContactId,
+                        FullName = s.PersonName + " " + s.PersonLastName
+                    }
+                ), "ContactId", "FullName");
                 ViewBag.EveContactList = getEveContacts(_eveDb);
                 ViewBag.CurrencyList = new SelectList(_db.Currency.ToList(), "CurrencyId", "Name");
-                // ViewBag.OfferStatusList = new SelectList(_db.OfferStatus.ToList(), "OfferStatusId", "Status");
                 ViewBag.OfferStatusName = _db.OfferStatus.Find(model.OfferStatusId).Name;
                 ViewBag.CreatedOrders = _db.Order.Where(x => x.OfferId == id).ToList();
 

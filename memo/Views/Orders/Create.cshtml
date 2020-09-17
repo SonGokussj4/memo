@@ -376,6 +376,7 @@
 
     <script>
 
+        // Just delete the <div> element, don't post anything like in ActionResult Edit()
         function DeleteInvoice(invoiceId) {
             console.log(`Deleting invoice id: ${invoiceId}`);
             var row = document.getElementById(`dynamic-row-${invoiceId}`);
@@ -423,6 +424,7 @@
 
         $(document).ready(function(){
 
+            // Parameters for DatePicker calendar
             var datepickerParameters = new Array({
                 format: "yyyy-mm-dd",
                 startDate: "1980-01-01",
@@ -435,43 +437,26 @@
                 todayHighlight: true
             });
 
-            //var offerId = document.getElementById("#Order_OfferId").value;
+            // Upon page load, check if OfferId != 0 (offer is selected) then set orderForm as visible
             if (@Model.Order.OfferId != 0) {
                 console.log("OfferId: " + @Model.Order.OfferId);
                 document.getElementById("orderForm").style.visibility = "visible";
             }
 
-            //$('#Order_BillOfDelivery').on('change',
-            //    function() {
-            //        //get the file name
-            //        var fileName = $(this).val();
-            //        //replace the "Choose a file" label
-            //        $(this).next('.custom-file-label').html(fileName);
-            //    })
-
+            // All .mycalendar input classes will have 'datepicker()' functionality
             $('.mycalendar input').datepicker(datepickerParameters[0]);
-            //    // format: "dd.mm.yyyy",
-            //    // startDate: "01.01.1980",
-            //    // endDate: "01.01.2021",
-            //    format: "yyyy-mm-dd",
-            //    startDate: "1980-01-01",
-            //    endDate: "2021-01-01",
-            //    todayBtn: "linked",
-            //    language: "cs",
-            //    daysOfWeekHighlighted: "0,6",
-            //    calendarWeeks: true,
-            //    autoclose: true,
-            //    todayHighlight: true
-            //});
 
-
+            // When changing <PriceFinal>, change <PriceDiscount> value
             $('#Order_PriceFinal').on('input', function(){
                 var offerPrice = parseInt($('#Offer_Price').val());
                 var finalPrice = parseInt($('#Order_PriceFinal').val());
                 $('#Order_PriceDiscount').val(offerPrice - finalPrice);
             });
 
-
+            // TODO: 2020-09-18 Toto udelat na dynamicky pridane radky
+            // https://stackoverflow.com/questions/28062254/how-can-i-detect-values-change-in-column-for-dynamic-rows-in-table/28062483#28062483
+            // When changing InvoiceIssueDate, fill InvoiceDueDate by + days from <InvoiceDueDays>
+            // https://ultimatecourses.com/blog/attaching-event-handlers-to-dynamically-created-javascript-elements
             $('#Order_InvoiceIssueDate').change('input', function(){
                 var date = new Date($('#Order_InvoiceIssueDate').val());
                 date.setDate( date.getUTCDate() + @Model.InvoiceDueDays );
