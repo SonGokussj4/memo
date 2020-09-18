@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace memo.Models
@@ -57,7 +58,7 @@ namespace memo.Models
         [Required]
         [Display(Name = "Konečná cena v Kč")]
         // [DisplayFormat(DataFormatString = "{0:#,0}", ApplyFormatInEditMode = true)]
-        public int? PriceFinalCzk { get; set; }
+        public int? PriceFinalCzk { get; set; } = 0;
 
         [Display(Name = "Poznámky"), Column(TypeName = "ntext")]
         public string Notes { get; set; }
@@ -65,9 +66,6 @@ namespace memo.Models
         [Display(Name = "Datum vytvoření"), Column(TypeName = "date")]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime? CreateDate { get; set; }
-
-        // [Display(Name = "Další náklady")]
-        // public int OtherCosts { get; set; }
 
         [Display(Name = "Aktivní")]
         public Boolean Active { get; set; }
@@ -81,5 +79,7 @@ namespace memo.Models
         public virtual List<Invoice> Invoices { get; set; } = new List<Invoice>();
 
         public virtual List<OtherCost> OtherCosts { get; set; } = new List<OtherCost>();
+
+        public string Username { get; set; } = "jverner";
     }
 }

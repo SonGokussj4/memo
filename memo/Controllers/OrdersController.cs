@@ -222,6 +222,15 @@ namespace memo.Controllers
                 ModelState.AddModelError("Order.OrderName", "Číslo objednávky zákazníka již existuje");
             }
 
+            foreach (Invoice invoice in vm.Order.Invoices)
+            {
+                invoice.CostCzk = Convert.ToInt32(invoice.Cost * vm.Order.ExchangeRate);
+            }
+            foreach (OtherCost otherCost in vm.Order.OtherCosts)
+            {
+                otherCost.CostCzk = Convert.ToInt32(otherCost.Cost * vm.Order.ExchangeRate);
+            }
+
             if (ModelState.IsValid)
             {
                 int? totalHours = _db.cOrders  // Planned
@@ -253,7 +262,6 @@ namespace memo.Controllers
                 return NotFound();
             }
 
-
             // List<Offer> wonOffersList = _db.Offer
             //     .Where(t => t.OfferStatusId == 2)
             //     .OrderBy(t => t.OfferName)
@@ -275,6 +283,7 @@ namespace memo.Controllers
                 order.OfferId = offerId;
             }
             order.Invoices = _db.Invoice.Where(x => x.OrderId == id).ToList();
+            order.OtherCosts = _db.OtherCost.Where(x => x.OrderId == id).ToList();
 
             Offer offer = _db.Offer.Find(order.OfferId);
             if (offer == null)
@@ -316,16 +325,19 @@ namespace memo.Controllers
             {
                 try
                 {
-                    int? totalHours = _db.cOrders
-                    .Where(t => t.OrderCode == vm.Order.OrderCode)
-                    .Select(t => t.Planned).FirstOrDefault();
+                    vm.Order.TotalHours = _db.cOrders
+                        .Where(t => t.OrderCode == vm.Order.OrderCode)
+                        .Select(t => t.Planned).FirstOrDefault();
 
-                    vm.Order.TotalHours = totalHours;
-                    vm.Order.PriceFinalCzk = 0;  // TODO: 2020-09-18 s timto neco udelat, ted to mam v listu <OtherCost>
+                    // vm.Order.PriceFinalCzk = 0;  // TODO: 2020-09-18 s timto neco udelat, ted to mam v listu <OtherCost>
                     // vm.Order.PriceFinalCzk = Convert.ToInt32(
                     //     (vm.Order.PriceFinal - vm.Order.OtherCosts) * vm.Order.ExchangeRate);
 
                     foreach (var item in vm.Order.Invoices)
+                    {
+                        item.CostCzk = Convert.ToInt32(item.Cost * vm.Order.ExchangeRate);
+                    }
+                    foreach (var item in vm.Order.OtherCosts)
                     {
                         item.CostCzk = Convert.ToInt32(item.Cost * vm.Order.ExchangeRate);
                     }
@@ -537,6 +549,17 @@ namespace memo.Controllers
             }
 
             _db.Invoice.Remove(invoice);
+            _db.SaveChanges();
+
+            return Json(new { success = true });
+        }
+
+        [HttpPost]
+        public ActionResult DeleteOtherCost(int id)
+        {
+            OtherCost otherCost = _db.OtherCost.Find(id);
+
+            _db.OtherCost.Remove(otherCost);
             _db.SaveChanges();
 
             return Json(new { success = true });

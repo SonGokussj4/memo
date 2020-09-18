@@ -114,8 +114,8 @@ CREATE TABLE [memo].[Order] (
   [PriceFinalCzk] int,
   [Notes] ntext,
   [CreateDate] date DEFAULT GETDATE(),
-  [OtherCosts] int DEFAULT 0,
-  [Active] bit DEFAULT 1
+  [Active] bit DEFAULT 1,
+  [Username] nvarchar(30)
 )
 GO
 

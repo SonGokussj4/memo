@@ -99,7 +99,7 @@
             <th scope="col" class="text-center" data-field="10" data-sortable="true" data-filter-control="input">Poznámky</th>
             <th scope="col" class="text-center" data-field="11" data-sortable="true" data-filter-control="input">Dodací list</th>
             <th scope="col" class="text-center" data-field="12" data-sortable="true" data-filter-control="select">Měna</th>
-            <th scope="col" class="text-center" data-field="13" data-sortable="true" data-filter-control="input">Další<br />náklady</th>
+            @* <th scope="col" class="text-center" data-field="13" data-sortable="true" data-filter-control="input">Další<br />náklady</th> *@
             <th scope="col" class="text-center" data-field="14" data-sortable="true" data-filter-control="input">Hod.<br />sazba</th>
             <th scope="col" class="text-center" data-field="15" data-sortable="true" data-filter-control="input">Vyčerpáno</th>
             <th scope="col" class="text-center" data-field="16" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatterCz">Přepočet [CZK]</th>
@@ -148,7 +148,7 @@
                 </th>
                 <th scope="row" class="text-center notesWrap" data-toggle="tooltip" title="@item.BillOfDelivery">@item.BillOfDelivery</th>
                 <th scope="row" class="text-center">@item.Offer?.Currency.Name</th>
-                <th scope="row" class="text-right">@String.Format(CultureInfo.CreateSpecificCulture(@item.Offer?.Currency.CultureCode), "{0:C0}", @item.OtherCosts)</th>
+                @* <th scope="row" class="text-right">@String.Format(CultureInfo.CreateSpecificCulture(@item.Offer?.Currency.CultureCode), "{0:C0}", @item.OtherCosts)</th> *@
                 <th scope="row" class="text-right">@String.Format(CultureInfo.CreateSpecificCulture(@item.Offer?.Currency.CultureCode), "{0:C0}", @item.HourWage)</th>
                 @{
                     @* string burnedText = @item.Burned == 0 ? "" : $"{item.Burned} hod"; *@
