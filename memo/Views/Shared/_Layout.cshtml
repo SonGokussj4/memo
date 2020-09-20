@@ -32,7 +32,8 @@
 
     <style>
         .active {
-            background-color: ghostwhite;
+            border-bottom: 2px solid #dfdff3;
+            margin-bottom: -2px;
         }
     </style>
 </head>
@@ -158,9 +159,22 @@
     @RenderSection("Scripts", required: false)
 
     <script>
-        $(document).ready(function () {
-            $('.navbar-collapse.collapse.d-sm-inline-flex.flex-sm-row-reverse').find('[href="' + window.location.pathname + '"]').parent().addClass('active');
+        $(function () {
+            setNavigation();
         });
+
+        function setNavigation() {
+            var path = window.location.pathname;
+            path = path.replace(/\/$/, "");
+            path = decodeURIComponent(path);
+
+            $(".navbar-nav a").each(function () {
+                var href = $(this).attr('href');
+                if (path.substring(0, href.length) === href) {
+                    $(this).closest('li').addClass('active');
+                }
+            });
+        }
     </script>
 
 </body>
