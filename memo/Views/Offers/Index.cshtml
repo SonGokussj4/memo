@@ -234,6 +234,12 @@
 
 @section scripts{
 <script>
+
+    // Reinitialize tooltips upon table change
+    $('#table').on('post-body.bs.table', function () {  // on('all.bs.table'
+        $('[data-toggle="tooltip"]').tooltip()
+    });
+
     // POST delete command to controller
     //----------------------------------
     function DeleteItem() {

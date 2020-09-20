@@ -320,7 +320,7 @@
                     <div class="input-group-prepend">
                         <div class="input-group-text">@Model.CurrencyName</div>
                     </div>
-                    <input asp-for="Order.PriceFinal" class="form-control" type="text" required="" />
+                    <input asp-for="Order.PriceFinal" class="form-control" type="text" required="" readonly/>
                 </div>
                 <span asp-validation-for="Order.PriceFinal" class="text-danger"></span>
             </div>

@@ -222,13 +222,22 @@ namespace memo.Controllers
                 ModelState.AddModelError("Order.OrderName", "Číslo objednávky zákazníka již existuje");
             }
 
+            vm.Order.PriceFinal = 0;
+            vm.Order.PriceFinalCzk = 0;
+            vm.Order.PriceDiscount = offer.Price;
+
             foreach (Invoice invoice in vm.Order.Invoices)
             {
                 invoice.CostCzk = Convert.ToInt32(invoice.Cost * vm.Order.ExchangeRate);
+                vm.Order.PriceFinalCzk += Convert.ToInt32(invoice.CostCzk);
+                vm.Order.PriceFinal += Convert.ToInt32(invoice.Cost);
+                vm.Order.PriceDiscount -= Convert.ToInt32(invoice.Cost);
             }
             foreach (OtherCost otherCost in vm.Order.OtherCosts)
             {
                 otherCost.CostCzk = Convert.ToInt32(otherCost.Cost * vm.Order.ExchangeRate);
+                vm.Order.PriceFinalCzk += Convert.ToInt32(otherCost.CostCzk);
+                vm.Order.PriceFinal += Convert.ToInt32(otherCost.Cost);
             }
 
             if (ModelState.IsValid)
@@ -239,7 +248,7 @@ namespace memo.Controllers
 
                 vm.Order.Active = true;
                 vm.Order.TotalHours = totalHours;
-                vm.Order.PriceFinalCzk = 0;  // TODO: 2020-09-18 s timto neco udelat, ted to mam v listu <OtherCost>
+                  // TODO: 2020-09-18 s timto neco udelat, ted to mam v listu <OtherCost>
                 // vm.Order.PriceFinalCzk = Convert.ToInt32(
                 //     (vm.Order.PriceFinal - vm.Order.OtherCosts) * vm.Order.ExchangeRate);
 
@@ -325,21 +334,26 @@ namespace memo.Controllers
             {
                 try
                 {
-                    vm.Order.TotalHours = _db.cOrders
+                    vm.Order.TotalHours = _db.cOrders  // Planned hours
                         .Where(t => t.OrderCode == vm.Order.OrderCode)
                         .Select(t => t.Planned).FirstOrDefault();
 
-                    // vm.Order.PriceFinalCzk = 0;  // TODO: 2020-09-18 s timto neco udelat, ted to mam v listu <OtherCost>
-                    // vm.Order.PriceFinalCzk = Convert.ToInt32(
-                    //     (vm.Order.PriceFinal - vm.Order.OtherCosts) * vm.Order.ExchangeRate);
+                    vm.Order.PriceFinal = 0;
+                    vm.Order.PriceFinalCzk = 0;
+                    vm.Order.PriceDiscount = _db.Offer.Find(vm.Order.OfferId).Price;
 
-                    foreach (var item in vm.Order.Invoices)
+                    foreach (Invoice invoice in vm.Order.Invoices)
                     {
-                        item.CostCzk = Convert.ToInt32(item.Cost * vm.Order.ExchangeRate);
+                        invoice.CostCzk = Convert.ToInt32(invoice.Cost * vm.Order.ExchangeRate);
+                        vm.Order.PriceFinalCzk += Convert.ToInt32(invoice.CostCzk);
+                        vm.Order.PriceFinal += Convert.ToInt32(invoice.Cost);
+                        vm.Order.PriceDiscount -= Convert.ToInt32(invoice.Cost);
                     }
-                    foreach (var item in vm.Order.OtherCosts)
+                    foreach (OtherCost otherCost in vm.Order.OtherCosts)
                     {
-                        item.CostCzk = Convert.ToInt32(item.Cost * vm.Order.ExchangeRate);
+                        otherCost.CostCzk = Convert.ToInt32(otherCost.Cost * vm.Order.ExchangeRate);
+                        vm.Order.PriceFinalCzk += Convert.ToInt32(otherCost.CostCzk);
+                        vm.Order.PriceFinal += Convert.ToInt32(otherCost.Cost);
                     }
                     _db.Update(vm.Order);
                     _db.SaveChanges();

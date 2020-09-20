@@ -169,6 +169,7 @@ namespace memo.Controllers
             {
                 try
                 {
+                    model.PriceCzk = Convert.ToInt32(model.Price * model.ExchangeRate);  // 1000 * 26,243
                     _db.Update(model);
                     _db.SaveChanges();
                 }
@@ -218,7 +219,6 @@ namespace memo.Controllers
             }), "ContactId", "FullName");
             ViewBag.EveContactList = getEveContacts(_eveDb);
             ViewBag.CurrencyList = new SelectList(_db.Currency.ToList(), "CurrencyId", "Name");
-            // ViewBag.OfferStatusList = new SelectList(_db.OfferStatus.ToList(), "OfferStatusId", "Status");
             ViewBag.OfferStatusName = _db.OfferStatus.Find(model.OfferStatusId).Name;
             ViewBag.CreatedOrders = _db.Order.Where(x => x.OfferId == id).ToList();
 
