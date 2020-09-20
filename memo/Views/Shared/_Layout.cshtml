@@ -30,6 +30,11 @@
     <!-- Base CSS -->
     <link rel="stylesheet" href="~/css/site.css" />
 
+    <style>
+        .active {
+            background-color: ghostwhite;
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -151,6 +156,13 @@
     @* <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.4.0/bootbox.js" integrity="sha512-aVnPFUGTiptfhBMaq2MLZfzSbt0LZbP6Eb1yXpSHQ1YIgJaVvWvtKi0uQGggaeQH+irK/7xc1r44dDrpzt6BCw==" crossorigin="anonymous"></script> *@
 
     @RenderSection("Scripts", required: false)
+
+    <script>
+        $(document).ready(function () {
+            $('.navbar-collapse.collapse.d-sm-inline-flex.flex-sm-row-reverse').find('[href="' + window.location.pathname + '"]').parent().addClass('active');
+        });
+    </script>
+
 </body>
 </html>
 
