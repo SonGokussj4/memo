@@ -96,6 +96,12 @@
         {
             <tr id="row_@item.ContactId" class="@(item.Active ? Html.Raw("itemActive") : Html.Raw("itemInactive"))">
                 <th scope="row" style="width: 10px;">
+                    <a href="#" data-toggle="modal" data-target="#infoModal"
+                        data-contactid="@item.ContactId"
+                        data-lastname="@item.PersonLastName"
+                        data-firstname="@item.PersonName"
+                        data-item="@item"
+                    ><i class="fa fa-info-circle fa-fw" aria-hidden="true" style="color: grey;"></i></a>
                     <a asp-action="Edit" asp-route-id=@item.ContactId><i class="fa fa-pencil fa-fw" aria-hidden="true"></i></a>
                     <a href="#" onclick="ConfirmDelete(@item.ContactId)"><i class="fa fa-times fa-fw" style="color: red;", aria-hidden="true"></i></a>
                 </th>
@@ -156,6 +162,29 @@
 @*hidden field for storing current Id*@
 <input type="hidden" id="hiddenId" />
 
+
+<!---------------------------
+    Modal: Info Window
+---------------------------->
+<div class="modal fade" id="infoModal" tabindex="-1" role="dialog" aria-labelledby="infoModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="infoModalLabel">Info about: </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-ContactId"></p>
+        <p class="modal-FirstName"></p>
+        <p class="modal-LastName"></p>
+        <p class="modal-Item"></p>
+      </div>
+    </div>
+  </div>
+</div>
+
 @section scripts{
 <script>
 
@@ -183,6 +212,21 @@
             }
         })
     }
+
+    $('#infoModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget) // Button that triggered the modal
+        var contactId = button.data('contactid') // Extract info from data-* attributes
+        var firstName = button.data('firstname') // Extract info from data-* attributes
+        var lastName = button.data('lastname') // Extract info from data-* attributes
+        var item = button.data('item') // Extract info from data-* attributes
+        var modal = $(this)
+        modal.find('.modal-title').text('New message to ' + contactId)
+        console.log(firstName);
+        modal.find('.modal-ContactId').text(`ContactId: ${contactId}`);
+        modal.find('.modal-FirstName').text(`FirstName: ${firstName}`);
+        modal.find('.modal-LastName').text(`LastName: ${lastName}`);
+        modal.find('.modal-Item').text(`Item: ${item}`);
+    });
 
     //function goContacts() {
     //    $.ajax({

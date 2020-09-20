@@ -246,12 +246,8 @@ namespace memo.Controllers
                     .Where(t => t.OrderCode == vm.Order.OrderCode)
                     .Select(t => t.Planned).FirstOrDefault();
 
-                vm.Order.Active = true;
+                // vm.Order.Active = true;
                 vm.Order.TotalHours = totalHours;
-                  // TODO: 2020-09-18 s timto neco udelat, ted to mam v listu <OtherCost>
-                // vm.Order.PriceFinalCzk = Convert.ToInt32(
-                //     (vm.Order.PriceFinal - vm.Order.OtherCosts) * vm.Order.ExchangeRate);
-
 
                 _db.Add(vm.Order);
                 _db.SaveChanges();

@@ -76,62 +76,6 @@
             </ul>
         }
 
-        @* <div class="form-group row">
-            <div class="col-lg-5"></div>
-            <div class="col-lg-2 align-self-center">
-                <button class="btn btn-sm btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
-                    <i class="fa fa-angle-down"></i> Detaily
-                </button>
-            </div>
-            <div class="col-lg-5"></div>
-        </div> *@
-
-        @* <div class="collapse" id="collapseExample">
-
-            <div class="form-group row">
-                <label asp-for="Offer.ReceiveDate" class="col-lg-3 col-form-label form-control-label control-label"></label>
-                <div class="col-lg-4">
-                    <input asp-for="Offer.ReceiveDate" class="form-control" type="text" required="" autocomplete="off" readonly />
-                </div>
-                <label class="col-lg-1 col-form-label form-control-label control-label"> <i class="fa fa-angle-double-right"></i> </label>
-                <div class="col-lg-4">
-                    <input asp-for="Offer.SentDate" class="form-control" type="text" autocomplete="off" readonly />
-                </div>
-            </div>
-
-            <div class="form-group row">
-                <label asp-for="Offer.Subject" class="col-lg-3 col-form-label form-control-label control-label"></label>
-                <div class="col-lg-9">
-                    <input asp-for="Offer.Subject" class="form-control" type="text" readonly />
-                    <span asp-validation-for="Offer.Subject" class="text-danger"></span>
-                </div>
-            </div>
-
-            <div class="form-group row">
-                <label asp-for="Offer.Price" class="col-lg-3 col-form-label form-control-label control-label"></label>
-                <div class="col-lg-5">
-                    <input asp-for="Offer.Price" class="form-control" type="text" readonly />
-                    <span asp-validation-for="Offer.Price" class="text-danger"></span>
-                </div>
-                <div class="col-lg-2">
-                    @Html.DropDownListFor(model => model.Offer.CurrencyId, ViewBag.CurrencyList as SelectList, new { @class = "form-control", @disabled = "disabled" })
-                    <span asp-validation-for="Offer.Currency" class="text-danger"></span>
-                </div>
-                <div class="col-lg-2">
-                    <input asp-for="Offer.ExchangeRate" class="form-control" type="text" readonly />
-                    <span asp-validation-for="Offer.ExchangeRate" class="text-danger"></span>
-                </div>
-            </div>
-
-            <div class="form-group row">
-                <label asp-for="InvoiceDueDays" class="col-lg-3 col-form-label form-control-label control-label"></label>
-                <div class="col-lg-3">
-                    <input asp-for="InvoiceDueDays" class="form-control" type="text" required="" autocomplete="off" readonly />
-                </div>
-            </div>
-
-        </div>  <!-- END collapse --> *@
-
         <div class="cardTitleMerged">
             <div class="">
                 <a asp-action="Index" class="btn btn-light border"><i class="fa fa-arrow-left"></i> Zpět</a>
@@ -163,13 +107,20 @@
         <div class="form-group row">
             <label asp-for="Order.OrderName" class="required col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-9">
-                <input asp-for="Order.OrderName" class="form-control" type="text" required="" />
-                <span asp-validation-for="Order.OrderName" class="text-danger"></span>
+                <div class="input-group mb-2 mr-sm-2">
+                    <input asp-for="Order.OrderName" class="form-control" type="text" required="" />
+                    <div class="input-group-append">
+                        <div class="input-group-text" data-toggle="tooltip" title="Vložit název Evektor nabídky" onclick="insertEvektorOfferName('@Model.Offer.OfferName');" style="cursor: pointer;">
+                            <i class="fa fa-caret-left">&nbsp;<i class="fa fa-tasks"></i></i>
+                        </div>
+                    </div>
+                </div>
             </div>
+            <span asp-validation-for="Order.OrderName" class="text-danger"></span>
         </div>
 
         <div class="form-group eveOrder">
-            <div class="form-group row ">
+            <div class="form-group row">
                 <label asp-for="Order.OrderCode" class="required col-lg-3 col-form-label form-control-label control-label"></label>
                 <div class="col-lg-5">
                     @* @Html.DropDownListFor(model => model.Order.OrderCode, ViewBag.EveOrderCodes as SelectList, "-- Vyber kód --", new { @class = "form-control selectpicker" }) *@
@@ -396,6 +347,10 @@
 
     <script>
 
+        function insertEvektorOfferName(offerName) {
+            $('#Order_OrderName').val(offerName);
+        };
+
         function changeExchangeRate(curSymbol) {
             $.ajax({
                 url: '@Url.Action("getCurrencyStr", "Orders")',
@@ -410,7 +365,7 @@
                     $('#Order_ExchangeRate').val(res).keyup();
                 }
             });
-        }
+        };
 
         // Just delete the <div> element
         function DeleteOtherCost(otherCostId) {

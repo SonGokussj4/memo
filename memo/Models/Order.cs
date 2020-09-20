@@ -10,6 +10,14 @@ namespace memo.Models
     [Table("Order", Schema = "memo")]
     public partial class Order
     {
+        public Order()
+        {
+            Active = true;
+            // BillOfDelivery = "";
+            // TotalHours = 0;
+            PriceFinalCzk = 0;
+            Username = "jverner";
+        }
         [Key]
         public int OrderId { get; set; }
 
@@ -47,6 +55,7 @@ namespace memo.Models
         public int? TotalHours { get; set; }
 
         [Display(Name = "Dodací list")]
+        // [DisplayFormat(ConvertEmptyStringToNull = false)]
         public string BillOfDelivery { get; set; }
 
         [Display(Name = "Kurz")]
@@ -58,10 +67,10 @@ namespace memo.Models
         [Required]
         [Display(Name = "Konečná cena v Kč")]
         // [DisplayFormat(DataFormatString = "{0:#,0}", ApplyFormatInEditMode = true)]
-        public int? PriceFinalCzk { get; set; } = 0;
+        public int PriceFinalCzk { get; set; }
 
         [Display(Name = "Poznámky"), Column(TypeName = "ntext")]
-        public string Notes { get; set; }
+        public string Notes { get; set; } = "";
 
         [Display(Name = "Datum vytvoření"), Column(TypeName = "date")]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
@@ -80,6 +89,6 @@ namespace memo.Models
 
         public virtual List<OtherCost> OtherCosts { get; set; } = new List<OtherCost>();
 
-        public string Username { get; set; } = "jverner";
+        public string Username { get; set; }
     }
 }
