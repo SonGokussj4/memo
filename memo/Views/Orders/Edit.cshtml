@@ -219,7 +219,7 @@
         </div>
 
         @Html.ValidationMessage("InvoiceMissing", "", new { @class = "text-danger" })
-        <div class="dynamic-rows-invoices" id="ss" data-order="@Model.Order.Invoices.Count()">
+        <div class="dynamic-rows-invoices" id="template-invoices" data-order="@Model.Order.Invoices.Count()">
             @for (int i = 0; i < Model.Order.Invoices.Count(); i++)
             {
                 <div class="row form-group justify-content-end">
@@ -233,7 +233,7 @@
                     <div class="col-lg-3">
                         <div class="input-group mb-2 mr-sm-2">
                             <div class="input-group-prepend">
-                                <div class="input-group-text" data-toggle="tooltip" title="Splatnost faktury [dní]. Aplikovat datum." style="cursor: pointer;">@Model.InvoiceDueDays</div>
+                                <div class="input-group-text" data-toggle="tooltip" title="Přičíst dny" style="cursor: pointer;" onclick="AddInvoiceDueDays('@i');">@Model.InvoiceDueDays &nbsp;<i class="fa fa-caret-right"></i></div>
                             </div>
                             <input asp-for="@Model.Order.Invoices[i].InvoiceDueDate" class="form-control" type="text" autocomplete="off" placeholder="Splatnost faktury" data-id="@i" />
                             <span asp-validation-for="@Model.Order.Invoices[i].InvoiceDueDate" class="text-danger"></span>
@@ -430,6 +430,13 @@
 
     <script>
 
+        function AddInvoiceDueDays(inputId) {
+            var _invoiceIssueInput = $('#Order_Invoices_' + inputId + '__InvoiceIssueDate');
+            var date = new Date(_invoiceIssueInput.val());
+            var futureDate = getPrettyDate(date, @Model.InvoiceDueDays);
+            var _invoiceDueInput = $('#Order_Invoices_' + inputId + '__InvoiceDueDate').val(futureDate);
+        }
+
         function DeleteInvoice(invoiceId) {
             console.log(`Deleting invoice id: ${invoiceId}`);
             $.ajax({
@@ -583,12 +590,7 @@
 
             $('#Order_InvoiceIssueDate').change('input', function(){
                 var date = new Date($('#Order_InvoiceIssueDate').val());
-                date.setDate( date.getUTCDate() + @Model.InvoiceDueDays );
-                var futureDate = date.getFullYear()
-                    +'-'
-                    +('0'+(date.getMonth()+1)).slice(-2)
-                    +'-'
-                    +('0'+(date.getDate())).slice(-2);
+                var futureDate = getPrettyDate(date, @Model.InvoiceDueDays);
                 $('#Order_InvoiceDueDate').val(futureDate);
             });
 
@@ -622,7 +624,7 @@
                         '<div class="col-lg-3">'+
                             '<div class="input-group mb-2 mr-sm-2">'+
                                 '<div class="input-group-prepend">'+
-                                    '<div class="input-group-text" data-toggle="tooltip" title="Splatnost faktury [dní]. Aplikovat datum." data-original-title="Hmm" style="cursor: pointer;">@Model.InvoiceDueDays</div>'+
+                                    '<div class="input-group-text" data-toggle="tooltip" title="Přičíst dny" style="cursor: pointer;" onclick="AddInvoiceDueDays(' + idInvoice + ');">@Model.InvoiceDueDays &nbsp;<i class="fa fa-caret-right"></i></div>'+
                                 '</div>'+
                                     '<input class="form-control" type="text" autocomplete="off" placeholder="Splatnost faktury" data-val="true" data-val-required="The Splatnost faktury field is required." id="Order_Invoices_' + idInvoice + '__InvoiceDueDate" name="Order.Invoices[' + idInvoice + '].InvoiceDueDate" value="">'+
                                     '<span class="text-danger field-validation-valid" data-valmsg-for="Order.Invoices[' + idInvoice + '].InvoiceDueDate" data-valmsg-replace="true"></span>'+
@@ -658,16 +660,8 @@
                 _invoiceDueInput.datepicker(datepickerParameters[0]);
 
                 _invoiceIssueInput.on("changeDate", function() {
-                    console.log(_invoiceIssueInput.val());
                     var date = new Date(_invoiceIssueInput.val());
-                    date.setDate( date.getUTCDate() + @Model.InvoiceDueDays );
-                    console.log(date);
-                    var futureDate = date.getFullYear()
-                        +'-'
-                        +('0'+(date.getMonth()+1)).slice(-2)
-                        +'-'
-                        +('0'+(date.getDate())).slice(-2);
-                    console.log(_invoiceIssueInput.data('id'));
+                    var futureDate = getPrettyDate(date, @Model.InvoiceDueDays);
                     $('#Order_Invoices_' + _invoiceIssueInput.data('id') + '__InvoiceDueDate').val(futureDate);
                  });
 
@@ -677,6 +671,7 @@
                 idInvoice = idInvoice + 1;
                 return false;
             });
+
 
             // Add new OTHER COSTS row
             var idOtherCosts = @Model.Order.OtherCosts.Count();

@@ -326,6 +326,13 @@
 
     <script>
 
+        function AddInvoiceDueDays(inputId) {
+            var _invoiceIssueInput = $('#Order_Invoices_' + inputId + '__InvoiceIssueDate');
+            var date = new Date(_invoiceIssueInput.val());
+            var futureDate = getPrettyDate(date, @Model.InvoiceDueDays);
+            var _invoiceDueInput = $('#Order_Invoices_' + inputId + '__InvoiceDueDate').val(futureDate);
+        }
+
         function insertEvektorOfferName(offerName) {
             $('#Order_OrderName').val(offerName);
         };
@@ -403,12 +410,7 @@
 
             $('.invoiceDate').change('input', function(){
                 var date = new Date($('.invoiceDate').val());
-                date.setDate( date.getUTCDate() + @Model.InvoiceDueDays );
-                var futureDate = date.getFullYear()
-                    +'-'
-                    +('0'+(date.getMonth()+1)).slice(-2)
-                    +'-'
-                    +('0'+(date.getDate())).slice(-2);
+                var futureDate = getPrettyDate(date, @Model.InvoiceDueDays);
                 $('#Order_InvoiceDueDate').val(futureDate);
             });
 
@@ -443,7 +445,7 @@
                         '<div class="col-lg-3">'+
                             '<div class="input-group mb-2 mr-sm-2">'+
                                 '<div class="input-group-prepend">'+
-                                    '<div class="input-group-text" data-toggle="tooltip" title="Splatnost faktury [dní]. Upravit datum." data-original-title="Hmm" style="cursor: pointer;">@Model.InvoiceDueDays</div>'+
+                                    '<div class="input-group-text" data-toggle="tooltip" title="Přičíst dny" style="cursor: pointer;" onclick="AddInvoiceDueDays(' + idInvoice + ');">@Model.InvoiceDueDays &nbsp;<i class="fa fa-caret-right"></i></div>'+
                                 '</div>'+
                                     '<input class="form-control" type="text" autocomplete="off" placeholder="Splatnost faktury" data-val="true" data-id="' + idInvoice + '" data-val-required="The Splatnost faktury field is required." id="Order_Invoices_' + idInvoice + '__InvoiceDueDate" name="Order.Invoices[' + idInvoice + '].InvoiceDueDate" value="">'+
                                     '<span class="text-danger field-validation-valid" data-valmsg-for="Order.Invoices[' + idInvoice + '].InvoiceDueDate" data-valmsg-replace="true"></span>'+
@@ -480,12 +482,7 @@
 
                 _invoiceIssueInput.on("changeDate", function() {
                     var date = new Date(_invoiceIssueInput.val());
-                    date.setDate( date.getUTCDate() + @Model.InvoiceDueDays );
-                    var futureDate = date.getFullYear()
-                        +'-'
-                        +('0'+(date.getMonth()+1)).slice(-2)
-                        +'-'
-                        +('0'+(date.getDate())).slice(-2);
+                    var futureDate = getPrettyDate(date, @Model.InvoiceDueDays);
                     $('#Order_Invoices_' + _invoiceIssueInput.data('id') + '__InvoiceDueDate').val(futureDate);
                  });
 
