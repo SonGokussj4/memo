@@ -173,6 +173,9 @@
                 type: "POST",
                 url: '@Url.Action("Delete")',
                 data: { Id: @Model.ContactId },
+                beforeSend: function (request) {
+                    request.setRequestHeader("RequestVerificationToken", $("[name='__RequestVerificationToken']").val());
+                },
                 success: function () {
                     $("#deleteConfirmModal").modal("hide")
                     window.location.href = '../'

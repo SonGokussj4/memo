@@ -13,6 +13,7 @@
         display: inline-block;
         text-align: center;
         width: 25px;
+        color: limegreen;
     }
 
     .fix::before {
@@ -25,6 +26,7 @@
         display: inline-block;
         text-align: center;
         width: 25px;
+        color: orange;
     }
 
     [data-toggle="collapse"].collapsed .if-not-collapsed {
@@ -37,6 +39,7 @@
 
     input[type=checkbox]:checked + label {
         text-decoration: line-through;
+        text-decoration-color: #737272;
     }
 
 </style>
@@ -69,11 +72,19 @@
         </label></div>
 
         <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
+            Zakázka: Doplnění InvoiceDays event do stávajících input polí
+        </label></div>
+
+        <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
+            Zakázka: Edit - smazání fakturace přes for cyklus, ne přes post
+        </label></div>
+
+        <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
             Zakázka: Přidat "Aktuální bilance", kde budu vědět "Objem zakázky" - "Jiné náklady" = "Aktuální bilance"
         </label></div>
 
         <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
-            Vyhodnocení: Filtr Vše/Oddělení
+            Zakázka: [Nabídka].PředpodkládanýTermínUkončení navázat na to, co je v zakázce - předvyplnit
         </label></div>
 
         <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
@@ -81,11 +92,7 @@
         </label></div>
 
         <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
-            Nabídka: Přidat předpokládaný termín ukončení
-        </label></div>
-
-        <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
-            Zakázka: [Nabídka].PředpodkládanýTermínUkončení navázat na to, co je v zakázce - předvyplnit
+            Vyhodnocení: Filtr Vše/Oddělení
         </label></div>
 
         <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
@@ -97,26 +104,7 @@
         <hr />
 
         <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
-            Globální: Lepčejší CSS input floating texty
-            <a href="https://w3bits.com/labs/css-floating-labels/3/">jedna</a>,
-            <a href="https://w3bits.com/css-floating-labels/">dva</a>,
-            <a href="https://www.freakyjolly.com/gmail-login-input-field-style/">tri</a>,
-        </label></div>
-
-        <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
-            Export: Faktické / očekávané vyhodnocení - pdf/excel?
-        </label></div>
-
-        <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
-            Fakturace navíc - otázka navýšit cenu nabídky [???]
-        </label></div>
-
-        <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
-            Nabídka: Pocitové číslo, jak je pravděpodobné udělat / vyhrát nabídku. [Slightly behind, lehce nad konkurencí, zákazník silně preferuje nás]
-        </label></div>
-
-        <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
-            Zakázka: Možnost přiřadit více "Kódů vykazování" - pozn. jak pak počítat hodiny, částky, ...
+            Globální: Nabídka/Objednávka: Rozšifrovat terminologii
         </label></div>
 
         <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
@@ -128,23 +116,42 @@
         </label></div>
 
         <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
+            Globální: Lepčejší CSS input floating texty
+            <a href="https://w3bits.com/labs/css-floating-labels/3/">zde</a>,
+            <a href="https://w3bits.com/css-floating-labels/">nějaký</a>,
+            <a href="https://www.freakyjolly.com/gmail-login-input-field-style/">příklad</a>,
+        </label></div>
+
+        <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
+            Globální: Export: Faktické / očekávané vyhodnocení - pdf/excel?
+        </label></div>
+
+        <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
+            Nabídka: Pocitové číslo, jak je pravděpodobné udělat / vyhrát nabídku. [Slightly behind, lehce nad konkurencí, zákazník silně preferuje nás]
+        </label></div>
+
+        <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
+            Zakázka: Fakturace navíc - otázka uživateli: navýšit cenu nabídky?
+        </label></div>
+
+        <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
+            Zakázka: Možnost přiřadit více "Kódů vykazování" - pozn. jak pak počítat hodiny, částky, ...
+        </label></div>
+
+        <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
             Zakázka: Vyřešit fakturaci - napojení na IT / Účetnictví (checkboxy souhlasu pro nový Projekt?)
         </label></div>
 
-        <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
-            Nabídka/Objednávka: Rozšifrovat terminologii
-        </label></div>
-
-        <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
-            Modul pohledávek: Fakturace - čísla "Kolik jsme nafakturovali" - Pozn. ???
-        </label></div>
-
         <div class="form-group "><input type="checkbox" class="form-check-input"><label class="form-check-label">
-            Daleká budoucnost: funkce připomenutí, že se má fakturovat
+            Daleká budoucnost: funkce připomenutí (e-mail), že se má fakturovat
         </label></div>
 
         <div class="form-group "><input type="checkbox" class="form-check-input"><label class="form-check-label">
             Daleká budoucnost: Evektor pohledávky - napárování faktur přes Variabilní Symbol z banky
+        </label></div>
+
+        <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
+            Modul pohledávek: Fakturace - čísla "Kolik jsme nafakturovali" - Pozn. Hrachovský DB přístup / Gemco export Api
         </label></div>
 
         <hr />
@@ -154,6 +161,10 @@
         @* //////////////////////////////////////////////////////////////////////////////////////////// *@
         @* ------------------------------------  DONE ------------------------------------------------- *@
         @* //////////////////////////////////////////////////////////////////////////////////////////// *@
+
+        <div class="form-group"><input type="checkbox" class="form-check-input" checked><label class="form-check-label">
+            Nabídka: Přidat předpokládaný termín ukončení
+        </label></div>
 
         <div class="form-group"><input type="checkbox" class="form-check-input" checked><label class="form-check-label">
             Zakázka: Možnost více "dalších nákladů" s individuálními [cenami] a [popisky]
@@ -241,10 +252,17 @@
         </h6>
         <div class="collapse show" id="show5">
             <ul style="list-style-type:none">
-                <li class="new">Zakázka: Možnost více dalších nákladů</li>
-                <li class="new">Zakázka: Možnost více termínů splatnosti a ceny</li>
+                <li class="new">Globální: Indikace, ve kterém menu se nacházím</li>
+                <li class="new">Tabulky: Zakázka: Zobrazení sumy hod</li>
+                <li class="new">Nabídka: Přidání předpokládaného termínu ukončení</li>
+                <li class="new">Zakázka: Automatické doplňování data splatnosti faktury, převzato ze splatnosti zákazníka</li>
+                <li class="new">Zakázka: Automatické doplňování Nabídka - Předp. termín dokončení do Zakázka - Termín vystavení</li>
+                <li class="new">Zakázka: <b>Možnost více dalších nákladů</b></li>
+                <li class="new">Zakázka: <b>Možnost více termínů splatnosti a ceny</b></li>
                 <li class="new">Zakázka: Tlačítko, které vloží název Evektor nabídky do pole "Číslo objednávky zákazníka"</li>
                 <li class="fix">Tabulky: Při aktivaci/filtrování v tabulkách se nesprávně objevoval tooltip</li>
+                <li class="fix">Tabulky: Zobrazení sumy v Kč</li>
+                <li class="fix">Zakázka: Doplňování správného data při InvoiceDays</li>
                 <li class="fix">Zakázka: Další náklady odečítány, ne přičítány</li>
             </ul>
         </div>

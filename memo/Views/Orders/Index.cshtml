@@ -36,6 +36,7 @@
 
 <div class="text-center">
     <h1 class="display-4">@ViewData["Title"]</h1>
+    <h3 style="color: green">@ViewBag.message</h3>
 </div>
 
 <div id="toolbar" style="padding-bottom: 10px;">
@@ -93,18 +94,15 @@
             <th scope="col" class="text-center" data-field="4" data-sortable="true" data-filter-control="input">Č. obj. zákazníka</th>
             <th scope="col" class="text-center" data-field="5" data-sortable="true" data-filter-control="input">Kód EVE<br />vykazování</th>
             <th scope="col" class="text-center" data-field="6" data-sortable="true" data-filter-control="input">Vedoucí<br />projektu</th>
-            <th scope="col" class="text-center" data-field="7" data-sortable="true" data-filter-control="input">Plánované<br />hod</th>
-            @* <th scope="col" class="text-center" data-field="8" data-sortable="true" data-filter-control="input">Termín vyst.<br />faktury</th> *@
-            <th scope="col" class="text-center" data-field="9" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatterCz">Konečná<br />cena [CZK]</th>
-            <th scope="col" class="text-center" data-field="10" data-sortable="true" data-filter-control="input">Poznámky</th>
-            <th scope="col" class="text-center" data-field="11" data-sortable="true" data-filter-control="input">Dodací list</th>
-            <th scope="col" class="text-center" data-field="12" data-sortable="true" data-filter-control="select">Měna</th>
-            @* <th scope="col" class="text-center" data-field="13" data-sortable="true" data-filter-control="input">Další<br />náklady</th> *@
-            <th scope="col" class="text-center" data-field="14" data-sortable="true" data-filter-control="input">Hod.<br />sazba</th>
-            <th scope="col" class="text-center" data-field="15" data-sortable="true" data-filter-control="input">Vyčerpáno</th>
-            <th scope="col" class="text-center" data-field="16" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatterCz">Přepočet [CZK]</th>
-            @* <th class="text-center" scope="col" data-field="14" data-sortable="true" data-filter-control="input">Stav<br />plnění</th> *@
-            <th scope="col" class="text-center" data-field="17" data-sortable="true" data-filter-control="input">Využito</th>
+            <th scope="col" class="text-center" data-field="7" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatterCz">Konečná<br />cena [CZK]</th>
+            <th scope="col" class="text-center" data-field="8" data-sortable="true" data-filter-control="input">Poznámky</th>
+            <th scope="col" class="text-center" data-field="9" data-sortable="true" data-filter-control="input">Dodací list</th>
+            <th scope="col" class="text-center" data-field="10" data-sortable="true" data-filter-control="select">Měna</th>
+            <th scope="col" class="text-center" data-field="11" data-sortable="true" data-filter-control="input">Hod.<br />sazba</th>
+            <th scope="col" class="text-center" data-field="12" data-sortable="true" data-filter-control="input" data-footer-formatter="sumHoursFormatter">Plánované<br />hod</th>
+            <th scope="col" class="text-center" data-field="13" data-sortable="true" data-filter-control="input" data-footer-formatter="sumHoursFormatter">Vyčerpáno</th>
+            <th scope="col" class="text-center" data-field="14" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatterCz">Přepočet [CZK]</th>
+            <th scope="col" class="text-center" data-field="15" data-sortable="true" data-filter-control="input">Využito</th>
         </tr>
     </thead>
     <tbody>
@@ -136,10 +134,6 @@
                 <th scope="row" class="text-left">@item.OrderName</th>
                 <th scope="row" class="text-center">@item.OrderCode</th>
                 <th scope="row" class="text-left">@item.EveContactName</th>
-                @{
-                    string totalHoursText = @item.TotalHours is null ? "" : String.Format("{0:# 000} hod", item.TotalHours);
-                    <th scope="row" class="text-right">@totalHoursText</th>
-                }
                 @* <th scope="row" class="text-right">@String.Format("{0:# 000}", item.TotalHours) hod</th> *@
                 @* <th scope="row" class="text-center">@String.Format("{0:yyyy-MM-dd}", @item.InvoiceIssueDate)</th> *@
                 <th scope="row" class="text-right">@string.Format(CultureInfo.CreateSpecificCulture("cs-CZ"), "{0:C0}", @item.PriceFinalCzk)</th>
@@ -150,6 +144,10 @@
                 <th scope="row" class="text-center">@item.Offer?.Currency.Name</th>
                 @* <th scope="row" class="text-right">@String.Format(CultureInfo.CreateSpecificCulture(@item.Offer?.Currency.CultureCode), "{0:C0}", @item.OtherCosts)</th> *@
                 <th scope="row" class="text-right">@String.Format(CultureInfo.CreateSpecificCulture(@item.Offer?.Currency.CultureCode), "{0:C0}", @item.HourWage)</th>
+                @{
+                    string totalHoursText = @item.TotalHours is null ? "" : String.Format("{0:# 000} hod", item.TotalHours);
+                    <th scope="row" class="text-right">@totalHoursText</th>
+                }
                 @{
                     @* string burnedText = @item.Burned == 0 ? "" : $"{item.Burned} hod"; *@
                     string burnedText = @item.Burned == 0 ? "" : String.Format("{0:# } hod", item.Burned / 60);
@@ -179,12 +177,6 @@
 
 
 
-
-
-
-
-
-
 <!-- Modal Confirm Delete-->
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog modal-sm" role="document">
@@ -208,7 +200,7 @@
     </div>
 </div>
 
-@*hidden field for storing current Id*@
+@*hidden field for storing current employeeId*@
 <input type="hidden" id="hiddenId" />
 
 
@@ -226,16 +218,23 @@
     function DeleteItem() {
         var itemId = $("#hiddenId").val();
         $.ajax({
-            type: "POST",
             url: '@Url.Action("Delete", "Orders")',
+            type: "POST",
             data: { Id: itemId },
-            success: function () {
+            //contentType: 'application/json; charset=utf-8',
+            //dataType: 'json',
+            //async: false,
+            beforeSend: function (request) {
+                request.setRequestHeader("RequestVerificationToken", $("[name='__RequestVerificationToken']").val());
+            },
+            success: function (msg) {
                 $("#myModal").modal("hide")
                 //$("#row_" + itemId).remove();
+                alert(msg);
                 window.location = "Orders/Index"
             },
-            error: function() {
-                alert("Tento zakázku nelze z nějakého důvodu odstranit...");
+            error: function(jqxhr, status, exception) {
+                alert("Nelze odstranit.");
                 $("#myModal").modal("hide");
             }
         })
@@ -280,8 +279,22 @@
         return 'Total'
     }
 
-    function nameFormatter(data) {
-        return data.length
+    //function nameFormatter(data) {
+    //    return data.length
+    //}
+
+    function sumHoursFormatter(data) {
+        var field = parseInt(this.field);
+        var result = data.map(function (row) {
+            var hours = parseInt(row[field]
+                .replace("hod", "")
+                .replace(" ", "")
+            ) || 0;
+            return + hours
+        }).reduce(function (sum, i) {
+            return sum + i
+        }, 0)
+        return result.toLocaleString('cs-CZ') + ' hod'
     }
 
     function priceFormatterCz(data) {
@@ -293,7 +306,8 @@
                 .replace(",", "")
                 .replace("&nbsp;", "")
                 .replace(" ", "")
-                .replace("Kč", ""));
+                .replace("Kč", "")
+                ) || 0;
             return + cost
         }).reduce(function (sum, i) {
             return sum + i

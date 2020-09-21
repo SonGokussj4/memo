@@ -76,6 +76,8 @@ CREATE TABLE [memo].[Invoice] (
   [CostCzk] decimal(18,3)
 )
 GO
+-- ON DELETE CASCADE
+-----------------------
 
 ALTER TABLE [memo].[Invoice] ADD FOREIGN KEY ([OrderId]) REFERENCES [memo].[Order] ([OrderId])
 GO
@@ -92,6 +94,15 @@ GO
 
 ALTER TABLE [memo].[OtherCost] ADD FOREIGN KEY ([OrderId]) REFERENCES [memo].[Order] ([OrderId])
 GO
+
+-- ON DELETE CASCADE
+-----------------------
+-- ALTER TABLE [memo].[OtherCost]  WITH CHECK ADD  CONSTRAINT [FK__OtherCost__Order__3429BB53] FOREIGN KEY([OrderId])
+-- REFERENCES [memo].[Order] ([OrderId])
+-- ON DELETE CASCADE
+-- GO
+-- ALTER TABLE [memo].[OtherCost] CHECK CONSTRAINT [FK__OtherCost__Order__3429BB53]
+-- GO
 
 CREATE TABLE [memo].[OfferStatus] (
   [OfferStatusId] int PRIMARY KEY IDENTITY(1, 1),

@@ -264,6 +264,14 @@
         </div>
 
         <div class="form-group row">
+            <label asp-for="EstimatedFinishDate" class="col-lg-3 col-form-label form-control-label control-label"></label>
+            <div class="col-lg-9 mycalendar">
+                <input asp-for="EstimatedFinishDate" class="form-control" type="text" autocomplete="off"/>
+                <span asp-validation-for="EstimatedFinishDate" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-group row">
             <label asp-for="Notes" class="col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-9">
                 <textarea asp-for="Notes" class="form-control"></textarea>
@@ -343,6 +351,9 @@
                 type: "POST",
                 url: '@Url.Action("Delete")',
                 data: { Id: @Model.OfferId },
+                beforeSend: function (request) {
+                    request.setRequestHeader("RequestVerificationToken", $("[name='__RequestVerificationToken']").val());
+                },
                 success: function () {
                     $("#deleteConfirmModal").modal("hide")
                     window.location.href = '../'

@@ -14,7 +14,7 @@ namespace memo.Models
 
         // [Required]
         [Display(Name = "Zakázka")]
-        public int? OrderId { get; set; }
+        public int OrderId { get; set; }
         public Order Order { get; set; }
 
         [Required]

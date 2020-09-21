@@ -81,6 +81,9 @@ namespace memo.Models
         [Display(Name = "Důvod prohry"), Column(TypeName = "ntext")]
         public string LostReason { get; set; }
 
+        [Display(Name = "Předp. termín ukončení"), Column(TypeName = "date"), DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+        public DateTime? EstimatedFinishDate { get; set; }
+
         [Display(Name = "Poznámky"), Column(TypeName = "ntext")]
         public string Notes { get; set; }
 

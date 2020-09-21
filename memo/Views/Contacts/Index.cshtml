@@ -201,6 +201,9 @@
             type: "POST",
             url: '@Url.Action("Delete", "Contacts")',
             data: { Id: itemId },
+            beforeSend: function (request) {
+                request.setRequestHeader("RequestVerificationToken", $("[name='__RequestVerificationToken']").val());
+            },
             success: function () {
                 $("#myModal").modal("hide")
                 //$("#row_" + itemId).remove();

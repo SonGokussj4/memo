@@ -366,6 +366,7 @@ namespace memo.Controllers
                     }
                 }
 
+                ViewBag.message = "Zakázka editována";
                 if (actionType == "Uložit")
                 {
                     return RedirectToAction("Edit", new { id = id, offerId = vm.Order.OfferId });
@@ -403,6 +404,7 @@ namespace memo.Controllers
                 CurrencyName = currencyname,
             };
 
+            ViewBag.message = "Něco se porouchalo";
             return View(viewModel);
         }
 
@@ -420,6 +422,20 @@ namespace memo.Controllers
             {
                 return NotFound();
             }
+            // THIS or (current) ON DELETE CASCADE
+            //-------------------------------------
+            // // First remove invoices
+            // List<Invoice> invoices = _db.Invoice.Where(m => m.OrderId == id).ToList();
+            // foreach (Invoice invoice in invoices)
+            // {
+            //     _db.Invoice.Remove(invoice);
+            // }
+            // // Then remove otherCosts
+            // List<OtherCost> otherCosts = _db.OtherCost.Where(m => m.OrderId == id).ToList();
+            // foreach (OtherCost otherCost in otherCosts)
+            // {
+            //     _db.OtherCost.Remove(otherCost);
+            // }
 
             _db.Order.Remove(order);
             await _db.SaveChangesAsync();

@@ -149,7 +149,6 @@
                 @if (item.Active is true)
                 {
                     <th scope="row" class="text-center" data-toggle="tooltip" title="Aktivní">
-                        @* <i class="fa fa-check-circle" style="color: #5abe58;" aria-hidden="true"></i> *@
                         <a asp-action="Deactivate" asp-route-id="@item.OfferId" asp-route-showInactive="@ViewBag.showInactive"><i class="fa fa-eye text-success" aria-hidden="true"></i></a>
                     </th>
                 }
@@ -163,21 +162,18 @@
                 @* OfferStatus - VyhraProhra *@
                 @if (item.OfferStatusId == 1)
                 {
-                    @* <th scope="row" class="text-left" ><span class="badge badge-secondary">@item.OfferStatus?.Name</span></th> *@
                     <th scope="row" class="text-center" data-toggle="tooltip" title="V řešení">
                         <span class="badge badge-secondary"><i class="fa fa-fw fa-question"></i></span>
                     </th>
                 }
                 else if (item.OfferStatusId == 2)
                 {
-                    @* <th scope="row" class="text-left" ><span class="badge badge-success">@item.OfferStatus?.Name</span></th> *@
                     <th scope="row" class="text-center" data-toggle="tooltip" title="Vyhraná nabídka -> objednávka">
                         <span class="badge badge-success"><i class="fa fa-fw fa-check"></i></span>
                     </th>
                 }
                 else
                 {
-                    @* <th scope="row" class="text-left" ><span class="badge badge-danger">@item.OfferStatus?.Name</span></th> *@
                     <th scope="row" class="text-center" data-toggle="tooltip" title="Prohraná nabídka">
                         <span class="badge badge-danger"><i class="fa fa-fw fa-times"></i></span>
                     </th>
@@ -248,10 +244,13 @@
             type: "POST",
             url: '@Url.Action("Delete", "Offers")',
             data: { Id: itemId },
+            beforeSend: function (request) {
+                request.setRequestHeader("RequestVerificationToken", $("[name='__RequestVerificationToken']").val());
+            },
             success: function () {
                 $("#myModal").modal("hide")
                 //$("#row_" + itemId).remove();
-                window.location = "Index"
+                window.location = "Offers/Index"
             },
             error: function() {
                 alert("Tento nabídka nelze z nějakého důvodu odstranit...");
@@ -297,12 +296,6 @@
             // Change icon and text
             btn.children[0].className = "fa fa-eye-slash"
             btn.lastChild.nodeValue = " Aktivní (@Model.Count(m => m.Active) / @Model.Count())"
-            // Get class('show hiddenBefore') elements and copy to normal array
-            //var hiddenRows = document.getElementsByClassName("show hiddenBefore");
-            //elementArray = [].slice.call(hiddenRows, 0);
-            //for(var i=0; i<elementArray.length; i++){
-            //    elementArray[i].className = "hide";
-            //}
             var hiddenRows = document.querySelectorAll(".show.hiddenBefore");
             for(var i = 0; i < hiddenRows.length; i++){
                 hiddenRows[i].className = "hide";
@@ -320,7 +313,6 @@
 
     function priceFormatterCz(data) {
         var field = parseInt(this.field.replace(",", "").replace("&nbsp;", "").replace(" ", "").replace("Kč", ""));
-        console.log(field);
         //var field = parseInt(this.field).val().replace(/[^0-9]/g, '')
         var vysledek = data.map(function (row) {
             var cost = parseInt(row[field]

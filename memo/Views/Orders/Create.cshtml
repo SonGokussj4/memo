@@ -50,21 +50,10 @@
         <div class="form-group row">
             <label asp-for="Order.OfferId" class="required col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-4">
-                @* <input type="hidden" asp-for="Order.OfferId" /> *@
                 <input type="hidden" asp-for="Order.OrderId" />
-                @* <input asp-for="Order.OrderId" /> *@
-                @* @Html.DropDownListFor(model => model.Order.OfferId, ViewBag.WonOffersList as SelectList, "-- Vyber Objednávku --", new { @class = "form-control", onchange = @"this.form.submit();" }) *@
                 @Html.DropDownList("OfferId", ViewBag.WonOffersList as SelectList, "-- Vyber objednávku --", new { @class = "form-control selectpicker", onchange = @"this.form.submit();" })
-                @* <input asp-for="Offer.OfferName" class="form-control" type="text" readonly /> *@
                 <span asp-validation-for="Order.OfferId" class="text-danger"></span>
             </div>
-            @* <div class="col-lg-1">
-                <label asp-for="OfferCompanyName" class="col-form-label form-control-label control-label"></label>
-            </div>
-            <div class="col-lg-4">
-                <input asp-for="OfferCompanyName" class="form-control" type="text" readonly />
-                <span asp-validation-for="OfferCompanyName" class="text-danger"></span>
-            </div> *@
         </div>
 
         @if (@Model.Offer?.OfferId != 0 && @Model.Offer?.OfferId != null)
@@ -72,7 +61,11 @@
             <ul>
                 <li><b>Předmět:</b> @Model.Offer?.Subject - <b>@String.Format(CultureInfo.CreateSpecificCulture(Model.Offer?.Currency.CultureCode), "{0:C0}", @Model.Offer?.Price)</b> (@String.Format(CultureInfo.CreateSpecificCulture("cs-CZ"), "{0:C0}", Model.Offer?.PriceCzk))</li>
                 <li><b>Zákazník:</b> @Model.OfferCompanyName (<b>Splatnost faktury:</b> @Model.InvoiceDueDays dní)</li>
-                <li><b>Přijetí poptávky:</b> @String.Format("{0:dd.MM.yyyy}", @Model.Offer.ReceiveDate) / <b>Odeslání nabídky:</b> @String.Format("{0:dd.MM.yyyy}", @Model.Offer.SentDate)</li>
+                <li>
+                    <b>Přijetí poptávky:</b> @String.Format("{0:dd.MM.yyyy}", @Model.Offer.ReceiveDate) /
+                    <b>Odeslání nabídky:</b> @String.Format("{0:dd.MM.yyyy}", @Model.Offer.SentDate) /
+                    <b><label asp-for="Offer.EstimatedFinishDate"></label>:</b> @String.Format("{0:dd.MM.yyyy}", @Model.Offer.EstimatedFinishDate)
+                </li>
             </ul>
         }
 
@@ -123,12 +116,10 @@
             <div class="form-group row">
                 <label asp-for="Order.OrderCode" class="required col-lg-3 col-form-label form-control-label control-label"></label>
                 <div class="col-lg-5">
-                    @* @Html.DropDownListFor(model => model.Order.OrderCode, ViewBag.EveOrderCodes as SelectList, "-- Vyber kód --", new { @class = "form-control selectpicker" }) *@
                     <select asp-for="Order.OrderCode" asp-items="ViewBag.EveOrderCodes" class="form-control selectpicker">
                         <option value="">-- Vyber kód --</option>
                     </select>
                     <span asp-validation-for="Order.OrderCode" class="text-danger"></span>
-                    @* @Html.ValidationSummary(true, "", new { @class = "text-danger" }) *@
                 </div>
                 <div class="col-lg-2">
                     <a href="@Url.Action("CreateEveProject")" target="_blank" class="btn btn-outline-success form-control"
@@ -146,7 +137,6 @@
             <div class="form-group row">
                 <label asp-for="Order.EveContactName" class="required col-lg-3 col-form-label form-control-label control-label"></label>
                 <div class="col-lg-9">
-                    @* @Html.DropDownListFor(model => model.Order.EveContactName, ViewBag.EveContactList as SelectList, "-- Vyber kontakt --", new { @class = "form-control selectpicker" }) *@
                     <select asp-for="Order.EveContactName" asp-items="ViewBag.EveContactList" class="form-control selectpicker">
                         <option value="">-- Vyber kontakt --</option>
                     </select>
@@ -239,7 +229,7 @@
             <span asp-validation-for="Order.OtherCosts" class="text-danger"></span>
         </div>
 
-        <div class="form-group row">
+        @* <div class="form-group row">
             <label asp-for="Order.PriceFinal" class="required col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-3">
                 <div class="input-group mb-2 mr-sm-2">
@@ -262,19 +252,9 @@
                 </div>
                 <span asp-validation-for="Order.PriceDiscount" class="text-danger"></span>
             </div>
-        </div>
+        </div> *@
 
         <div class="form-group row">
-            @* <label asp-for="Order.OtherCosts" class="col-lg-3 col-form-label form-control-label control-label" ></label>
-            <div class="col-lg-3">
-                <div class="input-group mb-2 mr-sm-2">
-                    <div class="input-group-prepend">
-                        <div class="input-group-text">@Model.CurrencyName</div>
-                    </div>
-                    <input asp-for="Order.OtherCosts" class="form-control" type="text" />
-                </div>
-                <span asp-validation-for="Order.OtherCosts" class="text-danger"></span>
-            </div> *@
             <label asp-for="Order.HourWage" class="required col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-3">
                  <div class="input-group mb-2 mr-sm-2">
@@ -319,7 +299,6 @@
             <label asp-for="Order.Notes" class="col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-9">
                 <textarea asp-for="Order.Notes" class="form-control"></textarea>
-                @* @Html.TextAreaFor(m => m.Order.Notes, additionalViewData: new { htmlAttributes = new { @class = "form-control" }}) *@
                 <span asp-validation-for="Order.Notes" class="text-danger"></span>
             </div>
         </div>
@@ -416,8 +395,14 @@
             // https://stackoverflow.com/questions/28062254/how-can-i-detect-values-change-in-column-for-dynamic-rows-in-table/28062483#28062483
             // When changing InvoiceIssueDate, fill InvoiceDueDate by + days from <InvoiceDueDays>
             // https://ultimatecourses.com/blog/attaching-event-handlers-to-dynamically-created-javascript-elements
-            $('#Order_InvoiceIssueDate').change('input', function(){
-                var date = new Date($('#Order_InvoiceIssueDate').val());
+            //$('#Order_InvoiceIssueDate').change('input', function(){
+
+            function dynamicEvent() {
+                console.log("Reaguji!!");
+            };
+
+            $('.invoiceDate').change('input', function(){
+                var date = new Date($('.invoiceDate').val());
                 date.setDate( date.getUTCDate() + @Model.InvoiceDueDays );
                 var futureDate = date.getFullYear()
                     +'-'
@@ -445,19 +430,26 @@
 
             // Add new INVOICES row
             var idInvoice = @Model.Order.Invoices.Count();
+            var invoiceDueDays = @Html.Raw(Json.Serialize(Model.InvoiceDueDays));
             $('.add-row-invoice').click(function () {
-                var idNum = idInvoice + 1;
                 var html =
                     '<div class="row form-group justify-content-end" id="dynamic-row-invoice-' + idInvoice + '">'+
                         '<input type="number" hidden="true" data-val="true" data-val-required="The InvoiceId field is required." id="Order_Invoices_' + idInvoice + '__InvoiceId" name="Order.Invoices[' + idInvoice + '].InvoiceId" value="0">'+
                         '<div class="col-lg-3 mycalendar">'+
-                            '<input class="form-control" type="text" autocomplete="off" placeholder="Termín vystavení" data-val="true" data-val-required="The Předp. termín vystavení faktury field is required." id="Order_Invoices_' + idInvoice + '__InvoiceIssueDate" name="Order.Invoices[' + idInvoice + '].InvoiceIssueDate" value="">'+
+                            '<input class="form-control" type="text" autocomplete="off" placeholder="Termín vystavení" data-id="' + idInvoice + '" data-val="true" data-val-required="The Předp. termín vystavení faktury field is required." id="Order_Invoices_' + idInvoice + '__InvoiceIssueDate" name="Order.Invoices[' + idInvoice + '].InvoiceIssueDate" value="">'+
                             '<span class="text-danger field-validation-valid" data-valmsg-for="Order.Invoices[' + idInvoice + '].InvoiceIssueDate" data-valmsg-replace="true"></span>'+
                         '</div>'+
-                        '<div class="col-lg-3 mycalendar">'+
-                            '<input class="form-control" type="text" autocomplete="off" placeholder="Splatnost faktury" data-val="true" data-val-required="The Splatnost faktury field is required." id="Order_Invoices_' + idInvoice + '__InvoiceDueDate" name="Order.Invoices[' + idInvoice + '].InvoiceDueDate" value="">'+
-                            '<span class="text-danger field-validation-valid" data-valmsg-for="Order.Invoices[' + idInvoice + '].InvoiceDueDate" data-valmsg-replace="true"></span>'+
+
+                        '<div class="col-lg-3">'+
+                            '<div class="input-group mb-2 mr-sm-2">'+
+                                '<div class="input-group-prepend">'+
+                                    '<div class="input-group-text" data-toggle="tooltip" title="Splatnost faktury [dní]. Upravit datum." data-original-title="Hmm" style="cursor: pointer;">@Model.InvoiceDueDays</div>'+
+                                '</div>'+
+                                    '<input class="form-control" type="text" autocomplete="off" placeholder="Splatnost faktury" data-val="true" data-id="' + idInvoice + '" data-val-required="The Splatnost faktury field is required." id="Order_Invoices_' + idInvoice + '__InvoiceDueDate" name="Order.Invoices[' + idInvoice + '].InvoiceDueDate" value="">'+
+                                    '<span class="text-danger field-validation-valid" data-valmsg-for="Order.Invoices[' + idInvoice + '].InvoiceDueDate" data-valmsg-replace="true"></span>'+
+                            '</div>'+
                         '</div>'+
+
                         '<div class="col-lg-3">'+
                             '<div class="input-group mb-2 mr-sm-2">'+
                                 '<div class="input-group-prepend">'+
@@ -475,8 +467,27 @@
                 var _targetForm = $(".dynamic-rows-invoices")
                 _targetForm.append(html)
 
-                $('#Order_Invoices_' + idInvoice + '__InvoiceIssueDate').datepicker(datepickerParameters[0]);
-                $('#Order_Invoices_' + idInvoice + '__InvoiceDueDate').datepicker(datepickerParameters[0]);
+                var _invoiceIssueInput = $('#Order_Invoices_' + idInvoice + '__InvoiceIssueDate');
+                var _invoiceDueInput = $('#Order_Invoices_' + idInvoice + '__InvoiceDueDate');
+
+                var parsed_date = @Html.Raw(Json.Serialize(Model.Offer.EstimatedFinishDate))
+                if ( parsed_date != null) {
+                    _invoiceIssueInput.val(new Date(parsed_date).toISOString().substring(0, 10));
+                }
+
+                _invoiceIssueInput.datepicker(datepickerParameters[0]);
+                _invoiceDueInput.datepicker(datepickerParameters[0]);
+
+                _invoiceIssueInput.on("changeDate", function() {
+                    var date = new Date(_invoiceIssueInput.val());
+                    date.setDate( date.getUTCDate() + @Model.InvoiceDueDays );
+                    var futureDate = date.getFullYear()
+                        +'-'
+                        +('0'+(date.getMonth()+1)).slice(-2)
+                        +'-'
+                        +('0'+(date.getDate())).slice(-2);
+                    $('#Order_Invoices_' + _invoiceIssueInput.data('id') + '__InvoiceDueDate').val(futureDate);
+                 });
 
                 $('form').data('validator', null);
                 $.validator.unobtrusive.parse($('form'));
@@ -488,7 +499,6 @@
             // Add new OTHER COSTS row
             var idOtherCosts = @Model.Order.OtherCosts.Count();
             $('.add-row-other-costs').click(function () {
-                var idNum = idOtherCosts + 1;
                 var html =
                     '<div class="row form-group justify-content-end" id="dynamic-row-other-costs-' + idOtherCosts + '">'+
                         '<input type="number" hidden="true" data-val="true" data-val-required="The OtherCostId field is required." id="Order_OtherCosts_' + idOtherCosts + '__OtherCostId" name="Order.OtherCosts[' + idOtherCosts + '].OtherCostId" value="0">'+
