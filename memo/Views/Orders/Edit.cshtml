@@ -624,7 +624,7 @@
                         '<div class="col-lg-3">'+
                             '<div class="input-group mb-2 mr-sm-2">'+
                                 '<div class="input-group-prepend">'+
-                                    '<div class="input-group-text" data-toggle="tooltip" title="Přičíst dny" style="cursor: pointer;" onclick="AddInvoiceDueDays(' + idInvoice + ');">@Model.InvoiceDueDays &nbsp;<i class="fa fa-caret-right"></i></div>'+
+                                    '<div class="input-group-text newlyAddedTooltip" data-toggle="tooltip" title="Přičíst dny" style="cursor: pointer;" onclick="AddInvoiceDueDays(' + idInvoice + ');">@Model.InvoiceDueDays &nbsp;<i class="fa fa-caret-right"></i></div>'+
                                 '</div>'+
                                     '<input class="form-control" type="text" autocomplete="off" placeholder="Splatnost faktury" data-val="true" data-val-required="The Splatnost faktury field is required." id="Order_Invoices_' + idInvoice + '__InvoiceDueDate" name="Order.Invoices[' + idInvoice + '].InvoiceDueDate" value="">'+
                                     '<span class="text-danger field-validation-valid" data-valmsg-for="Order.Invoices[' + idInvoice + '].InvoiceDueDate" data-valmsg-replace="true"></span>'+
@@ -658,6 +658,7 @@
 
                 _invoiceIssueInput.datepicker(datepickerParameters[0]);
                 _invoiceDueInput.datepicker(datepickerParameters[0]);
+                $('.newlyAddedTooltip').tooltip();
 
                 _invoiceIssueInput.on("changeDate", function() {
                     var date = new Date(_invoiceIssueInput.val());

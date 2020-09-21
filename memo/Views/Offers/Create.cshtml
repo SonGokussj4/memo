@@ -69,7 +69,7 @@
                 <span asp-validation-for="CompanyId" class="text-danger"></span>
             </div>
             <div class="col-lg-1" data-toggle="tooltip" title="Nová firma">
-                <a asp-for="create" asp-controller="Companies">
+                <a asp-action="create" asp-controller="Companies">
                     <i class="form-control fa fa-plus-circle" style="color: green; cursor: pointer;"></i>
                 </a>
             </div>
@@ -78,7 +78,7 @@
                 <span asp-validation-for="ContactId" class="text-danger"></span>
             </div>
             <div class="col-lg-1" data-toggle="tooltip" title="Nový kontakt">
-                <a asp-for="create" asp-controller="Contacts">
+                <a asp-action="create" asp-controller="Contacts">
                     <i class="form-control fa fa-plus-circle" style="color: green; cursor: pointer;"></i>
                 </a>
             </div>

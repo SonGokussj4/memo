@@ -76,10 +76,8 @@ CREATE TABLE [memo].[Invoice] (
   [CostCzk] decimal(18,3)
 )
 GO
--- ON DELETE CASCADE
------------------------
-
 ALTER TABLE [memo].[Invoice] ADD FOREIGN KEY ([OrderId]) REFERENCES [memo].[Order] ([OrderId])
+ON DELETE CASCADE
 GO
 
 CREATE TABLE [memo].[OtherCost]
@@ -91,9 +89,10 @@ CREATE TABLE [memo].[OtherCost]
   [CostCzk] decimal(18,3)
 )
 GO
-
 ALTER TABLE [memo].[OtherCost] ADD FOREIGN KEY ([OrderId]) REFERENCES [memo].[Order] ([OrderId])
+ON DELETE CASCADE
 GO
+
 
 -- ON DELETE CASCADE
 -----------------------
