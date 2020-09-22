@@ -229,7 +229,7 @@
                 <span asp-validation-for="CompanyId" class="text-danger"></span>
             </div>
             <div class="col-lg-1" data-toggle="tooltip" title="Nová firma">
-                <a asp-action="create" asp-controller="Companies">
+                <a asp-action="create" asp-controller="Companies" target="_blank">
                     <i class="form-control fa fa-plus-circle" style="color: green; cursor: pointer;"></i>
                 </a>
             </div>
@@ -238,7 +238,7 @@
                 <span asp-validation-for="ContactId" class="text-danger"></span>
             </div>
             <div class="col-lg-1" data-toggle="tooltip" title="Nový kontakt">
-                <a asp-action="create" asp-controller="Contacts">
+                <a asp-action="create" asp-controller="Contacts" target="_blank">
                     <i class="form-control fa fa-plus-circle" style="color: green; cursor: pointer;"></i>
                 </a>
             </div>
@@ -296,7 +296,7 @@
                 <input type="reset" class="btn btn-secondary" value="Resetovat pole" data-toggle="tooltip" title="Vrátí neuložené úpravy"/>
                 <input type="submit" class="btn btn-primary" name="actionType" value="Uložit" />
                 <input type="submit" class="btn btn-primary" name="actionType" value="Uložit a zavřít" />
-                <a href="#" class="btn btn-danger pull-right" onclick="ConfirmDelete(@Model.OfferId)">Smazat</a>
+                <a href="javascript:void(0)" class="btn btn-danger pull-right" onclick="ConfirmDelete(@Model.OfferId)">Smazat</a>
             </div>
         </div>
 
@@ -322,9 +322,9 @@
             </div>
             <!-- footer -->
             <div class="modal-footer">
-                <a href="#" class="btn btn-info" data-dismiss="modal">Zpět</a>
-                <a href="#" class="btn btn-warning" onclick="DeactivateItem()">Deaktivovat</a>
-                <a href="#" class="btn btn-danger" onclick="DeleteItem()">Smazat</a>
+                <a href="javascript:void(0)" class="btn btn-info" data-dismiss="modal">Zpět</a>
+                <a href="javascript:void(0)" class="btn btn-warning" onclick="DeactivateItem()">Deaktivovat</a>
+                <a href="javascript:void(0)" class="btn btn-danger" onclick="DeleteItem()">Smazat</a>
             </div>
         </div>
     </div>

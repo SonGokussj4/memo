@@ -214,7 +214,7 @@
                 <label class="form-control-label control-label">Faktury</label>
             </div>
             <div class="col-lg-10">
-                <a href="#" class="btn btn-success col-lg-3 add-row-invoices mt-1" data-toggle="tooltip" title="Přidat fakturaci"><i class="fa fa-plus"></i> Přidat fakturaci</a>
+                <a href="javascript:void(0)" class="btn btn-success col-lg-3 add-row-invoices mt-1" data-toggle="tooltip" title="Přidat fakturaci"><i class="fa fa-plus"></i> Přidat fakturaci</a>
             </div>
         </div>
 
@@ -251,7 +251,7 @@
                     </div>
 
                     <div class="col-lg-1">
-                        <a href="#" class="btn btn-danger btn-sm mt-1" data-toggle="tooltip" title="Odstranit záznam" onclick="DeleteInvoice(@Model.Order.Invoices[i].InvoiceId)"><i class="fa fa-trash"></i></a>
+                        <a href="javascript:void(0)" class="btn btn-danger btn-sm mt-1" data-toggle="tooltip" title="Odstranit záznam" onclick="DeleteInvoice(@Model.Order.Invoices[i].InvoiceId)"><i class="fa fa-trash"></i></a>
                     </div>
                 </div>
             }
@@ -263,7 +263,7 @@
                 <label class="form-control-label control-label">Další náklady</label>
             </div>
             <div class="col-lg-10">
-                <a href="#" class="btn btn-success col-lg-3 add-row-other-costs mt-1" data-toggle="tooltip" title="Přidat další náklady"><i class="fa fa-plus"></i> Další náklady</a>
+                <a href="javascript:void(0)" class="btn btn-success col-lg-3 add-row-other-costs mt-1" data-toggle="tooltip" title="Přidat další náklady"><i class="fa fa-plus"></i> Další náklady</a>
             </div>
         </div>
 
@@ -289,7 +289,7 @@
                     </div>
 
                     <div class="col-lg-1">
-                        <a href="#" class="btn btn-danger btn-sm mt-1" data-toggle="tooltip" title="Odstranit záznam" onclick="DeleteOtherCost(@Model.Order.OtherCosts[i].OtherCostId)"><i class="fa fa-trash"></i></a>
+                        <a href="javascript:void(0)" class="btn btn-danger btn-sm mt-1" data-toggle="tooltip" title="Odstranit záznam" onclick="DeleteOtherCost(@Model.Order.OtherCosts[i].OtherCostId)"><i class="fa fa-trash"></i></a>
                     </div>
                 </div>
             }
@@ -641,7 +641,7 @@
                             '</div>'+
                         '</div>'+
                         '<div class="col-lg-1">'+
-                            '<a href="#" class="btn btn-danger btn-sm mt-1" data-toggle="tooltip" title="" data-original-title="Odstranit záznam" onclick="DeleteInvoice(' + idInvoice + ')"><i class="fa fa-trash white"></i></a>'+
+                            '<a href="javascript:void(0)" class="btn btn-danger btn-sm mt-1" data-toggle="tooltip" title="" data-original-title="Odstranit záznam" onclick="DeleteInvoice(' + idInvoice + ')"><i class="fa fa-trash white"></i></a>'+
                         '</div>'+
                     '</div>';
                 var _formTemp = $("#template-invoices").clone(true)
@@ -694,7 +694,7 @@
                             '</div>'+
                         '</div>'+
                         '<div class="col-lg-1">'+
-                            '<a href="#" class="btn btn-danger btn-sm mt-1" data-toggle="tooltip" title="" data-original-title="Odstranit záznam" onclick="DeleteOtherCost(' + idOtherCosts + ')"><i class="fa fa-trash white"></i></a>'+
+                            '<a href="javascript:void(0)" class="btn btn-danger btn-sm mt-1" data-toggle="tooltip" title="" data-original-title="Odstranit záznam" onclick="DeleteOtherCost(' + idOtherCosts + ')"><i class="fa fa-trash white"></i></a>'+
                         '</div>'+
                     '</div>';
 
