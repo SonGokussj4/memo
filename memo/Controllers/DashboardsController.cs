@@ -24,9 +24,18 @@ namespace memo.Controllers
             _db = db;
         }
 
-        public IActionResult Index(string filter = "months", string SelectedYear = "2020")
+        [HttpGet]
+        public IActionResult Index(DashboardVM vm = null)
         {
-            int selectedYear = Convert.ToInt32(SelectedYear);
+            // DashboardVM vm = new DashboardVM();
+
+            if (vm.Filter == null)
+            {
+                vm.Year = 2020;
+                vm.Filter = "months";
+                vm.Department = "All";
+            }
+
             // DashboardVM viewModel = new DashboardVM();
 
             // viewModel.Months = _db.Order.Select(x => x.InvoiceDueDate).ToList();
@@ -71,10 +80,10 @@ namespace memo.Controllers
             // List<DashboardCashVM> viewModelCash2 = filtered.ToList();
 
             List<DashboardCashVM> viewModelCash = new List<DashboardCashVM>();
-            if (filter == "months")
+            if (vm.Filter == "months")
             {
                 viewModelCash = _db.Invoice
-                    .Where(a => a.InvoiceDueDate.Value.Year == selectedYear)
+                    .Where(a => a.InvoiceDueDate.Value.Year == vm.Year)
                     .GroupBy(b => b.InvoiceDueDate.Value.Month)
                     .Select(g => new DashboardCashVM
                     {
@@ -85,7 +94,7 @@ namespace memo.Controllers
                         // SumaC = string.Format("{0:C}", Convert.ToDecimal(g.Sum(gi => gi.PriceFinalCzk))),
                         // TotalHours = $"{g.Sum(gi => gi.TotalHours)} hod",
                         // AvgHourWage = $"{string.Format("{0:C}", g.Average(gi => gi.HourWage))}/hod",
-                        Month = new DateTime(selectedYear, g.Key, 1),
+                        Month = new DateTime(vm.Year, g.Key, 1),
                         Cash = (int)g.Sum(gi => gi.CostCzk),
                         // Cash = (int)g.Sum(gi => gi.PriceFinalCzk),
                     })
@@ -94,7 +103,7 @@ namespace memo.Controllers
             else
             {
                 viewModelCash = _db.Invoice
-                    .Where(a => a.InvoiceDueDate.Value.Year == selectedYear)
+                    .Where(a => a.InvoiceDueDate.Value.Year == vm.Year)
                     .AsEnumerable()
                     .GroupBy(b => ISOWeek.GetWeekOfYear((DateTime)b.InvoiceDueDate))
                     .Select(g => new DashboardCashVM
@@ -125,7 +134,7 @@ namespace memo.Controllers
                     // SumaC = string.Format("{0:C}", Convert.ToDecimal(g.Sum(gi => gi.PriceFinalCzk))),
                     // TotalHours = $"{g.Sum(gi => gi.TotalHours)} hod",
                     // AvgHourWage = $"{string.Format("{0:C}", g.Average(gi => gi.HourWage))}/hod",
-                    Month = new DateTime(selectedYear, g.Key, 1),
+                    Month = new DateTime(vm.Year, g.Key, 1),
                     All = (int)g.Count(),
                     Wait = (int)g.Count(row => row.OfferStatusId == 1),
                     Won = (int)g.Count(row => row.OfferStatusId == 2),
@@ -137,10 +146,20 @@ namespace memo.Controllers
             {
                 DashboardCashVM = viewModelCash,
                 DashboardWonOffersVM = viewModelWonOffers,
-                filter = filter,
+                Filter = vm.Filter,
+                Year = 2020,
+                Department = "All",
             };
 
             return View(viewModel);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult FilterIndex(DashboardVM vm)
+        {
+            // return View(vm);
+            return RedirectToAction("Index", new { vm });
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

@@ -24,45 +24,30 @@
 }
 *@
 
-<form class="form-inline">
+<form class="form-inline" asp-action="Index" method="get">
     <div class="container d-flex" style="justify-content: space-around;">
         <div class="d-flex">
             <label class="border-right mx-2 pr-2">Časové období:</label>
             @* <a asp-action="Index" asp-route-filter="weeks" data-toggle="tooltip" title="Finance v rozmezí týdnů" class="btn btn-primary ml-2 mr-2">Týdny</a>
             <a asp-action="Index" asp-route-filter="months" data-toggle="tooltip" title="Finance v rozmezí měsíců" class="btn btn-primary ml-2 mr-2">Měsíce</a> *@
-            <select data-toggle="tooltip" title="PROZATÍM NEFUNGUJE" class="form-control shadow-sm" id="SelectedYear" name="SelectedYear">
-                <option value="range">Rozsah</option>
-                <option value="weeks">Týdny</option>
-                <option value="months" selected>Měsíce</option>
-                <option value="quarters">Kvartály</option>
+            <select asp-for="Filter" asp-items="@Model.FilterList" class="form-control shadow-sm auto-post" data-toggle="tooltip" title="Vyberte časové rozmezí">
+                @* <option value="months" selected>Měsíce</option> *@
             </select>
         </div>
         <div class="d-flex">
             <label class="border-right mx-2 pr-2">Rok:</label>
-            <select data-toggle="tooltip" title="PROZATÍM NEFUNGUJE" class="form-control shadow-sm" id="SelectedYear" name="SelectedYear">
-                <option value="2019">2019</option>
-                <option value="2020" selected>2020</option>
-                <option value="2021">2021</option>
+            <select asp-for="Year" asp-items="@Model.YearList" class="form-control shadow-sm auto-post" data-toggle="tooltip" title="Zvolte rok">
+                @* <option value="2020" selected>2020</option> *@
             </select>
         </div>
         <div class="d-flex">
             <label class="border-right mx-2 pr-2">Oddělení:</label>
-            @* <select asp-for="Department" asp-items="DepartmentList" class="form-control shadow-sm" title="Filtrování přes oddělení"> *@
-            <select asp-for="Department" class="form-control shadow-sm" title="Filtrování přes oddělení">
-                <option value="all">Všechny</option>
-                <option value="C1">C1</option>
-                <option value="C2">C2</option>
+            <select asp-for="Department" asp-items="@Model.DepartmentList" class="form-control shadow-sm auto-post" data-toggle="tooltip" title="Zvolte oddělení">
+                @* <option value="all">Všechny</option> *@
             </select>
-            @* <select data-toggle="tooltip" title="PROZATÍM NEFUNGUJE" class="form-control shadow-sm" id="SelectedDepartment" name="SelectedDepartment">
-                <option value="C1">C1</option>
-                <option value="C2" selected>C2</option>
-                <option value="C3">C3</option>
-                <option value="C4">C4</option>
-                <option value="C5">C5</option>
-                <option value="C6">C6</option>
-            </select> *@
         </div>
-        <a asp-action="Index" data-toggle="tooltip" title="Filtrovat" class="btn btn-primary ml-5"><i class="fa fa-filter fa-fw"></i>Filtrovat</a>
+        @* <a asp-action="Index" data-toggle="tooltip" title="Filtrovat" class="btn btn-primary ml-5"><i class="fa fa-filter fa-fw"></i>Filtrovat</a> *@
+        <button type="submit" class="btn btn-primary"><i class="fa fa-filter fa-fw"></i>Filtrovat</button>
     </div>
 </form>
 
@@ -70,7 +55,7 @@
 
 <div class="container d-flex" style="justify-content: space-around;">
     <p>(DEBUG)</p>
-    <p>filter: @Model.filter</p>
+    <p>filter: @Model.Filter</p>
     <p>Year: @Model.Year</p>
     <p>Department: @Model.Department</p>
 </div>
@@ -112,6 +97,12 @@
 @section scripts{
 <script>
 
+    $(document).ready(function () {
+        $('form').find('select.auto-post').change(function () {
+            $(this).parents('form').submit();
+        });
+    });
+
     @* var monthArray = @Json.Serialize(Model.Months); *@
     @* var cashArray = @Json.Serialize(Model.PlannedCashPerMonth); *@
     @* var monthArray = @Json.Serialize(Model.Months); *@
@@ -120,7 +111,7 @@
     // -----------------------------------------
     // Graf - Očekávaný příjem v průběhu měsíců
     // -----------------------------------------
-    var filter = @Html.Raw(Json.Serialize(Model.filter))
+    var filter = @Html.Raw(Json.Serialize(Model.Filter))
     var items = @Html.Raw(Json.Serialize(Model.DashboardCashVM));
 
     if (filter == "months")
