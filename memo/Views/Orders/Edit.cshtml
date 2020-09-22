@@ -438,53 +438,65 @@
         }
 
         function DeleteInvoice(invoiceId) {
-            console.log(`Deleting invoice id: ${invoiceId}`);
-            $.ajax({
-                //async: true,
-                type: 'POST',
-                dataType: 'JSON',
-                ContentType: 'application/json; charset=utf-8',
-                url: '@Url.Action("DeleteInvoice")',
-                data: { id: invoiceId },
-                cache: false,
-                beforeSend:function(){
-                    return confirm(
-                        "Jste si jisti??? Tento úkon smaže označenou fakturaci!"
-                    );
-                },
-                success: function(data) {
-                    window.location = "@Model.Order.OrderId";  // return Orders/Edit/{OrderId}
-                },
-                error: function(data) {
-                     //alert(JSON.stringify(data.responseJSON.errorMessage));
-                     alert(data.responseJSON.errorMessage);
-                }
-            });
+            console.log(`Deleting invoiceId: ${invoiceId}`);
+            var row = document.getElementById(`dynamic-row-invoice-${invoiceId}`);
+            if (row != null) {
+                row.remove();
+            }
+            else {
+                $.ajax({
+                    //async: true,
+                    type: 'POST',
+                    dataType: 'JSON',
+                    ContentType: 'application/json; charset=utf-8',
+                    url: '@Url.Action("DeleteInvoice")',
+                    data: { id: invoiceId },
+                    cache: false,
+                    beforeSend:function(){
+                        return confirm(
+                            "Jste si jisti??? Tento úkon smaže označenou fakturaci!"
+                        );
+                    },
+                    success: function(data) {
+                        window.location = "@Model.Order.OrderId";  // return Orders/Edit/{OrderId}
+                    },
+                    error: function(data) {
+                        //alert(JSON.stringify(data.responseJSON.errorMessage));
+                        alert(data.responseJSON.errorMessage);
+                    }
+                });
+            }
         }
 
         function DeleteOtherCost(otherCostId) {
             console.log(`Deleting invoice id: ${otherCostId}`);
-            $.ajax({
-                //async: true,
-                type: 'POST',
-                dataType: 'JSON',
-                ContentType: 'application/json; charset=utf-8',
-                url: '@Url.Action("DeleteOtherCost")',
-                data: { id: otherCostId },
-                cache: false,
-                beforeSend:function(){
-                    return confirm(
-                        "Jste si jisti??? Tento úkon smaže označený další náklad!"
-                    );
-                },
-                success: function(data) {
-                    window.location = "@Model.Order.OrderId";  // return Orders/Edit/{OrderId}
-                },
-                error: function(data) {
-                     //alert(JSON.stringify(data.responseJSON.errorMessage));
-                     alert(data.responseJSON.errorMessage);
-                }
-            });
+            var row = document.getElementById(`dynamic-row-other-costs-${otherCostId}`);
+            if (row != null) {
+                row.remove();
+            }
+            else {
+                $.ajax({
+                    //async: true,
+                    type: 'POST',
+                    dataType: 'JSON',
+                    ContentType: 'application/json; charset=utf-8',
+                    url: '@Url.Action("DeleteOtherCost")',
+                    data: { id: otherCostId },
+                    cache: false,
+                    beforeSend:function(){
+                        return confirm(
+                            "Jste si jisti??? Tento úkon smaže označený další náklad!"
+                        );
+                    },
+                    success: function(data) {
+                        window.location = "@Model.Order.OrderId";  // return Orders/Edit/{OrderId}
+                    },
+                    error: function(data) {
+                        //alert(JSON.stringify(data.responseJSON.errorMessage));
+                        alert(data.responseJSON.errorMessage);
+                    }
+                });
+            }
         }
 
 //        function changeExchangeRate(curSymbol) {
