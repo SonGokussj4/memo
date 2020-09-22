@@ -13,61 +13,46 @@ DELETE FROM [memo].[Company];
 INSERT INTO [memo].[Company]
   ([Name], [City], [Address], [Phone], [Web], [InvoiceDueDays])
 VALUES
-  ('ŠKODA AUTO a.s.', '', '', '', '', '0'),
-  ('Andreas Stihl  AG  & Co.  KG', '', '', '', '', '0'),
-  ('SAFRAN CABIN CZ, s.r.o.', '', '', '', '', '0'),
-  ('EVEKTOR-AEROTECHNIK, a.s.', '', '', '', '', '0'),
-  ('HAUK  s.r.o.', '', '', '', '', '0'),
-  ('ŠKODA TRANSPORTATION a.s.', '', '', '', '', '0'),
-  ('HELLA  AUTOTECHNIK NOVA, s.r.o.', '', '', '', '', '0'),
-  ('Aircraft Industries, a.s.', '', '', '', '', '0'),
-  ('CYBEX GmbH', '', '', '', '', '0'),
-  ('Mercedes-AMG GmbH', '', '', '', '', '0'),
-  ('Gubesch Engineering & Production GmbH', '', '', '', '', '0'),
-  ('Siemens Mobility, s.r.o.', '', '', '', '', '0'),
-  ('AIR TEAM service, s.r.o.', '', '', '', '', '0'),
-  ('AERO Vodochody  AEROSPACE a.s.', '', '', '', '', '0'),
-  ('Varroc Lighting Systems, s.r.o.', '', '', '', '', '0'),
-  ('seele pilsen s.r.o.', '', '', '', '', '0'),
-  ('STIHL Tirol GmbH', '', '', '', '', '0'),
-  ('S.A.B. Aerospace s.r.o.', '', '', '', '', '0'),
-  ('PLASTIKA a.s.', '', '', '', '', '0'),
-  ('Promens a.s.', '', '', '', '', '0'),
-  ('ERA a.s.', '', '', '', '', '0'),
-  ('UNIS   a.s.', '', '', '', '', '0'),
-  ('IMS - Drašnar s.r.o.', '', '', '', '', '0'),
-  ('TELENE SAS', '', '', '', '', '0'),
-  ('Letecké opravovne Trenčín, a.s.', '', '', '', '', '0'),
-  ('KERAMTECH s.r.o.', '', '', '', '', '0'),
-  ('ARAVER CZ, s.r.o.', '', '', '', '', '0'),
-  ('Blanik Aircraft CZ s.r.o.', '', '', '', '', '0'),
-  ('ZLIN  AIRCRAFT a.s.', '', '', '', '', '0'),
-  ('BRM AERO, s.r.o.', '', '', '', '', '0'),
-  ('D4.CZ s.r.o.', '', '', '', '', '0'),
-  ('MB iDesign Group a.s.', '', '', '', '', '0'),
-  ('SAZ  Aerospace s.r.o.', '', '', '', '', '0'),
-  ('HM PARTNERS s.r.o.', '', '', '', '', '0'),
-  ('KOVOPlast, výrobní družstvo', '', '', '', '', '0'),
-  ('Univerzita Tomáše Bati ve Zlíně', '', '', '', '', '0'),
-  ('Česká zbrojovka, a.s.', '', '', '', '', '0'),
-  ('EBZ Hoffmann s.r.o.', '', '', '', '', '0'),
-  ('David Bartoš', '', '', '', '', '0'),
-  ('Michal Tomala', '', '', '', '', '0'),
-  ('BOSPORT s.r.o.', '', '', '', '', '0'),
-  ('Petr  Havlík', '', '', '', '', '0'),
-  ('GUMOTEX Automotive Břeclav, s.r.o.', '', '', '', '', '0'),
-  ('protechnik consulting s.r.o.', '', '', '', '', '0'),
-  ('Okresní soud v Novém Jičíně', '', '', '', '', '0'),
-  ('SAS Autosystemtechnik S.R.O.', '', '', '', '', '0'),
-  ('Euro VAT Reclaim, s.r.o.', '', '', '', '', '0'),
-  ('Okresní soud v Šumperku', '', '', '', '', '0'),
-  ('Město Solnice', '', '', '', '', '0'),
-  ('ZŠ Kvasiny', '', '', '', '', '0'),
-  ('Ing. Marek Ambros', '', '', '', '', '0'),
-  ('Falcon Aircraft s.r.o.', '', '', '', '', '0'),
-  ('Drobný odběratel', '', '', '', '', '0'),
-  ('Air Jihlava - service s.r.o.', '', '', '', '', '0'),
-  ('ZK  AIRCRAFT SERVICE  s.r.o.', '', '', '', '', '0')
+  ('5M LEVIT s.r.o.', '', '', '', '', '14'),
+  ('Aircraft Industries, a.s.', '', '', '', '', '30'),
+  ('Andreas Stihl  AG  & Co.  KG', '', '', '', '', '30'),
+  ('ARAVER CZ, s.r.o', '', '', '', '', '3'),
+  ('BOSPORT s.r.o.', '', '', '', '', '30'),
+  ('CYBEX GmbH', '', '', '', '', '30'),
+  ('Česká agentura pro standardizaci', '', '', '', '', '14'),
+  ('D4.CZ s.r.o.', '', '', '', '', '30'),
+  ('David Bartoš', '', '', '', '', '30'),
+  ('EBZ Hoffmann s.r.o.', '', '', '', '', '30'),
+  ('EDAG Engineering CZ spol. s r.o.', '', '', '', '', '30'),
+  ('ERA a.s.', '', '', '', '', '30'),
+  ('EVEKTOR-AEROTECHNIK, a.s.', '', '', '', '', '30'),
+  ('Gubesch Engineering & Production GmbH', '', '', '', '', '30'),
+  ('Gumárny  Zubří, akciová  společnost', '', '', '', '', '30'),
+  ('GUMOTEX Automotive Břeclav, s.r.o.', '', '', '', '', '30'),
+  ('HAUK  s.r.o.', '', '', '', '', '30'),
+  ('IMS - Drašnar s.r.o.', '', '', '', '', '30'),
+  ('Ing. Marek Ambros', '', '', '', '', '30'),
+  ('Letecké opravovne Trenčín, a.s.', '', '', '', '', '30'),
+  ('LUKOV Plast spol. s r.o.', '', '', '', '', '30'),
+  ('Mercedes AMG', '', '', '', '', '30'),
+  ('Michal Tomala', '', '', '', '', '30'),
+  ('New Space Technologies s.r.o.', '', '', '', '', '30'),
+  ('Petr  Havlík', '', '', '', '', '30'),
+  ('PLASTIKA a.s.', '', '', '', '', '30'),
+  ('Promens a.s.', '', '', '', '', '30'),
+  ('SAFRAN CABIN CZ, s.r.o.', '', '', '', '', '60'),
+  ('SAFRAN CABIN GAYLLEYS US', '', '', '', '', '60'),
+  ('SAZ Aerospace s.r.o.', '', '', '', '', '14'),
+  ('Seele Pilsen s.r.o.', '', '', '', '', '30'),
+  ('Siemens Mobility', '', '', '', '', '30'),
+  ('STIHL Tirol GmbH', '', '', '', '', '30'),
+  ('ŠKODA AUTO a.s.', '', '', '', '', '30'),
+  ('ŠKODA TRANSPORTATION a.s.', '', '', '', '', '60'),
+  ('TELENE SAS', '', '', '', '', '60'),
+  ('Varroc Lighting Systems, s.r.o.', '', '', '', '', '75'),
+  ('ZLIN  AIRCRAFT a.s.', '', '', '', '', '30')
+
+
 
 
 
@@ -212,16 +197,16 @@ VALUES
 -- Změnit sloupec double na decimal
 
 --SELECT
---	ExchangeRate,
---	CAST([ExchangeRate] as decimal(18,3)) exchangerate_decimal
+-- ExchangeRate,
+-- CAST([ExchangeRate] as decimal(18,3)) exchangerate_decimal
 --from [memo].[Order]
 
 -- UPDATE
--- 	[memo].[Order]
+--  [memo].[Order]
 -- SET
--- 	[ExchangeRate] = CAST([ExchangeRate] as decimal(18,3));
+--  [ExchangeRate] = CAST([ExchangeRate] as decimal(18,3));
 
 --  ALTER TABLE
---  	[memo].[Order]
+--   [memo].[Order]
 --  ALTER COLUMN
---  	[ExchangeRate] DECIMAL(18,3);
+--   [ExchangeRate] DECIMAL(18,3);
