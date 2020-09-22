@@ -11,12 +11,12 @@ namespace memo.ViewModels
     {
         public List<DashboardCashVM> DashboardCashVM { get; set; }
         public List<DashboardWonOffersVM> DashboardWonOffersVM { get; set; }
-        public string Filter { get; set; }
+        public string TimePeriod { get; set; }
         public int Year { get; set; }
         public string Department { get; set; }
 
         // [NotMapped]
-        public List<SelectListItem> DepartmentList { get; } = new List<SelectListItem>
+        public List<SelectListItem> DepartmentList { get; set; } = new List<SelectListItem>
         {
             new SelectListItem { Value = "All", Text = "Všechny" },
             new SelectListItem { Value = "C1", Text = "C1" },
@@ -30,7 +30,7 @@ namespace memo.ViewModels
             new SelectListItem { Value = "2022", Text = "2022"},
         };
 
-        public List<SelectListItem> FilterList { get; } = new List<SelectListItem>
+        public List<SelectListItem> TimePeriodList { get; } = new List<SelectListItem>
         {
             new SelectListItem { Value = "range", Text = "Rozsah" },
             new SelectListItem { Value = "weeks", Text = "Týdny"},

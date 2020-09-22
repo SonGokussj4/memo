@@ -12,6 +12,7 @@ using memo.ViewModels;
 using memo.Data;
 using System.Globalization;
 using Microsoft.EntityFrameworkCore.SqlServer;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace memo.Controllers
 {
@@ -27,60 +28,34 @@ namespace memo.Controllers
         [HttpGet]
         public IActionResult Index(DashboardVM vm = null)
         {
-            // DashboardVM vm = new DashboardVM();
-
-            if (vm.Filter == null)
+            // Fill DepartmentList ComboBox with only used Offer Department values
+            vm.DepartmentList = new List<SelectListItem>();
+            vm.DepartmentList.Add( new SelectListItem { Value = "All", Text = "Všechny" });
+            var something = _db.Offer.Select(x => x.EveDepartment).Distinct().ToList();
+            foreach (string item in something)
             {
-                vm.Year = 2020;
-                vm.Filter = "months";
+                vm.DepartmentList.Add(new SelectListItem { Value = item, Text = item });
+            }
+
+            // Default values for filter
+            if (vm.TimePeriod == null)
+            {
+                vm.Year = DateTime.Now.Year;
+                vm.TimePeriod = "months";
                 vm.Department = "All";
             }
 
-            // DashboardVM viewModel = new DashboardVM();
+            List<Invoice> invoices = new List<Invoice>();
 
-            // viewModel.Months = _db.Order.Select(x => x.InvoiceDueDate).ToList();
-            // viewModel.PlannedCashPerMonth = _db.Order.Select(x => x.PriceFinalCzk).ToList();
-
-            // DashboardVM dashboardVM = _db.Order
-            //     .Where(x => x.InvoiceDueDate.Value.Year == 2020)
-            //     .GroupBy(l => l.InvoiceDueDate.Value.Month)
-            //     .Select(x => new DashboardVM {
-            //             Cash = (int)x.Sum(y => y.PriceFinalCzk),
-            //             Months = x.InvoiceDueDate.Value.Month,
-            //         }
-            //     ).ToList();
-
-            // List<DashboardCashVM> mylist = new List<DashboardCashVM>();
-
-
-            // IQueryable<Invoice> mylist = _db.Invoice.Where(a => a.InvoiceDueDate.Value.Year == selectedYear);
-
-
-            // if (filter == "months")
-            // {
-            //     IQueryable<DashboardCashVM> filtered = mylist
-            //         .GroupBy(b => b.InvoiceDueDate.Value.Month)
-            //         .Select(g => new DashboardCashVM {
-            //             Month = new DateTime(selectedYear, g.Key, 1),
-            //             Cash = (int)g.Sum(gi => gi.CostCzk),
-            //         });
-            // }
-            // else
-            // {
-            //     IQueryable<DashboardCashVM> filtered = (IQueryable<DashboardCashVM>)mylist
-            //         .AsEnumerable()
-            //         .GroupBy(b => ISOWeek.GetWeekOfYear((DateTime)b.InvoiceDueDate))
-            //         .Select(g => new DashboardCashVM {
-            //             Week = g.Key,
-            //             Cash = (int)g.Sum(gi => gi.CostCzk),
-            //         })
-            //         .OrderBy(x => x.Week);
-            // }
-
-            // List<DashboardCashVM> viewModelCash2 = filtered.ToList();
-
+            // Filter - Department, get offers == department and then invoices from those offers
+            if (vm.Department != "All")
+            {
+                List<Offer> offers = _db.Offer.Where(x => x.EveDepartment == vm.Department).ToList();
+                var orders = _db.Order.Where
+                var numbers = offers.Select(x => x.Invoice).Distinct().ToList();
+            }
             List<DashboardCashVM> viewModelCash = new List<DashboardCashVM>();
-            if (vm.Filter == "months")
+            if (vm.TimePeriod == "months")
             {
                 viewModelCash = _db.Invoice
                     .Where(a => a.InvoiceDueDate.Value.Year == vm.Year)
@@ -110,11 +85,11 @@ namespace memo.Controllers
                     {
                         Week = g.Key,
                         Cash = (int)g.Sum(gi => gi.CostCzk),
-                        // Cash = (int)g.Sum(gi => gi.PriceFinalCzk),
                     })
                     .OrderBy(x => x.Week)
                     .ToList();
             }
+
             // DateTimeFormatInfo dfi = DateTimeFormatInfo.CurrentInfo;
             // Calendar cal = dfi.Calendar;
             // var res = dfi.FirstDayOfWeek;
@@ -142,25 +117,18 @@ namespace memo.Controllers
                 })
                 .ToList();
 
-            DashboardVM viewModel = new DashboardVM
-            {
-                DashboardCashVM = viewModelCash,
-                DashboardWonOffersVM = viewModelWonOffers,
-                Filter = vm.Filter,
-                Year = 2020,
-                Department = "All",
-            };
+            vm.DashboardCashVM = viewModelCash;
+            vm.DashboardWonOffersVM = viewModelWonOffers;
 
-            return View(viewModel);
+            return View(vm);
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult FilterIndex(DashboardVM vm)
-        {
-            // return View(vm);
-            return RedirectToAction("Index", new { vm });
-        }
+        // [HttpPost]
+        // [ValidateAntiForgeryToken]
+        // public IActionResult FilterIndex(DashboardVM vm)
+        // {
+        //     return RedirectToAction("Index", new { vm });
+        // }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

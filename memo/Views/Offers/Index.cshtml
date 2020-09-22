@@ -127,13 +127,15 @@
             <th scope="col" class="text-center" data-field="3" data-sortable="true" data-filter-control="input">Vytvořeno</th>
             <th scope="col" class="text-center" data-field="4" data-sortable="true" data-filter-control="input">Název</th>
             <th scope="col" class="text-center" data-field="5" data-sortable="true" data-filter-control="input">Přijato</th>
-            <th scope="col" class="text-center" data-field="6" data-sortable="true" data-filter-control="input">Firma</th>
-            <th scope="col" class="text-center" data-field="7" data-sortable="true" data-filter-control="input">Kontakt</th>
-            <th scope="col" class="text-center" data-field="8" data-sortable="true" data-filter-control="input">Předmět</th>
-            <th scope="col" class="text-center" data-field="9" data-sortable="true" data-filter-control="input">Cena</th>
-            <th scope="col" class="text-center" data-field="10" data-sortable="true" data-filter-control="input">Měna</th>
-            <th scope="col" class="text-center" data-field="11" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatterCz">Cena [CZK]</th>
-            <th scope="col" class="text-center" data-field="12" data-sortable="true" data-filter-control="input">Poznámky</th>
+            <th scope="col" class="text-center" data-field="6" data-sortable="true" data-filter-control="input">Oddělení</th>
+            <th scope="col" class="text-center" data-field="7" data-sortable="true" data-filter-control="input">Eve vytvořil</th>
+            <th scope="col" class="text-center" data-field="8" data-sortable="true" data-filter-control="input">Zákazník</th>
+            <th scope="col" class="text-center" data-field="9" data-sortable="true" data-filter-control="input">Kontakt</th>
+            <th scope="col" class="text-center" data-field="10" data-sortable="true" data-filter-control="input">Předmět</th>
+            <th scope="col" class="text-center" data-field="11" data-sortable="true" data-filter-control="input">Cena</th>
+            <th scope="col" class="text-center" data-field="12" data-sortable="true" data-filter-control="input">Měna</th>
+            <th scope="col" class="text-center" data-field="13" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatterCz">Cena [CZK]</th>
+            <th scope="col" class="text-center" data-field="14" data-sortable="true" data-filter-control="input">Poznámky</th>
         </tr>
     </thead>
     <tbody>
@@ -183,6 +185,8 @@
                 <th scope="row" class="text-left">@dateText</th>
                 <th scope="row" class="text-left">@item.OfferName</th>
                 <th scope="row" class="text-left">@item.ReceiveDate.Value.ToString("yyyy-MM-dd")</th>
+                <th scope="row" class="text-left">@item.EveDepartment</th>
+                <th scope="row" class="text-left">@item.EveCreatedUser</th>
                 <th scope="row" class="text-left">@item.Company?.Name</th>
                 <th scope="row" class="text-left">@item.Contact?.PersonTitle @item.Contact?.PersonName @item.Contact?.PersonLastName </th>
                 <th scope="row" class="notesWrap" data-toggle="tooltip" data-placement="top" data-html="true" title="@item.Subject">

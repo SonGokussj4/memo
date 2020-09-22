@@ -1,7 +1,6 @@
 @using System.Globalization;
 
 @{
-
     ViewData["Title"] = "Vyhodnocení";
 }
 
@@ -27,27 +26,18 @@
 <form class="form-inline" asp-action="Index" method="get">
     <div class="container d-flex" style="justify-content: space-around;">
         <div class="d-flex">
-            <label class="border-right mx-2 pr-2">Časové období:</label>
-            @* <a asp-action="Index" asp-route-filter="weeks" data-toggle="tooltip" title="Finance v rozmezí týdnů" class="btn btn-primary ml-2 mr-2">Týdny</a>
-            <a asp-action="Index" asp-route-filter="months" data-toggle="tooltip" title="Finance v rozmezí měsíců" class="btn btn-primary ml-2 mr-2">Měsíce</a> *@
-            <select asp-for="Filter" asp-items="@Model.FilterList" class="form-control shadow-sm auto-post" data-toggle="tooltip" title="Vyberte časové rozmezí">
-                @* <option value="months" selected>Měsíce</option> *@
-            </select>
+            <label class="border-right mx-2 pr-2 font-weight-bold">Časové období:</label>
+            <select asp-for="TimePeriod" asp-items="@Model.TimePeriodList" class="form-control shadow-sm auto-post" data-toggle="tooltip" title="Vyberte časové rozmezí"></select>
         </div>
         <div class="d-flex">
-            <label class="border-right mx-2 pr-2">Rok:</label>
-            <select asp-for="Year" asp-items="@Model.YearList" class="form-control shadow-sm auto-post" data-toggle="tooltip" title="Zvolte rok">
-                @* <option value="2020" selected>2020</option> *@
-            </select>
+            <label class="border-right mx-2 pr-2 font-weight-bold">Rok:</label>
+            <select asp-for="Year" asp-items="@Model.YearList" class="form-control shadow-sm auto-post" data-toggle="tooltip" title="Zvolte rok"></select>
         </div>
         <div class="d-flex">
-            <label class="border-right mx-2 pr-2">Oddělení:</label>
-            <select asp-for="Department" asp-items="@Model.DepartmentList" class="form-control shadow-sm auto-post" data-toggle="tooltip" title="Zvolte oddělení">
-                @* <option value="all">Všechny</option> *@
-            </select>
+            <label class="border-right mx-2 pr-2 font-weight-bold">Oddělení:</label>
+            <select asp-for="Department" asp-items="@Model.DepartmentList" class="form-control shadow-sm auto-post" data-toggle="tooltip" title="Zvolte oddělení"></select>
         </div>
-        @* <a asp-action="Index" data-toggle="tooltip" title="Filtrovat" class="btn btn-primary ml-5"><i class="fa fa-filter fa-fw"></i>Filtrovat</a> *@
-        <button type="submit" class="btn btn-primary"><i class="fa fa-filter fa-fw"></i>Filtrovat</button>
+        <button type="submit" class="btn btn-primary TimePeriod" style="visibility: hidden;"><i class="fa fa-filter fa-fw"></i>Filtrovat</button>
     </div>
 </form>
 
@@ -55,7 +45,7 @@
 
 <div class="container d-flex" style="justify-content: space-around;">
     <p>(DEBUG)</p>
-    <p>filter: @Model.Filter</p>
+    <p>TimePeriod: @Model.TimePeriod</p>
     <p>Year: @Model.Year</p>
     <p>Department: @Model.Department</p>
 </div>
@@ -97,23 +87,33 @@
 @section scripts{
 <script>
 
+
+    // Add .auto-post class to ComboBox, when changed, it will autosubmit form
     $(document).ready(function () {
         $('form').find('select.auto-post').change(function () {
-            $(this).parents('form').submit();
+            if ($('form').find('select.auto-post').val() != "range") {
+                $(this).parents('form').submit();
+            }
+            else{
+                $(".TimePeriod").show();
+                //document.getElementsByClassName("TimePeriod").style.visibility = "hidden";
+                console.log("Zobrazuji");
+            }
         });
+
+        //$('form').find('#TimePeriod').change(function() {
+        //    console.log("Hmm");
+        //    var hmm = $(this).find('InputRanges')
+        //    console.log(`hmm: ${hmm}`);
+        //});
     });
 
-    @* var monthArray = @Json.Serialize(Model.Months); *@
-    @* var cashArray = @Json.Serialize(Model.PlannedCashPerMonth); *@
-    @* var monthArray = @Json.Serialize(Model.Months); *@
-    @* var cashArray = @Json.Serialize(Model.PlannedCashPerMonth); *@
-
-    // -----------------------------------------
+    // ----------------------------------------------------------------------------------------------
     // Graf - Očekávaný příjem v průběhu měsíců
-    // -----------------------------------------
-    var filter = @Html.Raw(Json.Serialize(Model.Filter))
-    var items = @Html.Raw(Json.Serialize(Model.DashboardCashVM));
+    // ----------------------------------------------------------------------------------------------
 
+    var filter = @Html.Raw(Json.Serialize(Model.TimePeriod))
+    var items = @Html.Raw(Json.Serialize(Model.DashboardCashVM));
     if (filter == "months")
     {
         var monthArray = items.map(a => new Date(a.month).toLocaleString('cs-CZ', { month: 'long' }));
@@ -134,25 +134,17 @@
                 label: 'Příjem v Kč',
                 data: cashArray,
                 fillColor: "#79D1CF",
-                backgroundColor: 'rgba(0, 123, 255, 0.4)',
-                borderColor: 'rgba(0, 123, 255, 0.8)',
+                backgroundColor: '#4d8fdb',
+                borderColor: '#4179ba',
                 borderWidth: 1,
-                barPercentage: 0.5,
+                barPercentage: 0.8,
             }]
         },
         options: {
-            //title: {
-            //    display: true,
-            //    text: 'Finance Eve v měsících roku 2020',
-            //},
             scales: {
                 yAxes: [{
-                    //display: true,
                     ticks: {
                         beginAtZero: true,
-                        //steps: 5,
-                        //stepValue: 200000,
-                        //max: 1000000,
                         callback: function(value, index, values) {
                             return value.toLocaleString('cs-CZ') + ' Kč';
                         }
@@ -169,13 +161,12 @@
         }
     });
 
-    // ------------------------------------------------------
+    // ----------------------------------------------------------------------------------------------
     // Graf - Vyhrané/celkem zadané nabídky v průběhu měsíců
-    // ------------------------------------------------------
+    // ----------------------------------------------------------------------------------------------
     var ctx = document.getElementById('chart_wonOffers');
 
     var items = @Html.Raw(Json.Serialize(Model.DashboardWonOffersVM));
-    //var monthArray = items.map(a => new Date(a.month).toLocaleString('cs-CZ', { month: 'long' }));
     var monthArray = items.map(a => new Date(a.month).toLocaleString('cs-CZ', { month: 'long' }));
     var allArray = items.map(a => a.all);
     var waitArray = items.map(a => a.wait);
@@ -187,22 +178,12 @@
         data: {
             labels: monthArray,
             datasets: [
-                //{
-                //    label: 'Celkem',
-                //    data: allArray,
-                //    fillColor: "#79D1CF",
-                //    backgroundColor: 'rgba(206, 212, 218, 0.6)',
-                //    borderColor: 'rgba(206, 212, 218, 0.9)',
-                //    borderWidth: 1,
-                //    barPercentage: 0.7,
-                //
-                //},
                 {
                     label: 'Čekají',
                     data: waitArray,
-                    fillColor: "#79D1CF",
-                    backgroundColor: 'rgba(0, 0, 255, 0.6)',
-                    borderColor: 'rgba(20, 20, 235, 0.9)',
+                    fillColor: "#949494",
+                    backgroundColor: '#949494',
+                    borderColor: '#6e6e6e',
                     borderWidth: 1,
                     barPercentage: 0.8,
                 },
@@ -210,8 +191,8 @@
                     label: 'Vyhrané',
                     data: wonArray,
                     fillColor: "#79D1CF",
-                    backgroundColor: 'rgba(0, 255, 0, 0.6)',
-                    borderColor: 'rgba(20, 235, 20, 0.9)',
+                    backgroundColor: '#2db53a',
+                    borderColor: '#208029',
                     borderWidth: 1,
                     barPercentage: 0.8,
                 },
@@ -220,27 +201,20 @@
                     data: lostArray,
                     fillColor: "#79D1CF",
                     backgroundColor: 'rgba(255, 0, 0, 0.6)',
-                    borderColor: 'rgba(230, 20, 20, 0.9)',
+                    borderColor: 'rgba(230, 20, 20, 0.8)',
                     borderWidth: 1,
                     barPercentage: 0.8,
                 },
-
             ]
         },
         options: {
-            //title: {
-            //    display: true,
-            //    text: 'Finance Eve v měsících roku 2020',
-            //},
             scales: {
                 xAxes: [{
-                    //display: true,
                     ticks: {
                         beginAtZero: true,
                         steps: 1,
                         stepValue: 1,
                         min: 0,
-                        //max: 1000000,
                         callback: function(value, index, values) {
                             return value.toLocaleString('cs-CZ');
                         }
@@ -250,8 +224,7 @@
             tooltips: {
                 callbacks: {
                     label: function(tooltipItem, data) {
-                        return ' ' + tooltipItem.xLabel.toLocaleString('cs-CZ') + ' / ' + allArray[tooltipItem.index];
-                        //return tooltipItem.xLabel.toLocaleString('cs-CZ');
+                        return ' ' + tooltipItem.xLabel.toLocaleString('cs-CZ') + ' / ' + allArray[tooltipItem.index] + ' - ' + data.datasets[tooltipItem.datasetIndex].label;
                     }
                 }
             }
