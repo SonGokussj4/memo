@@ -51,6 +51,9 @@ namespace memo.Controllers
                     .ToList();
             }
 
+            List<Order> allOrders = _db.Order.ToList();
+            ViewBag.AllOrders = allOrders;
+
             return View(model);
         }
 

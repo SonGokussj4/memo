@@ -29,12 +29,22 @@ namespace memo.Controllers
         public IActionResult Index(DashboardVM vm = null)
         {
             // Fill DepartmentList ComboBox with only used Offer Department values
-            vm.DepartmentList = new List<SelectListItem>();
-            vm.DepartmentList.Add( new SelectListItem { Value = "All", Text = "Všechny" });
-            var something = _db.Offer.Select(x => x.EveDepartment).Distinct().ToList();
-            foreach (string item in something)
+            // vm.DepartmentList = new List<SelectListItem>();
+            vm.DepartmentList.Add( new SelectListItem { Value = "All", Text = "Vše" });
+            vm.CustomerList.Add( new SelectListItem { Value = "All", Text = "Vše" });
+
+            List<string> filteredDepartments = _db.Offer.Select(x => x.EveDepartment).Distinct().ToList();
+            foreach (string department in filteredDepartments)
             {
-                vm.DepartmentList.Add(new SelectListItem { Value = item, Text = item });
+                vm.DepartmentList.Add(new SelectListItem { Value = department, Text = department });
+            }
+
+            List<int?> companyIds = _db.Offer.Select(x => x.CompanyId).Distinct().ToList();
+            List<Company> filteredCompanies = _db.Company.Where(x => companyIds.Contains(x.CompanyId)).ToList();
+
+            foreach (Company company in filteredCompanies)
+            {
+                vm.CustomerList.Add(new SelectListItem { Value = company.Name, Text = company.Name });
             }
 
             // Default values for filter
@@ -43,21 +53,57 @@ namespace memo.Controllers
                 vm.Year = DateTime.Now.Year;
                 vm.TimePeriod = "months";
                 vm.Department = "All";
+                vm.Customer = "All";
             }
 
             List<Invoice> invoices = new List<Invoice>();
 
+            // TODO: kdyz prekliknu zakaznika, oddeleni by se melo vyfiltrovat podle toho.
+            // TODO: to same oddeleni, vyfiltrovat zakaznika, pokud by bylo oddeleni C2 a zakaznik Levit neobsahoval C2, tak zmenit C2 na All
+
             // Filter - Department, get offers == department and then invoices from those offers
             if (vm.Department != "All")
             {
-                List<Offer> offers = _db.Offer.Where(x => x.EveDepartment == vm.Department).ToList();
-                var orders = _db.Order.Where
-                var numbers = offers.Select(x => x.Invoice).Distinct().ToList();
+                // List<Offer> offers = _db.Offer.Where(x => x.EveDepartment == vm.Department).ToList();
+
+                List<int> offerIds = (from r in _db.Offer
+                                where r.EveDepartment == vm.Department
+                                select r.OfferId).ToList();
+
+                // IQueryable<Order> orders = _db.Order.Where(x => offerIds.Contains((int)x.OfferId));
+                List<int> orderIds = (from r in _db.Order
+                                where offerIds.Contains((int)r.OfferId)
+                                select r.OrderId).ToList();
+
+                invoices = _db.Invoice.Where(x => orderIds.Contains(x.OrderId)).ToList();
             }
+            else
+            {
+                invoices = _db.Invoice.ToList();
+            }
+
+            // Filter - Customer on existing invoices
+            if (vm.Customer != "All")
+            {
+                int companyId = _db.Company.Where(x => x.Name == vm.Customer).Select(x => x.CompanyId).FirstOrDefault();
+
+                List<int> offerIdsList = (
+                    from r in _db.Offer
+                    where r.CompanyId == companyId
+                    select r.OfferId).ToList();
+
+                List<int> orderIds = (
+                    from r in _db.Order
+                    where offerIdsList.Contains((int)r.OfferId)
+                    select r.OrderId).ToList();
+
+                invoices = invoices.Where(x => orderIds.Contains(x.OrderId)).ToList();
+            }
+
             List<DashboardCashVM> viewModelCash = new List<DashboardCashVM>();
             if (vm.TimePeriod == "months")
             {
-                viewModelCash = _db.Invoice
+                viewModelCash = invoices
                     .Where(a => a.InvoiceDueDate.Value.Year == vm.Year)
                     .GroupBy(b => b.InvoiceDueDate.Value.Month)
                     .Select(g => new DashboardCashVM
@@ -77,7 +123,7 @@ namespace memo.Controllers
             }
             else
             {
-                viewModelCash = _db.Invoice
+                viewModelCash = invoices
                     .Where(a => a.InvoiceDueDate.Value.Year == vm.Year)
                     .AsEnumerable()
                     .GroupBy(b => ISOWeek.GetWeekOfYear((DateTime)b.InvoiceDueDate))

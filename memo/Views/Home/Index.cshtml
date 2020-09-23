@@ -80,14 +80,6 @@
         </label></div>
 
         <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
-            Vyhodnocení: Přidat filtr [Celá firma] / [Oddělení] + další [Po zákaznících]
-        </label></div>
-
-        <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
-            Vyhodnocení: Filtr Vše/Oddělení
-        </label></div>
-
-        <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
             Vyhodnocení: Tabulka [Col: Název oddělení, úspěšnost %, Sum vyhraných, Sum hodin]
         </label></div>
 
@@ -155,6 +147,13 @@
         @* //////////////////////////////////////////////////////////////////////////////////////////// *@
         <div class="done">
 
+        <div class="form-group"><input type="checkbox" class="form-check-input" checked><label class="form-check-label">
+            Vyhodnocení: Přidat filtr [Celá firma] / [Oddělení] + další [Po zákaznících]
+        </label></div>
+
+        <div class="form-group"><input type="checkbox" class="form-check-input" checked><label class="form-check-label">
+            Vyhodnocení: Filtr Vše/Oddělení
+        </label></div>
 
         <div class="form-group"><input type="checkbox" class="form-check-input" checked><label class="form-check-label">
             Zakázka: Edit - smazání fakturace přes for cyklus, ne přes post
@@ -251,15 +250,31 @@
     <div class="pl-5">
 
         <h6>
-            <i class="fa fa-calendar"></i> 2020-09-22
-            <a class="btn btn-light btn-sm" href="#show5" data-toggle="collapse" role="button" >
+            <i class="fa fa-calendar"></i> 2020-09-24
+            <a class="btn btn-light btn-sm" href="#show6" data-toggle="collapse" role="button" >
                 <i class="fa fa-chevron-down if-collapsed"></i><i class="fa fa-chevron-up if-not-collapsed"></i>
             </a>
         </h6>
-        <div class="collapse show" id="show5">
+        <div class="collapse show" id="show6">
+            <ul style="list-style-type:none">
+                <li class="new">Tabulky: Zakázka - Nový sloupec - Celkové skut. náklady [CZK]</li>
+                <li class="fix">Tabulky: Zakázka - Opraven problém při zobrazení neaktivních zakázek </li>
+            </ul>
+        </div>
+
+        <h6>
+            <i class="fa fa-calendar"></i> 2020-09-23
+            <a class="btn btn-light btn-sm collapsed" href="#show5" data-toggle="collapse" role="button" >
+                <i class="fa fa-chevron-down if-collapsed"></i><i class="fa fa-chevron-up if-not-collapsed"></i>
+            </a>
+        </h6>
+        <div class="collapse" id="show5">
             <ul style="list-style-type:none">
                 <li class="new">Globální: Indikace, ve kterém menu se nacházím</li>
                 <li class="new">Tabulky: Zakázka: Zobrazení sumy hod</li>
+                <li class="new">Tabulky: Zakázka: Ve sloupci Kód EVE vykazování přidán tooltip s popisem, o co se jedná</li>
+                <li class="new">Tabulky: Nabídky: Přidán sloupec s počty zakázek - ??? sčítat jen aktivní? Teď vše</li>
+                <li class="new">Tabulky: Nabídky: Ve sloupci s počtem zakázek přidán tooltip "jaké" zakázky</li>
                 <li class="new">Nabídka: Přidání předpokládaného termínu ukončení</li>
                 <li class="new">Zakázka: Automatické doplňování data splatnosti faktury, převzato ze splatnosti zákazníka</li>
                 <li class="new">Zakázka: Automatické doplňování Nabídka - Předp. termín dokončení do Zakázka - Termín vystavení</li>
@@ -267,6 +282,10 @@
                 <li class="new">Zakázka: <b>Možnost více termínů splatnosti a ceny</b></li>
                 <li class="new">Zakázka: Tlačítko, které vloží název Evektor nabídky do pole "Číslo objednávky zákazníka"</li>
                 <li class="new">Zakázka: Tlačítko, které vloží upravené datum splatnosti</li>
+                <li class="new">Vyhodnoceni: Filtr pro Období/Rok</li>
+                <li class="new">Vyhodnoceni: Filtr pro Oddělení</li>
+                <li class="new">Vyhodnoceni: Filtr pro Zákazníka</li>
+                <li class="fix">Tabulky: Zakázka: opraven přepočet skutečných nákladů do CZK</li>
                 <li class="fix">Tabulky: Při aktivaci/filtrování v tabulkách se nesprávně objevoval tooltip</li>
                 <li class="fix">Tabulky: Zobrazení sumy v Kč</li>
                 <li class="fix">Zakázka: Nyní zobrazuje tooltipy u dynamicky přidaných input polí</li>
@@ -276,6 +295,7 @@
                 <li class="fix">Zakázka: Při úpravě opraveno mazání Faktur/Dalších nákladů</li>
                 <li class="fix">Nabídka: Nefunkční vytváření zákazníka/firmy</li>
                 <li class="fix">Nabídka: Vytvoření zákazníka/firmy se otevírá v novém okně</li>
+                <li class="fix">Vyhodnoceni: Znovuzprovoznění filtrů</li>
             </ul>
         </div>
 

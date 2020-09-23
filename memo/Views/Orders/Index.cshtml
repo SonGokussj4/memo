@@ -101,15 +101,15 @@
             <th scope="col" class="text-center" data-field="11" data-sortable="true" data-filter-control="input">Hod.<br />sazba</th>
             <th scope="col" class="text-center" data-field="12" data-sortable="true" data-filter-control="input" data-footer-formatter="sumHoursFormatter">Plánované<br />hod</th>
             <th scope="col" class="text-center" data-field="13" data-sortable="true" data-filter-control="input" data-footer-formatter="sumHoursFormatter">Vyčerpáno</th>
-            <th scope="col" class="text-center" data-field="14" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatterCz">Přepočet [CZK]</th>
-            <th scope="col" class="text-center" data-field="15" data-sortable="true" data-filter-control="input">Využito</th>
+            <th scope="col" class="text-center" data-field="14" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatterCz">Skutečné<br />náklady [CZK]</th>
+            <th scope="col" class="text-center" data-field="15" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatterCz"><div data-toggle="tooltip" title="Skutečné náklady včetně dalších nákladů">Celkové skut.<br />náklady [CZK]</div></th>
+            <th scope="col" class="text-center" data-field="16" data-sortable="true" data-filter-control="input">Využito</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model)
         {
             <tr id="row_@item.OrderId" class="@(item.Active ? Html.Raw("itemActive") : Html.Raw("itemInactive"))">
-            @* <tr id="row_@item.OrderId"> *@
                 <th scope="row" data-field="0">
                     <a asp-action="Edit" asp-route-id=@item.OrderId><i class="fa fa-pencil fa-fw" aria-hidden="true"></i></a>
                     <a href="#" onclick="ConfirmDelete(@item.OrderId)"><i class="fa fa-times fa-fw" style="color: red;", aria-hidden="true"></i></a>
@@ -128,33 +128,39 @@
                         <a asp-action="Activate" asp-route-id="@item.OrderId" asp-route-showInactive="@ViewBag.showInactive"><i class="fa fa-eye-slash" style="color: #8a97a2;" aria-hidden="true"></i></a>
                     </th>
                 }
-
                 <th scope="row" class="text-left">@String.Format("{0:yyyy-MM-dd}", @item.CreateDate)</th>
                 <th scope="row" class="text-left">@item.Offer?.OfferName</th>
                 <th scope="row" class="text-left">@item.OrderName</th>
-                <th scope="row" class="text-center">@item.OrderCode</th>
+                @{
+                    string OrderCodeTooltip = ((IEnumerable<dynamic>)ViewBag.cOrdersAll)
+                        .Where(x => x.OrderCode == item.OrderCode)
+                        .Select(x => x.OrderName)
+                        .FirstOrDefault();
+                }
+                <th scope="row" class="text-center" data-toggle="tooltip" data-html="true" title="@OrderCodeTooltip">@item.OrderCode</th>
                 <th scope="row" class="text-left">@item.EveContactName</th>
-                @* <th scope="row" class="text-right">@String.Format("{0:# 000}", item.TotalHours) hod</th> *@
-                @* <th scope="row" class="text-center">@String.Format("{0:yyyy-MM-dd}", @item.InvoiceIssueDate)</th> *@
                 <th scope="row" class="text-right">@string.Format(CultureInfo.CreateSpecificCulture("cs-CZ"), "{0:C0}", @item.PriceFinalCzk)</th>
                 <th scope="row" class="notesWrap" data-toggle="tooltip" data-html="true" title="@item.Notes">
                     @item.Notes
                 </th>
                 <th scope="row" class="text-center notesWrap" data-toggle="tooltip" title="@item.BillOfDelivery">@item.BillOfDelivery</th>
                 <th scope="row" class="text-center">@item.Offer?.Currency.Name</th>
-                @* <th scope="row" class="text-right">@String.Format(CultureInfo.CreateSpecificCulture(@item.Offer?.Currency.CultureCode), "{0:C0}", @item.OtherCosts)</th> *@
                 <th scope="row" class="text-right">@String.Format(CultureInfo.CreateSpecificCulture(@item.Offer?.Currency.CultureCode), "{0:C0}", @item.HourWage)</th>
                 @{
                     string totalHoursText = @item.TotalHours is null ? "" : String.Format("{0:# 000} hod", item.TotalHours);
                     <th scope="row" class="text-right">@totalHoursText</th>
                 }
                 @{
-                    @* string burnedText = @item.Burned == 0 ? "" : $"{item.Burned} hod"; *@
                     string burnedText = @item.Burned == 0 ? "" : String.Format("{0:# } hod", item.Burned / 60);
                     <th scope="row" class="text-right">@burnedText</th>
                 }
-                <th scope="row" class="text-right">@string.Format(CultureInfo.CreateSpecificCulture("cs-CZ"), "{0:C0}", @item.Burned * @item.HourWage / 60 )</th>
-                @* <th scope="row" class="text-right">@( String.Format("{0:0.00}", (float)item.Burned / 60 / item.TotalHours * 100) ) %</th> *@
+                <th scope="row" class="text-right">@string.Format(CultureInfo.CreateSpecificCulture("cs-CZ"), "{0:C0}", @item.Burned * (@item.HourWage * (double)@item.ExchangeRate) / 60 )</th>
+                @{
+                    var mujlist = item.OtherCosts;
+                    var dalsi = item.OtherCosts.Where(x => x.OrderId == item.OrderId).Select(x => x.Cost).Sum() * item.ExchangeRate;
+                    var totalkaCzk = (decimal)(item.Burned * (item.HourWage * (double)item.ExchangeRate) / 60) + dalsi;
+                }
+                <th scope="row" class="text-right">@string.Format(CultureInfo.CreateSpecificCulture("cs-CZ"), "{0:C0}", totalkaCzk)</th>
                 @{
                     float? currentVal = (float)item.Burned / 60 / item.TotalHours * 100;
                     currentVal = currentVal is null ? 0 : currentVal;
@@ -325,7 +331,8 @@
                 .replace(",", "")
                 .replace("&nbsp;", "")
                 .replace(" ", "")
-                .replace("Kč", ""));
+                .replace("Kč", "")
+            ) || 0;
             return + cost
         }).reduce(function (sum, i) {
             return sum + i

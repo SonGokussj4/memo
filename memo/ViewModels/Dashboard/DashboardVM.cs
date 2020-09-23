@@ -14,13 +14,13 @@ namespace memo.ViewModels
         public string TimePeriod { get; set; }
         public int Year { get; set; }
         public string Department { get; set; }
+        public string Customer { get; set; }
 
-        // [NotMapped]
         public List<SelectListItem> DepartmentList { get; set; } = new List<SelectListItem>
         {
-            new SelectListItem { Value = "All", Text = "Všechny" },
-            new SelectListItem { Value = "C1", Text = "C1" },
-            new SelectListItem { Value = "C2", Text = "C2" },
+            // new SelectListItem { Value = "All", Text = "Všechny" },
+            // new SelectListItem { Value = "C1", Text = "C1" },
+            // new SelectListItem { Value = "C2", Text = "C2" },
         };
 
         public List<SelectListItem> YearList { get; } = new List<SelectListItem>
@@ -32,11 +32,13 @@ namespace memo.ViewModels
 
         public List<SelectListItem> TimePeriodList { get; } = new List<SelectListItem>
         {
-            new SelectListItem { Value = "range", Text = "Rozsah" },
+            // new SelectListItem { Value = "range", Text = "Rozsah" },
             new SelectListItem { Value = "weeks", Text = "Týdny"},
             new SelectListItem { Value = "months", Text = "Měsíce"},
-            new SelectListItem { Value = "quarters", Text = "Kvartály"},
+            // new SelectListItem { Value = "quarters", Text = "Kvartály"},
         };
+
+        public List<SelectListItem> CustomerList { get; set; } = new List<SelectListItem>();
 
     }
 }

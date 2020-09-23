@@ -34,35 +34,24 @@ namespace memo.Controllers
 
             List<Order> model = new List<Order>();
 
+            model = _db.Order
+                .Include(x => x.Offer)
+                .Include(z => z.Offer.Currency)
+                .ToList();
+
+            // Filtr - Pouze aktivní
             if (showInactive is false)
             {
-                model = _db.Order
-                    .Include(x => x.Offer)
-                    .Include(z => z.Offer.Currency)
-                    .Where(x => x.Active == true)
-                    .ToList();
-            }
-            else
-            {
-                model = _db.Order
-                    .Include(x => x.Offer)
-                    // .Include(y => y.Contact)
-                    .Include(z => z.Offer.Currency)
-                    // .Include(z => z.cOrders)
-                    // .Include(a => a.cProjects)
-                    // .Include(x => x.Company)
-                    // .Include(z => z.Currency)
-                    // .Include(a => a.OfferStatus)
-                    .ToList();
+                model = model.Where(x => x.Active == true).ToList();
             }
 
             foreach (Order order in model)
             {
-                SumMinutesSP sumMInutes = GetSumMinutes(order.OrderCode);
+                SumMinutesSP sumMinutes = GetSumMinutes(order.OrderCode);
 
-                if (sumMInutes != null)
+                if (sumMinutes != null)
                 {
-                    int var = sumMInutes.SumMinutes;
+                    int var = sumMinutes.SumMinutes;
                     order.Burned = var;
                 }
                 else
@@ -70,6 +59,14 @@ namespace memo.Controllers
                     order.Burned = 0;
                 }
             }
+            // Fill Invoices OtherCosts  // TODO: Can this be done cleverly?
+            foreach (Order order in model)
+            {
+                order.Invoices = _db.Invoice.ToList();
+                order.OtherCosts = _db.OtherCost.ToList();
+            }
+
+            ViewBag.cOrdersAll = _db.cOrders.ToList();
 
             return View(model);
         }
@@ -79,30 +76,9 @@ namespace memo.Controllers
         // public IActionResult Refresh(int? offerId, OfferOrderVM vm)
         public IActionResult Refresh(int offerId)
         {
-            // Offer offer = _db.Offer.Find(offerId);
             Order order = new Order { OfferId = offerId };
-            // OfferOrderVM vm = new OfferOrderVM {
-            //     Offer = offer,
-            //     Order = order,
-            //     OfferId = offerId,
-            // };
 
             return RedirectToAction("Create", order);
-
-            // if (vm != null)
-            // {
-            //     vm.Order.OfferId = vm.OfferId;
-
-            //     if (vm.Edit == "true")
-            //     {
-            //         return RedirectToAction("Edit", "Orders", new { @id=vm.Order.OrderId, @offerId=vm.OfferId } );
-            //     }
-            //     return RedirectToAction("Create", vm.Order);
-            // }
-
-            // return View();
-
-
         }
 
 

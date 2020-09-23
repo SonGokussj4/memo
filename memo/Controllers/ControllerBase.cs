@@ -74,7 +74,7 @@ namespace memo.Controllers
             WebClient client = new WebClient();
             string text = client.DownloadString(URL);
 
-            String[] lines = text.Split("\n");
+            string[] lines = text.Split("\n");
 
             // 31.07.2020 #147
             // země|měna|množství|kód|kurz
