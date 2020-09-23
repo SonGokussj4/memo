@@ -9,7 +9,6 @@
     <hr />
 </div>
 
-
 <div class="container d-flex justify-content-center">
     <div class="col-lg-10 personal-info">
         <form class="card" role="form" autocomplete="on" asp-action="Create" method="post">
@@ -18,8 +17,9 @@
 
         <div class="form-group row">
             <label asp-for="Name" class="required col-lg-3 col-form-label form-control-label control-label"></label>
-            <div class="col-lg-4">
-                <input asp-for="Name" class="form-control" type="text" placeholder="Název firmy"/>
+            <div class="col-lg-4 field-wrapper">
+                <input asp-for="Name" class="form-control" type="text" />
+                <div class="field-placeholder"><span>Název firmy</span></div>
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
         </div>
