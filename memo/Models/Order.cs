@@ -32,7 +32,7 @@ namespace memo.Models
         [Display(Name = "Konečná cena")]
         public int? PriceFinal { get; set; }
 
-        [Display(Name = "Poskytnutá sleva")]
+        [Display(Name = "Nevyčerpáno")]
         public int? PriceDiscount { get; set; }
 
         [Required]

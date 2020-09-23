@@ -326,6 +326,7 @@ namespace memo.Controllers
                         otherCost.CostCzk = Convert.ToInt32(otherCost.Cost * vm.Order.ExchangeRate);
                         vm.Order.PriceFinalCzk += Convert.ToInt32(otherCost.CostCzk);
                         vm.Order.PriceFinal += Convert.ToInt32(otherCost.Cost);
+                        vm.Order.PriceDiscount -= Convert.ToInt32(otherCost.Cost);
                     }
                     _db.Update(vm.Order);
                     _db.SaveChanges();
