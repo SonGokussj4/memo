@@ -72,7 +72,19 @@
         <hr />
 
         <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
-            Globální: Login systém
+            Globální: Přidat pole pro stížnosti/nápady (alespoň teď v testovací verzi)
+        </label></div>
+
+        <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
+            Globální: Znemožnit náhodným lidem se registrovat
+        </label></div>
+
+        <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
+            Nabídka: Pocitové číslo, jak je pravděpodobné udělat / vyhrát nabídku. (ComboBox) [Slightly behind, lehce nad konkurencí, zákazník silně preferuje nás]
+        </label></div>
+
+        <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
+            Globální: <del>Login systém</del> (Kerberos jindy) - Omezit delete na Admina
         </label></div>
 
         <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
@@ -96,7 +108,7 @@
         </label></div>
 
         <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
-            Globální: Popup okna, která budou informovat o úspěšnosti/neúspěšnosti operací
+            Globální: Notofications, která budou informovat o úspěšnosti/neúspěšnosti operací
         </label></div>
 
         <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
@@ -108,10 +120,6 @@
 
         <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
             Globální: Export: Faktické / očekávané vyhodnocení - pdf/excel?
-        </label></div>
-
-        <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
-            Nabídka: Pocitové číslo, jak je pravděpodobné udělat / vyhrát nabídku. [Slightly behind, lehce nad konkurencí, zákazník silně preferuje nás]
         </label></div>
 
         <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
@@ -257,8 +265,15 @@
         </h6>
         <div class="collapse show" id="show6">
             <ul style="list-style-type:none">
+                <li class="new">TODO: Kontakty: Infokarta s informacemi bez editace</li>
+                <li class="new">TODO: Zakázka: objednávka - vylepšena grafická podoba</li>
+                <li class="new">TODO: Objednávka: Stávající zakázky - vylepšena grafická podoba</li>
+                <li class="new">TODO: Firmy: Přidána možnost doplnit PSČ a Stát</li>
                 <li class="new">Tabulky: Zakázka - Nový sloupec - Celkové skut. náklady [CZK]</li>
                 <li class="fix">Tabulky: Zakázka - Opraven problém při zobrazení neaktivních zakázek </li>
+                <li class="fix">Zakázka: Sleva přepsána na "nevyčerpáno"</li>
+                <li class="fix">Zakázka: Již správné počítání celkové ceny a nevyčerpáno (započítává i "další náklady")</li>
+                <li class="fix">Globální: Pár jazykových chyb a přešlapů</li>
             </ul>
         </div>
 
