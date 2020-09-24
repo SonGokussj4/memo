@@ -47,9 +47,11 @@
 
             <div class="form-group row">
                 <label asp-for="Name" class="required col-lg-3 col-form-label form-control-label control-label"></label>
-                <div class="col-lg-4 field-wrapper">
-                    <input asp-for="Name" class="form-control" type="text" placeholder="Název firmy"/>
-                    <div class="field-placeholder"><span>Název firmy</span></div>
+                <div class="col-lg-4">
+                    <div class="field-wrapper">
+                        <input asp-for="Name" class="form-control" type="text" />
+                        <div class="field-placeholder"><span>Název firmy</span></div>
+                    </div>
                     <span asp-validation-for="Name" class="text-danger"></span>
                 </div>
             </div>
@@ -57,11 +59,17 @@
             <div class="form-group row">
                 <label asp-for="City" class="col-lg-3 col-form-label form-control-label control-label">Adresa</label>
                 <div class="col-lg-4">
-                    <input asp-for="City" class="form-control" type="text" placeholder="Město"/>
+                    <div class="field-wrapper">
+                        <input asp-for="City" class="form-control" type="text" />
+                        <div class="field-placeholder"><span>Město</span></div>
+                    </div>
                     <span asp-validation-for="City" class="text-danger"></span>
                 </div>
                 <div class="col-lg-5">
-                    <input asp-for="Address" class="form-control" type="text" placeholder="Ulice a č. p."/>
+                    <div class="field-wrapper">
+                        <input asp-for="Address" class="form-control" type="text" />
+                        <div class="field-placeholder"><span>Ulice a č. p.</span></div>
+                    </div>
                     <span asp-validation-for="Address" class="text-danger"></span>
                 </div>
             </div>
@@ -69,11 +77,17 @@
             <div class="form-group row">
                 <label asp-for="Phone" class="col-lg-3 col-form-label form-control-label control-label">Kontakt</label>
                 <div class="col-lg-4">
-                    <input asp-for="Phone" class="form-control" type="text" placeholder="Telefonní číslo"/>
+                    <div class="field-wrapper">
+                        <input asp-for="Phone" class="form-control" type="text" />
+                        <div class="field-placeholder"><span>Telefonní číslo</span></div>
+                    </div>
                     <span asp-validation-for="Phone" class="text-danger"></span>
                 </div>
                 <div class="col-lg-5">
-                    <input asp-for="Web" class="form-control" type="text" placeholder="https://"/>
+                    <div class="field-wrapper">
+                        <input asp-for="Web" class="form-control" type="text" />
+                        <div class="field-placeholder"><span>Webová stránka</span></div>
+                    </div>
                     <span asp-validation-for="Web" class="text-danger"></span>
                 </div>
             </div>
@@ -95,7 +109,6 @@
                 <label asp-for="Notes" class="col-lg-3 col-form-label form-control-label control-label"></label>
                 <div class="col-lg-9">
                     <textarea asp-for="Notes" class="form-control"></textarea>
-                    @* @Html.TextAreaFor(m => m.Notes, additionalViewData: new { htmlAttributes = new { @class = "form-control" }}) *@
                     <span asp-validation-for="Notes" class="text-danger"></span>
                 </div>
             </div>

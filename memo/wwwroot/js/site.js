@@ -58,6 +58,9 @@ function getPrettyDate(date, daysToAdd = 0) {
     return futureDate  // RRRR-MM-DD
 }
 
+//--------------------
+// FLOATING TOOLTIPS
+//--------------------
 $(function () {
 
     $(".field-wrapper .field-placeholder").on("click", function () {
@@ -71,5 +74,8 @@ $(function () {
             $(this).closest(".field-wrapper").removeClass("hasValue");
         }
     });
-
+    if ($(".field-wrapper input").val() != "") {
+        $(".field-wrapper input").closest(".field-wrapper").removeClass("hasValue");
+        $(".field-wrapper input").closest(".field-wrapper").addClass("hasValue");
+    }
 });
