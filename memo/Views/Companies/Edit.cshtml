@@ -94,11 +94,14 @@
 
             <div class="form-group row">
                 <label asp-for="InvoiceDueDays" class="required col-lg-3 col-form-label form-control-label control-label">Splatnost faktury</label>
-                <div class="col-lg-3">
-                    <div class="input-group mb-2 mr-sm-2">
-                        <input asp-for="InvoiceDueDays" class="form-control" type="text" required="" />
-                        <div class="input-group-append">
-                            <div class="input-group-text">dní</div>
+                <div class="col-lg-4">
+                    <div class="field-wrapper">
+                        <div class="input-group mb-2 mr-sm-2">
+                            <input asp-for="InvoiceDueDays" class="form-control" type="text" required="" />
+                            <div class="input-group-append">
+                                <div class="input-group-text">dní</div>
+                            </div>
+                        <div class="field-placeholder"><span>Splatnost</span></div>
                         </div>
                     </div>
                     <span asp-validation-for="InvoiceDueDays" class="text-danger"></span>

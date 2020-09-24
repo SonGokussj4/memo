@@ -74,8 +74,17 @@ $(function () {
             $(this).closest(".field-wrapper").removeClass("hasValue");
         }
     });
-    if ($(".field-wrapper input").val() != "") {
-        $(".field-wrapper input").closest(".field-wrapper").removeClass("hasValue");
-        $(".field-wrapper input").closest(".field-wrapper").addClass("hasValue");
-    }
+
+    $('.field-wrapper input').focusout(function () {
+        var text_val = $(this).val();
+        console.log(`text_val: ${text_val}`);
+        // ONE LINE
+        $(this).closest(".field-wrapper").toggleClass('hasValue', text_val !== "");
+        // MANY LINES
+        // if (text_val === "") {
+        //     $(this).closest(".field-wrapper").removeClass("hasValue");
+        // } else {
+        //     $(this).closest(".field-wrapper").addClass('hasValue');
+        // }
+    }).focusout(); //trigger the focusout event manually
 });

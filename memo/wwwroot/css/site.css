@@ -293,6 +293,7 @@ form.myform {
 .field-wrapper{
     position: relative;
     margin-bottom: 0px;  /* Default 15px */
+    cursor: text;
 }
 
 .field-wrapper input{
@@ -300,16 +301,16 @@ form.myform {
     /* border-left: 0px solid #DADCE0;
     border-right: 0px solid #DADCE0;
     border-top: 0px solid #DADCE0; */
-    padding: 15px;
     border-radius: 6px;
+    padding: 15px;
     width: 100%;
 }
 
 .field-wrapper .field-placeholder{
-    font-size: 16px;
+    font-size: 14px;
     position: absolute;
     /* background: #fff; */
-    bottom: 5px;
+    bottom: 8px;
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
     color: #80868b;
@@ -336,7 +337,12 @@ form.myform {
 .field-wrapper input:not([disabled]):focus~.field-placeholder,
 .field-wrapper.hasValue input:not([disabled])~.field-placeholder
 {
-    -webkit-transform: scale(.75) translateY(-28px) translateX(-35px);
-    transform: scale(.75) translateY(-28px) translateX(-35px);
+    -webkit-transform: scale(.85) translateY(-23px) translateX(-22px);
+    transform: scale(.85) translateY(-23px) translateX(-22px);
 
+}
+
+/* Bootstrap Z-Index fix */
+.input-group>.form-control:focus {
+  z-index: 0;
 }

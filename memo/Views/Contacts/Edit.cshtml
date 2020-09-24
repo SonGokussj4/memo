@@ -48,7 +48,10 @@
             <div class="form-group row">
                 <label asp-for="PersonTitle" class="col-lg-3 col-form-label form-control-label control-label"></label>
                 <div class="col-lg-3">
-                    <input asp-for="PersonTitle" class="form-control" type="text" placeholder="Titul"/>
+                    <div class="field-wrapper">
+                        <input asp-for="PersonTitle" class="form-control" type="text" />
+                        <div class="field-placeholder"><span>Titul</span></div>
+                    </div>
                     <span asp-validation-for="PersonTitle" class="text-danger"></span>
                 </div>
             </div>
@@ -56,11 +59,17 @@
             <div class="form-group row">
                 <label asp-for="PersonName" class="required col-lg-3 col-form-label form-control-label control-label">Celé jméno</label>
                 <div class="col-lg-3">
-                    <input asp-for="PersonName" class="form-control" type="text" placeholder="Křestní jméno"/>
+                    <div class="field-wrapper">
+                        <input asp-for="PersonName" class="form-control" type="text"/>
+                        <div class="field-placeholder"><span>Křestní jméno</span></div>
+                    </div>
                     <span asp-validation-for="PersonName" class="text-danger"></span>
                 </div>
                 <div class="col-lg-3">
-                    <input asp-for="PersonLastName" class="form-control" type="text" placeholder="Příjmení"/>
+                    <div class="field-wrapper">
+                        <input asp-for="PersonLastName" class="form-control" type="text"/>
+                        <div class="field-placeholder"><span>Příjmení</span></div>
+                    </div>
                     <span asp-validation-for="PersonLastName" class="text-danger"></span>
                 </div>
             </div>
@@ -71,24 +80,32 @@
                     @Html.DropDownListFor(model => model.CompanyId, ViewBag.CompanyList as SelectList, "-- Vyber firmu --", new { @class = "form-control selectpicker" })
                     <span asp-validation-for="CompanyId" class="text-danger"></span>
                 </div>
-                @* <label asp-for="Department" class="col-lg-3 col-form-label form-control-label control-label"></label> *@
                 <div class="col-lg-3">
-                    <input asp-for="Department" class="form-control" type="text" placeholder="Oddělení"/>
+                    <div class="field-wrapper">
+                        <input asp-for="Department" class="form-control" type="text"/>
+                        <div class="field-placeholder"><span>Oddělení</span></div>
+                    </div>
                     <span asp-validation-for="Department" class="text-danger"></span>
                 </div>
             </div>
 
             <div class="form-group row">
                 <label asp-for="Email" class="col-lg-3 col-form-label form-control-label control-label"></label>
-                <div class="col-lg-3">
-                    <input asp-for="Email" class="form-control" type="text" placeholder="E-mail"/>
+                <div class="col-lg-6">
+                    <div class="field-wrapper">
+                        <input asp-for="Email" class="form-control" type="text"/>
+                        <div class="field-placeholder"><span>E-mail</span></div>
+                    </div>
                     <span asp-validation-for="Email" class="text-danger"></span>
                 </div>
             </div>
             <div class="form-group row">
                 <label asp-for="Phone" class="col-lg-3 col-form-label form-control-label control-label"></label>
                 <div class="col-lg-3">
-                    <input asp-for="Phone" class="form-control" type="text" placeholder="Telefon"/>
+                    <div class="field-wrapper">
+                        <input asp-for="Phone" class="form-control" type="text"/>
+                        <div class="field-placeholder"><span>Telefon</span></div>
+                    </div>
                     <span asp-validation-for="Phone" class="text-danger"></span>
                 </div>
             </div>
@@ -97,7 +114,6 @@
                 <label asp-for="Notes" class="col-lg-3 col-form-label form-control-label control-label"></label>
                 <div class="col-lg-9">
                     <textarea asp-for="Notes" class="form-control"></textarea>
-                    @* @Html.TextAreaFor(m => m.Notes, additionalViewData: new { htmlAttributes = new { @class = "form-control" }}) *@
                     <span asp-validation-for="Notes" class="text-danger"></span>
                 </div>
             </div>
