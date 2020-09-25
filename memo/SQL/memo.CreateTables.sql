@@ -45,10 +45,11 @@ CREATE TABLE [memo].[Offer] (
   [ExchangeRate] decimal(18,3),
   [PriceCzk] int,
   [OfferStatusId] int,
-  [Notes] ntext,
   [LostReason] ntext,
-  [CreateDate] date DEFAULT GETDATE(),
-  [Active] bit DEFAULT 1
+  [ExtimatedFinishDate] date,
+  [Notes] ntext,
+  [Active] bit DEFAULT 1,
+  [CreateDate] date DEFAULT GETDATE()
 )
 GO
 
@@ -122,10 +123,10 @@ CREATE TABLE [memo].[Order] (
   [TotalHours] int,
   [ExchangeRate] decimal(18,3),
   [PriceFinalCzk] int,
+  [Username] nvarchar(30),
   [Notes] ntext,
   [CreateDate] date DEFAULT GETDATE(),
-  [Active] bit DEFAULT 1,
-  [Username] nvarchar(30)
+  [Active] bit DEFAULT 1
 )
 GO
 

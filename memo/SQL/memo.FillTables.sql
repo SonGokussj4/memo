@@ -2,14 +2,6 @@
 
 DELETE FROM [memo].[Company];
 
---INSERT INTO [memo].[Company]
---  (CompanyId, Name, City, Address, Phone, Web, InvoiceDueDays)
---VALUES
---  ('5', 'Škoda Auto, a.s.', 'Mladá Boleslav', NULL, '+420 356 815 354', 'www.skoda-auto.cz', '30'),
---  ('13', 'Andreas Stihl', 'Waiblingen', NULL, '+49 607 130 553 58', 'www.stihl.de', '66'),
---  ('14', 'Cybex', 'Vídeň / Bayreuth', NULL, '+49 921 785 114 80', 'www.cybex-online.com', '15'),
---  ('15', 'Varroc', 'Nový Jičín', NULL, '+420 556 623 111', 'www.varroclighting.com', '45')
-
 INSERT INTO [memo].[Company]
   ([Name], [City], [Address], [Phone], [Web], [InvoiceDueDays])
 VALUES
@@ -61,65 +53,44 @@ VALUES
 DELETE FROM [memo].[Contact];
 
 INSERT INTO [memo].[Contact]
-  ([PersonName], [Department], [Phone], [Email], [PersonLastName], [PersonTitle])
+  ([PersonName], [PersonLastName], [Department], [Phone], [Email], [PersonTitle])
 VALUES
-  ('bosport', '', '', 'bosport@bosport.eu', '', ''),
-  ('georg.ude', '', '', 'georg.ude@cybex-online.com', '', 'Ing'),
-  ('stefan.aschinger', '', '', 'stefan.aschinger@cybex-online.com', '', 'Bc'),
-  ('J.Nauhardt', '', '', 'J.Nauhardt@gubesch.de', '', ''),
-  ('tomas.rehor', '', '', 'tomas.rehor@hauk.cz', '', ''),
-  ('juraj.chovanec', '', '', 'juraj.chovanec@hella.com', '', ''),
-  ('zdenek.bures', '', '', 'zdenek.bures@hella.com', '', ''),
-  ('patrik.coufal', '', '', 'patrik.coufal@mbtool.cz', '', ''),
-  ('hrosova', '', '', 'hrosova@plastika.cz', '', ''),
-  ('hebnarova', '', '', 'hebnarova@plastika.cz', '', ''),
-  ('petr.marsalek', '', '', 'petr.marsalek@safrangoup.com', '', ''),
-  ('petr.sedlacek', '', '', 'petr.sedlacek@safrangroup.com', '', ''),
-  ('michal.dufek', '', '', 'michal.dufek@safrangroup.com', '', ''),
-  ('jaroslav.brodsky', '', '', 'jaroslav.brodsky@skoda.cz', '', ''),
-  ('Jan.Tymich', '', '', 'Jan.Tymich@skoda-auto.cz', '', ''),
-  ('Jaroslav.Havel', '', '', 'Jaroslav.Havel@skoda-auto.cz', '', ''),
-  ('Robert.Prochyra2', '', '', 'Robert.Prochyra2@skoda-auto.cz', '', ''),
-  ('Zdenek.Drapak', '', '', 'Zdenek.Drapak@skoda-auto.cz', '', ''),
-  ('Pavel.Sevela', '', '', 'Pavel.Sevela@skoda-auto.cz', '', ''),
-  ('Martin.Bradac', '', '', 'Martin.Bradac@skoda-auto.cz', '', ''),
-  ('Jan.Hrncir', '', '', 'Jan.Hrncir@skoda-auto.cz', '', ''),
-  ('TOMAS.HORNICEK', '', '', 'TOMAS.HORNICEK@SKODA-AUTO.CZ', '', ''),
-  ('Vladimir.Sestak', '', '', 'Vladimir.Sestak@skoda-auto.cz', '', ''),
-  ('David.Dvorak', '', '', 'David.Dvorak@skoda-auto.cz', '', ''),
-  ('Michaela.Kabelkova', '', '', 'Michaela.Kabelkova@skoda-auto.cz', '', ''),
-  ('Jirina.Cabelkova', '', '', 'Jirina.Cabelkova@skoda-auto.cz', '', ''),
-  ('ext.Iveta.Sebestova2', '', '', 'Iveta.Sebestova2@skoda-auto.cz', '', ''),
-  ('Milos.Jambor', '', '', 'Milos.Jambor@skoda-auto.cz', '', ''),
-  ('Jiri.Holoubek', '', '', 'Jiri.Holoubek@skoda-auto.cz', '', ''),
-  ('Janos.Barsony', '', '', 'Janos.Barsony@skoda-auto.cz', '', ''),
-  ('Martin.Stastny', '', '', 'Martin.Stastny@skoda-auto.cz', '', ''),
-  ('Martin.Cerny2', '', '', 'Martin.Cerny2@skoda-auto.cz', '', ''),
-  ('Gilles.Recher', '', '', 'Gilles.Recher@telene.com', '', '')
+  ('bosport', '', '', '', 'bosport@bosport.eu', ''),
+  ('georg', 'ude', '', '', 'georg.ude@cybex-online.com', 'Ing'),
+  ('stefan', 'aschinger', '', '', 'stefan.aschinger@cybex-online.com', 'Bc'),
+  ('Juraj', 'Nauhardt', '', '', 'J.Nauhardt@gubesch.de', ''),
+  ('tomas', 'rehor', '', '', 'tomas.rehor@hauk.cz', ''),
+  ('juraj', 'chovanec', '', '', 'juraj.chovanec@hella.com', ''),
+  ('zdenek', 'bures', '', '', 'zdenek.bures@hella.com', ''),
+  ('patrik', 'coufal', '', '', 'patrik.coufal@mbtool.cz', ''),
+  ('hrosova', '', '', '', 'hrosova@plastika.cz', ''),
+  ('hebnarova', '', '', '', 'hebnarova@plastika.cz', ''),
+  ('petr', 'marsalek', '', '', 'petr.marsalek@safrangoup.com', ''),
+  ('petr', 'sedlacek', '', '', 'petr.sedlacek@safrangroup.com', ''),
+  ('michal', 'dufek', '', '', 'michal.dufek@safrangroup.com', ''),
+  ('jaroslav', 'brodsky', '', '', 'jaroslav.brodsky@skoda.cz', ''),
+  ('Jan', 'Tymich', '', '', 'Jan.Tymich@skoda-auto.cz', ''),
+  ('Jaroslav', 'Havel', '', '', 'Jaroslav.Havel@skoda-auto.cz', ''),
+  ('Robert', 'Prochyra2', '', '', 'Robert.Prochyra2@skoda-auto.cz', ''),
+  ('Zdenek', 'Drapak', '', '', 'Zdenek.Drapak@skoda-auto.cz', ''),
+  ('Pavel', 'Sevela', '', '', 'Pavel.Sevela@skoda-auto.cz', ''),
+  ('Martin', 'Bradac', '', '', 'Martin.Bradac@skoda-auto.cz', ''),
+  ('Jan', 'Hrncir', '', '', 'Jan.Hrncir@skoda-auto.cz', ''),
+  ('TOMAS', 'HORNICEK', '', '', 'TOMAS.HORNICEK@SKODA-AUTO.CZ', ''),
+  ('Vladimir', 'Sestak', '', '', 'Vladimir.Sestak@skoda-auto.cz', ''),
+  ('David', 'Dvorak', '', '', 'David.Dvorak@skoda-auto.cz', ''),
+  ('Michaela', 'Kabelkova', '', '', 'Michaela.Kabelkova@skoda-auto.cz', ''),
+  ('Jirina', 'Cabelkova', '', '', 'Jirina.Cabelkova@skoda-auto.cz', ''),
+  ('ext.Iveta', 'Sebestova2', '', '', 'Iveta.Sebestova2@skoda-auto.cz', ''),
+  ('Milos', 'Jambor', '', '', 'Milos.Jambor@skoda-auto.cz', ''),
+  ('Jiri', 'Holoubek', '', '', 'Jiri.Holoubek@skoda-auto.cz', ''),
+  ('Janos', 'Barsony', '', '', 'Janos.Barsony@skoda-auto.cz', ''),
+  ('Martin', 'Stastny', '', '', 'Martin.Stastny@skoda-auto.cz', ''),
+  ('Martin', 'Cerny2', '', '', 'Martin.Cerny2@skoda-auto.cz', ''),
+  ('Gilles', 'Recher', '', '', 'Gilles.Recher@telene.com', '')
 
 
 DELETE FROM [memo].[Offer];
-
--- CREATE TABLE [memo].[Offer] (
---   [OfferId] int PRIMARY KEY IDENTITY(1, 1),
---   [OfferName] nvarchar(50),
---   [ReceiveDate] date,
---   [SentDate] date,
---   [Subject] text,
---   [ContactId] int,
---   [CompanyId] int,
---   [EveDivision] nvarchar(50) NOT NULL CHECK ([EveDivision] IN ('AD', 'ED')),
---   [EveDepartment] nvarchar(50),
---   [EveCreatedUser] nvarchar(50),
---   [Price] int,
---   [CurrencyId] int,
---   [ExchangeRate] float,
---   [PriceCzk] int,
---   [Status] int,
---   [LostReason] text,
---   [CreateDate] date
--- )
--- GO
 
 DELETE FROM [memo].[OfferStatus];
 
@@ -130,26 +101,6 @@ VALUES
   ('Výhra'),
   ('Prohra')
 
-
--- CREATE TABLE [memo].[Order] (
---   [OrderId] int PRIMARY KEY IDENTITY(1, 1),
---   [OfferId] int,
---   [OrderName] nvarchar(50),
---   [PriceFinal] int,
---   [PriceDiscount] int,
---   [OrderCode] nvarchar(50),
---   [ContactId] int,
---   [HourWage] float,
---   [TotalHours] int,
---   [InvoiceIssueDate] date,
---   [InvoiceDueDate] date,
---   [ExchangeRate] float,
---   [PriceFinalCzk] int,
---   [Notes] text,
---   [CreateDate] date
--- )
--- GO
-
 DELETE FROM [memo].[Currency];
 
 INSERT INTO [memo].[Currency]
@@ -158,12 +109,6 @@ VALUES
   ('CZK', 'cs-CZ'),
   ('EUR', 'de-DE'),
   ('USD', 'en-US')
-
--- CREATE TABLE [memo].[Currency] (
---   [CurrencyId] int PRIMARY KEY IDENTITY(1, 1),
---   [Name] nvarchar(10)
--- )
--- GO
 
 
 
