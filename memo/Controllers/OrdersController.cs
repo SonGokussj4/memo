@@ -66,7 +66,7 @@ namespace memo.Controllers
                 order.OtherCosts = _db.OtherCost.ToList();
             }
 
-            ViewBag.cOrdersAll = _db.cOrders.ToList();
+            ViewBag.cOrdersAll = _eveDb.cOrders.ToList();
 
             return View(model);
         }

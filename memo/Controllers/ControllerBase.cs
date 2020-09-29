@@ -132,30 +132,50 @@ namespace memo.Controllers
 
         public SelectList getDepartmentList(EvektorDbContext _eveDb)
         {
+            string[] numbers = new string[]{"1","2","3","4","5","6","7","8","9","0"};
+
             List<SelectListItem> eveDepartmentList = new List<SelectListItem>();
-            foreach (tUsers item in _eveDb.tUsers)
+
+            var departments = _eveDb.tUsers
+                .Where(x =>
+                    x.IntAccType == 2 &&
+                    x.Del == 0 &&
+                    x.FormatedName.Contains("-") &&
+                    // !int.TryParse(x.FormatedName.Substring(0, 1), out int n)
+                    !numbers.Contains(x.FormatedName.Substring(0, 1))
+                    // !SqlMethods.Like(x.FormatedName, "[0-9]%")
+                )
+                .Select(x => x.FormatedName)
+                .ToList();
+
+            foreach (string item in departments)
             {
-
-                if (item.IntAccType != 2)
-                {
-                    continue;
-                }
-                if (item.Del == -1)
-                {
-                    continue;
-                }
-                if (!item.FormatedName.Contains("-"))
-                {
-                    continue;
-                }
-
-                eveDepartmentList.Add(new SelectListItem
-                {
-                    // Value = item.Id.ToString(),
-                    Value = item.LastName,
-                    Text = item.LastName
-                });
+                eveDepartmentList.Add( new SelectListItem { Value = item, Text = item } );
             }
+
+            // foreach (tUsers item in _eveDb.tUsers)
+            // {
+
+            //     if (item.IntAccType != 2)
+            //     {
+            //         continue;
+            //     }
+            //     if (item.Del == -1)
+            //     {
+            //         continue;
+            //     }
+            //     if (!item.FormatedName.Contains("-"))
+            //     {
+            //         continue;
+            //     }
+
+            //     eveDepartmentList.Add(new SelectListItem
+            //     {
+            //         // Value = item.Id.ToString(),
+            //         Value = item.LastName,
+            //         Text = item.LastName
+            //     });
+            // }
 
             return new SelectList(eveDepartmentList.OrderBy(x => x.Text), "Value", "Text");
         }
