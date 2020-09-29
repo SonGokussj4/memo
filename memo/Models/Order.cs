@@ -54,10 +54,6 @@ namespace memo.Models
         [Display(Name = "Celkem hodin plánovaných")]
         public int? TotalHours { get; set; }
 
-        [Display(Name = "Dodací list")]
-        // [DisplayFormat(ConvertEmptyStringToNull = false)]
-        public string BillOfDelivery { get; set; }
-
         [Display(Name = "Kurz")]
         [Column(TypeName = "decimal(18,3)")]
         // [DisplayFormat(DataFormatString = "{0:#.000}", ApplyFormatInEditMode = true)]

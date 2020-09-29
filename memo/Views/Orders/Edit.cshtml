@@ -67,54 +67,6 @@
                 </li>
             </ul>
         }
-@*
-        <div class="collapse" id="collapseExample">
-
-            <div class="form-group row">
-                <label asp-for="Offer.ReceiveDate" class="col-lg-3 col-form-label form-control-label control-label"></label>
-                <div class="col-lg-4">
-                    <input asp-for="Offer.ReceiveDate" class="form-control" type="text" required="" autocomplete="off" readonly />
-                </div>
-                <label class="col-lg-1 col-form-label form-control-label control-label"> <i class="fa fa-angle-double-right"></i> </label>
-                <div class="col-lg-4">
-                    <input asp-for="Offer.SentDate" class="form-control" type="text" autocomplete="off" readonly />
-                </div>
-            </div>
-
-            <div class="form-group row">
-                <label asp-for="Offer.Subject" class="col-lg-3 col-form-label form-control-label control-label"></label>
-                <div class="col-lg-9">
-                    <input asp-for="Offer.Subject" class="form-control" type="text" readonly />
-                    <span asp-validation-for="Offer.Subject" class="text-danger"></span>
-                </div>
-            </div>
-
-            <div class="form-group row">
-                <label asp-for="Offer.Price" class="col-lg-3 col-form-label form-control-label control-label"></label>
-                <div class="col-lg-5">
-                    <input asp-for="Offer.Price" class="form-control" type="text" readonly />
-                    <span asp-validation-for="Offer.Price" class="text-danger"></span>
-                </div>
-                <div class="col-lg-2">
-                    @Html.DropDownListFor(model => model.Offer.CurrencyId, ViewBag.CurrencyList as SelectList, new { @class = "form-control selectpicker", @disabled = "disabled" })
-                    @Html.HiddenFor(model => model.Offer.CurrencyId)
-                    <span asp-validation-for="Offer.Currency" class="text-danger"></span>
-                </div>
-                <div class="col-lg-2">
-                    <input asp-for="Offer.ExchangeRate" class="form-control" type="text" readonly />
-                    <span asp-validation-for="Offer.ExchangeRate" class="text-danger"></span>
-                </div>
-            </div>
-
-            <div class="form-group row">
-                <label asp-for="InvoiceDueDays" class="col-lg-3 col-form-label form-control-label control-label"></label>
-                <div class="col-lg-3">
-                    <input asp-for="InvoiceDueDays" class="form-control" type="text" required="" autocomplete="off" readonly />
-                </div>
-            </div>
-
-
-        </div>  <!-- END collapse --> *@
 
         <div class="cardTitleMerged">
             <div class="">
@@ -159,17 +111,22 @@
             </div>
 
         </div>
+
         <hr />
 
         <div class="form-group row">
             <label asp-for="Order.OrderName" class="required col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-9">
-                <input asp-for="Order.OrderName" class="form-control" type="text" required="" placeholder="EV-ord/rrrr/####" />
+                <div class="field-wrapper">
+                    <input asp-for="Order.OrderName" class="form-control" type="text" required="" />
+                    <div class="field-placeholder"><span>Číslo objednávky zákazníka</span></div>
+                </div>
                 <span asp-validation-for="Order.OrderName" class="text-danger"></span>
             </div>
         </div>
 
         <div class="form-group eveOrder">
+
             <div class="form-group row ">
                 <label asp-for="Order.OrderCode" class="required col-lg-3 col-form-label form-control-label control-label"></label>
                 <div class="col-lg-5">
@@ -179,7 +136,7 @@
                 </div>
                 <div class="col-lg-2">
                     <a href="@Url.Action("CreateEveProject")" target="_blank" class="btn btn-outline-success form-control"
-                    data-toggle="tooltip" data-placement="top" title="Nová EVE zakázka">
+                       data-toggle="tooltip" data-placement="top" title="Nová EVE zakázka">
                         <i class="fa fa-plus-square"></i>
                     </a>
                 </div>
@@ -201,14 +158,6 @@
 
         </div>
 
-        <div class="form-group row">
-            <label asp-for="Order.BillOfDelivery" class="col-lg-3 col-form-label form-control-label control-label"></label>
-            <div class="col-lg-9">
-                <input asp-for="Order.BillOfDelivery" class="form-control" type="text" />
-                <span asp-validation-for="Order.BillOfDelivery" class="text-danger"></span>
-            </div>
-        </div>
-
         <div class="form-group row border-top pt-2">
             <div class="col-lg-2 col-form-label d-flex justify-content-left">
                 <label class="form-control-label control-label">Faktury</label>
@@ -222,7 +171,10 @@
         <div class="dynamic-rows-invoices" id="template-invoices" data-order="@Model.Order.Invoices.Count()">
             @for (int i = 0; i < Model.Order.Invoices.Count(); i++)
             {
-                <div class="row form-group justify-content-end" style="margin-bottom: 0;">
+                <div class="dynamicrowsgroup mb-4 pt-4" style="border-top: 1px solid #0000000d;">
+
+                <div class="row form-group justify-content-end">
+
                     <input hidden="true" asp-for="@Model.Order.Invoices[i].InvoiceId" />
 
                     <div class="col-lg-3 mycalendar">
@@ -234,41 +186,38 @@
                     </div>
 
                     <div class="col-lg-3 mycalendar">
-                        <div class="input-group mb-2 mr-sm-2">
-                            <div class="input-group-prepend">
-                                <div class="input-group-text" data-toggle="tooltip" title="Přičíst dny" style="cursor: pointer;" onclick="AddInvoiceDueDays('@i');">@Model.InvoiceDueDays &nbsp;<i class="fa fa-caret-right"></i></div>
-                            </div>
+                        <div class="field-wrapper">
                             <input asp-for="@Model.Order.Invoices[i].InvoiceDueDate" class="form-control" type="text" autocomplete="off" data-id="@i" />
                             <div class="field-placeholder"><span>Splatnost faktury</span></div>
-                            <span asp-validation-for="@Model.Order.Invoices[i].InvoiceDueDate" class="text-danger"></span>
                         </div>
+                        <span asp-validation-for="@Model.Order.Invoices[i].InvoiceDueDate" class="text-danger"></span>
                     </div>
 
                     <div class="col-lg-3">
-                        <div class="input-group mb-2 mr-sm-2">
-                            <div class="input-group-prepend">
-                                <div class="input-group-text">@Model.CurrencyName</div>
-                            </div>
+                        <div class="field-wrapper">
                             <input asp-for="@Model.Order.Invoices[i].Cost" class="form-control" type="text" />
-                            <div class="field-placeholder"><span>Částka</span></div>
-                            <span asp-validation-for="@Model.Order.Invoices[i].Cost" class="text-danger"></span>
+                            <div class="field-placeholder"><span>Částka [@Model.CurrencyName]</span></div>
                         </div>
+                        <span asp-validation-for="@Model.Order.Invoices[i].Cost" class="text-danger"></span>
                     </div>
 
                     <div class="col-lg-1">
                         <a href="javascript:void(0)" class="btn btn-danger btn-sm mt-1" data-toggle="tooltip" title="Odstranit záznam" onclick="DeleteInvoice(@Model.Order.Invoices[i].InvoiceId)"><i class="fa fa-trash"></i></a>
                     </div>
+
                 </div>
 
                 <div class="row form-group justify-content-end">
                     <div class="col-lg-9">
                         <div class="field-wrapper">
-                            <input asp-for="Order.BillOfDelivery" class="form-control" type="text" />
+                            <input asp-for="@Model.Order.Invoices[i].DeliveryNote" class="form-control" type="text" />
                             <div class="field-placeholder"><span>Dodací list</span></div>
                         </div>
-                        <span asp-validation-for="Order.BillOfDelivery" class="text-danger"></span>
+                        <span asp-validation-for="@Model.Order.Invoices[i].DeliveryNote" class="text-danger"></span>
                     </div>
                     <div class="col-lg-1"></div>
+                </div>
+
                 </div>
             }
             <span asp-validation-for="Order.Invoices" class="text-danger"></span>
@@ -290,19 +239,18 @@
                 <div class="row form-group justify-content-end">
                     <input hidden="true" asp-for="@Model.Order.OtherCosts[i].OtherCostId" />
                     <div class="col-lg-6">
-                        <input asp-for="@Model.Order.OtherCosts[i].Subject" class="form-control" type="text" autocomplete="off" />
-                        <div class="field-placeholder"><span>Stručný popis</span></div>
+                        <div class="field-wrapper">
+                            <input asp-for="@Model.Order.OtherCosts[i].Subject" class="form-control" type="text" autocomplete="off" />
+                            <div class="field-placeholder"><span>Stručný popis</span></div>
+                        </div>
                         <span asp-validation-for="@Model.Order.OtherCosts[i].Subject" class="text-danger"></span>
                     </div>
 
                     <div class="col-lg-3">
-                        <div class="input-group mb-2 mr-sm-2">
-                            <div class="input-group-prepend">
-                                <div class="input-group-text">@Model.CurrencyName</div>
-                            </div>
+                        <div class="field-wrapper">
                             <input asp-for="@Model.Order.OtherCosts[i].Cost" class="form-control" type="text" />
                             <div class="field-placeholder"><span>Částka</span></div>
-                            <span asp-validation-for="@Model.Order.OtherCosts[i].Cost" class="text-danger"></span>
+                        <span asp-validation-for="@Model.Order.OtherCosts[i].Cost" class="text-danger"></span>
                         </div>
                     </div>
 
@@ -342,12 +290,10 @@
         <div class="form-group row">
             <label asp-for="Order.HourWage" class="required col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-3">
-                 <div class="input-group mb-2 mr-sm-2">
-                    <div class="input-group-prepend">
-                        <div class="input-group-text">@Model.CurrencyName</div>
-                    </div>
+                <div class="field-wrapper">
                     <input asp-for="Order.HourWage" class="form-control" type="text" onchange="this.value = this.value.replace(/,/g, '.')"/>
-                 </div>
+                    <div class="field-placeholder"><span>Hod. sazba [@Model.CurrencyName]</span></div>
+                </div>
                 <span asp-validation-for="Order.HourWage" class="text-danger"></span>
             </div>
         </div>
@@ -355,12 +301,10 @@
         <div class="form-group row">
             <label asp-for="Order.PriceFinalCzk" class="col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-3">
-                <div class="input-group mb-2 mr-sm-2">
-                    <div class="input-group-prepend">
-                        <div class="input-group-text">Kč</div>
-                    </div>
+                @* <div class="field-wrapper"> *@
                     <input asp-for="Order.PriceFinalCzk" class="form-control" type="text" readonly />
-                </div>
+                    @* <div class="field-placeholder"><span>Konečná cena [CZK]</span></div>
+                </div> *@
                 <span asp-validation-for="Order.PriceFinalCzk" class="text-danger"></span>
             </div>
             <label asp-for="Order.ExchangeRate" class="col-lg-3 col-form-label form-control-label control-label"></label>

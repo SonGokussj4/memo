@@ -92,7 +92,6 @@ CREATE TABLE [memo].[Order] (
   [PriceDiscount] int,
   [OrderCode] nvarchar(50),
   [EveContactName] nvarchar(50),
-  [BillOfDelivery] nvarchar(255),
   [HourWage] float,
   [TotalHours] int,
   [ExchangeRate] decimal(18,3),

@@ -96,7 +96,6 @@
             <th scope="col" class="text-center" data-field="6" data-sortable="true" data-filter-control="input">Vedoucí<br />projektu</th>
             <th scope="col" class="text-center" data-field="7" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatterCz">Konečná<br />cena [CZK]</th>
             <th scope="col" class="text-center" data-field="8" data-sortable="true" data-filter-control="input">Poznámky</th>
-            <th scope="col" class="text-center" data-field="9" data-sortable="true" data-filter-control="input">Dodací list</th>
             <th scope="col" class="text-center" data-field="10" data-sortable="true" data-filter-control="select">Měna</th>
             <th scope="col" class="text-center" data-field="11" data-sortable="true" data-filter-control="input">Hod.<br />sazba</th>
             <th scope="col" class="text-center" data-field="12" data-sortable="true" data-filter-control="input" data-footer-formatter="sumHoursFormatter">Plánované<br />hod</th>
@@ -143,7 +142,6 @@
                 <th scope="row" class="notesWrap" data-toggle="tooltip" data-html="true" title="@item.Notes">
                     @item.Notes
                 </th>
-                <th scope="row" class="text-center notesWrap" data-toggle="tooltip" title="@item.BillOfDelivery">@item.BillOfDelivery</th>
                 <th scope="row" class="text-center">@item.Offer?.Currency.Name</th>
                 <th scope="row" class="text-right">@String.Format(CultureInfo.CreateSpecificCulture(@item.Offer?.Currency.CultureCode), "{0:C0}", @item.HourWage)</th>
                 @{

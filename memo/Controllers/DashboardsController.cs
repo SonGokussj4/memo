@@ -117,7 +117,6 @@ namespace memo.Controllers
                         // AvgHourWage = $"{string.Format("{0:C}", g.Average(gi => gi.HourWage))}/hod",
                         Month = new DateTime(vm.Year, g.Key, 1),
                         Cash = (int)g.Sum(gi => gi.CostCzk),
-                        // Cash = (int)g.Sum(gi => gi.PriceFinalCzk),
                     })
                     .ToList();
             }
@@ -135,12 +134,7 @@ namespace memo.Controllers
                     .OrderBy(x => x.Week)
                     .ToList();
             }
-
-            // DateTimeFormatInfo dfi = DateTimeFormatInfo.CurrentInfo;
-            // Calendar cal = dfi.Calendar;
-            // var res = dfi.FirstDayOfWeek;
-            // var res2 = cal.GetWeekOfYear(DateTime.Today, dfi.CalendarWeekRule, dfi.FirstDayOfWeek);
-
+            vm.DashboardCashVM = viewModelCash;
 
             List<DashboardWonOffersVM> viewModelWonOffers = _db.Offer
                 // .Where(a => a.InvoiceDueDate.Value.Year == selectedYear)
@@ -148,13 +142,6 @@ namespace memo.Controllers
                 .GroupBy(b => b.ReceiveDate.Value.Month)
                 .Select(g => new DashboardWonOffersVM
                 {
-                    // Month2020 = g.Key,
-                    // TotalCount = g.Count(),
-                    // SumaNormal = g.Sum(gi => gi.PriceFinalCzk),
-                    // Suma = string.Format("{0:#.00}", Convert.ToDecimal(g.Sum(gi => gi.PriceFinalCzk))),
-                    // SumaC = string.Format("{0:C}", Convert.ToDecimal(g.Sum(gi => gi.PriceFinalCzk))),
-                    // TotalHours = $"{g.Sum(gi => gi.TotalHours)} hod",
-                    // AvgHourWage = $"{string.Format("{0:C}", g.Average(gi => gi.HourWage))}/hod",
                     Month = new DateTime(vm.Year, g.Key, 1),
                     All = (int)g.Count(),
                     Wait = (int)g.Count(row => row.OfferStatusId == 1),
@@ -162,9 +149,32 @@ namespace memo.Controllers
                     Lost = (int)g.Count(row => row.OfferStatusId == 3),
                 })
                 .ToList();
-
-            vm.DashboardCashVM = viewModelCash;
             vm.DashboardWonOffersVM = viewModelWonOffers;
+
+            List<DashboardTableVM> dashboardTableVMs = new List<DashboardTableVM>();
+            var departments = _db.Offer.Select(x => x.EveDepartment).Distinct().ToList();
+            foreach (var department in departments)
+            {
+                var allOffers = _db.Offer.Where(x => x.EveDepartment == department);
+                var wonOffers = allOffers.Where(x => x.OfferStatusId == 2).ToList();
+                var lostOffers = allOffers.Where(x => x.OfferStatusId == 3).ToList();
+
+                // Get hours
+                List<int> offersIds = allOffers.Select(x => x.OfferId).ToList();
+                IEnumerable<Order> orders = _db.Order.Where(x => offersIds.Contains((int)x.OfferId));
+                // int hours = orders.Select(x => x.Burned).ToList().Sum();
+
+                DashboardTableVM dashboardTableVM = new DashboardTableVM()
+                {
+                    Department = department,
+                    SuccessRate = wonOffers.Count() / (float)allOffers.Count(),
+                    WonSum = wonOffers.Count(),
+                    LostSum = lostOffers.Count(),
+                    // HoursSum = hours,
+                };
+                dashboardTableVMs.Add(dashboardTableVM);
+            }
+            vm.DashboardTableVM = dashboardTableVMs;
 
             return View(vm);
         }

@@ -38,28 +38,20 @@ namespace memo
             {
                 builder.AddRazorRuntimeCompilation();
             }
-
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-
             services.AddDbContext<EvektorDbContext>(options =>
-                // options.UseSqlServer(Configuration.GetConnectionString("EvektorDbConnection")));
-                options.UseSqlServer(Configuration.GetConnectionString("EvektorDbConnectionMock")));
-
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
-
             services.AddAuthorization(options =>
             {
                 options.FallbackPolicy = new AuthorizationPolicyBuilder()
                     .RequireAuthenticatedUser()
                     .Build();
-
                 // Register other policies here
             });
-
             services.AddControllersWithViews();
-
             // services.AddRazorPages();
                 // .AddRazorRuntimeCompilation();
             // services.AddRazorPages();

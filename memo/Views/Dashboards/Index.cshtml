@@ -88,6 +88,36 @@
 
 </div>
 
+<hr />
+
+<div class="container d-flex justify-content-center">
+
+<table id="table" class="table table-sm text-xsmall text-nowrap">
+    <thead>
+        <tr>
+            <th class="text-center">Oddělení</th>
+            <th>Úspěšnost</th>
+            <th>(Vyhrané)</th>
+            <th>(Prohrané)</th>
+            <th>Hodiny</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in @Model.DashboardTableVM)
+        {
+        <tr>
+            <td class="text-left">@item.Department</td>
+            <td class="text-right">@item.SuccessRate.ToString("P")</td>
+            <td class="text-right">@item.WonSum</td>
+            <td class="text-right">@item.LostSum</td>
+            <td class="text-right">---</td>
+        </tr>
+        }
+    </tbody>
+</table>
+
+</div>
+
 
 @section scripts{
 <script>

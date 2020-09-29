@@ -38,6 +38,9 @@ namespace memo.Models
         [Column(TypeName = "decimal(18,3)")]
         public decimal CostCzk { get; set; }
 
+        [Display(Name = "Dodací list")]
+        public string DeliveryNote { get; set; }
+
         // public Invoice()
         // {
         //     Cost = 0;
