@@ -5,7 +5,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE [dbo].[spSumMinutesByOrderName]
+CREATE PROCEDURE [memo].[spSumMinutesByOrderName]
 	@OrderName nvarchar(50)
 AS
 BEGIN
@@ -23,20 +23,20 @@ END
 
 GO
 
-CREATE PROCEDURE [dbo].[spGetPlannedCash]
-AS
-BEGIN
-	SET NOCOUNT ON;
+-- CREATE PROCEDURE [dbo].[spGetPlannedCash]
+-- AS
+-- BEGIN
+-- 	SET NOCOUNT ON;
 
-	SELECT
-		MONTH(InvoiceDueDate),
-		SUM(PriceFinalCzk)
-	FROM
-		[MemoDB].[memo].[Order]
-	WHERE
-		YEAR(InvoiceDueDate) = '2020'
-	GROUP BY
-		MONTH(InvoiceDueDate)
-END
+-- 	SELECT
+-- 		MONTH(InvoiceDueDate),
+-- 		SUM(PriceFinalCzk)
+-- 	FROM
+-- 		[MemoDB].[memo].[Order]
+-- 	WHERE
+-- 		YEAR(InvoiceDueDate) = '2020'
+-- 	GROUP BY
+-- 		MONTH(InvoiceDueDate)
+-- END
 
 

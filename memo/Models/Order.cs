@@ -79,13 +79,11 @@ namespace memo.Models
         [Display(Name = "Spáleno")]
         public int Burned { get; set; }
 
-        [Required, MinLength(1, ErrorMessage="Musíte přidat alespoň jednu fakturaci.")]
+        public string Username { get; set; }
 
         // [InverseProperty("Invoice")]
+        // [Required, MinLength(1, ErrorMessage="Musíte přidat alespoň jednu fakturaci.")]
         public virtual List<Invoice> Invoices { get; set; } = new List<Invoice>();
-
         public virtual List<OtherCost> OtherCosts { get; set; } = new List<OtherCost>();
-
-        public string Username { get; set; }
     }
 }

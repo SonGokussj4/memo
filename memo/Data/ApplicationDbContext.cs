@@ -27,12 +27,12 @@ namespace memo.Data
         public virtual DbSet<OtherCost> OtherCost { get; set; }
 
         // PROCEDURES
-        public virtual DbSet<SumMinutesSP> SumMinutesSP { get; set; }
+        // public virtual DbSet<SumMinutesSP> SumMinutesSP { get; set; }
         // public virtual DbSet<DashboardVM> DashboardVM { get; set; }
 
         // EVE
-        public virtual DbSet<tWorks> tWorks { get; set; }
-        public virtual DbSet<cOrders> cOrders { get; set; }
+        // public virtual DbSet<tWorks> tWorks { get; set; }
+        // public virtual DbSet<cOrders> cOrders { get; set; }
 
         // // ViewModels
         // public DbSet<CreateOfferViewModel> CreateOfferVM { get; set; }

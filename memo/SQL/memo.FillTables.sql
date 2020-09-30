@@ -154,3 +154,8 @@ VALUES
 --   [memo].[Order]
 --  ALTER COLUMN
 --   [ExchangeRate] DECIMAL(18,3);
+
+
+-- Presunout dbo.spProcedure do memo.spProcedure
+-- ##################################
+-- ALTER SCHEMA memo TRANSFER dbo.spProcedure;

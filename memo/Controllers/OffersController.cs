@@ -18,11 +18,13 @@ namespace memo.Controllers
     {
         public ApplicationDbContext _db { get; }
         public EvektorDbContext _eveDb { get; }
+        public EvektorDochnaDbContext _eveDbDochna { get; }
 
-        public OffersController(ApplicationDbContext db, EvektorDbContext eveDb)
+        public OffersController(ApplicationDbContext db, EvektorDbContext eveDb, EvektorDochnaDbContext eveDbDochna)
         {
             _db = db;
             _eveDb = eveDb;
+            _eveDbDochna = eveDbDochna;
         }
 
         public IActionResult Index(bool showInactive = false)
@@ -63,17 +65,19 @@ namespace memo.Controllers
             Offer model = new Offer();
 
             ViewBag.CompanyList = new SelectList(_db.Company.ToList(), "CompanyId", "Name");
-            // ViewBag.ContactList = new SelectList(_db.Contact.ToList(), "ContactId", "PersonName");
-            ViewBag.ContactList = new SelectList((from s in _db.Contact.ToList() select new {
-                ContactId = s.ContactId,
-                FullName = s.PersonName + " " + s.PersonLastName
-            }), "ContactId", "FullName");
-            ViewBag.DepartmentList = getDepartmentList(_eveDb);
-            ViewBag.EveContactList = getEveContacts(_eveDb);
+            ViewBag.ContactList = new SelectList(
+                (from s in _db.Contact.ToList() select new {
+                    ContactId = s.ContactId,
+                    FullName = s.PersonName + " " + s.PersonLastName
+                }
+            ), "ContactId", "FullName");
+            ViewBag.DepartmentList = getDepartmentList(_eveDbDochna);
+            ViewBag.EveContactList = getEveContacts(_eveDbDochna);
             ViewBag.CurrencyList = new SelectList(_db.Currency.ToList(), "CurrencyId", "Name");
             ViewBag.OfferStatusList = new SelectList(_db.OfferStatus.ToList(), "OfferStatusId", "Status");
 
             model.ExchangeRate = decimal.Parse(getCurrencyStr("CZK"));
+            model.OfferName = getNewOfferNum();
 
             return View(model);
         }
@@ -82,27 +86,9 @@ namespace memo.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create(Offer offer)
         {
-            offer.OfferStatusId = 1;  // default
-            offer.Active = true;
-
-            int maxOfferNum = 0;
-            var offerNames = _db.Offer.Where(m => m.OfferName.Contains(DateTime.Now.Year.ToString()))
-                .Select(m => m.OfferName).ToList();
-
-            foreach (string item in offerNames)
-            {
-                int num = Convert.ToInt32(item.Split("/").Last());
-                if (num > maxOfferNum)
-                {
-                    maxOfferNum = num;
-                }
-            }
-            string maxOfferNumNext = String.Format("{0:0000}", maxOfferNum + 1);  // 0069
-            string newOfferNum = $"EV-quo/{DateTime.Now.Year.ToString()}/{maxOfferNumNext}";  // EV-quo/2020/0069
-
-            offer.OfferName = newOfferNum;
+            offer.OfferName = getNewOfferNum();
             offer.PriceCzk = Convert.ToInt32(offer.Price * offer.ExchangeRate);  // 1000 * 26,243
-            offer.LostReason = "";
+            // offer.LostReason = "";
             offer.Notes = String.IsNullOrEmpty(offer.Notes) ? "" : offer.Notes;
             offer.CreateDate = DateTime.Now;
 
@@ -113,13 +99,13 @@ namespace memo.Controllers
                 return RedirectToAction("Index");
             }
 
-            ViewBag.DepartmentList = getDepartmentList(_eveDb);
+            ViewBag.DepartmentList = getDepartmentList(_eveDbDochna);
             ViewBag.CompanyList = new SelectList(_db.Company.ToList(), "CompanyId", "Name");
             ViewBag.ContactList = new SelectList((from s in _db.Contact.ToList() select new {
                 ContactId = s.ContactId,
                 FullName = s.PersonName + " " + s.PersonLastName
             }), "ContactId", "FullName");
-            ViewBag.EveContactList = getEveContacts(_eveDb);
+            ViewBag.EveContactList = getEveContacts(_eveDbDochna);
             ViewBag.CurrencyList = new SelectList(_db.Currency.ToList(), "CurrencyId", "Name");
             ViewBag.OfferStatusList = new SelectList(_db.OfferStatus.ToList(), "OfferStatusId", "Status");
 
@@ -141,13 +127,13 @@ namespace memo.Controllers
                 return NotFound();
             }
 
-            ViewBag.DepartmentList = getDepartmentList(_eveDb);
+            ViewBag.DepartmentList = getDepartmentList(_eveDbDochna);
             ViewBag.CompanyList = new SelectList( _db.Company.ToList(), "CompanyId", "Name");
             ViewBag.ContactList = new SelectList((from s in _db.Contact.ToList() select new {
                 ContactId = s.ContactId,
                 FullName = s.PersonName + " " + s.PersonLastName
             }), "ContactId", "FullName");
-            ViewBag.EveContactList = getEveContacts(_eveDb);
+            ViewBag.EveContactList = getEveContacts(_eveDbDochna);
             ViewBag.CurrencyList = new SelectList( _db.Currency.ToList(), "CurrencyId", "Name");
             ViewBag.OfferStatusList = new SelectList( _db.OfferStatus.ToList(), "OfferStatusId", "Status");
             ViewBag.OfferStatusName = offer.OfferStatus.Name;
@@ -184,7 +170,7 @@ namespace memo.Controllers
                 }
 
                 // Populate
-                ViewBag.DepartmentList = getDepartmentList(_eveDb);
+                ViewBag.DepartmentList = getDepartmentList(_eveDbDochna);
                 ViewBag.CompanyList = new SelectList(_db.Company.ToList(), "CompanyId", "Name");
                 ViewBag.ContactList = new SelectList((
                     from s in _db.Contact.ToList()
@@ -193,7 +179,7 @@ namespace memo.Controllers
                         FullName = s.PersonName + " " + s.PersonLastName
                     }
                 ), "ContactId", "FullName");
-                ViewBag.EveContactList = getEveContacts(_eveDb);
+                ViewBag.EveContactList = getEveContacts(_eveDbDochna);
                 ViewBag.CurrencyList = new SelectList(_db.Currency.ToList(), "CurrencyId", "Name");
                 ViewBag.OfferStatusName = _db.OfferStatus.Find(model.OfferStatusId).Name;
                 ViewBag.CreatedOrders = _db.Order.Where(x => x.OfferId == id).ToList();
@@ -214,13 +200,13 @@ namespace memo.Controllers
             // Console.WriteLine(errors.ToString());
 
             // Populate
-            ViewBag.DepartmentList = getDepartmentList(_eveDb);
+            ViewBag.DepartmentList = getDepartmentList(_eveDbDochna);
             ViewBag.CompanyList = new SelectList(_db.Company.ToList(), "CompanyId", "Name");
             ViewBag.ContactList = new SelectList((from s in _db.Contact.ToList() select new {
                 ContactId = s.ContactId,
                 FullName = s.PersonName + " " + s.PersonLastName
             }), "ContactId", "FullName");
-            ViewBag.EveContactList = getEveContacts(_eveDb);
+            ViewBag.EveContactList = getEveContacts(_eveDbDochna);
             ViewBag.CurrencyList = new SelectList(_db.Currency.ToList(), "CurrencyId", "Name");
             ViewBag.OfferStatusName = _db.OfferStatus.Find(model.OfferStatusId).Name;
             ViewBag.CreatedOrders = _db.Order.Where(x => x.OfferId == id).ToList();
@@ -354,6 +340,21 @@ namespace memo.Controllers
             await _db.SaveChangesAsync();
 
             return RedirectToAction("Index", new { showInactive });
+        }
+
+        private string getNewOfferNum()
+        {
+            string offerNames = _db.Offer
+                .Where(m => m.OfferName.Contains("/" + DateTime.Now.Year.ToString() + "/"))
+                .Select(m => m.OfferName)
+                .OrderByDescending(x => x)
+                .FirstOrDefault();
+
+            int maxOfferNum = Convert.ToInt32(offerNames.Split("/").Last());  // 0068
+            string maxOfferNumNext = String.Format("{0:0000}", maxOfferNum + 1);  // 0069
+            string newOfferNum = $"EV-quo/{DateTime.Now.Year.ToString()}/{maxOfferNumNext}";  // EV-quo/2020/0069
+
+            return newOfferNum;
         }
     }
 }

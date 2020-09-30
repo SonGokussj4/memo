@@ -12,6 +12,7 @@ namespace memo.Models
         [Key]
         public int OfferId { get; set; }
 
+        [Required]
         [Display(Name = "Ev. číslo nabídky"), StringLength(50)]
         [RegularExpression(@"^EV-quo/\d{4}/\d{4}$", ErrorMessage = "Číslo nabídky musí být ve tvaru EV-quo/rrrr/####, kde rrrr je rok a #### pořadové unikátní číslo")]
         public string OfferName { get; set; }
@@ -43,8 +44,8 @@ namespace memo.Models
         [NotMapped]
         public List<SelectListItem> EveDivisionList { get; } = new List<SelectListItem>
         {
-            new SelectListItem { Value = "AD", Text = "AD" },
-            new SelectListItem { Value = "ED", Text = "ED" },
+            new SelectListItem { Value = "EVE", Text = "EVE" },
+            new SelectListItem { Value = "EVAT", Text = "EVAT" },
         };
 
         [Display(Name = "EVE oddělení"), StringLength(50)]
@@ -73,7 +74,7 @@ namespace memo.Models
         public int? PriceCzk { get; set; }
 
         [Display(Name = "Status nabídky")]
-        public int OfferStatusId { get; set; }
+        public int OfferStatusId { get; set; } = 1;  // Default: Ceka
         public OfferStatus OfferStatus { get; set; }
         // [InverseProperty(nameof(OfferStatus.OfferStatusId))]
         // public virtual OfferStatus StatusNavigation { get; set; }
@@ -92,6 +93,6 @@ namespace memo.Models
         public DateTime? CreateDate { get; set; }
 
         [Display(Name = "Aktivní")]
-        public Boolean Active { get; set; }
+        public Boolean Active { get; set; } = true;  // Default: Active
     }
 }

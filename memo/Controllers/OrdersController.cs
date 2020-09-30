@@ -21,11 +21,13 @@ namespace memo.Controllers
     {
         public ApplicationDbContext _db { get; }
         public EvektorDbContext _eveDb { get; }
+        public EvektorDochnaDbContext _eveDbDochna { get; }
 
-        public OrdersController(ApplicationDbContext db, EvektorDbContext eveDb)
+        public OrdersController(ApplicationDbContext db, EvektorDbContext eveDb, EvektorDochnaDbContext eveDbDochna)
         {
             _db = db;
             _eveDb = eveDb;
+            _eveDbDochna = eveDbDochna;
         }
 
         public IActionResult Index(bool showInactive = false)
@@ -92,7 +94,7 @@ namespace memo.Controllers
                 .ToList();
             ViewBag.WonOffersList = new SelectList(wonOffersList, "OfferId", "OfferName");
             ViewBag.CurrencyList = new SelectList(_db.Currency.ToList(), "CurrencyId", "Name");
-            ViewBag.EveContactList = getEveContacts(_eveDb);
+            ViewBag.EveContactList = getEveContacts(_eveDbDochna);
             ViewBag.EveOrderCodes = getOrderCodes(_eveDb);
 
             string offerCompanyName = string.Empty;
@@ -145,7 +147,7 @@ namespace memo.Controllers
                 .ToList();
             ViewBag.WonOffersList = new SelectList(wonOffersList, "OfferId", "OfferName");
             ViewBag.CurrencyList = new SelectList(_db.Currency.ToList(), "CurrencyId", "Name");
-            ViewBag.EveContactList = getEveContacts(_eveDb);
+            ViewBag.EveContactList = getEveContacts(_eveDbDochna);
             ViewBag.EveOrderCodes = getOrderCodes(_eveDb);
 
             string offerCompanyName = string.Empty;
@@ -218,7 +220,7 @@ namespace memo.Controllers
 
             if (ModelState.IsValid)
             {
-                int? totalHours = _db.cOrders  // Planned
+                int? totalHours = _eveDb.cOrders  // Planned
                     .Where(t => t.OrderCode == vm.Order.OrderCode)
                     .Select(t => t.Planned).FirstOrDefault();
 
@@ -250,7 +252,7 @@ namespace memo.Controllers
             // ViewBag.WonOffersList = new SelectList(wonOffersList, "OfferId", "OfferName");
 
             ViewBag.CurrencyList = new SelectList(_db.Currency.ToList(), "CurrencyId", "Name");
-            ViewBag.EveContactList = getEveContacts(_eveDb);
+            ViewBag.EveContactList = getEveContacts(_eveDbDochna);
             ViewBag.EveOrderCodes = getOrderCodes(_eveDb);
 
             Order order = _db.Order.Find(id);
@@ -306,7 +308,7 @@ namespace memo.Controllers
             {
                 try
                 {
-                    vm.Order.TotalHours = _db.cOrders  // Planned hours
+                    vm.Order.TotalHours = _eveDb.cOrders  // Planned hours
                         .Where(t => t.OrderCode == vm.Order.OrderCode)
                         .Select(t => t.Planned).FirstOrDefault();
 
@@ -360,7 +362,7 @@ namespace memo.Controllers
                 .ToList();
             ViewBag.WonOffersList = new SelectList(wonOffersList, "OfferId", "OfferName");
             ViewBag.CurrencyList = new SelectList(_db.Currency.ToList(), "CurrencyId", "Name");
-            ViewBag.EveContactList = getEveContacts(_eveDb);
+            ViewBag.EveContactList = getEveContacts(_eveDbDochna);
             ViewBag.EveOrderCodes = getOrderCodes(_eveDb);
 
             var offer = _db.Offer.Find(vm.Order.OfferId);
@@ -422,8 +424,8 @@ namespace memo.Controllers
 
         public SumMinutesSP GetSumMinutes(string orderName)
         {
-            return _db.SumMinutesSP
-                .FromSqlRaw<SumMinutesSP>("spSumMinutesByOrderName {0}", orderName)
+            return _eveDb.SumMinutesSP
+                .FromSqlRaw<SumMinutesSP>("memo.spSumMinutesByOrderName {0}", orderName)
                 .ToList()
                 .SingleOrDefault();
         }

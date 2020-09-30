@@ -114,6 +114,7 @@ CREATE TABLE [memo].[Invoice] (
   [InvoiceIssueDate] date,
   [Cost] decimal(18,3),
   [CostCzk] decimal(18,3),
+  [DeliveryNote] nvarchar(255),
   CONSTRAINT [FK__memo.Invoice__memo.Order__OrderId] FOREIGN KEY ([OrderId])
     REFERENCES [memo].[Order] ([OrderId]) ON DELETE CASCADE
 )

@@ -96,14 +96,14 @@ namespace memo.Controllers
             return "";
         }
 
-        public SelectList getEveContacts(EvektorDbContext _eveDb)
+        public SelectList getEveContacts(EvektorDochnaDbContext _eveDbDochna)
         {
 
             // EVE - Del = 1 and nemáš TxAccount a nejsi IntAccType == 1 -> nepracuješ
 	        // EVAT - Del = 0 and máš BranchID 1 a zároveň WorkMask non NULL -> pracuješ v EVATu
 
             List<SelectListItem> eveContactsList = new List<SelectListItem>();
-            foreach (tUsers item in _eveDb.tUsers)
+            foreach (tUsers item in _eveDbDochna.tUsers)
             {
                 if (item.TxAccount == "" || item.Del == 1 || item.IntAccType != 1)
                 {
@@ -130,13 +130,13 @@ namespace memo.Controllers
             return new SelectList(eveContactsList.OrderBy(x => x.Text), "Value", "Text");
         }
 
-        public SelectList getDepartmentList(EvektorDbContext _eveDb)
+        public SelectList getDepartmentList(EvektorDochnaDbContext _eveDbDochna)
         {
             string[] numbers = new string[]{"1","2","3","4","5","6","7","8","9","0"};
 
             List<SelectListItem> eveDepartmentList = new List<SelectListItem>();
 
-            var departments = _eveDb.tUsers
+            var departments = _eveDbDochna.tUsers
                 .Where(x =>
                     x.IntAccType == 2 &&
                     x.Del == 0 &&
