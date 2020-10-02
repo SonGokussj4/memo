@@ -29,7 +29,6 @@ namespace memo.Controllers
         public IActionResult Index(DashboardVM vm = null)
         {
             // Fill DepartmentList ComboBox with only used Offer Department values
-            // vm.DepartmentList = new List<SelectListItem>();
             vm.DepartmentList.Add( new SelectListItem { Value = "All", Text = "Vše" });
             vm.CustomerList.Add( new SelectListItem { Value = "All", Text = "Vše" });
 
@@ -64,8 +63,6 @@ namespace memo.Controllers
             // Filter - Department, get offers == department and then invoices from those offers
             if (vm.Department != "All")
             {
-                // List<Offer> offers = _db.Offer.Where(x => x.EveDepartment == vm.Department).ToList();
-
                 List<int> offerIds = (from r in _db.Offer
                                 where r.EveDepartment == vm.Department
                                 select r.OfferId).ToList();
