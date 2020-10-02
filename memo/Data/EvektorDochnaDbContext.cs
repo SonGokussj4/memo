@@ -17,6 +17,7 @@ namespace memo.Data
         }
 
         public virtual DbSet<tUsers> tUsers { get; set; }
+        public virtual DbSet<vEmployees> vEmployees { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

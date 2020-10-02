@@ -102,82 +102,31 @@ namespace memo.Controllers
             // EVE - Del = 1 and nemáš TxAccount a nejsi IntAccType == 1 -> nepracuješ
 	        // EVAT - Del = 0 and máš BranchID 1 a zároveň WorkMask non NULL -> pracuješ v EVATu
 
-            List<SelectListItem> eveContactsList = new List<SelectListItem>();
-            foreach (tUsers item in _eveDbDochna.tUsers)
-            {
-                if (item.TxAccount == "" || item.Del == 1 || item.IntAccType != 1)
-                {
-                    continue;
-                }
+            IEnumerable<SelectListItem> eveContactsList = _eveDbDochna.vEmployees
+                .Where(x => x.EVE == 1)
+                .ToList()
+                .Select(x => new SelectListItem {
+                    Value = x.FormatedName,
+                    Text = x.FormatedName,
+                })
+                .OrderBy(x => x.Text);
 
-                string fullName = $"{item.LastName} {item.FirstName}";
-
-                if (eveContactsList.Any(item => item.Text == fullName))
-                {
-                    continue;
-                }
-
-                eveContactsList.Add(new SelectListItem
-                {
-                    // Value = item.Id.ToString(),
-                    Value = fullName,
-                    Text = fullName
-                });
-
-                // eveContactsList.OrderBy(x => x.Text);
-            }
-
-            return new SelectList(eveContactsList.OrderBy(x => x.Text), "Value", "Text");
+            return new SelectList(eveContactsList, "Value", "Text");
         }
 
         public SelectList getDepartmentList(EvektorDochnaDbContext _eveDbDochna)
         {
-            string[] numbers = new string[]{"1","2","3","4","5","6","7","8","9","0"};
+            IEnumerable<SelectListItem> eveDepartmentList = _eveDbDochna.vEmployees
+                .Where(x => x.EVE == 1)
+                .OrderBy(x => x.DepartName)
+                .ToList()
+                .Select(x => new SelectListItem {
+                    Value = x.DepartName,
+                    Text = x.DepartName,
+                })
+                .Distinct(new SelectListItemComparer());
 
-            List<SelectListItem> eveDepartmentList = new List<SelectListItem>();
-
-            var departments = _eveDbDochna.tUsers
-                .Where(x =>
-                    x.IntAccType == 2 &&
-                    x.Del == 0 &&
-                    x.FormatedName.Contains("-") &&
-                    // !int.TryParse(x.FormatedName.Substring(0, 1), out int n)
-                    !numbers.Contains(x.FormatedName.Substring(0, 1))
-                    // !SqlMethods.Like(x.FormatedName, "[0-9]%")
-                )
-                .Select(x => x.FormatedName)
-                .ToList();
-
-            foreach (string item in departments)
-            {
-                eveDepartmentList.Add( new SelectListItem { Value = item, Text = item } );
-            }
-
-            // foreach (tUsers item in _eveDb.tUsers)
-            // {
-
-            //     if (item.IntAccType != 2)
-            //     {
-            //         continue;
-            //     }
-            //     if (item.Del == -1)
-            //     {
-            //         continue;
-            //     }
-            //     if (!item.FormatedName.Contains("-"))
-            //     {
-            //         continue;
-            //     }
-
-            //     eveDepartmentList.Add(new SelectListItem
-            //     {
-            //         // Value = item.Id.ToString(),
-            //         Value = item.LastName,
-            //         Text = item.LastName
-            //     });
-            // }
-
-            return new SelectList(eveDepartmentList.OrderBy(x => x.Text), "Value", "Text");
+            return new SelectList(eveDepartmentList, "Value", "Text");
         }
 
         public SelectList getOrderCodes(EvektorDbContext _eveDb)
@@ -199,6 +148,21 @@ namespace memo.Controllers
 
             // return new SelectList(eveOrderCodes.OrderByDescending(x => x.Text), "Value", "Text");
             return new SelectList(eveOrderCodes, "Value", "Text");
+        }
+
+        public class SelectListItemComparer : IEqualityComparer<SelectListItem>
+        {
+            public bool Equals(SelectListItem x, SelectListItem y)
+            {
+                return x.Text == y.Text && x.Value == y.Value;
+            }
+
+            public int GetHashCode(SelectListItem  item)
+            {
+                int hashText = item.Text == null ? 0 : item.Text.GetHashCode();
+                int hashValue = item.Value == null ? 0 : item.Value.GetHashCode();
+                return hashText ^ hashValue;
+            }
         }
 
     }
