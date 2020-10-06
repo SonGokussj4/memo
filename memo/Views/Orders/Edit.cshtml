@@ -173,50 +173,50 @@
             {
                 <div class="dynamicrowsgroup mb-4 pt-4" style="border-top: 1px solid #0000000d;">
 
-                <div class="row form-group justify-content-end">
+                    <div class="row form-group justify-content-end">
 
-                    <input hidden="true" asp-for="@Model.Order.Invoices[i].InvoiceId" />
+                        <input hidden="true" asp-for="@Model.Order.Invoices[i].InvoiceId" />
 
-                    <div class="col-lg-3 mycalendar">
-                        <div class="field-wrapper">
-                            <input asp-for="@Model.Order.Invoices[i].InvoiceIssueDate" class="form-control" type="text" autocomplete="off" data-id="@i" />
-                            <div class="field-placeholder"><span>Termín vystavení</span></div>
+                        <div class="col-lg-3 mycalendar">
+                            <div class="field-wrapper">
+                                <input asp-for="@Model.Order.Invoices[i].InvoiceIssueDate" class="form-control" type="text" autocomplete="off" data-id="@i" />
+                                <div class="field-placeholder"><span>Termín vystavení</span></div>
+                            </div>
+                            <span asp-validation-for="@Model.Order.Invoices[i].InvoiceIssueDate" class="text-danger"></span>
                         </div>
-                        <span asp-validation-for="@Model.Order.Invoices[i].InvoiceIssueDate" class="text-danger"></span>
-                    </div>
 
-                    <div class="col-lg-3 mycalendar">
-                        <div class="field-wrapper">
-                            <input asp-for="@Model.Order.Invoices[i].InvoiceDueDate" class="form-control" type="text" autocomplete="off" data-id="@i" />
-                            <div class="field-placeholder"><span>Splatnost faktury</span></div>
+                        <div class="col-lg-3 mycalendar">
+                            <div class="field-wrapper">
+                                <input asp-for="@Model.Order.Invoices[i].InvoiceDueDate" class="form-control" type="text" autocomplete="off" data-id="@i" />
+                                <div class="field-placeholder"><span>Splatnost faktury</span></div>
+                            </div>
+                            <span asp-validation-for="@Model.Order.Invoices[i].InvoiceDueDate" class="text-danger"></span>
                         </div>
-                        <span asp-validation-for="@Model.Order.Invoices[i].InvoiceDueDate" class="text-danger"></span>
-                    </div>
 
-                    <div class="col-lg-3">
-                        <div class="field-wrapper">
-                            <input asp-for="@Model.Order.Invoices[i].Cost" class="form-control" type="text" />
-                            <div class="field-placeholder"><span>Částka [@Model.CurrencyName]</span></div>
+                        <div class="col-lg-3">
+                            <div class="field-wrapper">
+                                <input asp-for="@Model.Order.Invoices[i].Cost" class="form-control" type="text" />
+                                <div class="field-placeholder"><span>Částka [@Model.CurrencyName]</span></div>
+                            </div>
+                            <span asp-validation-for="@Model.Order.Invoices[i].Cost" class="text-danger"></span>
                         </div>
-                        <span asp-validation-for="@Model.Order.Invoices[i].Cost" class="text-danger"></span>
-                    </div>
 
-                    <div class="col-lg-1">
-                        <a href="javascript:void(0)" class="btn btn-danger btn-sm mt-1" data-toggle="tooltip" title="Odstranit záznam" onclick="DeleteInvoice(@Model.Order.Invoices[i].InvoiceId)"><i class="fa fa-trash"></i></a>
-                    </div>
-
-                </div>
-
-                <div class="row form-group justify-content-end">
-                    <div class="col-lg-9">
-                        <div class="field-wrapper">
-                            <input asp-for="@Model.Order.Invoices[i].DeliveryNote" class="form-control" type="text" />
-                            <div class="field-placeholder"><span>Dodací list</span></div>
+                        <div class="col-lg-1">
+                            <a href="javascript:void(0)" class="btn btn-danger btn-sm mt-1" data-toggle="tooltip" title="Odstranit záznam" onclick="DeleteInvoice(@Model.Order.Invoices[i].InvoiceId)"><i class="fa fa-trash"></i></a>
                         </div>
-                        <span asp-validation-for="@Model.Order.Invoices[i].DeliveryNote" class="text-danger"></span>
+
                     </div>
-                    <div class="col-lg-1"></div>
-                </div>
+
+                    <div class="row form-group justify-content-end">
+                        <div class="col-lg-9">
+                            <div class="field-wrapper">
+                                <input asp-for="@Model.Order.Invoices[i].DeliveryNote" class="form-control" type="text" />
+                                <div class="field-placeholder"><span>Dodací list</span></div>
+                            </div>
+                            <span asp-validation-for="@Model.Order.Invoices[i].DeliveryNote" class="text-danger"></span>
+                        </div>
+                        <div class="col-lg-1"></div>
+                    </div>
 
                 </div>
             }
@@ -400,7 +400,10 @@
         }
 
         function DeleteInvoice(invoiceId) {
-            console.log(`Deleting invoiceId: ${invoiceId}`);
+            var rowDeliveryNote = document.getElementById(`dynamic-row-delivery-note-${invoiceId}`);
+            if (rowDeliveryNote != null) {
+                rowDeliveryNote.remove();
+            }
             var row = document.getElementById(`dynamic-row-invoice-${invoiceId}`);
             if (row != null) {
                 row.remove();
@@ -416,7 +419,7 @@
                     cache: false,
                     beforeSend:function(){
                         return confirm(
-                            "Jste si jisti??? Tento úkon smaže označenou fakturaci!"
+                            "Jste si jisti??? Tento úkon smaže již uloženou fakturaci!"
                         );
                     },
                     success: function(data) {
@@ -574,37 +577,55 @@
             // Add new INVOICES row
             var idInvoice = @Model.Order.Invoices.Count();
             $('.add-row-invoices').click(function () {
-                var html =
-                    '<div class="row form-group justify-content-end" id="dynamic-row-invoice-' + idInvoice + '">'+
-                        '<input type="number" hidden="true" data-val="true" data-val-required="The InvoiceId field is required." id="Order_Invoices_' + idInvoice + '__InvoiceId" name="Order.Invoices[' + idInvoice + '].InvoiceId" value="0">'+
-                        '<div class="col-lg-3 mycalendar">'+
-                            '<input class="form-control" type="text" autocomplete="off" placeholder="Termín vystavení" data-val="true" data-id="' + idInvoice + '" data-val-required="The Předp. termín vystavení faktury field is required." id="Order_Invoices_' + idInvoice + '__InvoiceIssueDate" name="Order.Invoices[' + idInvoice + '].InvoiceIssueDate" value="">'+
-                            '<span class="text-danger field-validation-valid" data-valmsg-for="Order.Invoices[' + idInvoice + '].InvoiceIssueDate" data-valmsg-replace="true"></span>'+
+                var html = ''+
+                    @* '<div class="dynamic-rows-invoices" id="template-invoices" data-order="' + idInvoice + '">'+ *@
+
+                        '<div class="row form-group justify-content-end" id="dynamic-row-invoice-' + idInvoice + '">'+
+                            '<input type="number" hidden="true" data-val="true" data-val-required="The InvoiceId field is required." id="Order_Invoices_' + idInvoice + '__InvoiceId" name="Order.Invoices[' + idInvoice + '].InvoiceId" value="0">'+
+
+                            '<div class="col-lg-3 mycalendar">'+
+                                '<input class="form-control" type="text" autocomplete="off" placeholder="Termín vystavení" data-val="true" data-id="' + idInvoice + '" data-val-required="The Předp. termín vystavení faktury field is required." id="Order_Invoices_' + idInvoice + '__InvoiceIssueDate" name="Order.Invoices[' + idInvoice + '].InvoiceIssueDate" value="">'+
+                                '<span class="text-danger field-validation-valid" data-valmsg-for="Order.Invoices[' + idInvoice + '].InvoiceIssueDate" data-valmsg-replace="true"></span>'+
+                            '</div>'+
+
+                            '<div class="col-lg-3">'+
+                                '<div class="input-group mb-2 mr-sm-2">'+
+                                    '<div class="input-group-prepend">'+
+                                        '<div class="input-group-text newlyAddedTooltip" data-toggle="tooltip" title="Přičíst dny" style="cursor: pointer;" onclick="AddInvoiceDueDays(' + idInvoice + ');">@Model.InvoiceDueDays &nbsp;<i class="fa fa-caret-right"></i></div>'+
+                                    '</div>'+
+                                        '<input class="form-control" type="text" autocomplete="off" placeholder="Splatnost faktury" data-val="true" data-val-required="The Splatnost faktury field is required." id="Order_Invoices_' + idInvoice + '__InvoiceDueDate" name="Order.Invoices[' + idInvoice + '].InvoiceDueDate" value="">'+
+                                        '<span class="text-danger field-validation-valid" data-valmsg-for="Order.Invoices[' + idInvoice + '].InvoiceDueDate" data-valmsg-replace="true"></span>'+
+                                '</div>'+
+                            '</div>'+
+
+                            '<div class="col-lg-3">'+
+                                '<div class="input-group mb-2 mr-sm-2">'+
+                                    '<div class="input-group-prepend">'+
+                                        '<div class="input-group-text">@Model.CurrencyName</div>'+
+                                    '</div>'+
+                                    '<input class="form-control" type="text" placeholder="Částka" data-val="true" data-val-number="The field Částka must be a number." data-val-required="The Částka field is required." id="Order_Invoices_' + idInvoice + '__Cost" name="Order.Invoices[' + idInvoice + '].Cost" value="">'+
+                                    '<span class="text-danger field-validation-valid" data-valmsg-for="Order.Invoices[' + idInvoice + '].Cost" data-valmsg-replace="true"></span>'+
+                                '</div>'+
+                            '</div>'+
+
+                            '<div class="col-lg-1">'+
+                                '<a href="javascript:void(0)" class="btn btn-danger btn-sm mt-1" data-toggle="tooltip" title="" data-original-title="Odstranit záznam" onclick="DeleteInvoice(' + idInvoice + ')"><i class="fa fa-trash white"></i></a>'+
+                            '</div>'+
+
                         '</div>'+
 
-                        '<div class="col-lg-3">'+
-                            '<div class="input-group mb-2 mr-sm-2">'+
-                                '<div class="input-group-prepend">'+
-                                    '<div class="input-group-text newlyAddedTooltip" data-toggle="tooltip" title="Přičíst dny" style="cursor: pointer;" onclick="AddInvoiceDueDays(' + idInvoice + ');">@Model.InvoiceDueDays &nbsp;<i class="fa fa-caret-right"></i></div>'+
+                        '<div class="row form-group justify-content-end " id="dynamic-row-delivery-note-' + idInvoice + '">'+
+                            '<div class="col-lg-9">'+
+                                '<div class="field-wrapper">'+
+                                    '<input class="form-control" type="text" id="Order_Invoices_' + idInvoice + '__DeliveryNote" name="Order.Invoices[' + idInvoice + '].DeliveryNote value="" />'+
+                                    '<div class="field-placeholder"><span>Dodací list</span></div>'+
                                 '</div>'+
-                                    '<input class="form-control" type="text" autocomplete="off" placeholder="Splatnost faktury" data-val="true" data-val-required="The Splatnost faktury field is required." id="Order_Invoices_' + idInvoice + '__InvoiceDueDate" name="Order.Invoices[' + idInvoice + '].InvoiceDueDate" value="">'+
-                                    '<span class="text-danger field-validation-valid" data-valmsg-for="Order.Invoices[' + idInvoice + '].InvoiceDueDate" data-valmsg-replace="true"></span>'+
+                                '<span data-valmsg-for="Order.Invoices[' + idInvoice + '].DeliveryNote" data-valmsg-replace="true" class="text-danger"></span>'+
                             '</div>'+
-                        '</div>'+
-
-                        '<div class="col-lg-3">'+
-                            '<div class="input-group mb-2 mr-sm-2">'+
-                                '<div class="input-group-prepend">'+
-                                    '<div class="input-group-text">@Model.CurrencyName</div>'+
-                                '</div>'+
-                                '<input class="form-control" type="text" placeholder="Částka" data-val="true" data-val-number="The field Částka must be a number." data-val-required="The Částka field is required." id="Order_Invoices_' + idInvoice + '__Cost" name="Order.Invoices[' + idInvoice + '].Cost" value="">'+
-                                '<span class="text-danger field-validation-valid" data-valmsg-for="Order.Invoices[' + idInvoice + '].Cost" data-valmsg-replace="true"></span>'+
-                            '</div>'+
-                        '</div>'+
-                        '<div class="col-lg-1">'+
-                            '<a href="javascript:void(0)" class="btn btn-danger btn-sm mt-1" data-toggle="tooltip" title="" data-original-title="Odstranit záznam" onclick="DeleteInvoice(' + idInvoice + ')"><i class="fa fa-trash white"></i></a>'+
-                        '</div>'+
-                    '</div>';
+                            '<div class="col-lg-1"></div>'+
+                        '</div>'
+                    @* '</div>' *@
+                    ;
                 var _formTemp = $("#template-invoices").clone(true)
                 var _targetForm = $(".dynamic-rows-invoices")
                 _targetForm.append(html)
@@ -626,6 +647,8 @@
                     var futureDate = getPrettyDate(date, @Model.InvoiceDueDays);
                     $('#Order_Invoices_' + _invoiceIssueInput.data('id') + '__InvoiceDueDate').val(futureDate);
                  });
+
+                floatingLabelsInit();
 
                 $('form').data('validator', null);
                 $.validator.unobtrusive.parse($('form'));

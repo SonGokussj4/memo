@@ -80,30 +80,33 @@ function getPrettyDate(date, daysToAdd = 0) {
 //--------------------
 // FLOATING TOOLTIPS
 //--------------------
-$(function () {
+function floatingLabelsInit () {
 
     $(".field-wrapper .field-placeholder").on("click", function () {
         $(this).closest(".field-wrapper").find("input").focus();
     });
+
     $(".field-wrapper input").on("keyup", function () {
         var value = $.trim($(this).val());
-        if (value) {
-            $(this).closest(".field-wrapper").addClass("hasValue");
-        } else {
-            $(this).closest(".field-wrapper").removeClass("hasValue");
-        }
+        $(this).closest(".field-wrapper").toggleClass('hasValue', value);
+        // if (value) {
+        //     $(this).closest(".field-wrapper").addClass("hasValue");
+        // } else {
+        //     $(this).closest(".field-wrapper").removeClass("hasValue");
+        // }
     });
 
     $('.field-wrapper input').focusout(function () {
         var text_val = $(this).val();
-        console.log(`text_val: ${text_val}`);
-        // ONE LINE
-        $(this).closest(".field-wrapper").toggleClass('hasValue', text_val !== "");
-        // MANY LINES
         // if (text_val === "") {
         //     $(this).closest(".field-wrapper").removeClass("hasValue");
         // } else {
         //     $(this).closest(".field-wrapper").addClass('hasValue');
         // }
+        $(this).closest(".field-wrapper").toggleClass('hasValue', text_val !== "");
     }).focusout(); //trigger the focusout event manually
-});
+};
+
+$(function () {
+    floatingLabelsInit();
+})

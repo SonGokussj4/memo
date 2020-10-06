@@ -70,9 +70,17 @@ namespace memo.Controllers
             }
 
             string URL = @"https://www.cnb.cz/cs/financni-trhy/devizovy-trh/kurzy-devizoveho-trhu/kurzy-devizoveho-trhu/denni_kurz.txt";
+            string text = "";
 
             WebClient client = new WebClient();
-            string text = client.DownloadString(URL);
+            try
+            {
+                text = client.DownloadString(URL);
+            }
+            catch (System.Net.WebException)
+            {
+                return "";
+            }
 
             string[] lines = text.Split("\n");
 
