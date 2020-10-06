@@ -540,19 +540,6 @@
 
         $(document).ready(function(){
 
-            // Parameters for DatePicker calendar
-            var datepickerParameters = new Array({
-                format: "yyyy-mm-dd",
-                startDate: "1980-01-01",
-                endDate: "2021-01-01",
-                todayBtn: "linked",
-                language: "cs",
-                daysOfWeekHighlighted: "0,6",
-                calendarWeeks: true,
-                autoclose: true,
-                todayHighlight: true
-            });
-
             $('.mycalendar input').datepicker(datepickerParameters[0]);
 
             $('#Order_PriceFinal').on('input', function(){

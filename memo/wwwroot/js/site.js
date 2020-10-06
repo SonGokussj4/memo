@@ -12,6 +12,25 @@
 //     });
 // });
 
+
+// PARAMETERS
+//---------------------------------------------------------------------------
+
+// Parameters for DatePicker calendar
+var datepickerParameters = new Array({
+    format: "yyyy-mm-dd",
+    startDate: "1980-01-01",
+    // endDate: "2021-01-01",
+    todayBtn: "linked",
+    language: "cs",
+    daysOfWeekHighlighted: "0,6",
+    calendarWeeks: true,
+    autoclose: true,
+    todayHighlight: true
+});
+
+// OTHER
+//---------------------------------------------------------------------------
 $(document).ready(function () {
     $('.selectpicker').select2({
         // dropdownCssClass: 'form-control',

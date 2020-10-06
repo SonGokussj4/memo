@@ -361,19 +361,6 @@
 
         $(document).ready(function(){
 
-            // Parameters for DatePicker calendar
-            var datepickerParameters = new Array({
-                format: "yyyy-mm-dd",
-                startDate: "1980-01-01",
-                endDate: "2021-01-01",
-                todayBtn: "linked",
-                language: "cs",
-                daysOfWeekHighlighted: "0,6",
-                calendarWeeks: true,
-                autoclose: true,
-                todayHighlight: true
-            });
-
             // Upon page load, check if OfferId != 0 (offer is selected) then set orderForm as visible
             if (@Model.Order.OfferId != 0) {
                 console.log("OfferId: " + @Model.Order.OfferId);

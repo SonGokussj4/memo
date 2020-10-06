@@ -169,21 +169,7 @@
 
         $(document).ready(function(){
 
-            $('.mycalendar input').datepicker({
-                // format: "dd.mm.yyyy",
-                // startDate: "01.01.1980",
-                // endDate: "01.01.2021",
-                format: "yyyy-mm-dd",
-                startDate: "1980-01-01",
-                endDate: "2021-01-01",
-                todayBtn: "linked",
-                language: "cs",
-                daysOfWeekHighlighted: "0,6",
-                calendarWeeks: true,
-                autoclose: true,
-                todayHighlight: true
-            });
-
+            $('.mycalendar input').datepicker(datepickerParameters[0]);
 
             function changeExchangeRate(curSymbol) {
                 $.ajax({
