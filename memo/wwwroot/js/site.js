@@ -89,21 +89,27 @@ function floatingLabelsInit () {
     $(".field-wrapper input").on("keyup", function () {
         var value = $.trim($(this).val());
         $(this).closest(".field-wrapper").toggleClass('hasValue', value);
-        // if (value) {
+        // if (value !== "") {
         //     $(this).closest(".field-wrapper").addClass("hasValue");
-        // } else {
+        // }
+        // else {
         //     $(this).closest(".field-wrapper").removeClass("hasValue");
         // }
     });
 
     $('.field-wrapper input').focusout(function () {
         var text_val = $(this).val();
+        $(this).closest(".field-wrapper").toggleClass('hasValue', text_val !== "");
         // if (text_val === "") {
         //     $(this).closest(".field-wrapper").removeClass("hasValue");
-        // } else {
+        // }
+        // else {
         //     $(this).closest(".field-wrapper").addClass('hasValue');
         // }
-        $(this).closest(".field-wrapper").toggleClass('hasValue', text_val !== "");
+        console.log(`focusout: '${$(this).val()}'`)
+        if (text_val !== "") {
+            $(this).closest(".field-wrapper").addClass("hasValue");
+        }
     }).focusout(); //trigger the focusout event manually
 };
 

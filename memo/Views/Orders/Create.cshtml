@@ -358,12 +358,6 @@
                 $('#Order_PriceDiscount').val(offerPrice - finalPrice);
             });
 
-            // TODO: 2020-09-18 Toto udelat na dynamicky pridane radky
-            // https://stackoverflow.com/questions/28062254/how-can-i-detect-values-change-in-column-for-dynamic-rows-in-table/28062483#28062483
-            // When changing InvoiceIssueDate, fill InvoiceDueDate by + days from <InvoiceDueDays>
-            // https://ultimatecourses.com/blog/attaching-event-handlers-to-dynamically-created-javascript-elements
-            //$('#Order_InvoiceIssueDate').change('input', function(){
-
             function dynamicEvent() {
                 console.log("Reaguji!!");
             };
@@ -402,18 +396,26 @@
                             '<input type="number" hidden="true" data-val="true" data-val-required="The InvoiceId field is required." id="Order_Invoices_' + idInvoice + '__InvoiceId" name="Order.Invoices[' + idInvoice + '].InvoiceId" value="0">'+
 
                             '<div class="col-lg-3 mycalendar">'+
-                                '<input class="form-control" type="text" autocomplete="off" placeholder="Termín vystavení" data-id="' + idInvoice + '" data-val="true" data-val-required="The Předp. termín vystavení faktury field is required." id="Order_Invoices_' + idInvoice + '__InvoiceIssueDate" name="Order.Invoices[' + idInvoice + '].InvoiceIssueDate" value="">'+
+                                '<span class="has-float-label">'+
+                                    '<input class="form-control" type="text" autocomplete="off" placeholder="rrrr-mm-dd" data-id="' + idInvoice + '" data-val="true" data-val-required="The Předp. termín vystavení faktury field is required." id="Order_Invoices_' + idInvoice + '__InvoiceIssueDate" name="Order.Invoices[' + idInvoice + '].InvoiceIssueDate" value="">'+
+                                    '<label for="Order_Invoices_' + idInvoice + '__InvoiceIssueDate">Termín vystavení</label>'+
+                                '</span>'+
                                 '<span class="text-danger field-validation-valid" data-valmsg-for="Order.Invoices[' + idInvoice + '].InvoiceIssueDate" data-valmsg-replace="true"></span>'+
                             '</div>'+
 
                             '<div class="col-lg-3">'+
-                                '<div class="input-group mb-2 mr-sm-2">'+
-                                    '<div class="input-group-prepend">'+
-                                        '<div class="input-group-text newlyAddedTooltip" data-toggle="tooltip" title="Přičíst dny" style="cursor: pointer;" onclick="AddInvoiceDueDays(' + idInvoice + ');">@Model.InvoiceDueDays &nbsp;<i class="fa fa-caret-right"></i></div>'+
-                                    '</div>'+
-                                        '<input class="form-control" type="text" autocomplete="off" placeholder="Splatnost faktury" data-val="true" data-id="' + idInvoice + '" data-val-required="The Splatnost faktury field is required." id="Order_Invoices_' + idInvoice + '__InvoiceDueDate" name="Order.Invoices[' + idInvoice + '].InvoiceDueDate" value="">'+
-                                        '<span class="text-danger field-validation-valid" data-valmsg-for="Order.Invoices[' + idInvoice + '].InvoiceDueDate" data-valmsg-replace="true"></span>'+
-                                '</div>'+
+                                @* '<div class="input-group">'+ *@
+                                    @* '<div class="input-group-prepend">'+
+                                        '<div class="input-group-text newlyAddedTooltip" data-toggle="tooltip" title="Přičíst dny" style="cursor: pointer;" onclick="AddInvoiceDueDays(' + idInvoice + ');">'+
+                                            '@Model.InvoiceDueDays &nbsp;<i class="fa fa-caret-right"></i>'+
+                                        '</div>'+
+                                    '</div>'+ *@
+                                    '<span class="has-float-label">'+
+                                        '<input class="form-control" type="text" autocomplete="off" placeholder="rrrr-mm-dd" data-val="true" data-id="' + idInvoice + '" data-val-required="The Splatnost faktury field is required." id="Order_Invoices_' + idInvoice + '__InvoiceDueDate" name="Order.Invoices[' + idInvoice + '].InvoiceDueDate" value="">'+
+                                        '<label for="Order_Invoices_' + idInvoice + '__InvoiceDueDate">Splatnost faktury</label>'+
+                                    '</span>'+
+                                    '<span class="text-danger field-validation-valid" data-valmsg-for="Order.Invoices[' + idInvoice + '].InvoiceDueDate" data-valmsg-replace="true"></span>'+
+                                @* '</div>'+ *@
                             '</div>'+
 
                             '<div class="col-lg-3">'+
@@ -434,10 +436,10 @@
 
                         '<div class="row form-group justify-content-end " id="dynamic-row-delivery-note-' + idInvoice + '">'+
                             '<div class="col-lg-9">'+
-                                '<div class="field-wrapper">'+
-                                    '<input class="form-control" type="text" id="Order_Invoices_' + idInvoice + '__DeliveryNote" name="Order.Invoices[' + idInvoice + '].DeliveryNote value="" />'+
-                                    '<div class="field-placeholder"><span>Dodací list</span></div>'+
-                                '</div>'+
+                                '<span class="has-float-label">'+
+                                    '<input class="form-control" type="text" placeholder="Cesta k dodacímu listu" id="Order_Invoices_' + idInvoice + '__DeliveryNote" name="Order.Invoices[' + idInvoice + '].DeliveryNote value="" />'+
+                                    '<label for="Order_Invoices_' + idInvoice + '__DeliveryNote">Dodací list</label>'+
+                                '</span>'+
                                 '<span data-valmsg-for="Order.Invoices[' + idInvoice + '].DeliveryNote" data-valmsg-replace="true" class="text-danger"></span>'+
                             '</div>'+
                             '<div class="col-lg-1"></div>'+
