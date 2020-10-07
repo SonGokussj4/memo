@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace memo.Controllers
 {
-    public class BugReportController : ControllerBase
+    public class BugReportController : BaseController
     {
         public ApplicationDbContext _db { get; }
 

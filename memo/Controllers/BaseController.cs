@@ -18,7 +18,7 @@ using System.Security.Claims;
 
 namespace memo.Controllers
 {
-    public class ControllerBase : Controller
+    public class BaseController : Controller
     {
         public string getCurrencyStr(string symbol)
         {

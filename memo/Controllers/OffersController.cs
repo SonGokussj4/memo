@@ -14,7 +14,7 @@ using memo.ViewModels;
 
 namespace memo.Controllers
 {
-    public class OffersController : ControllerBase
+    public class OffersController : BaseController
     {
         public ApplicationDbContext _db { get; }
         public EvektorDbContext _eveDb { get; }

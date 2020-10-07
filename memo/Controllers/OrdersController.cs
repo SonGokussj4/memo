@@ -17,7 +17,7 @@ using Microsoft.AspNetCore.Mvc.Routing;
 
 namespace memo.Controllers
 {
-    public class OrdersController : ControllerBase
+    public class OrdersController : BaseController
     {
         public ApplicationDbContext _db { get; }
         public EvektorDbContext _eveDb { get; }
