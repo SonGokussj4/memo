@@ -143,6 +143,11 @@ body {
 /* User modifications
 -------------------------------------------------- */
 
+/* Disable blue glow on input focus */
+.form-control:focus {
+  box-shadow: 0 0 black;
+}
+
 /* Form width */
 /* @media (min-width: 992px) */
 .col-lg-8 {

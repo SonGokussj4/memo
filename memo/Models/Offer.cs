@@ -79,13 +79,13 @@ namespace memo.Models
         // [InverseProperty(nameof(OfferStatus.OfferStatusId))]
         // public virtual OfferStatus StatusNavigation { get; set; }
 
-        [Display(Name = "Důvod prohry"), Column(TypeName = "ntext")]
+        [Display(Name = "Důvod prohry"), Column(TypeName = "nvarchar(max)")]
         public string LostReason { get; set; }
 
         [Display(Name = "Předp. termín ukončení"), Column(TypeName = "date"), DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime? EstimatedFinishDate { get; set; }
 
-        [Display(Name = "Poznámky"), Column(TypeName = "ntext")]
+        [Display(Name = "Poznámky"), Column(TypeName = "nvarchar(max)")]
         public string Notes { get; set; }
 
         [Display(Name = "Datum vytvoření"), Column(TypeName = "date")]

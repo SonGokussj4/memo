@@ -16,13 +16,10 @@
     .centerHeader {
         text-align: center;
     }
-    @* .container {
-        max-width: 1680px;
-    } *@
 
-    @* th {
-        font-weight: 400;
-    } *@
+    .fixed-table-body {
+        max-width: 100%;
+    }
 
     .bootstrap-table .fixed-table-container .table thead th .sortable {
         padding-right: 20px!important;
@@ -30,6 +27,12 @@
 
     .itemInactive {
         color: #9ba8b1;
+    }
+
+    .table-responsive {
+        position: fixed;
+        left: 2rem;
+        width: calc(100% - 4rem);
     }
 </style>
 
@@ -81,14 +84,14 @@
     {
         <a asp-action="index" class="btn btn-outline-secondary" asp-route-ShowInactive="true" data-toggle="tooltip" title="Zobrazit vše"><i class="fa fa-eye-slash"></i> Aktivní (@Model.Count())</a>
     }
-    <span data-toggle="tooltip" title="Zobrazit legendu">
+    @* <span data-toggle="tooltip" title="Zobrazit legendu">
         <a class="btn btn-light border" href="#showLegend" data-toggle="collapse" role="button">
             <i class="fa fa-question-circle-o"></i>
         </a>
-    </span>
+    </span> *@
 </div>
 
-
+<div class="table-responsive">
 <table
     id="table"
     class="table table-sm text-xsmall text-nowrap"
@@ -213,7 +216,7 @@
         }
     </tbody>
 </table>
-
+</div>
 
 <!-- Modal Confirm Delete-->
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">

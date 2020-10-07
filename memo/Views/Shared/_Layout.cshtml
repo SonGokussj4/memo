@@ -28,8 +28,8 @@
     <style>
         /* Active menu element */
         .active {
-            border-bottom: 2px solid #dfdff3;
-            margin-bottom: -2px;
+            border-bottom: 4px solid #5ca9ef;
+            margin-bottom: -4px;
         }
     </style>
 </head>
@@ -47,33 +47,46 @@
                     <partial name="_LoginPartial" />
                     <ul class="navbar-nav flex-grow-1">
 
-                        <li class="nav-item pl-3 border-left">
+                        <span class="nav-item border-left"></span>
+
+                        <li class="nav-item mx-2">
                             <a class="nav-link text-dark" asp-controller="Offers" asp-action="Index">
                                 <i class="fa fa-list-alt" style="color:#5182ee"></i> Nabídky
                             </a>
                         </li>
 
-                        <li class="nav-item pl-3 pr-3">
+                        <li class="nav-item mx-2">
                             <a class="nav-link text-dark" asp-controller="Orders" asp-action="Index">
                                 <i class="fa fa-handshake-o" style="color:green"></i> Zakázky
                             </a>
                         </li>
 
-                        <li class="nav-item pl-3 border-left">
+                        <span class="nav-item border-left"></span>
+
+                        <li class="nav-item mx-2">
                             <a class="nav-link" asp-controller="Contacts" asp-action="Index">
                                 <i class="fa fa-address-book-o"></i> Kontakty
                             </a>
                         </li>
 
-                        <li class="nav-item pl-3">
+                        <li class="nav-item mx-2">
                             <a class="nav-link" asp-controller="Companies" asp-action="Index">
                                 <i class="fa fa-building-o"></i> Firmy
                             </a>
                         </li>
 
-                        <li class="nav-item pl-3 border-left">
+                        <span class="nav-item border-left"></span>
+
+                        <li class="nav-item mx-2">
                             <a class="nav-link text-dark" asp-controller="Dashboards" asp-action="Index">
                                 <i class="fa fa-bar-chart"></i> Vyhodnocení
+                            </a>
+                        </li>
+
+                        <li class="nav-item ml-5">
+                            <a class="nav-link text-dark" asp-controller="BugReport" asp-action="Index"
+                               data-toggle="tooltip" title="Zobrazit/oznámit poznatky, nápady">
+                                <i class="fa fa-bug"></i> <span style="color: grey;">Bugs</span>
                             </a>
                         </li>
 
@@ -105,7 +118,7 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2020 - memo - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; @DateTime.Now.Year Evektor - Memo
         </div>
     </footer>
 

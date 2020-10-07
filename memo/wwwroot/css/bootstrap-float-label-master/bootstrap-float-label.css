@@ -2,6 +2,11 @@
   display: block;
   position: relative;
 }
+
+.has-float-label input:not([disabled]):focus~ label
+{
+    color: #3591f5;
+}
 /* Text floating label */
 .has-float-label label, .has-float-label > span {
   position: absolute;
