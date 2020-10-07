@@ -136,6 +136,18 @@ CREATE TABLE [memo].[OtherCost]
 GO
 
 
+-----------------------------------------------------------------------------------------
+CREATE TABLE [memo].[BugReport] (
+  [BugReportId] int PRIMARY KEY IDENTITY(1, 1),
+  [Subject] nvarchar(255),
+  [Details] nvarchar(max),
+  [Priority] int,
+  [Category] nvarchar(50),
+  [Resolved] bit DEFAULT 0,
+  [User] nvarchar(50),
+  [Created] datetime
+)
+GO
 
 
 
