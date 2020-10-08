@@ -86,7 +86,7 @@ namespace memo.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create(Offer offer)
         {
-            offer.OfferName = getNewOfferNum();
+            // offer.OfferName = getNewOfferNum();  // TODO Tohle vratit zpet, az tam budou vsechny aktualni
             offer.PriceCzk = Convert.ToInt32(offer.Price * offer.ExchangeRate);  // 1000 * 26,243
             // offer.LostReason = "";
             offer.Notes = String.IsNullOrEmpty(offer.Notes) ? "" : offer.Notes;
@@ -344,13 +344,17 @@ namespace memo.Controllers
 
         private string getNewOfferNum()
         {
-            string offerNames = _db.Offer
+            string offerName = _db.Offer
                 .Where(m => m.OfferName.Contains("/" + DateTime.Now.Year.ToString() + "/"))
                 .Select(m => m.OfferName)
                 .OrderByDescending(x => x)
                 .FirstOrDefault();
 
-            int maxOfferNum = Convert.ToInt32(offerNames.Split("/").Last());  // 0068
+            if (offerName == null)
+            {
+                return $"EV-quo/{DateTime.Now.Year.ToString()}/0001";
+            }
+            int maxOfferNum = Convert.ToInt32(offerName.Split("/").Last());  // 0068
             string maxOfferNumNext = String.Format("{0:0000}", maxOfferNum + 1);  // 0069
             string newOfferNum = $"EV-quo/{DateTime.Now.Year.ToString()}/{maxOfferNumNext}";  // EV-quo/2020/0069
 

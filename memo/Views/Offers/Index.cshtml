@@ -30,7 +30,7 @@
     }
 
     .table-responsive {
-        position: fixed;
+        position: absolute;
         left: 2rem;
         width: calc(100% - 4rem);
     }
@@ -333,10 +333,10 @@
         var vysledek = data.map(function (row) {
             var cost = parseInt(row[field]
                 //.replace(/, (Kč)(&nbsp);/g, ''));
-                .replace(",", "")
-                .replace("&nbsp;", "")
-                .replace(" ", "")
-                .replace("Kč", "")
+                .replaceAllTxt(",", "")
+                .replaceAllTxt("&nbsp;", "")
+                .replaceAllTxt(" ", "")
+                .replaceAllTxt("Kč", "")
                 ) || 0;
             return + cost
         }).reduce(function (sum, i) {
@@ -352,10 +352,10 @@
         var vysledek = data.map(function (row) {
             var cost = parseInt(row[field]
                 //.replace(/, (Kč)(&nbsp);/g, ''));
-                .replace(",", "")
-                .replace("&nbsp;", "")
-                .replace(" ", "")
-                .replace("Kč", "")
+                .replaceAllTxt(",", "")
+                .replaceAllTxt("&nbsp;", "")
+                .replaceAllTxt(" ", "")
+                .replaceAllTxt("Kč", "")
                 ) || 0;
             return + cost
         }).reduce(function (sum, i) {

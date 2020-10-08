@@ -14,7 +14,7 @@ namespace memo.Models
 
         [Required]
         [Display(Name = "Ev. číslo nabídky"), StringLength(50)]
-        [RegularExpression(@"^EV-quo/\d{4}/\d{4}$", ErrorMessage = "Číslo nabídky musí být ve tvaru EV-quo/rrrr/####, kde rrrr je rok a #### pořadové unikátní číslo")]
+        [RegularExpression(@"^EV[E]?-quo/\d{4}/\d{4}$", ErrorMessage = "Číslo nabídky musí být ve tvaru EV(E)-quo/rrrr/####, kde rrrr je rok a #### pořadové unikátní číslo")]
         public string OfferName { get; set; }
 
         [Display(Name = "Datum přijetí poptávky"), Column(TypeName = "date"), DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]

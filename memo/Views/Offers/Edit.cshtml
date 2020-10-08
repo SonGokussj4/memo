@@ -88,7 +88,7 @@
         <div class="form-group row">
             <label asp-for="OfferName" class="col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-9">
-                <input asp-for="OfferName" class="form-control" type="text" />
+                <input asp-for="OfferName" class="form-control" placeholder="EV(E)-quo/rrrr/dddd" type="text" />
                 <span asp-validation-for="OfferName" class="text-danger"></span>
             </div>
         </div>
@@ -168,7 +168,6 @@
                 <label asp-for="LostReason" class="col-lg-3 col-form-label form-control-label control-label"></label>
                 <div class="col-lg-9">
                     <textarea asp-for="LostReason" class="form-control"></textarea>
-                    @* @Html.TextAreaFor(m => m.LostReason, additionalViewData: new { htmlAttributes = new { @class = "form-control" }}) *@
                     <span asp-validation-for="LostReason" class="text-danger"></span>
                 </div>
             </div>
@@ -179,7 +178,10 @@
         <div class="form-group row">
             <label asp-for="ReceiveDate" class="required col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-9 mycalendar">
-                <input asp-for="ReceiveDate" class="form-control" type="text" required="" autocomplete="off"/>
+                <span class="has-float-label">
+                    <input asp-for="ReceiveDate" class="form-control" type="text" placeholder=" " required="" autocomplete="off"/>
+                    <label asp-for="ReceiveDate">Datum přijetí poptávky</label>
+                </span>
                 <span asp-validation-for="ReceiveDate" class="text-danger"></span>
             </div>
         </div>
@@ -187,7 +189,10 @@
         <div class="form-group row">
             <label asp-for="SentDate" class="col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-9 mycalendar">
-                <input asp-for="SentDate" class="form-control" type="text" autocomplete="off"/>
+                <span class="has-float-label">
+                    <input asp-for="SentDate" class="form-control" type="text" placeholder=" " autocomplete="off"/>
+                    <label asp-for="SentDate">Datum odeslání nabídky</label>
+                </span>
                 <span asp-validation-for="SentDate" class="text-danger"></span>
             </div>
         </div>
@@ -195,7 +200,10 @@
         <div class="form-group row">
             <label asp-for="Subject" class="required col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-9">
-                <input asp-for="Subject" class="form-control" type="text" />
+                <span class="has-float-label">
+                    <input asp-for="Subject" class="form-control" placeholder="Krátký popis nabídky" type="text" />
+                    <label asp-for="Subject">Předmět nabídky</label>
+                </span>
                 <span asp-validation-for="Subject" class="text-danger"></span>
             </div>
         </div>
@@ -203,15 +211,17 @@
         <div class="form-group row eveOffer">
             <label class="required col-lg-3 col-form-label form-control-label control-label">Evektor</label>
             <div class="col-lg-2">
-                <div data-toggle="tooltip" title="Divize">
+                <span class="has-float-label">
                     @Html.DropDownList("EveDivision", new SelectList(Model.EveDivisionList, "Value", "Text", "-- Divize --"), new { @class = "form-control"})
-                </div>
+                    <label asp-for="EveDivision">Divize</label>
+                </span>
                 <span asp-validation-for="EveDivision" class="text-danger"></span>
             </div>
             <div class="col-lg-3">
-                <div data-toggle="tooltip" title="Oddělení">
-                    @Html.DropDownList("EveDepartment", new SelectList(ViewBag.DepartmentList, "Value", "Text"), new { @class = "form-control"})
-                </div>
+                <span class="has-float-label">
+                    <select asp-for="EveDepartment" asp-items="ViewBag.DepartmentList" class="form-control"></select>
+                    <label asp-for="EveDepartment">Oddělení</label>
+                </span>
                 <span asp-validation-for="EveDepartment" class="text-danger"></span>
             </div>
             <div class="col-lg-4">
@@ -247,18 +257,24 @@
         <div class="form-group row">
             <label asp-for="Price" class="required col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-5">
-                <input asp-for="Price" class="form-control" type="text" />
+                <span class="has-float-label">
+                    <input asp-for="Price" class="form-control" type="text" placeholder=" "/>
+                    <label asp-for="Price">Cena bez DPH</label>
+                </span>
                 <span asp-validation-for="Price" class="text-danger"></span>
             </div>
             <div class="col-lg-2">
-                <div data-toggle="tooltip" title="Měna">
-                    @Html.DropDownListFor(model => model.CurrencyId, ViewBag.CurrencyList as SelectList, new { @class = "form-control" })
-                </div>
+                <span class="has-float-label">
+                    <select asp-for="CurrencyId" asp-items="ViewBag.CurrencyList" class="form-control"></select>
+                    <label asp-for="CurrencyId">Měna</label>
+                </span>
                 <span asp-validation-for="Currency" class="text-danger"></span>
             </div>
             <div class="col-lg-2">
-                @* <input asp-for="ExchangeRate" class="form-control" type="text" onchange="this.value = this.value.replace(/,/g, '.')"/> *@
-                <input asp-for="ExchangeRate" class="form-control" type="text" data-toggle="tooltip" title="Měnový kurz: X -> CZK"/>
+                <span class="has-float-label">
+                    <input asp-for="ExchangeRate" class="form-control" type="text" data-toggle="tooltip" data-placement="top" title="Měnový kurz z ČNB" />
+                    <label asp-for="ExchangeRate">Kurz</label>
+                </span>
                 <span asp-validation-for="ExchangeRate" class="text-danger"></span>
             </div>
         </div>
@@ -266,7 +282,10 @@
         <div class="form-group row">
             <label asp-for="EstimatedFinishDate" class="col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-9 mycalendar">
-                <input asp-for="EstimatedFinishDate" class="form-control" type="text" autocomplete="off"/>
+                <span class="has-float-label">
+                    <input asp-for="EstimatedFinishDate" class="form-control" type="text" autocomplete="off" placeholder=" "/>
+                    <label asp-for="EstimatedFinishDate">Předpodkládaný termín ukončení</label>
+                </span>
                 <span asp-validation-for="EstimatedFinishDate" class="text-danger"></span>
             </div>
         </div>
@@ -274,8 +293,10 @@
         <div class="form-group row">
             <label asp-for="Notes" class="col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-9">
-                <textarea asp-for="Notes" class="form-control"></textarea>
-                @* @Html.TextAreaFor(m => m.Notes, additionalViewData: new { htmlAttributes = new { @class = "form-control" }}) *@
+                <span class="has-float-label">
+                    <textarea asp-for="Notes" class="form-control" placeholder=" "></textarea>
+                    <label asp-for="Notes">Poznámky</label>
+                </span>
                 <span asp-validation-for="Notes" class="text-danger"></span>
             </div>
         </div>

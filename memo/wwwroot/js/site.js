@@ -123,3 +123,5 @@ $("#success-alert").fadeTo(2000, 500).slideUp(500, function(){
 $("#error-alert").fadeTo(8000, 500).slideUp(500, function(){
     $("#error-alert").slideUp(500);
 });
+
+String.prototype.replaceAllTxt = function replaceAll(search, replace) { return this.split(search).join(replace); }

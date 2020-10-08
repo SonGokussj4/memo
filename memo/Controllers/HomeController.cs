@@ -27,10 +27,10 @@ namespace memo.Controllers
 
         public IActionResult Index()
         {
-            var user = User.FindFirstValue(ClaimTypes.Name);
-            ViewBag.user = user;
-            var role = User.FindFirstValue(ClaimTypes.Role);
-            ViewBag.role = role;
+            // var user = User.FindFirstValue(ClaimTypes.Name);
+            // ViewBag.user = user;
+            // var role = User.FindFirstValue(ClaimTypes.Role);
+            // ViewBag.role = role;
 
             return View();
         }

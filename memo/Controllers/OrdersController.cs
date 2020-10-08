@@ -220,12 +220,15 @@ namespace memo.Controllers
 
             if (ModelState.IsValid)
             {
-                int? totalHours = _eveDb.cOrders  // Planned
+                int? totalMinutes = _eveDb.cOrders  // Planned
                     .Where(t => t.OrderCode == vm.Order.OrderCode)
                     .Select(t => t.Planned).FirstOrDefault();
 
-                // vm.Order.Active = true;
-                vm.Order.TotalHours = totalHours;
+                vm.Order.TotalHours = 0;
+                if (totalMinutes != null)
+                {
+                    vm.Order.TotalHours = totalMinutes / 60;
+                }
 
                 _db.Add(vm.Order);
                 _db.SaveChanges();
@@ -308,9 +311,15 @@ namespace memo.Controllers
             {
                 try
                 {
-                    vm.Order.TotalHours = _eveDb.cOrders  // Planned hours
+                    int? totalMinutes = _eveDb.cOrders  // Planned hours
                         .Where(t => t.OrderCode == vm.Order.OrderCode)
                         .Select(t => t.Planned).FirstOrDefault();
+
+                    // TODO tohle delat v ramci zobrazeni a do ViewModelu, NEUKLADAT V DATABAZI....
+                    if (totalMinutes != null)
+                    {
+                        vm.Order.TotalHours = totalMinutes / 60;
+                    }
 
                     vm.Order.PriceFinal = 0;
                     vm.Order.PriceFinalCzk = 0;

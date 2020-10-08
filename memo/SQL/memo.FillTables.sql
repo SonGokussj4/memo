@@ -1,10 +1,8 @@
 
-
 DELETE FROM [memo].[Company];
 INSERT INTO [memo].[Company]
   ([Name], [InvoiceDueDays])
 VALUES
-  ('Neznámá', '0'),
   ('5M LEVIT s.r.o.', '14'),
   ('Aircraft Industries, a.s.', '30'),
   ('Andreas Stihl  AG  & Co.  KG', '30'),
@@ -50,7 +48,6 @@ DELETE FROM [memo].[Contact];
 INSERT INTO [memo].[Contact]
   ([PersonName], [PersonLastName], [Email], [PersonTitle])
 VALUES
-  ('Neznámý', 'Neznámý', '', ''),
   ('bosport', '', 'bosport@bosport.eu', ''),
   ('georg', 'ude', 'georg.ude@cybex-online.com', 'Ing'),
   ('stefan', 'aschinger', 'stefan.aschinger@cybex-online.com', 'Bc'),

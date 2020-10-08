@@ -157,10 +157,10 @@ IF NOT EXISTS
   (
     SELECT *
     FROM sysobjects
-    WHERE id = OBJECT_ID(N'[dbo].[Audit]')
+    WHERE id = OBJECT_ID(N'[memo].[Audit]')
     AND OBJECTPROPERTY(id, N'IsUserTable') = 1
   )
-CREATE TABLE [dbo].[Audit]
+CREATE TABLE [memo].[Audit]
   (
     Type CHAR(1),
     TableName VARCHAR(128),
@@ -176,8 +176,8 @@ GO
 
 -- AUDITING TRIGGER for each table I want to use that
 ---------------------------------------------------------
-CREATE TRIGGER [memo].[TR__Company__AUDIT]
-ON [memo].[Company]
+CREATE TRIGGER [memo].[TR__OtherCost__AUDIT]
+ON [memo].[OtherCost]
 FOR UPDATE
 AS
 DECLARE @bit            INT,
@@ -195,7 +195,7 @@ DECLARE @bit            INT,
 
 -- You will need to change @TableName to match the table to be audited.
 -- Here we made GUESTS for your example.
-SELECT @TableName = 'Company'
+SELECT @TableName = 'OtherCost'
 
 SELECT @UserName = SYSTEM_USER,
        @UpdateDate = CONVERT(NVARCHAR(30), GETDATE(), 126)

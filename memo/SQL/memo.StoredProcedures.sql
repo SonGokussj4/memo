@@ -1,5 +1,3 @@
-USE [MemoDB]
-GO
 /****** Object:  StoredProcedure [dbo].[spSumMinutesByOrderName]    Script Date: 27.07.2020 17:45:21 ******/
 SET ANSI_NULLS ON
 GO

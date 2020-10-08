@@ -16,6 +16,7 @@ using System.Globalization;
 using Microsoft.AspNetCore.Localization;
 using System.Threading;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 
 namespace memo
 {
@@ -38,14 +39,25 @@ namespace memo
             {
                 builder.AddRazorRuntimeCompilation();
             }
-            services.AddDbContext<ApplicationDbContext>(options =>
+
+            services.AddDbContext<LoginDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("EvektorDbConnectionTest")));
 
+            services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("EvektorDbConnectionEvektor")));
+            // options.UseSqlServer(Configuration.GetConnectionString("EvektorDbConnectionTest")));
+
             services.AddDbContext<EvektorDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("EvektorDbConnectionMock")));
+                  options.UseSqlServer(Configuration.GetConnectionString("EvektorDbConnectionEvektor")));
+            // options.UseSqlServer(Configuration.GetConnectionString("EvektorDbConnectionMock")));
+
+            services.AddDbContext<EvektorDochnaDbContext>(options =>
+                  options.UseSqlServer(Configuration.GetConnectionString("EvektorDbConnectionDochna")));
+            // options.UseSqlServer(Configuration.GetConnectionString("EvektorDbConnectionMock")));
 
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+                .AddEntityFrameworkStores<LoginDbContext>();
+
             services.AddAuthorization(options =>
             {
                 options.FallbackPolicy = new AuthorizationPolicyBuilder()
@@ -54,9 +66,6 @@ namespace memo
                 // Register other policies here
             });
             services.AddControllersWithViews();
-            // services.AddRazorPages();
-                // .AddRazorRuntimeCompilation();
-            // services.AddRazorPages();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -99,12 +108,12 @@ namespace memo
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints
-                    .MapControllerRoute(
-                        name: "default",
-                        pattern: "{controller=Home}/{action=Index}/{id?}");
-                endpoints
-                    .MapRazorPages();
+                endpoints.MapControllerRoute(name: "default",pattern: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapRazorPages();
+
+                // Disable Register
+                endpoints.MapGet("/Identity/Account/Register", context => Task.Factory.StartNew(() => context.Response.Redirect("/Identity/Account/Login", true, true)));
+                endpoints.MapPost("/Identity/Account/Register", context => Task.Factory.StartNew(() => context.Response.Redirect("/Identity/Account/Login", true, true)));
             });
         }
     }

@@ -20,7 +20,7 @@
             <label asp-for="OfferName" class="required col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-9">
                 <span class="has-float-label">
-                    <input asp-for="OfferName" class="form-control" placeholder="EV-quo/rrrr/dddd" type="text" />
+                    <input asp-for="OfferName" class="form-control" placeholder="EV(E)-quo/rrrr/dddd" type="text" />
                     <label asp-for="OfferName"></label>
                 </span>
                 <span asp-validation-for="OfferName" class="text-danger"></span>
@@ -63,17 +63,17 @@
         <div class="form-group row eveOffer">
             <label class="col-lg-3 col-form-label form-control-label control-label">Evektor</label>
             <div class="col-lg-2">
-                    <span class="has-float-label">
-                        @Html.DropDownList("EveDivision", new SelectList(Model.EveDivisionList, "Value", "Text", "-- Divize --"), new { @class = "form-control"})
-                        <label asp-for="EveDivision">Divize</label>
-                    </span>
+                <span class="has-float-label">
+                    @Html.DropDownList("EveDivision", new SelectList(Model.EveDivisionList, "Value", "Text", "-- Divize --"), new { @class = "form-control"})
+                    <label asp-for="EveDivision">Divize</label>
+                </span>
                 <span asp-validation-for="EveDivision" class="text-danger"></span>
             </div>
             <div class="col-lg-3">
-                    <span class="has-float-label">
-                        @Html.DropDownList("EveDepartment", new SelectList(ViewBag.DepartmentList, "Value", "Text"), new { @class = "form-control"})
-                        <label asp-for="EveDepartment">Oddělení</label>
-                    </span>
+                <span class="has-float-label">
+                    <select asp-for="EveDepartment" asp-items="ViewBag.DepartmentList" class="form-control"></select>
+                    <label asp-for="EveDepartment">Oddělení</label>
+                </span>
                 <span asp-validation-for="EveDepartment" class="text-danger"></span>
             </div>
             <div class="col-lg-4">
@@ -109,24 +109,24 @@
         <div class="form-group row">
             <label asp-for="Price" class="required col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-5">
-                <div class="field-wrapper">
-                    <input asp-for="Price" class="form-control" type="text"/>
-                    <div class="field-placeholder"><span>Cena bez DPH</span></div>
-                </div>
-
+                <span class="has-float-label">
+                    <input asp-for="Price" class="form-control" type="text" placeholder=" "/>
+                    <label asp-for="Price">Cena bez DPH</label>
+                </span>
                 <span asp-validation-for="Price" class="text-danger"></span>
             </div>
             <div class="col-lg-2">
-                <div data-toggle="tooltip" data-placement="top" title="Měna">
-                    @Html.DropDownListFor(model => model.CurrencyId, ViewBag.CurrencyList as SelectList, new { @class = "form-control" })
-                </div>
+                <span class="has-float-label">
+                    <select asp-for="CurrencyId" asp-items="ViewBag.CurrencyList" class="form-control"></select>
+                    <label asp-for="CurrencyId">Měna</label>
+                </span>
                 <span asp-validation-for="Currency" class="text-danger"></span>
             </div>
             <div class="col-lg-2">
-                <div class="field-wrapper">
-                    <input asp-for="ExchangeRate" class="form-control" type="text" data-toggle="tooltip" data-placement="top" title="Měnový kurz: X -> CZK" />
-                    <div class="field-placeholder"><span>Kurz</span></div>
-                </div>
+                <span class="has-float-label">
+                    <input asp-for="ExchangeRate" class="form-control" type="text" data-toggle="tooltip" data-placement="top" title="Měnový kurz z ČNB" />
+                    <label asp-for="ExchangeRate">Kurz</label>
+                </span>
                 <span asp-validation-for="ExchangeRate" class="text-danger"></span>
             </div>
         </div>
@@ -134,7 +134,10 @@
         <div class="form-group row">
             <label asp-for="EstimatedFinishDate" class="col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-9 mycalendar">
-                <input asp-for="EstimatedFinishDate" class="form-control" type="text" autocomplete="off"/>
+                <span class="has-float-label">
+                    <input asp-for="EstimatedFinishDate" class="form-control" type="text" autocomplete="off" placeholder=" "/>
+                    <label asp-for="EstimatedFinishDate">Předpodkládaný termín ukončení</label>
+                </span>
                 <span asp-validation-for="EstimatedFinishDate" class="text-danger"></span>
             </div>
         </div>
@@ -142,7 +145,10 @@
         <div class="form-group row">
             <label asp-for="Notes" class="col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-9">
-                <textarea asp-for="Notes" class="form-control"></textarea>
+                <span class="has-float-label">
+                    <textarea asp-for="Notes" class="form-control" placeholder=" "></textarea>
+                    <label asp-for="Notes">Poznámky</label>
+                </span>
                 <span asp-validation-for="Notes" class="text-danger"></span>
             </div>
         </div>
