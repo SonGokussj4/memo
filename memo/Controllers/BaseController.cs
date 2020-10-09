@@ -102,10 +102,11 @@ namespace memo.Controllers
             List<SelectListItem> eveOrderCodes = new List<SelectListItem>();
             foreach (cOrders item in _eveDb.cOrders.OrderByDescending(x => x.Idorder))
             {
-                if (item.Active != 1)
-                {
-                    continue;
-                }
+                // TODO: [m] zakazky se neukazovaly v seznamu, nejsou aktivni. Ale jejich CProject.Active ano??? zjistit...
+                // if (item.Active != 1)
+                // {
+                //     continue;
+                // }
 
                 eveOrderCodes.Add(new SelectListItem
                 {

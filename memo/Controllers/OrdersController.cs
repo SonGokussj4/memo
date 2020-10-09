@@ -86,7 +86,7 @@ namespace memo.Controllers
 
         [HttpGet]
         // public IActionResult Create(int? id, Order model)
-        public IActionResult Create(Order model)  // TODO: Predelat z model<Order> na OfferId
+        public IActionResult Create(Order order)  // TODO: Predelat z order<Order> na OfferId
         {
             List<Offer> wonOffersList = _db.Offer
                 .Where(t => t.OfferStatusId == 2)
@@ -103,14 +103,16 @@ namespace memo.Controllers
             int offerFinalPrice = 0;
             int offerPriceDiscount = 0;
             int finalPriceCzk = 0;
+            int negotiatedPrice = 0;
 
             Offer offer = new Offer();
-            if (model.OfferId != null && model.OfferId != 0)
+            if (order.OfferId != null && order.OfferId != 0)
             {
-                offer = _db.Offer.Find(model.OfferId);
+                offer = _db.Offer.Find(order.OfferId);
                 curSymbol = _db.Currency.Find(offer.CurrencyId).Name;
                 offerFinalPrice = (int)offer.Price;
                 finalPriceCzk = Convert.ToInt32(offerFinalPrice * offer.ExchangeRate);
+                negotiatedPrice = (int)offer.Price;
 
                 Company company = _db.Company.Find(offer.CompanyId);
                 if (company != null)
@@ -120,15 +122,16 @@ namespace memo.Controllers
                 }
             }
 
-            model.ExchangeRate = Decimal.Parse(getCurrencyStr(curSymbol).Replace(",", "."), CultureInfo.InvariantCulture);
-            model.PriceFinal = offerFinalPrice;
-            model.PriceDiscount = offerPriceDiscount;
-            model.PriceFinalCzk = finalPriceCzk;
+            order.ExchangeRate = Decimal.Parse(getCurrencyStr(curSymbol).Replace(",", "."), CultureInfo.InvariantCulture);
+            order.PriceFinal = offerFinalPrice;
+            order.PriceDiscount = offerPriceDiscount;
+            order.PriceFinalCzk = finalPriceCzk;
+            order.NegotiatedPrice = negotiatedPrice;
 
             OfferOrderVM viewModel = new OfferOrderVM()
             {
                 Offer = offer,
-                Order = model,
+                Order = order,
                 OfferCompanyName = offerCompanyName,
                 InvoiceDueDays = invoiceDueDays,
                 CurrencyName = curSymbol,
@@ -230,6 +233,8 @@ namespace memo.Controllers
                     vm.Order.TotalHours = totalMinutes / 60;
                 }
 
+                vm.Order.Username = User.GetLoggedInUserName();
+
                 _db.Add(vm.Order);
                 _db.SaveChanges();
                 return RedirectToAction("Index");
@@ -285,7 +290,7 @@ namespace memo.Controllers
                 OfferCompanyName = _db.Company.Find(offer.CompanyId).Name,
                 InvoiceDueDays = (int)_db.Company.Find(offer.CompanyId).InvoiceDueDays,
                 CurrencyName = _db.Currency.Find(offer.CurrencyId).Name,
-                // TotalHours = totalHours
+                UnspentMoney = (int)(order.NegotiatedPrice - order.PriceFinal),
             };
 
             if (offerId == 0 && viewModel.Edit != "true")
@@ -323,21 +328,22 @@ namespace memo.Controllers
 
                     vm.Order.PriceFinal = 0;
                     vm.Order.PriceFinalCzk = 0;
-                    vm.Order.PriceDiscount = _db.Offer.Find(vm.Order.OfferId).Price;
+                    vm.UnspentMoney = vm.Order.NegotiatedPrice;
 
                     foreach (Invoice invoice in vm.Order.Invoices)
                     {
                         invoice.CostCzk = Convert.ToInt32(invoice.Cost * vm.Order.ExchangeRate);
                         vm.Order.PriceFinalCzk += Convert.ToInt32(invoice.CostCzk);
+
                         vm.Order.PriceFinal += Convert.ToInt32(invoice.Cost);
-                        vm.Order.PriceDiscount -= Convert.ToInt32(invoice.Cost);
+                        vm.Order.PriceFinalCzk += Convert.ToInt32(invoice.CostCzk);
+                        vm.UnspentMoney -= Convert.ToInt32(invoice.Cost);
                     }
                     foreach (OtherCost otherCost in vm.Order.OtherCosts)
                     {
-                        otherCost.CostCzk = Convert.ToInt32(otherCost.Cost * vm.Order.ExchangeRate);
-                        vm.Order.PriceFinalCzk += Convert.ToInt32(otherCost.CostCzk);
                         vm.Order.PriceFinal += Convert.ToInt32(otherCost.Cost);
-                        vm.Order.PriceDiscount -= Convert.ToInt32(otherCost.Cost);
+                        vm.Order.PriceFinalCzk += Convert.ToInt32(otherCost.Cost * vm.Order.ExchangeRate);
+                        vm.UnspentMoney -= Convert.ToInt32(otherCost.Cost);
                     }
                     _db.Update(vm.Order);
                     _db.SaveChanges();
@@ -354,7 +360,7 @@ namespace memo.Controllers
                     }
                 }
 
-                ViewBag.message = "Zakázka editována";
+                TempData["Success"] = "Editace zakázky uložena.";
                 if (actionType == "Uložit")
                 {
                     return RedirectToAction("Edit", new { id = id, offerId = vm.Order.OfferId });
@@ -377,9 +383,9 @@ namespace memo.Controllers
             var offer = _db.Offer.Find(vm.Order.OfferId);
             var order = vm.Order;
             var offerId = Convert.ToInt32(vm.Order.OfferId);
-            var offercompanyname = _db.Company.Find(offer.CompanyId).Name;
-            var invoiceduedays = _db.Company.Find(offer.CompanyId).InvoiceDueDays;
-            var currencyname = _db.Currency.Find(offer.CurrencyId).Name;
+            var offerCompanyName = _db.Company.Find(offer.CompanyId).Name;
+            var invoiceDueDays = _db.Company.Find(offer.CompanyId).InvoiceDueDays;
+            var currencyName = _db.Currency.Find(offer.CurrencyId).Name;
 
             order.Invoices = _db.Invoice.Where(x => x.OrderId == id).ToList();
             OfferOrderVM viewModel = new OfferOrderVM()
@@ -387,9 +393,9 @@ namespace memo.Controllers
                 Offer = offer,
                 Order = order,
                 OfferId = offerId,
-                OfferCompanyName = offercompanyname,
-                InvoiceDueDays = (int)invoiceduedays,
-                CurrencyName = currencyname,
+                OfferCompanyName = offerCompanyName,
+                InvoiceDueDays = (int)invoiceDueDays,
+                CurrencyName = currencyName,
             };
 
             ViewBag.message = "Něco se porouchalo";

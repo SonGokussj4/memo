@@ -26,12 +26,21 @@
     }
 
     .table-responsive {
-        position: fixed;
+        position: absolute;
         left: 2rem;
         width: calc(100% - 4rem);
     }
 </style>
 
+@if (TempData["Success"] != null){
+    <div class="alert alert-success alert-dismissible fade show" role="alert" id="success-alert"
+         style="position: absolute; right: 1rem">
+        @TempData["Success"]
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+}
 
 <div class="text-center">
     <h1 class="display-4">@ViewData["Title"]</h1>
@@ -94,15 +103,16 @@
             <th scope="col" class="text-center" data-field="4" data-sortable="true" data-filter-control="input">Č. obj. zákazníka</th>
             <th scope="col" class="text-center" data-field="5" data-sortable="true" data-filter-control="input">Kód EVE<br />vykazování</th>
             <th scope="col" class="text-center" data-field="6" data-sortable="true" data-filter-control="input">Vedoucí<br />projektu</th>
-            <th scope="col" class="text-center" data-field="7" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatterCz">Konečná<br />cena [CZK]</th>
-            <th scope="col" class="text-center" data-field="8" data-sortable="true" data-filter-control="input">Poznámky</th>
-            <th scope="col" class="text-center" data-field="9" data-sortable="true" data-filter-control="select">Měna</th>
-            <th scope="col" class="text-center" data-field="10" data-sortable="true" data-filter-control="input">Hod.<br />sazba</th>
-            <th scope="col" class="text-center" data-field="11" data-sortable="true" data-filter-control="input" data-footer-formatter="sumHoursFormatter">Plánované<br />hod</th>
+            <th scope="col" class="text-center" data-field="7" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatterCz"><div data-toggle="tooltip" title="Po odečtení poskytnuté slevy">Vyjednaná<br />cena</div></th>
+            <th scope="col" class="text-center" data-field="8" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatterProgress"><div data-toggle="tooltip" title="Součet fakturací + dalších nákladů">Aktuálně</div></th>
+            <th scope="col" class="text-center" data-field="9" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatterCz"><div data-toggle="tooltip" title="Částka, která zbývá do vyjednané ceny">Zbývá</div></th>
+            <th scope="col" class="text-center" data-field="10" data-sortable="true" data-filter-control="input">Poznámky</th>
+            <th scope="col" class="text-center" data-field="11" data-sortable="true" data-filter-control="input">Hod.<br />sazba</th>
             <th scope="col" class="text-center" data-field="12" data-sortable="true" data-filter-control="input" data-footer-formatter="sumHoursFormatter">Vyčerpáno</th>
-            <th scope="col" class="text-center" data-field="13" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatterCz">Skutečné<br />náklady [CZK]</th>
-            <th scope="col" class="text-center" data-field="14" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatterCz"><div data-toggle="tooltip" title="Skutečné náklady včetně dalších nákladů">Celkové skut.<br />náklady [CZK]</div></th>
-            <th scope="col" class="text-center" data-field="15" data-sortable="true" data-filter-control="input">Využito</th>
+            <th scope="col" class="text-center" data-field="13" data-sortable="true" data-filter-control="input" data-footer-formatter="sumHoursFormatter">Plánované<br />hod</th>
+            <th scope="col" class="text-center" data-field="14" data-sortable="true" data-filter-control="input">Využito</th>
+            <th scope="col" class="text-center" data-field="15" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatterCz">Skutečné<br />náklady [CZK]</th>
+            <th scope="col" class="text-center" data-field="16" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatterCz"><div data-toggle="tooltip" title="Skutečné náklady včetně dalších nákladů">Celkové skut.<br />náklady [CZK]</div></th>
         </tr>
     </thead>
     <tbody>
@@ -138,12 +148,31 @@
                 }
                 <th scope="row" class="text-center" data-toggle="tooltip" data-html="true" title="@OrderCodeTooltip">@item.OrderCode</th>
                 <th scope="row" class="text-left">@item.EveContactName</th>
-                <th scope="row" class="text-right">@string.Format(CultureInfo.CreateSpecificCulture("cs-CZ"), "{0:C0}", @item.PriceFinalCzk)</th>
+                <th scope="row" class="text-right">@string.Format(CultureInfo.CreateSpecificCulture(@item.Offer?.Currency.CultureCode), "{0:C0}", @item.NegotiatedPrice)</th>
+                <th scope="row" class="text-right">
+                    <span style="font-size: 0.9rem;">@string.Format(CultureInfo.CreateSpecificCulture("cs-CZ"), "{0:C0}", @item.PriceFinalCzk)</span>
+                    <div class="progress" style="height: 5px;">
+                    @{
+                        int percentValue = (int)Math.Ceiling(item.PriceFinalCzk / (double)item.NegotiatedPrice * 100);
+                        string progressBarWidth = percentValue <= 100 ? (percentValue).ToString() : "100";
+                        string progressbarClassColor = percentValue <= 100 ? "" : "bg-danger";
+                    }
+                    <div class="progress-bar @progressbarClassColor progress-bar-striped" role="progressbar" style="width: @progressBarWidth%;"></div>
+                </div>
+                </th>
+                <th scope="row" class="text-right">@string.Format(CultureInfo.CreateSpecificCulture(@item.Offer?.Currency.CultureCode), "{0:C0}", @item.NegotiatedPrice - @item.PriceFinalCzk)</th>
                 <th scope="row" class="notesWrap" data-toggle="tooltip" data-html="true" title="@item.Notes">
                     @item.Notes
                 </th>
-                <th scope="row" class="text-center">@item.Offer?.Currency.Name</th>
                 <th scope="row" class="text-right">@String.Format(CultureInfo.CreateSpecificCulture(@item.Offer?.Currency.CultureCode), "{0:C0}", @item.HourWage)</th>
+                @{
+                    string burnedText = "";
+                    if (@item.Burned != 0)
+                    {
+                        burnedText = String.Format("{0:# ### ###} hod", item.Burned / 60);
+                    }
+                    <th scope="row" class="text-right">@burnedText</th>
+                }
                 @{
                     string totalHoursText = "";
                     if (@item.TotalHours != 0)
@@ -154,12 +183,24 @@
                     <th scope="row" class="text-right">@totalHoursText</th>
                 }
                 @{
-                    string burnedText = "";
-                    if (@item.Burned != 0)
+                    decimal currentVal = 0;
+                    string tooltipText = "Nejsou zadány celkové hodiny";
+                    string currentValStr = "0.00";
+                    if (item.TotalHours.HasValue && item.TotalHours != 0)
                     {
-                        burnedText = String.Format("{0:# ### ###} hod", item.Burned / 60);
+                        currentVal = Convert.ToDecimal((decimal)item.Burned / 60 / item.TotalHours * 100);
+                        currentValStr = String.Format("{0:0.00}", currentVal);
+                        currentVal = (int)Math.Ceiling(currentVal);
+                        tooltipText = $"Využito: {currentValStr} % </br> Hodin: {item.Burned / 60} / {item.TotalHours}";
                     }
-                    <th scope="row" class="text-right">@burnedText</th>
+                    string backgroundClass = currentVal < 85 ? "bg-success" : (currentVal < 95 ? "bg-warning" : "bg-danger");
+
+                    <th scope="row" data-toggle="tooltip" data-html="true" title="@tooltipText">
+                        <span style="font-size: 0.8rem;">@currentValStr %</span>
+                        <div class="progress" style="height: 5px;">
+                            <div class="progress-bar @backgroundClass" role="progressbar" style="width: @currentVal%;"></div>
+                        </div>
+                    </th>
                 }
                 <th scope="row" class="text-right">@string.Format(CultureInfo.CreateSpecificCulture("cs-CZ"), "{0:C0}", @item.Burned * (@item.HourWage * (double)@item.ExchangeRate) / 60 )</th>
                 @{
@@ -168,36 +209,6 @@
                     var totalkaCzk = (decimal)(item.Burned * (item.HourWage * (double)item.ExchangeRate) / 60) + dalsi;
                 }
                 <th scope="row" class="text-right">@string.Format(CultureInfo.CreateSpecificCulture("cs-CZ"), "{0:C0}", totalkaCzk)</th>
-                @{
-                    decimal currentVal = 0;
-                    try
-                    {
-                        currentVal = Convert.ToDecimal(item.Burned / 60 / item.TotalHours * 100);
-                    }
-                    catch (DivideByZeroException)
-                    {
-                    }
-                    string backgroundClass = currentVal < 90 ? "bg-success" : "bg-danger";
-                    string currentValStr = String.Format("{0:0.00}", currentVal);
-
-                    string tooltipText = "Nejsou zadány celkové hodiny";
-                    try
-                    {
-                        tooltipText = $"Využito: {currentValStr} % </br> Hodin: {item.Burned / 60} / {item.TotalHours}";
-                    }
-                    catch (Exception)
-                    {
-                        tooltipText = "Shit";
-                    }
-
-                    <th scope="row" data-toggle="tooltip" data-html="true" title="@tooltipText">
-                        <div class="progress">
-                            <div class="progress-bar @backgroundClass" role="progressbar" style="width: @currentValStr%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
-                                @currentValStr %
-                            </div>
-                        </div>
-                    </th>
-                }
 
             </tr>
         }
@@ -338,12 +349,32 @@
                 .replaceAllTxt(" ", "")
                 .replaceAllTxt("Kč", "")
                 ) || 0;
-            console.log(`Cost: ${cost}`);
+            console.log(`CostCz: ${cost}`);
             return + cost
         }).reduce(function (sum, i) {
             return sum + i
         }, 0)
         return vysledek.toLocaleString('cs-CZ') + ' Kč'
+    }
+
+    function priceFormatterProgress(data) {
+        var field = parseInt(this.field);
+        //var field = parseInt(this.field.replace(",", "").replace("&nbsp;", "").replace(" ", "").replace("Kč", ""));
+        //var field = parseInt(this.field).val().replace(/[^0-9]/g, '')
+        var vysledek = data.map(function (row) {
+            var cost = parseInt(row[field].substring(row[field].indexOf('">') + 2,row[field].indexOf('</span>'))
+                //.replace(/, (Kč)(&nbsp);/g, ''));
+                .replaceAllTxt(",", "")
+                .replaceAllTxt("&nbsp;", "")
+                .replaceAllTxt(" ", "")
+                .replaceAllTxt("Kč", "")
+                ) || 0;
+            console.log(`CostProgress: ${cost}`);
+            return + cost
+        }).reduce(function (sum, i) {
+            return sum + i
+        }, 0)
+        return vysledek.toLocaleString("cs-CZ")
     }
 
     function priceFormatter(data) {

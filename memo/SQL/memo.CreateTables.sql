@@ -88,6 +88,7 @@ CREATE TABLE [memo].[Order] (
   [OrderId] int PRIMARY KEY IDENTITY(1, 1),
   [OfferId] int,
   [OrderName] nvarchar(50) UNIQUE,
+  [NegotiatedPrice] int,
   [PriceFinal] int,
   [PriceDiscount] int,
   [OrderCode] nvarchar(50),

@@ -29,6 +29,8 @@ namespace memo.ViewModels
 
         public string CurrencyName { get; set; }
 
+        public int UnspentMoney { get; set; }
+
         // public string ReturnUrl {get;set;}
     }
 }

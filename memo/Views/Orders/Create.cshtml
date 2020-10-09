@@ -34,19 +34,19 @@
         @* @Html.HiddenFor(model => model.ReturnUrl) *@
 
         <!--------------------------------------------------------------------------------------
-            FORM - OBJEDNAVKA
+            FORM - NABÍDKA
         --------------------------------------------------------------------------------------->
         <form class="card" role="form" autocomplete="on" asp-action="Refresh" method="post">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-        <h5 class="card-title">Detaily objednávky</h5>
+        <h5 class="card-title">Detaily nabídky</h5>
         <hr />
 
         <div class="form-group row">
             <label asp-for="Order.OfferId" class="required col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-4">
                 <input type="hidden" asp-for="Order.OrderId" />
-                @Html.DropDownList("OfferId", ViewBag.WonOffersList as SelectList, "-- Vyber objednávku --", new { @class = "form-control selectpicker", onchange = @"this.form.submit();" })
+                @Html.DropDownList("OfferId", ViewBag.WonOffersList as SelectList, "-- Vyber nabídku --", new { @class = "form-control selectpicker", onchange = @"this.form.submit();" })
                 <span asp-validation-for="Order.OfferId" class="text-danger"></span>
             </div>
         </div>
@@ -72,7 +72,7 @@
             @if (@Model.Offer?.OfferId != 0 && @Model.Offer?.OfferId != null)
             {
                 <div class="">
-                    <a asp-action="Edit" asp-controller="Offers" asp-route-id="@Model.Offer.OfferId" class="btn btn-primary"><i class="fa fa-list-alt"></i> Přejít na objednávku</a>
+                    <a asp-action="Edit" asp-controller="Offers" asp-route-id="@Model.Offer.OfferId" class="btn btn-primary"><i class="fa fa-list-alt"></i> Přejít na nabídku</a>
                 </div>
             }
         </div>
@@ -110,30 +110,29 @@
             <span asp-validation-for="Order.OrderName" class="text-danger"></span>
         </div>
 
-        @* <div class="form-group row">
+        <div class="form-group row">
             <label class="required col-lg-3 col-form-label form-control-label control-label">Cena dle jednacího protokolu</label>
             <div class="col-lg-3">
                 <span class="has-float-label">
-                    <input id="lalalulu" class="form-control" type="text" required placeholder=" "/>
-                    <label for="lalalulu">Vyjednaná cena [Kč]</label>
+                    <input asp-for="Order.NegotiatedPrice" class="form-control" type="text" required placeholder=" "/>
+                    <label asp-for="Order.NegotiatedPrice">Vyjednaná cena [@Model.CurrencyName]</label>
                 </span>
-                <span asp-validation-for="PersonName" class="text-danger"></span>
+                <span asp-validation-for="Order.NegotiatedPrice" class="text-danger"></span>
             </div>
             <div class="col-lg-3">
                 <span class="has-float-label">
-                    <input id="lalam" class="form-control" type="text" placeholder=" "/>
-                    <label for="lalam">Sleva z nabídky [Kč]</label>
+                    <input asp-for="Order.PriceDiscount" class="form-control" type="text" placeholder=" "/>
+                    <label asp-for="Order.PriceDiscount">Sleva z nabídky [@Model.CurrencyName]</label>
                 </span>
-                <span asp-validation-for="PersonLastName" class="text-danger"></span>
+                <span asp-validation-for="Order.PriceDiscount" class="text-danger"></span>
             </div>
+            @if (@Model.Offer?.OfferId != 0 && @Model.Offer?.OfferId != null)
+            {
             <div class="col-lg-3">
-                <span class="has-float-label">
-                    <input asp-for="Offer.PriceCzk" class="form-control" type="text" disabled placeholder=" "/>
-                    <label asp-for="Offer.PriceCzk">Počáteční cena [Kč]</label>
-                </span>
-                <p class="mt-1">Počáteční: <b>@Html.Raw(@Model.Offer.Price)</b> Kč</p>
+                <p class="mt-1">Cena nab: <b>@String.Format(CultureInfo.CreateSpecificCulture(Model.Offer?.Currency.CultureCode), "{0:C0}", @Model.Offer?.Price)</b></p>
             </div>
-        </div> *@
+            }
+        </div>
 
         <div class="form-group eveOrder">
             <div class="form-group row">
@@ -244,21 +243,19 @@
             <span asp-validation-for="Order.OtherCosts" class="text-danger"></span>
         </div>
 
-        <div class="form-group row">
+        @* <div class="form-group row">
             <label asp-for="Order.HourWage" class="required col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-3">
-                 <div class="input-group mb-2 mr-sm-2">
-                    <div class="input-group-prepend">
-                        <div class="input-group-text">@Model.CurrencyName</div>
-                    </div>
-                    <input asp-for="Order.HourWage" class="form-control" type="text" onchange="this.value = this.value.replace(/,/g, '.')"/>
-                 </div>
+                 <span class="has-float-label">
+                    <input asp-for="Order.HourWage" class="form-control" type="text" onchange="this.value = this.value.replace(/,/g, '.')" placeholder=" " />
+                    <label asp-for="Order.HourWage">Hod. sazba [@Model.CurrencyName]</label>
+                </span>
                 <span asp-validation-for="Order.HourWage" class="text-danger"></span>
             </div>
-        </div>
+        </div> *@
 
         <div class="form-group row">
-            <label asp-for="Order.PriceFinalCzk" class="col-lg-3 col-form-label form-control-label control-label"></label>
+            @* <label asp-for="Order.PriceFinalCzk" class="col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-3">
                 <div class="input-group mb-2 mr-sm-2">
                     <div class="input-group-prepend">
@@ -267,6 +264,14 @@
                     <input asp-for="Order.PriceFinalCzk" class="form-control" type="text" readonly />
                 </div>
                 <span asp-validation-for="Order.PriceFinalCzk" class="text-danger"></span>
+            </div> *@
+            <label asp-for="Order.HourWage" class="required col-lg-3 col-form-label form-control-label control-label"></label>
+            <div class="col-lg-3">
+                 <span class="has-float-label">
+                    <input asp-for="Order.HourWage" class="form-control" type="text" onchange="this.value = this.value.replace(/,/g, '.')" placeholder=" " />
+                    <label asp-for="Order.HourWage">Hod. sazba [@Model.CurrencyName]</label>
+                </span>
+                <span asp-validation-for="Order.HourWage" class="text-danger"></span>
             </div>
             <label asp-for="Order.ExchangeRate" class="col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-3">
@@ -374,38 +379,25 @@
             // All .mycalendar input classes will have 'datepicker()' functionality
             $('.mycalendar input').datepicker(datepickerParameters[0]);
 
-            // When changing <PriceFinal>, change <PriceDiscount> value
-            $('#Order_PriceFinal').on('input', function(){
-                var offerPrice = parseInt($('#Offer_Price').val());
-                var finalPrice = parseInt($('#Order_PriceFinal').val());
-                $('#Order_PriceDiscount').val(offerPrice - finalPrice);
+            var offerPrice = parseInt('@Model.Offer.Price');
+
+            $('#Order_NegotiatedPrice').on('keydown input change textInput', function(){
+                var negotiatedPrice = parseInt($('#Order_NegotiatedPrice').val());
+                //var offerPrice = parseInt('@Model.Offer.Price');
+                $('#Order_PriceDiscount').val(offerPrice - negotiatedPrice);
             });
 
-            function dynamicEvent() {
-                console.log("Reaguji!!");
-            };
-
-            $('.invoiceDate').change('input', function(){
-                var date = new Date($('.invoiceDate').val());
-                var futureDate = getPrettyDate(date, @Model.InvoiceDueDays);
-                $('#Order_InvoiceDueDate').val(futureDate);
+            $('#Order_PriceDiscount').on('keydown input change textInput', function(){
+                var priceDiscount = parseInt($('#Order_PriceDiscount').val());
+                //var offerPrice = parseInt('@Model.Offer.Price');
+                $('#Order_NegotiatedPrice').val(offerPrice - priceDiscount);
             });
 
-//            // PriceFinalCzk realtime refresh
-//            var exchangeRate = document.getElementById('Order_ExchangeRate')
-//            var priceFinal = document.getElementById('Order_PriceFinal')
-//            var otherCosts = document.getElementById('Order_OtherCosts')
-//            var priceFinalCzk = document.getElementById('Order_PriceFinalCzk')
-//
-//            trigFunc = function(){
-//                var exchangeRateNum = parseFloat(exchangeRate.value.replace(/,/g, "."))
-//                var priceFinalNum = parseFloat(priceFinal.value.replace(/,/g, "."))
-//                var otherCostsNum = parseFloat(otherCosts.value.replace(/,/g, "."))
-//                priceFinalCzk.value = parseInt(exchangeRateNum * (priceFinalNum - otherCostsNum));
-//            }
-//            exchangeRate.onkeyup = trigFunc;
-//            priceFinal.onkeyup = trigFunc;
-//            otherCosts.onkeyup = trigFunc;
+            //$('.invoiceDate').change('input', function(){
+            //    var date = new Date($('.invoiceDate').val());
+            //    var futureDate = getPrettyDate(date, @Model.InvoiceDueDays);
+            //    $('#Order_InvoiceDueDate').val(futureDate);
+            //});
 
             // Add new INVOICES row
             var idInvoice = @Model.Order.Invoices.Count();
@@ -479,6 +471,9 @@
                 var parsed_date = @Html.Raw(Json.Serialize(Model.Offer.EstimatedFinishDate))
                 if ( parsed_date != null) {
                     _invoiceIssueInput.val(new Date(parsed_date).toISOString().substring(0, 10));
+                    var date = new Date(_invoiceIssueInput.val());
+                    var futureDate = getPrettyDate(date, @Model.InvoiceDueDays);
+                    _invoiceDueInput.val(futureDate);
                 }
 
                 _invoiceIssueInput.datepicker(datepickerParameters[0]);
@@ -506,22 +501,24 @@
                 var html =
                     '<div class="row form-group justify-content-end" id="dynamic-row-other-costs-' + idOtherCosts + '">'+
                         '<input type="number" hidden="true" data-val="true" data-val-required="The OtherCostId field is required." id="Order_OtherCosts_' + idOtherCosts + '__OtherCostId" name="Order.OtherCosts[' + idOtherCosts + '].OtherCostId" value="0">'+
+
                         '<div class="col-lg-6">'+
                             '<input class="form-control" type="text" autocomplete="off" placeholder="Popis" data-val="true" data-val-required="Je třeba přidat popis dalšího nákladu" id="Order_OtherCosts_' + idOtherCosts + '__Subject" name="Order.OtherCosts[' + idOtherCosts + '].Subject" value="">'+
                             '<span class="text-danger field-validation-valid" data-valmsg-for="Order.OtherCosts[' + idOtherCosts + '].Subject" data-valmsg-replace="true"></span>'+
                         '</div>'+
+
                         '<div class="col-lg-3">'+
-                            '<div class="input-group mb-2 mr-sm-2">'+
-                                '<div class="input-group-prepend">'+
-                                    '<div class="input-group-text">@Model.CurrencyName</div>'+
-                                '</div>'+
-                                '<input class="form-control" type="text" placeholder="Částka" data-val="true" data-val-number="The field Částka must be a number." data-val-required="The Částka field is required." id="Order_OtherCosts_' + idOtherCosts + '__Cost" name="Order.OtherCosts[' + idOtherCosts + '].Cost" value="">'+
-                                '<span class="text-danger field-validation-valid" data-valmsg-for="Order.OtherCosts[' + idOtherCosts + '].Cost" data-valmsg-replace="true"></span>'+
-                            '</div>'+
+                            '<span class="has-float-label">'+
+                                '<input class="form-control" type="text" placeholder="Částka" data-val="true" data-val-number="The field Částka must be a number." data-val-required="The Částka field is required." id="Order_Invoices_' + idInvoice + '__Cost" name="Order.Invoices[' + idInvoice + '].Cost" value="" placeholder=" " />'+
+                                '<label for="Order_Invoices_' + idInvoice + '__Cost">Částka [@Model.CurrencyName]</label>'+
+                            '</span>'+
+                            '<span class="text-danger field-validation-valid" data-valmsg-for="Order.Invoices[' + idInvoice + '].Cost" data-valmsg-replace="true"></span>'+
                         '</div>'+
+
                         '<div class="col-lg-1">'+
                             '<a href="javascript:void(0)" class="btn btn-danger btn-sm mt-1" data-toggle="tooltip" title="" data-original-title="Odstranit záznam" onclick="DeleteOtherCost(' + idOtherCosts + ')"><i class="fa fa-trash white"></i></a>'+
                         '</div>'+
+
                     '</div>';
 
                 //$("tbody").append($(html).clone(true))

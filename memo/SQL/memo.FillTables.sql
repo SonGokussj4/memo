@@ -156,3 +156,16 @@ VALUES
 -- Presunout dbo.spProcedure do memo.spProcedure
 -- ##################################
 -- ALTER SCHEMA memo TRANSFER dbo.spProcedure;
+
+
+
+-- UPDATE
+-- 	[memo].[Order]
+-- SET
+-- 	[memo].[Order].NegotiatedPrice = [memo].[Offer].Price
+-- FROM
+-- 	[memo].[Order]
+-- INNER JOIN
+-- 	[memo].[Offer]
+-- ON
+-- 	[memo].[Order].[OfferId] = [memo].[Offer].[OfferId]

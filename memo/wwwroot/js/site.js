@@ -117,7 +117,7 @@ $(function () {
     floatingLabelsInit();
 })
 
-$("#success-alert").fadeTo(2000, 500).slideUp(500, function(){
+$("#success-alert").fadeTo(3000, 500).slideUp(500, function(){
     $("#success-alert").slideUp(500);
 });
 $("#error-alert").fadeTo(8000, 500).slideUp(500, function(){

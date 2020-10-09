@@ -24,6 +24,16 @@
     }
 </style>
 
+@if (TempData["Success"] != null){
+    <div class="alert alert-success alert-dismissible fade show" role="alert" id="success-alert"
+         style="position: absolute; right: 1rem">
+        @TempData["Success"]
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+}
+
 <div class="text-center">
     <h1 class="display-6">@ViewData["Title"]</h1>
     <hr />
@@ -124,6 +134,27 @@
             </div>
         </div>
 
+        <div class="form-group row">
+            <label class="required col-lg-3 col-form-label form-control-label control-label">Cena dle jednacího protokolu</label>
+            <div class="col-lg-3">
+                <span class="has-float-label">
+                    <input asp-for="Order.NegotiatedPrice" class="form-control" type="text" required placeholder=" "/>
+                    <label asp-for="Order.NegotiatedPrice">Vyjednaná cena [@Model.CurrencyName]</label>
+                </span>
+                <span asp-validation-for="Order.NegotiatedPrice" class="text-danger"></span>
+            </div>
+            <div class="col-lg-3">
+                <span class="has-float-label">
+                    <input asp-for="Order.PriceDiscount" class="form-control" type="text" placeholder=" "/>
+                    <label asp-for="Order.PriceDiscount">Sleva z nabídky [@Model.CurrencyName]</label>
+                </span>
+                <span asp-validation-for="Order.PriceDiscount" class="text-danger"></span>
+            </div>
+            <div class="col-lg-3">
+                <p class="mt-1">Cena nab: <b>@String.Format(CultureInfo.CreateSpecificCulture(Model.Offer?.Currency.CultureCode), "{0:C0}", @Model.Offer?.Price)</b></p>
+            </div>
+        </div>
+
         <div class="form-group eveOrder">
 
             <div class="form-group row ">
@@ -132,6 +163,7 @@
                     @Html.DropDownListFor(model => model.Order.OrderCode, ViewBag.EveOrderCodes as SelectList, "-- Vyber kód --", new { @class = "form-control selectpicker", @style = "min-width: 500px !important" })
                     <span asp-validation-for="Order.OrderCode" class="text-danger"></span>
                     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    @* <span>Spáleno/Plánováno: @(Model.Order.Burned / 60) / @Model.Order.TotalHours [hod]</span> *@
                 </div>
                 <div class="col-lg-2">
                     <a href="@Url.Action("CreateEveProject")" target="_blank" class="btn btn-outline-success form-control"
@@ -248,9 +280,9 @@
                     <div class="col-lg-3">
                         <span class="has-float-label">
                             <input asp-for="@Model.Order.OtherCosts[i].Cost" class="form-control" type="text" placeholder=" "/>
-                            <label asp-for="@Model.Order.OtherCosts[i].Cost">Částka</label>
-                        <span asp-validation-for="@Model.Order.OtherCosts[i].Cost" class="text-danger"></span>
+                            <label asp-for="@Model.Order.OtherCosts[i].Cost">Částka [@Model.CurrencyName]</label>
                         </span>
+                        <span asp-validation-for="@Model.Order.OtherCosts[i].Cost" class="text-danger"></span>
                     </div>
 
                     <div class="col-lg-1">
@@ -273,16 +305,24 @@
                 <span asp-validation-for="Order.PriceFinal" class="text-danger"></span>
             </div>
             <div class="col-lg-3">
-                <label asp-for="Order.PriceDiscount" class="col-form-label form-control-label control-label"></label>
+                <label asp-for="UnspentMoney" class="col-form-label form-control-label control-label">Nespotřebovaná částka</label>
             </div>
             <div class="col-lg-3">
                 <div class="input-group mb-2 mr-sm-2">
                     <div class="input-group-prepend">
                         <div class="input-group-text">@Model.CurrencyName</div>
                     </div>
-                    <input asp-for="Order.PriceDiscount" class="form-control" type="text" required="" readonly />
+                    <input asp-for="UnspentMoney" class="form-control" type="text" readonly />
                 </div>
-                <span asp-validation-for="Order.PriceDiscount" class="text-danger"></span>
+                <span asp-validation-for="UnspentMoney" class="text-danger"></span>
+                <div class="progress" style="height: 5px;">
+                    @{
+                        decimal percentValue = Model.UnspentMoney / (decimal)Model.Order.NegotiatedPrice * 100;
+                        string progressBarWidth = percentValue >= 0 ? (100 - percentValue).ToString() : "100";
+                        string progressbarClassColor = percentValue >= 0 ? "" : "bg-danger";
+                    }
+                    <div class="progress-bar @progressbarClassColor progress-bar-striped" role="progressbar" style="width: @progressBarWidth%;"></div>
+                </div>
             </div>
         </div>
 
@@ -290,7 +330,7 @@
             <label asp-for="Order.HourWage" class="required col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-3">
                 <span class="has-float-label">
-                    <input asp-for="Order.HourWage" class="form-control" type="text" onchange="this.value = this.value.replace(/,/g, '.')"/>
+                    <input asp-for="Order.HourWage" class="form-control" type="text" onchange="this.value = this.value.replace(/,/g, '.')" placeholder=" " />
                     <label asp-for="Order.HourWage">Hod. sazba [@Model.CurrencyName]</label>
                 </span>
                 <span asp-validation-for="Order.HourWage" class="text-danger"></span>
@@ -541,12 +581,19 @@
 
             $('.mycalendar input').datepicker(datepickerParameters[0]);
 
-            $('#Order_PriceFinal').on('input', function(){
-                var offerPrice = parseInt($('#Offer_Price').val());
-                var finalPrice = parseInt($('#Order_PriceFinal').val());
-                $('#Order_PriceDiscount').val(offerPrice - finalPrice);
+            var offerPrice = parseInt('@Model.Offer.Price');
+
+            $('#Order_NegotiatedPrice').on('keydown input change textInput', function(){
+                var negotiatedPrice = parseInt($('#Order_NegotiatedPrice').val());
+                //var offerPrice = parseInt('@Model.Offer.Price');
+                $('#Order_PriceDiscount').val(offerPrice - negotiatedPrice);
             });
 
+            $('#Order_PriceDiscount').on('keydown input change textInput', function(){
+                var priceDiscount = parseInt($('#Order_PriceDiscount').val());
+                //var offerPrice = parseInt('@Model.Offer.Price');
+                $('#Order_NegotiatedPrice').val(offerPrice - priceDiscount);
+            });
 
             $('#Order_InvoiceIssueDate').change('input', function(){
                 var date = new Date($('#Order_InvoiceIssueDate').val());
@@ -554,21 +601,18 @@
                 $('#Order_InvoiceDueDate').val(futureDate);
             });
 
-//            // PriceFinalCzk realtime refresh
-//            var exchangeRate = document.getElementById('Order_ExchangeRate')
-//            var priceFinal = document.getElementById('Order_PriceFinal')
-//            var otherCosts = document.getElementById('Order_OtherCosts')
-//            var priceFinalCzk = document.getElementById('Order_PriceFinalCzk')
-//
-//            trigFunc = function(){
-//                var exchangeRateNum = parseFloat(exchangeRate.value.replace(/,/g, "."))
-//                var priceFinalNum = parseFloat(priceFinal.value.replace(/,/g, "."))
-//                var otherCostsNum = parseFloat(otherCosts.value.replace(/,/g, "."))
-//                priceFinalCzk.value = parseInt(exchangeRateNum * (priceFinalNum - otherCostsNum));
-//            }
-//            exchangeRate.onkeyup = trigFunc;
-//            priceFinal.onkeyup = trigFunc;
-//            otherCosts.onkeyup = trigFunc;
+            // Active on(changeDate) events for existing InvoiceIssueDate datepicker inputs
+            let childrenIssueDate = document.querySelectorAll('[id$="InvoiceIssueDate"]');
+            childrenIssueDate.forEach( function(item) {
+                let dateInput = $(`#${item.id}`);
+                dateInput.on("changeDate", function(lol) {
+                    console.log(lol);
+                    var date = new Date(dateInput.val());
+                    var futureDate = getPrettyDate(date, @Model.InvoiceDueDays);
+                    var childIssueId = lol.target.id.split("__")[0];  // Order_Invoices_X
+                    childDue = $(`#${childIssueId}__InvoiceDueDate`).val(futureDate);
+                });
+            });
 
             // Add new INVOICES row
             var idInvoice = @Model.Order.Invoices.Count();
@@ -588,28 +632,19 @@
                             '</div>'+
 
                             '<div class="col-lg-3">'+
-                                @* '<div class="input-group">'+ *@
-                                    @* '<div class="input-group-prepend">'+
-                                        '<div class="input-group-text newlyAddedTooltip" data-toggle="tooltip" title="Přičíst dny" style="cursor: pointer;" onclick="AddInvoiceDueDays(' + idInvoice + ');">'+
-                                            '@Model.InvoiceDueDays &nbsp;<i class="fa fa-caret-right"></i>'+
-                                        '</div>'+
-                                    '</div>'+ *@
-                                    '<span class="has-float-label">'+
-                                        '<input class="form-control" type="text" autocomplete="off" placeholder="rrrr-mm-dd" data-val="true" data-id="' + idInvoice + '" data-val-required="The Splatnost faktury field is required." id="Order_Invoices_' + idInvoice + '__InvoiceDueDate" name="Order.Invoices[' + idInvoice + '].InvoiceDueDate" value="">'+
-                                        '<label for="Order_Invoices_' + idInvoice + '__InvoiceDueDate">Splatnost faktury</label>'+
-                                    '</span>'+
-                                    '<span class="text-danger field-validation-valid" data-valmsg-for="Order.Invoices[' + idInvoice + '].InvoiceDueDate" data-valmsg-replace="true"></span>'+
-                                @* '</div>'+ *@
+                                '<span class="has-float-label">'+
+                                    '<input class="form-control" type="text" autocomplete="off" placeholder="rrrr-mm-dd" data-val="true" data-id="' + idInvoice + '" data-val-required="The Splatnost faktury field is required." id="Order_Invoices_' + idInvoice + '__InvoiceDueDate" name="Order.Invoices[' + idInvoice + '].InvoiceDueDate" value="">'+
+                                    '<label for="Order_Invoices_' + idInvoice + '__InvoiceDueDate">Splatnost faktury</label>'+
+                                '</span>'+
+                                '<span class="text-danger field-validation-valid" data-valmsg-for="Order.Invoices[' + idInvoice + '].InvoiceDueDate" data-valmsg-replace="true"></span>'+
                             '</div>'+
 
                             '<div class="col-lg-3">'+
-                                '<div class="input-group mb-2 mr-sm-2">'+
-                                    '<div class="input-group-prepend">'+
-                                        '<div class="input-group-text">@Model.CurrencyName</div>'+
-                                    '</div>'+
-                                    '<input class="form-control" type="text" placeholder="Částka" data-val="true" data-val-number="The field Částka must be a number." data-val-required="The Částka field is required." id="Order_Invoices_' + idInvoice + '__Cost" name="Order.Invoices[' + idInvoice + '].Cost" value="">'+
-                                    '<span class="text-danger field-validation-valid" data-valmsg-for="Order.Invoices[' + idInvoice + '].Cost" data-valmsg-replace="true"></span>'+
-                                '</div>'+
+                                '<span class="has-float-label">'+
+                                    '<input class="form-control" type="text" placeholder="Částka" data-val="true" data-val-number="The field Částka must be a number." data-val-required="The Částka field is required." id="Order_Invoices_' + idInvoice + '__Cost" name="Order.Invoices[' + idInvoice + '].Cost" value="" placeholder=" " />'+
+                                    '<label for="Order_Invoices_' + idInvoice + '__Cost">Částka [@Model.CurrencyName]</label>'+
+                                '</span>'+
+                                '<span class="text-danger field-validation-valid" data-valmsg-for="Order.Invoices[' + idInvoice + '].Cost" data-valmsg-replace="true"></span>'+
                             '</div>'+
 
                             '<div class="col-lg-1">'+
@@ -640,6 +675,9 @@
                 var parsed_date = @Html.Raw(Json.Serialize(Model.Offer.EstimatedFinishDate))
                 if ( parsed_date != null) {
                     _invoiceIssueInput.val(new Date(parsed_date).toISOString().substring(0, 10));
+                    var date = new Date(_invoiceIssueInput.val());
+                    var futureDate = getPrettyDate(date, @Model.InvoiceDueDays);
+                    _invoiceDueInput.val(futureDate);
                 }
 
                 _invoiceIssueInput.datepicker(datepickerParameters[0]);
@@ -650,7 +688,7 @@
                     var date = new Date(_invoiceIssueInput.val());
                     var futureDate = getPrettyDate(date, @Model.InvoiceDueDays);
                     $('#Order_Invoices_' + _invoiceIssueInput.data('id') + '__InvoiceDueDate').val(futureDate);
-                 });
+                });
 
                 floatingLabelsInit();
 
@@ -672,15 +710,15 @@
                             '<input class="form-control" type="text" autocomplete="off" placeholder="Popis" data-val="true" data-val-required="Je třeba přidat popis dalšího nákladu" id="Order_OtherCosts_' + idOtherCosts + '__Subject" name="Order.OtherCosts[' + idOtherCosts + '].Subject" value="">'+
                             '<span class="text-danger field-validation-valid" data-valmsg-for="Order.OtherCosts[' + idOtherCosts + '].Subject" data-valmsg-replace="true"></span>'+
                         '</div>'+
+
                         '<div class="col-lg-3">'+
-                            '<div class="input-group mb-2 mr-sm-2">'+
-                                '<div class="input-group-prepend">'+
-                                    '<div class="input-group-text">@Model.CurrencyName</div>'+
-                                '</div>'+
-                                '<input class="form-control" type="text" placeholder="Částka" data-val="true" data-val-number="The field Částka must be a number." data-val-required="The Částka field is required." id="Order_OtherCosts_' + idOtherCosts + '__Cost" name="Order.OtherCosts[' + idOtherCosts + '].Cost" value="">'+
-                                '<span class="text-danger field-validation-valid" data-valmsg-for="Order.OtherCosts[' + idOtherCosts + '].Cost" data-valmsg-replace="true"></span>'+
-                            '</div>'+
+                            '<span class="has-float-label">'+
+                                '<input class="form-control" type="text" placeholder="Částka" data-val="true" data-val-number="The field Částka must be a number." data-val-required="The Částka field is required." id="Order_OtherCosts_' + idOtherCosts + '__Cost" name="Order.OtherCosts[' + idOtherCosts + '].Cost" value="" />'+
+                                '<label for="Částka [@Model.CurrencyName]">Částka [@Model.CurrencyName]</label>'+
+                            '</span>'+
+                            '<span class="text-danger field-validation-valid" data-valmsg-for="Order.OtherCosts[' + idInvoice + '].Cost" data-valmsg-replace="true"></span>'+
                         '</div>'+
+
                         '<div class="col-lg-1">'+
                             '<a href="javascript:void(0)" class="btn btn-danger btn-sm mt-1" data-toggle="tooltip" title="" data-original-title="Odstranit záznam" onclick="DeleteOtherCost(' + idOtherCosts + ')"><i class="fa fa-trash white"></i></a>'+
                         '</div>'+

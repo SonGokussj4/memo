@@ -13,10 +13,8 @@ namespace memo.Models
         public Order()
         {
             Active = true;
-            // BillOfDelivery = "";
-            // TotalHours = 0;
             PriceFinalCzk = 0;
-            Username = "jverner";
+            Username = "";
         }
         [Key]
         public int OrderId { get; set; }
@@ -28,6 +26,10 @@ namespace memo.Models
 
         [Display(Name = "Číslo objednávky zákazníka"), StringLength(50)]
         public string OrderName { get; set; }
+
+        [Display(Name = "Vyjednaná cena")]
+        // [Column(TypeName = "decimal(18,3)")]
+        public int NegotiatedPrice { get; set; }
 
         [Display(Name = "Konečná cena")]
         public int? PriceFinal { get; set; }
@@ -43,9 +45,6 @@ namespace memo.Models
         [Required]
         [Display(Name = "Vedoucí projektu v EVEKTORu")]
         public string EveContactName { get; set; }
-        // [Display(Name = "Vedoucí projektu v EVEKTORu")]
-        // public int? ContactId { get; set; }
-        // public Contact Contact { get; set; }
 
         [Required]
         [Display(Name = "Hod. sazba komerční")]
@@ -56,13 +55,11 @@ namespace memo.Models
 
         [Display(Name = "Kurz")]
         [Column(TypeName = "decimal(18,3)")]
-        // [DisplayFormat(DataFormatString = "{0:#.000}", ApplyFormatInEditMode = true)]
         [RegularExpression(@"\d+([,.]\d+)?", ErrorMessage = "Pouze čísla s čárkou. Např: 26,49")]
         public decimal ExchangeRate { get; set; }
 
         [Required]
         [Display(Name = "Konečná cena v Kč")]
-        // [DisplayFormat(DataFormatString = "{0:#,0}", ApplyFormatInEditMode = true)]
         public int PriceFinalCzk { get; set; }
 
         [Display(Name = "Poznámky"), Column(TypeName = "ntext")]
@@ -82,7 +79,6 @@ namespace memo.Models
         public string Username { get; set; }
 
         // [InverseProperty("Invoice")]
-        // [Required, MinLength(1, ErrorMessage="Musíte přidat alespoň jednu fakturaci.")]
         public virtual List<Invoice> Invoices { get; set; } = new List<Invoice>();
         public virtual List<OtherCost> OtherCosts { get; set; } = new List<OtherCost>();
     }
