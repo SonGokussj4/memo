@@ -31,7 +31,7 @@ namespace memo.Models
         // [Column(TypeName = "decimal(18,3)")]
         public int NegotiatedPrice { get; set; }
 
-        [Display(Name = "Konečná cena")]
+        [Display(Name = "Aktuální čerpání")]
         public int? PriceFinal { get; set; }
 
         [Display(Name = "Nevyčerpáno")]
@@ -59,7 +59,7 @@ namespace memo.Models
         public decimal ExchangeRate { get; set; }
 
         [Required]
-        [Display(Name = "Konečná cena v Kč")]
+        [Display(Name = "Aktuání čerpání v Kč")]
         public int PriceFinalCzk { get; set; }
 
         [Display(Name = "Poznámky"), Column(TypeName = "ntext")]

@@ -148,6 +148,7 @@ namespace memo.Controllers
                 .Where(t => t.OfferStatusId == 2)
                 .OrderBy(t => t.OfferName)
                 .ToList();
+
             ViewBag.WonOffersList = new SelectList(wonOffersList, "OfferId", "OfferName");
             ViewBag.CurrencyList = new SelectList(_db.Currency.ToList(), "CurrencyId", "Name");
             ViewBag.EveContactList = getEveContacts(_eveDbDochna);
@@ -235,9 +236,18 @@ namespace memo.Controllers
 
                 vm.Order.Username = User.GetLoggedInUserName();
 
-                _db.Add(vm.Order);
-                _db.SaveChanges();
-                return RedirectToAction("Index");
+                try
+                {
+                    _db.Add(vm.Order);
+                    _db.SaveChanges();
+                    TempData["Success"] = "Nová zakázka vytvořena.";
+                    return RedirectToAction("Index");
+                }
+                catch (Exception e)
+                {
+
+                    TempData["Error"] = $"Problém s uložením do databáze... Detail: '@{e}'";
+                }
             }
 
             return View("Create", vm);
@@ -333,7 +343,6 @@ namespace memo.Controllers
                     foreach (Invoice invoice in vm.Order.Invoices)
                     {
                         invoice.CostCzk = Convert.ToInt32(invoice.Cost * vm.Order.ExchangeRate);
-                        vm.Order.PriceFinalCzk += Convert.ToInt32(invoice.CostCzk);
 
                         vm.Order.PriceFinal += Convert.ToInt32(invoice.Cost);
                         vm.Order.PriceFinalCzk += Convert.ToInt32(invoice.CostCzk);

@@ -1,71 +1,61 @@
 @model memo.ViewModels.BugReportVM
 
+<style>
+    .has-float-label {
+        margin-top: 0.6rem;
+    }
+</style>
+
 <div class="text-center">
-    <p>Logged in user: [@ViewBag.User] and role: [@ViewBag.Role]</p>
+    <p>User: @ViewBag.User, role: @ViewBag.Role</p>
 </div>
 
-@if (TempData["Success"] != null){
-    <div class="alert alert-success alert-dismissible fade show" role="alert" id="success-alert">
-        @TempData["Success"]
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-}
-@if (TempData["Error"] != null){
-    <div class="alert alert-danger alert-dismissible fade show" role="alert" id="error-alert">
-        @TempData["Error"]
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-}
+@await Html.PartialAsync("_PartialToastNotification")
 
 <div class="col-lg-13 personal-info">
 <div class="card">
-    <h4>Přidat:</h4>
+
+    <h4>Vytvořit:</h4>
 
     <hr />
 
     <form asp-action="Index" method="post">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-        <div class="form-group row">
-            <div class="col-lg-12">
+        <div class="form-group row col-lg-13">
+            <div class="col-lg-2">
+                <span class="has-float-label">
+                    <select asp-for="BugReport.Priority" asp-items="@Model.PriorityList" class="form-control" placeholder=" " type="text"></select>
+                    <label asp-for="BugReport.Priority">Závažnost</label>
+                </span>
+                <span asp-validation-for="BugReport.Priority" class="text-danger"></span>
+            </div>
+            <div class="col-lg-2">
+                <span class="has-float-label">
+                    <select asp-for="BugReport.Category" asp-items="@Model.CategoryList" class="form-control" placeholder=" " type="text"></select>
+                    <label asp-for="BugReport.Category">Kategorie</label>
+                </span>
+                <span asp-validation-for="BugReport.Category" class="text-danger"></span>
+            </div>
+            <div class="col-lg-7">
                 <span class="has-float-label">
                     <input asp-for="BugReport.Subject" class="form-control" placeholder=" " type="text" />
-                    <label asp-for="BugReport.Subject"></label>
+                    <label asp-for="BugReport.Subject">Předmět</label>
                 </span>
                 <span asp-validation-for="BugReport.Subject" class="text-danger"></span>
             </div>
         </div>
+
         <div class="form-group row">
             <div class="col-lg-12">
                 <span class="has-float-label">
                     <textarea asp-for="BugReport.Details" class="form-control" placeholder=" " type="text" ></textarea>
-                    <label asp-for="BugReport.Details"></label>
+                    <label asp-for="BugReport.Details">Popis</label>
                 </span>
                 <span asp-validation-for="BugReport.Details" class="text-danger"></span>
             </div>
         </div>
-        <div class="form-group row">
-            <div class="col-lg-12">
-                <span class="has-float-label">
-                    <input asp-for="BugReport.Priority" class="form-control" placeholder=" " type="text" />
-                    <label asp-for="BugReport.Priority"></label>
-                </span>
-                <span asp-validation-for="BugReport.Priority" class="text-danger"></span>
-            </div>
-        </div>
-        <div class="form-group row">
-            <div class="col-lg-12">
-                <span class="has-float-label">
-                    <input asp-for="BugReport.Category" class="form-control" placeholder=" " type="text" />
-                    <label asp-for="BugReport.Category"></label>
-                </span>
-                <span asp-validation-for="BugReport.Category" class="text-danger"></span>
-            </div>
-        </div>
+
 
         <div class="form-group row justify-content-md-between">
             <div class="col-lg-auto">
@@ -97,7 +87,7 @@
 
                 <p>
                 @* <b class="pl-3">Details:</b> @Html.Raw(item.Details?.Replace("\n", "<br/>")) *@
-                <b class="pl-3">Details:</b> @Html.Raw(item.Details)
+                @Html.Raw(item.Details)
                 </p>
                 <p>
                 <b class="pl-3">Resolved:</b> @item.Resolved
@@ -108,3 +98,29 @@
         }
     </div>
 </div>
+
+
+
+@section Scripts {
+@{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+<script>
+
+    $(document).ready(function() {
+        $('#BugReport_Details').summernote({
+            placeholder: 'Vložte popis.<br>Můžete vkládat i snímek obrazovky (PrintScreen) ze schránky (CTRL+C/V) nebo obrázky jako takové.',
+            tabsize: 4,
+            height: 160,
+            //toolbar: [
+            //    ['style', ['style']],
+            //    ['font', ['bold', 'underline', 'clear']],
+            //    ['color', ['color']],
+            //    ['para', ['ul', 'ol', 'paragraph']],
+            //    ['table', ['table']],
+            //    ['insert', ['link', 'picture', 'video']],
+            //    ['view', ['fullscreen', 'codeview', 'help']],
+            //]
+        });
+    });
+
+</script>
+}

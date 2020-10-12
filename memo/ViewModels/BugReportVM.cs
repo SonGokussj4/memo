@@ -19,21 +19,19 @@ namespace memo.ViewModels
         public IEnumerable<BugReport> BugReports { get; set; }
 
 
-        // // SelectLists
-        // public List<SelectListItem> DepartmentList { get; set; } = new List<SelectListItem>();
-        // public List<SelectListItem> CustomerList { get; set; } = new List<SelectListItem>();
-        // public List<SelectListItem> YearList { get; } = new List<SelectListItem>
-        // {
-        //     new SelectListItem { Value = "2020", Text = "2020" },
-        //     new SelectListItem { Value = "2021", Text = "2021" },
-        //     new SelectListItem { Value = "2022", Text = "2022"},
-        // };
-        // public List<SelectListItem> TimePeriodList { get; } = new List<SelectListItem>
-        // {
-        //     // new SelectListItem { Value = "range", Text = "Rozsah" },
-        //     new SelectListItem { Value = "weeks", Text = "Týdny"},
-        //     new SelectListItem { Value = "months", Text = "Měsíce"},
-        //     // new SelectListItem { Value = "quarters", Text = "Kvartály"},
-        // };
+        // SelectLists
+        public List<SelectListItem> PriorityList { get; } = new List<SelectListItem>
+        {
+            new SelectListItem { Value = "Critical", Text = "Kritická!!" },
+            new SelectListItem { Value = "Major", Text = "Zásadní" },
+            new SelectListItem { Value = "Normal", Text = "Normální", Selected = true },
+            new SelectListItem { Value = "Minor", Text = "Vedlejší" },
+        };
+        public List<SelectListItem> CategoryList { get; } = new List<SelectListItem>
+        {
+            new SelectListItem { Value = "Bug", Text = "Chyba"},
+            new SelectListItem { Value = "Missing", Text = "Postrádám zde"},
+            new SelectListItem { Value = "Note", Text = "Poznámka"},
+        };
     }
 }

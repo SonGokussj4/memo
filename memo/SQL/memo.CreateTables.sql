@@ -142,8 +142,8 @@ CREATE TABLE [memo].[BugReport] (
   [BugReportId] int PRIMARY KEY IDENTITY(1, 1),
   [Subject] nvarchar(255),
   [Details] nvarchar(max),
-  [Priority] int,
-  [Category] nvarchar(50),
+  [Priority] nvarchar(25),
+  [Category] nvarchar(25),
   [Resolved] bit DEFAULT 0,
   [User] nvarchar(50),
   [Created] datetime

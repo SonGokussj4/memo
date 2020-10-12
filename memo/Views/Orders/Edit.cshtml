@@ -24,15 +24,7 @@
     }
 </style>
 
-@if (TempData["Success"] != null){
-    <div class="alert alert-success alert-dismissible fade show" role="alert" id="success-alert"
-         style="position: absolute; right: 1rem">
-        @TempData["Success"]
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-}
+@await Html.PartialAsync("_PartialToastNotification")
 
 <div class="text-center">
     <h1 class="display-6">@ViewData["Title"]</h1>
@@ -294,7 +286,7 @@
         </div>
 
         <div class="form-group row border-top pt-2">
-            <label asp-for="Order.PriceFinal" class="required col-lg-3 col-form-label form-control-label control-label"></label>
+            <label asp-for="Order.PriceFinal" class="col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-3">
                 <div class="input-group mb-2 mr-sm-2">
                     <div class="input-group-prepend">
@@ -305,7 +297,7 @@
                 <span asp-validation-for="Order.PriceFinal" class="text-danger"></span>
             </div>
             <div class="col-lg-3">
-                <label asp-for="UnspentMoney" class="col-form-label form-control-label control-label">Nespotřebovaná částka</label>
+                <label asp-for="UnspentMoney" class="col-form-label form-control-label control-label"></label>
             </div>
             <div class="col-lg-3">
                 <div class="input-group mb-2 mr-sm-2">
@@ -317,7 +309,7 @@
                 <span asp-validation-for="UnspentMoney" class="text-danger"></span>
                 <div class="progress" style="height: 5px;">
                     @{
-                        decimal percentValue = Model.UnspentMoney / (decimal)Model.Order.NegotiatedPrice * 100;
+                        int percentValue = (int)Math.Ceiling(Model.UnspentMoney / (decimal)Model.Order.NegotiatedPrice * 100);
                         string progressBarWidth = percentValue >= 0 ? (100 - percentValue).ToString() : "100";
                         string progressbarClassColor = percentValue >= 0 ? "" : "bg-danger";
                     }

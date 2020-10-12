@@ -21,9 +21,10 @@ namespace memo.Models
         [Column(TypeName = "nvarchar(max)")]
         public string Details { get; set; }
 
-        public int Priority { get; set; }
+        [StringLength(25)]
+        public string Priority { get; set; }
 
-        [StringLength(50)]
+        [StringLength(25)]
         public string Category { get; set; }
 
         public bool Resolved { get; set; } = false;

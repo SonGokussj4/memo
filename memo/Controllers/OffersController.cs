@@ -92,10 +92,22 @@ namespace memo.Controllers
             offer.Notes = String.IsNullOrEmpty(offer.Notes) ? "" : offer.Notes;
             offer.CreateDate = DateTime.Now;
 
+            // Check if OfferName exists, if yes, add model error...
+            Offer existingOffer = _db.Offer
+                .Where(x => x.OfferName == offer.OfferName)
+                .FirstOrDefault();
+
+            if (existingOffer != null)
+            {
+                ModelState.AddModelError("OfferName", "Ev. Číslo nabídky již existuje. Zvolte jinou, nebo upravte stávající.");
+            }
+
+            // Save new offer to the DB
             if (ModelState.IsValid)
             {
                 _db.Add(offer);
                 _db.SaveChanges();
+                TempData["Success"] = "Nová nabídka vytvořena.";
                 return RedirectToAction("Index");
             }
 

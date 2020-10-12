@@ -32,15 +32,7 @@
     }
 </style>
 
-@if (TempData["Success"] != null){
-    <div class="alert alert-success alert-dismissible fade show" role="alert" id="success-alert"
-         style="position: absolute; right: 1rem">
-        @TempData["Success"]
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-}
+@await Html.PartialAsync("_PartialToastNotification")
 
 <div class="text-center">
     <h1 class="display-4">@ViewData["Title"]</h1>
@@ -119,11 +111,11 @@
         @foreach (var item in Model)
         {
             <tr id="row_@item.OrderId" class="@(item.Active ? Html.Raw("itemActive") : Html.Raw("itemInactive"))">
+                @* Edit *@
                 <th scope="row" data-field="0">
                     <a asp-action="Edit" asp-route-id=@item.OrderId><i class="fa fa-pencil fa-fw" aria-hidden="true"></i></a>
                     <a href="#" onclick="ConfirmDelete(@item.OrderId)"><i class="fa fa-times fa-fw" style="color: red;", aria-hidden="true"></i></a>
                 </th>
-
                 @* Status *@
                 @if (item.Active is true)
                 {
@@ -137,8 +129,11 @@
                         <a asp-action="Activate" asp-route-id="@item.OrderId" asp-route-showInactive="@ViewBag.showInactive"><i class="fa fa-eye-slash" style="color: #8a97a2;" aria-hidden="true"></i></a>
                     </th>
                 }
+                @* Vytvořeno *@
                 <th scope="row" class="text-left">@String.Format("{0:yyyy-MM-dd}", @item.CreateDate)</th>
+                @* Nabídka *@
                 <th scope="row" class="text-left">@item.Offer?.OfferName</th>
+                @* Č. obj. zákazníka *@
                 <th scope="row" class="text-left">@item.OrderName</th>
                 @{
                     string OrderCodeTooltip = ((IEnumerable<dynamic>)ViewBag.cOrdersAll)
@@ -146,25 +141,33 @@
                         .Select(x => x.OrderName)
                         .FirstOrDefault();
                 }
+                @* Kód EVE vykazování *@
                 <th scope="row" class="text-center" data-toggle="tooltip" data-html="true" title="@OrderCodeTooltip">@item.OrderCode</th>
+                @* Vedoucí projektu *@
                 <th scope="row" class="text-left">@item.EveContactName</th>
+                @* Vyjednaná cena *@
                 <th scope="row" class="text-right">@string.Format(CultureInfo.CreateSpecificCulture(@item.Offer?.Currency.CultureCode), "{0:C0}", @item.NegotiatedPrice)</th>
+                @* Aktuálně *@
                 <th scope="row" class="text-right">
-                    <span style="font-size: 0.9rem;">@string.Format(CultureInfo.CreateSpecificCulture("cs-CZ"), "{0:C0}", @item.PriceFinalCzk)</span>
+                    <span style="font-size: 0.9rem;">@string.Format(CultureInfo.CreateSpecificCulture(@item.Offer?.Currency.CultureCode), "{0:C0}", @item.PriceFinal)</span>
                     <div class="progress" style="height: 5px;">
                     @{
-                        int percentValue = (int)Math.Ceiling(item.PriceFinalCzk / (double)item.NegotiatedPrice * 100);
+                        int percentValue = (int)Math.Ceiling((double)item.PriceFinal / item.NegotiatedPrice * 100);
                         string progressBarWidth = percentValue <= 100 ? (percentValue).ToString() : "100";
                         string progressbarClassColor = percentValue <= 100 ? "" : "bg-danger";
                     }
                     <div class="progress-bar @progressbarClassColor progress-bar-striped" role="progressbar" style="width: @progressBarWidth%;"></div>
                 </div>
                 </th>
-                <th scope="row" class="text-right">@string.Format(CultureInfo.CreateSpecificCulture(@item.Offer?.Currency.CultureCode), "{0:C0}", @item.NegotiatedPrice - @item.PriceFinalCzk)</th>
+                @* Zbývá *@
+                <th scope="row" class="text-right">@string.Format(CultureInfo.CreateSpecificCulture(@item.Offer?.Currency.CultureCode), "{0:C0}", @item.NegotiatedPrice - @item.PriceFinal)</th>
+                @* Poznámky *@
                 <th scope="row" class="notesWrap" data-toggle="tooltip" data-html="true" title="@item.Notes">
                     @item.Notes
                 </th>
+                @* Hod. sazba *@
                 <th scope="row" class="text-right">@String.Format(CultureInfo.CreateSpecificCulture(@item.Offer?.Currency.CultureCode), "{0:C0}", @item.HourWage)</th>
+                @* Vyčerpáno *@
                 @{
                     string burnedText = "";
                     if (@item.Burned != 0)
@@ -173,6 +176,7 @@
                     }
                     <th scope="row" class="text-right">@burnedText</th>
                 }
+                @* Plánované hod *@
                 @{
                     string totalHoursText = "";
                     if (@item.TotalHours != 0)
@@ -182,6 +186,7 @@
                     //string totalHoursText = @item.TotalHours is null ? "" : String.Format("{0:# ### ###} hod", item.TotalHours);
                     <th scope="row" class="text-right">@totalHoursText</th>
                 }
+                @* Využito *@
                 @{
                     decimal currentVal = 0;
                     string tooltipText = "Nejsou zadány celkové hodiny";
@@ -202,7 +207,9 @@
                         </div>
                     </th>
                 }
+                @* Skutečné náklady [CZK] *@
                 <th scope="row" class="text-right">@string.Format(CultureInfo.CreateSpecificCulture("cs-CZ"), "{0:C0}", @item.Burned * (@item.HourWage * (double)@item.ExchangeRate) / 60 )</th>
+                @* Celkové skut. náklady [CZK] *@
                 @{
                     var mujlist = item.OtherCosts;
                     var dalsi = item.OtherCosts.Where(x => x.OrderId == item.OrderId).Select(x => x.Cost).Sum() * item.ExchangeRate;

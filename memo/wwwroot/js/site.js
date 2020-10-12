@@ -117,10 +117,10 @@ $(function () {
     floatingLabelsInit();
 })
 
-$("#success-alert").fadeTo(3000, 500).slideUp(500, function(){
+$("#success-alert").fadeTo(4000, 500).slideUp(500, function(){
     $("#success-alert").slideUp(500);
 });
-$("#error-alert").fadeTo(8000, 500).slideUp(500, function(){
+$("#error-alert").fadeTo(10000, 500).slideUp(500, function(){
     $("#error-alert").slideUp(500);
 });
 

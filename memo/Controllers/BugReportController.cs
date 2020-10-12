@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using memo.Data;
 using memo.Models;
@@ -22,15 +23,14 @@ namespace memo.Controllers
         public async Task<ActionResult> Index()
         {
             BugReportVM vm = await initViewModelAsync();
-
+            ViewBag.User = User.GetLoggedInUserName();
+            ViewBag.Role = User.FindFirstValue(ClaimTypes.Role);
             return View(vm);
         }
 
         [HttpPost]
         public async Task<ActionResult> Index(BugReportVM vm)
         {
-
-
             BugReport bugReport = vm.BugReport;
             bugReport.User = User.GetLoggedInUserName();
 
@@ -38,11 +38,11 @@ namespace memo.Controllers
             {
                 _db.Add(bugReport);
                 await _db.SaveChangesAsync();
-                TempData["Success"] = "Úspěšně přidáno";
+                TempData["Success"] = "Hlášení úspěšně přidáno";
                 return RedirectToAction("Index");
             }
 
-            ViewBag.Message = "Nějaká chyba...";
+            TempData["Error"] = "Nějaká chyba... Tož... Co se děje?";
 
             return View(vm);
         }
