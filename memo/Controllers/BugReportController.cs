@@ -89,23 +89,25 @@ namespace memo.Controllers
         {
             IEnumerable<BugReport> bugReports = await _db.BugReport.ToListAsync();
 
-            IEnumerable<Audit> audits = (IEnumerable<Audit>)_db.Audit
+            var audits = _db.Audit
                 .AsEnumerable()
                 .GroupBy(x => new {
                     x.PK,
                     x.UpdateDate
                 })
                 .Select(g => new {
-                    g.Key.PK,
+                    Id = g.Key.PK,
                     Type = g.First().Type,
-                    TableName = g.First().TableName,
-                    UpdateBy = g.First().UpdateBy,
+                    // TableName = g.First().TableName,
+                    // UpdateBy = g.First().UpdateBy,
                 });
+
+            var results = audits.ToList();
 
             BugReportVM vm = new BugReportVM
             {
                 BugReports = bugReports,
-                Audits = audits,
+                Audits = (IEnumerable<Audit>)audits,
             };
 
             return vm;
