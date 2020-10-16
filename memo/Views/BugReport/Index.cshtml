@@ -26,7 +26,7 @@
             <div class="col-lg-2">
                 <span class="has-float-label">
                     <select asp-for="BugReport.Priority" asp-items="@Model.PriorityList" class="form-control" placeholder=" " type="text"></select>
-                    <label asp-for="BugReport.Priority">Závažnost</label>
+                    <label asp-for="BugReport.Priority">Priorita</label>
                 </span>
                 <span asp-validation-for="BugReport.Priority" class="text-danger"></span>
             </div>
@@ -39,7 +39,7 @@
             </div>
             <div class="col-lg-7">
                 <span class="has-float-label">
-                    <input asp-for="BugReport.Subject" class="form-control" placeholder=" " type="text" />
+                    <input asp-for="BugReport.Subject" class="form-control" placeholder=" " type="text" required />
                     <label asp-for="BugReport.Subject">Předmět</label>
                 </span>
                 <span asp-validation-for="BugReport.Subject" class="text-danger"></span>
@@ -71,31 +71,66 @@
 
 <div class="bug-report">
     <div class="card">
-        @foreach (BugReport item in Model.BugReports)
+        @foreach (BugReport item in Model.BugReports.Reverse())
         {
-            <div class="card pb-0 pt-3 mb-3">
-                <p class="pb-0 mb-0">
-                    <a asp-action="Delete" asp-route-id="@item.BugReportId"><i class="fa fa-times fa-fw"></i></a>
-                    <a asp-action="Edit" asp-route-id="@item.BugReportId"><i class="fa fa-pencil fa-fw border-right pr-2 mr-2"></i></a>
-                    <b>Id:</b> @item.BugReportId
-                    <b class="pl-3">Priority:</b> @item.Priority
-                    <b class="pl-3">Category:</b> @item.Category
-                    <b class="pl-3">Subject:</b> @item.Subject
-                </p>
+            <div class="card py-0 p-0 mb-3">
+                <div class="card-header px-3 mx-0 py-1">
+                    <div class="d-flex justify-content-between">
+                        <div class="flex-row">
+                                <a asp-action="Delete" asp-route-id="@item.BugReportId" onclick="return confirm('Jste si jisti, že chcete smazat tuto položku?');"><i class="fa fa-times fa-fw" style="color: red;"></i></a>
+                                @* <a asp-action="Edit" asp-route-id="@item.BugReportId"><i class="fa fa-pencil fa-fw border-right pr-2 mr-2"></i></a> *@
 
-                <hr class="pt-1 mb-1" />
+                                @{string priorityText = item.Priority == "Critical" ? "Kritická!!" : (item.Priority == "Major" ? "Závažná" : (item.Priority == "Normal" ? "Normální" : "Vedlejší"));}
+                                <b class="pl-3">Priorita:</b> @priorityText
 
-                <p>
-                @* <b class="pl-3">Details:</b> @Html.Raw(item.Details?.Replace("\n", "<br/>")) *@
-                @Html.Raw(item.Details)
-                </p>
-                <p>
-                <b class="pl-3">Resolved:</b> @item.Resolved
-                <b class="pl-3">Created:</b> @item.Created.ToString("yyyy-MM-dd HH:mm")
-                <b class="pl-3">User:</b> @item.User
-                </p>
+                                @{string categoryIcon = item.Category == "Bug" ? "bug" : (item.Category == "Missing" ? "search-minus" : "exclamation-triangle" );}
+                                <b class="pl-3">Kategorie:</b> <i class="fa fa-fw fa-@categoryIcon"></i>
+
+                                @{string statusColor = item.Resolved == false ? "red" : "green";}
+                                <b class="pl-3">Status:</b> <i class="fa fa-fw fa-circle" style="color: @statusColor"></i>
+
+                        </div>
+                        <div class="flex-row">
+                                <i class="fa fa-fw fa-user"></i> @item.Username <i class="fa fa-fw fa-calendar ml-3"></i> @item.Created.ToString("dd.MM.yyyy HH:mm")
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    @item.Subject
+
+                    @if (@Html.Raw(item.Details).ToString() != "")
+                    {
+                        <hr />
+                        <p class="text-muted" style="position: absolute;
+                                                     top: 84px;
+                                                     left: 30px;
+                                                     background: white;
+                                                     padding: 0px 4px;
+                                                     font-size: small;">Detaily</p>
+                        <p>@Html.Raw(item.Details)</p>
+                    }
+
+                </div>
             </div>
         }
+    </div>
+</div>
+
+
+<div class="audit-log">
+    <div class="card">
+
+        <div class="card-header">
+            Hlava
+        </div>
+
+        <div class="card-body">
+            @foreach (Audit item in Model.Audits.OrderByDescending(x => x.UpdateDate))
+            {
+                <p>PK: @item.PK</p>
+            }
+        </div>
+
     </div>
 </div>
 
@@ -110,6 +145,7 @@
             placeholder: 'Vložte popis.<br>Můžete vkládat i snímek obrazovky (PrintScreen) ze schránky (CTRL+C/V) nebo obrázky jako takové.',
             tabsize: 4,
             height: 160,
+            lang: 'cs-CZ',
             //toolbar: [
             //    ['style', ['style']],
             //    ['font', ['bold', 'underline', 'clear']],

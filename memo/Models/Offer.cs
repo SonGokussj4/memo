@@ -24,7 +24,7 @@ namespace memo.Models
         public DateTime? SentDate { get; set; }
 
         [Required]
-        [Display(Name = "Předmět nabídky"), Column(TypeName = "ntext")]
+        [Display(Name = "Předmět nabídky"), Column(TypeName = "nvarchar(max)")]
         public string Subject { get; set; }
 
         [Required]

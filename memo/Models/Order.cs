@@ -62,7 +62,7 @@ namespace memo.Models
         [Display(Name = "Aktuání čerpání v Kč")]
         public int PriceFinalCzk { get; set; }
 
-        [Display(Name = "Poznámky"), Column(TypeName = "ntext")]
+        [Display(Name = "Poznámky"), Column(TypeName = "nvarchar(max)")]
         public string Notes { get; set; } = "";
 
         [Display(Name = "Datum vytvoření"), Column(TypeName = "date")]

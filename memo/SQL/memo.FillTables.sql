@@ -169,3 +169,40 @@ VALUES
 -- 	[memo].[Offer]
 -- ON
 -- 	[memo].[Order].[OfferId] = [memo].[Offer].[OfferId]
+
+
+------------------- ADD PRIMARY KEY to existing table --------------
+-- ALTER TABLE memo.Audit
+-- ADD AuditId INT IDENTITY PRIMARY KEY;
+
+
+
+
+
+------------------- NEVYZKOUSENE ale stejne jako nahore -------------
+-- -- First, add identity column
+-- alter table
+--     mytable
+
+-- add
+--     id int identity(1, 1) not null
+
+-- -- Second, create new table from existing one with correct column order
+-- select
+--     id,
+--     col1,
+--     col2
+
+-- into
+--     newtable
+
+-- from
+--     mytable
+
+-- GO
+
+-- drop table
+--     mytable
+
+-- exec sp_rename
+--     'newtable', 'mytable'

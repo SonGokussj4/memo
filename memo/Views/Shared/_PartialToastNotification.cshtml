@@ -1,6 +1,6 @@
 @if (TempData["Success"] != null){
     <div class="alert alert-success alert-dismissible fade show" role="alert" id="success-alert"
-         style="position: absolute; right: 1rem">
+         style="position: absolute; right: 1rem; z-index: 999">
         @TempData["Success"]
         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
             <span aria-hidden="true">&times;</span>

@@ -30,16 +30,16 @@ namespace memo.Controllers
             _eveDbDochna = eveDbDochna;
         }
 
-        public IActionResult Index(bool showInactive = false)
+        public async Task<IActionResult> Index(bool showInactive = false)
         {
             ViewBag.showInactive = showInactive;
 
             List<Order> model = new List<Order>();
 
-            model = _db.Order
+            model = await _db.Order
                 .Include(x => x.Offer)
                 .Include(z => z.Offer.Currency)
-                .ToList();
+                .ToListAsync();
 
             // Filtr - Pouze aktivní
             if (showInactive is false)
@@ -64,11 +64,11 @@ namespace memo.Controllers
             // Fill Invoices OtherCosts  // TODO: Can this be done cleverly?
             foreach (Order order in model)
             {
-                order.Invoices = _db.Invoice.ToList();
-                order.OtherCosts = _db.OtherCost.ToList();
+                order.Invoices = await _db.Invoice.ToListAsync();
+                order.OtherCosts = await _db.OtherCost.ToListAsync();
             }
 
-            ViewBag.cOrdersAll = _eveDb.cOrders.ToList();
+            ViewBag.cOrdersAll = await _eveDb.cOrders.ToListAsync();
 
             return View(model);
         }
@@ -239,7 +239,7 @@ namespace memo.Controllers
                 try
                 {
                     _db.Add(vm.Order);
-                    _db.SaveChanges();
+                    _db.SaveChanges(User.GetLoggedInUserName());
                     TempData["Success"] = "Nová zakázka vytvořena.";
                     return RedirectToAction("Index");
                 }
@@ -305,7 +305,7 @@ namespace memo.Controllers
 
             if (offerId == 0 && viewModel.Edit != "true")
             {
-                ModelState.AddModelError(string.Empty, "Nelze vybrat prázdnou objednávku");
+                ModelState.AddModelError(string.Empty, "Nelze vybrat prázdnou nabídku");
                 return View();
             }
 
@@ -355,7 +355,7 @@ namespace memo.Controllers
                         vm.UnspentMoney -= Convert.ToInt32(otherCost.Cost);
                     }
                     _db.Update(vm.Order);
-                    _db.SaveChanges();
+                    _db.SaveChanges(User.GetLoggedInUserName());
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -441,7 +441,7 @@ namespace memo.Controllers
             // }
 
             _db.Order.Remove(order);
-            await _db.SaveChangesAsync();
+            _db.SaveChanges(User.GetLoggedInUserName());
 
             return RedirectToAction("Index");
         }
@@ -501,7 +501,7 @@ namespace memo.Controllers
             order.Active = false;
 
             _db.Order.Update(order);
-            await _db.SaveChangesAsync();
+            _db.SaveChanges(User.GetLoggedInUserName());
 
             return RedirectToAction("Index");
         }
@@ -524,7 +524,7 @@ namespace memo.Controllers
             model.Active = false;
 
             _db.Order.Update(model);
-            await _db.SaveChangesAsync();
+            _db.SaveChanges(User.GetLoggedInUserName());
 
             return RedirectToAction("Index", new { showInactive });
         }
@@ -541,7 +541,7 @@ namespace memo.Controllers
             model.Active = true;
 
             _db.Order.Update(model);
-            await _db.SaveChangesAsync();
+            _db.SaveChanges(User.GetLoggedInUserName());
 
             return RedirectToAction("Index", new { showInactive });
         }
@@ -554,7 +554,7 @@ namespace memo.Controllers
             newInvoice.Cost = invoice.Cost;
 
             _db.Add(newInvoice);
-            _db.SaveChanges();
+            _db.SaveChanges(User.GetLoggedInUserName());
 
             return Json(new { success = true });
         }
@@ -578,7 +578,7 @@ namespace memo.Controllers
             }
 
             _db.Invoice.Remove(invoice);
-            _db.SaveChanges();
+            _db.SaveChanges(User.GetLoggedInUserName());
 
             return Json(new { success = true });
         }
@@ -589,7 +589,7 @@ namespace memo.Controllers
             OtherCost otherCost = _db.OtherCost.Find(id);
 
             _db.OtherCost.Remove(otherCost);
-            _db.SaveChanges();
+            _db.SaveChanges(User.GetLoggedInUserName());
 
             return Json(new { success = true });
         }

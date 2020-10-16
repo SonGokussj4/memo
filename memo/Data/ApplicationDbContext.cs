@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using memo.Models;
 using memo.ViewModels;
+using Microsoft.Data.SqlClient;
+using System.Threading.Tasks;
 
 namespace memo.Data
 {
@@ -26,6 +28,43 @@ namespace memo.Data
         public virtual DbSet<Invoice> Invoice { get; set; }
         public virtual DbSet<OtherCost> OtherCost { get; set; }
         public virtual DbSet<BugReport> BugReport { get; set; }
+        public virtual DbSet<Audit> Audit { get; set; }
+
+
+        /// <summary>
+        /// Extension method for saving changes with username into UserContext
+        /// </summary>
+        /// <param name="userId">Username (string) of the logged in user</param>
+        public void SaveChanges(string userId)
+        {
+            using (var scope = Database.BeginTransaction())
+            {
+                SetUserContext(userId);
+                base.SaveChanges();
+                scope.Commit();
+            }
+        }
+
+        public async Task SaveChangesAsync(string userId)
+        {
+            using (var scope = Database.BeginTransaction())
+            {
+                SetUserContext(userId);
+                await base.SaveChangesAsync();
+                scope.Commit();
+            }
+        }
+
+        /// <summary>
+        /// Send logged-in UserName to USER_CONTEXT() MSSQL server
+        /// Runs 'memo.SetUserContext' procedure which has to be on the MSSQL server
+        /// </summary>
+        /// <param name="userId">User.GetLoggedInUserName()</param>
+        public virtual void SetUserContext(string userId)
+        {
+            var idParam = new SqlParameter("@userId", userId);
+            this.Database.ExecuteSqlRaw("memo.SetUserContext @userId", idParam);
+        }
 
         // PROCEDURES
         // public virtual DbSet<SumMinutesSP> SumMinutesSP { get; set; }
@@ -47,6 +86,8 @@ namespace memo.Data
         // MODEL BUILDER
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            // modelBuilder.ApplyConfiguration(new AuditConfig());
+
             modelBuilder.Entity<SumMinutesSP>(entity => {
                 entity.HasNoKey();
             });

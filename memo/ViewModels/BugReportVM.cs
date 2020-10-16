@@ -18,12 +18,14 @@ namespace memo.ViewModels
 
         public IEnumerable<BugReport> BugReports { get; set; }
 
+        public Audit Audit { get; set; }
+        public IEnumerable<Audit> Audits { get; set; }
 
         // SelectLists
         public List<SelectListItem> PriorityList { get; } = new List<SelectListItem>
         {
             new SelectListItem { Value = "Critical", Text = "Kritická!!" },
-            new SelectListItem { Value = "Major", Text = "Zásadní" },
+            new SelectListItem { Value = "Major", Text = "Závažná" },
             new SelectListItem { Value = "Normal", Text = "Normální", Selected = true },
             new SelectListItem { Value = "Minor", Text = "Vedlejší" },
         };

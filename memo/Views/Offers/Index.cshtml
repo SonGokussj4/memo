@@ -50,25 +50,23 @@
     </span>
 </div> *@
 
-<div class="card collapse text-center" id="showLegend">
+@* <div class="card collapse text-center" id="showLegend">
     <h4 class="pb-2">Legenda</h4>
     <ul class="p-0" style="list-style-type:none">
         <li class="pb-3">
             <span class="badge badge-secondary">Čeká</span>  <br />
             Nabídka, která je v řešení.
         </li>
-        @* <li>&nbsp;</li> *@
         <li class="pb-3">
             <span class="badge badge-success">Výhra</span> <br />
             Nabídka se stává objednávkou. Možno založit jednu/více zakázek.
         </li>
-        @* <li>&nbsp;</li> *@
         <li class="pb-3">
             <span class="badge badge-danger">Prohra</span> <br />
             Nevyhraná nabídka. Je dobré ji deaktivovat.
         </li>
     </ul>
-</div>
+</div> *@
 
 <div id="toolbar" style="padding-bottom: 10px;">
     <a asp-action="Create" class="btn btn-outline-success">
@@ -129,7 +127,7 @@
             <th scope="col" class="text-center" data-field="1" data-sortable="true"><span data-toggle="tooltip" title="Aktivní / Neaktivní"><i class="fa fa-eye text-secondary"></i></span></th>
             <th scope="col" class="text-center" data-field="2" data-sortable="true" data-filter-control="input">Status</th>
             <th scope="col" class="text-center" data-field="3" data-sortable="true" data-filter-control="input">Vytvořeno</th>
-            <th scope="col" class="text-center" data-field="4" data-sortable="true" data-filter-control="input">Název</th>
+            <th scope="col" class="text-center" data-field="4" data-sortable="true" data-filter-control="input">Číslo nabídky</th>
             <th scope="col" class="text-center" data-field="5" data-sortable="true" data-filter-control="input">Přijato</th>
             <th scope="col" class="text-right" data-field="6" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatter">Zakázek</th>
             <th scope="col" class="text-center" data-field="7" data-sortable="true" data-filter-control="input">Oddělení</th>

@@ -41,7 +41,7 @@ namespace memo.Models
         [Display(Name = "E-mail"), StringLength(255)]
         public string Email { get; set; }
 
-        [Display(Name = "Poznámky"), Column(TypeName = "ntext")]
+        [Display(Name = "Poznámky"), Column(TypeName = "nvarchar(max)")]
         public string Notes { get; set; }
 
         [Display(Name = "Datum vytvoření"), Column(TypeName = "date")]

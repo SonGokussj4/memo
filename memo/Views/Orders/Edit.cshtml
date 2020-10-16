@@ -36,13 +36,13 @@
     <div class="col-lg-10 push-lg-2 personal-info">
 
         <!--------------------------------------------------------------------------------------
-            FORM - OBJEDNAVKA
+            FORM - NABIDKA
         --------------------------------------------------------------------------------------->
         <form class="card" role="form" autocomplete="on" asp-action="Refresh" method="post">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <input type="hidden" asp-for="Edit" value="true" />
 
-        <h5 class="card-title">Detaily objednávky</h5>
+        <h5 class="card-title">Detaily nabídky</h5>
 
         <hr />
 
@@ -77,7 +77,7 @@
             @if (@Model.Offer?.OfferId != 0 && @Model.Offer?.OfferId != null)
             {
                 <div class="">
-                    <a asp-action="Edit" asp-controller="Offers" asp-route-id="@Model.Offer.OfferId" class="btn btn-primary"><i class="fa fa-list-alt"></i> Přejít na objednávku</a>
+                    <a asp-action="Edit" asp-controller="Offers" asp-route-id="@Model.Offer.OfferId" class="btn btn-primary"><i class="fa fa-list-alt"></i> Přejít na nabídku</a>
                 </div>
             }
         </div>

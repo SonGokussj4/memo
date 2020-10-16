@@ -65,7 +65,7 @@ namespace memo.Controllers
                 model.Phone = model.Phone?.Replace(" ", "");
 
                 _db.Update(model);
-                _db.SaveChanges();
+                _db.SaveChanges(User.GetLoggedInUserName());
 
                 ViewBag.CompanyList = new SelectList(_db.Company.ToList(), "CompanyId", "Name");
 
@@ -99,7 +99,7 @@ namespace memo.Controllers
             // TODO: overit, zda neni v nejakem Offer/Order uveden kontakt, popr co delat pak?
 
             _db.Contact.Remove(contact);
-            await _db.SaveChangesAsync();
+            await _db.SaveChangesAsync(User.GetLoggedInUserName());
 
             return RedirectToAction("Index");
         }
@@ -134,7 +134,7 @@ namespace memo.Controllers
                 model.Active = true;  // default
 
                 _db.Add(model);
-                _db.SaveChanges();
+                _db.SaveChanges(User.GetLoggedInUserName());
                 return RedirectToAction("Index");
             }
 
@@ -179,7 +179,7 @@ namespace memo.Controllers
             contact.Active = false;
 
             _db.Contact.Update(contact);
-            await _db.SaveChangesAsync();
+            await _db.SaveChangesAsync(User.GetLoggedInUserName());
 
             return RedirectToAction("Index");
         }
@@ -196,7 +196,7 @@ namespace memo.Controllers
             model.Active = false;
 
             _db.Contact.Update(model);
-            await _db.SaveChangesAsync();
+            await _db.SaveChangesAsync(User.GetLoggedInUserName());
 
             return RedirectToAction("Index", new { showInactive });
         }
@@ -213,7 +213,7 @@ namespace memo.Controllers
             model.Active = true;
 
             _db.Contact.Update(model);
-            await _db.SaveChangesAsync();
+            await _db.SaveChangesAsync(User.GetLoggedInUserName());
 
             return RedirectToAction("Index", new { showInactive });
         }

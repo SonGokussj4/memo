@@ -96,29 +96,21 @@ namespace memo.Controllers
             return new SelectList(eveDepartmentList, "Value", "Text");
         }
 
-        // TODO: use linq
         public SelectList getOrderCodes(EvektorDbContext _eveDb)
         {
-            List<SelectListItem> eveOrderCodes = new List<SelectListItem>();
-            foreach (cOrders item in _eveDb.cOrders.OrderByDescending(x => x.Idorder))
-            {
-                // TODO: [m] zakazky se neukazovaly v seznamu, nejsou aktivni. Ale jejich CProject.Active ano??? zjistit...
-                // if (item.Active != 1)
-                // {
-                //     continue;
-                // }
-
-                eveOrderCodes.Add(new SelectListItem
+            IOrderedEnumerable<SelectListItem> eveOrderCodes = _eveDb.cOrders
+                .AsEnumerable()
+                .Select(m => new SelectListItem
                 {
-                    Value = item.OrderCode,
-                    Text = $"{item.OrderCode} : {item.OrderName}"
-                });
-            }
+                    Text = string.Format($"{m.OrderCode} - {m.OrderName}"),
+                    Value = m.OrderCode
+                })
+                .OrderBy(x => x.Value);
 
-            // return new SelectList(eveOrderCodes.OrderByDescending(x => x.Text), "Value", "Text");
             return new SelectList(eveOrderCodes, "Value", "Text");
         }
 
+        // Used by 'getDepartmentList()' when getting 'Distinct(new SelectListItemComparer())' values
         public class SelectListItemComparer : IEqualityComparer<SelectListItem>
         {
             public bool Equals(SelectListItem x, SelectListItem y)

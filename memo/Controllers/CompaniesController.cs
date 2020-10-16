@@ -8,6 +8,8 @@ using Microsoft.Extensions.Logging;
 using memo.Models;
 using memo.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.Data.SqlClient;
 
 namespace memo.Controllers
 {
@@ -43,6 +45,25 @@ namespace memo.Controllers
         }
 
         [HttpGet]
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult Create(Company model)
+        {
+            if (ModelState.IsValid)
+            {
+                _db.Add(model);
+                _db.SaveChanges(User.GetLoggedInUserName());
+                return RedirectToAction("Index");
+            }
+
+            return View(model);
+        }
+
+        [HttpGet]
         public IActionResult Edit(int? id)
         {
             Company model = _db.Company.Find(id);
@@ -61,7 +82,7 @@ namespace memo.Controllers
                 model.Phone = model.Phone?.Replace(" ", "");
 
                 _db.Update(model);
-                _db.SaveChanges();
+                _db.SaveChanges(User.GetLoggedInUserName());
 
                 if (actionType == "Uložit")
                 {
@@ -74,33 +95,6 @@ namespace memo.Controllers
 
             }
             return View();
-        }
-
-        [HttpGet]
-        public IActionResult Create()
-        {
-            Company model = new Company();
-
-            return View(model);
-        }
-
-        [HttpPost]
-        public IActionResult Create(Company model)
-        {
-            if (ModelState.IsValid)
-            {
-                model.Active = true;  // default
-
-                _db.Add(model);
-                _db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-            // else
-            // {
-            //     ModelState.AddModelError(string.Empty, "Invalid SOMETHING");
-            // }
-
-            return View(model);
         }
 
         [HttpPost]
@@ -119,7 +113,7 @@ namespace memo.Controllers
             // TODO: overit, zda neni v nejakem Offer/Order uveden kontakt, popr co delat pak?
 
             _db.Company.Remove(company);
-            await _db.SaveChangesAsync();
+            _db.SaveChanges(User.GetLoggedInUserName());
 
             return RedirectToAction("Index");
         }
@@ -159,7 +153,7 @@ namespace memo.Controllers
             company.Active = false;
 
             _db.Company.Update(company);
-            await _db.SaveChangesAsync();
+            _db.SaveChanges(User.GetLoggedInUserName());
 
             return RedirectToAction("Index");
         }
@@ -176,7 +170,7 @@ namespace memo.Controllers
             model.Active = false;
 
             _db.Company.Update(model);
-            await _db.SaveChangesAsync();
+            _db.SaveChanges(User.GetLoggedInUserName());
 
             return RedirectToAction("Index", new { showInactive });
         }
@@ -193,7 +187,7 @@ namespace memo.Controllers
             model.Active = true;
 
             _db.Company.Update(model);
-            await _db.SaveChangesAsync();
+            _db.SaveChanges(User.GetLoggedInUserName());
 
             return RedirectToAction("Index", new { showInactive });
         }

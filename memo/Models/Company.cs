@@ -32,19 +32,19 @@ namespace memo.Models
         [Display(Name = "Web"), StringLength(50)]
         public string Web { get; set; }
 
-        [Display(Name = "Datum vytvoření"), Column(TypeName = "date")]
-        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
-        public DateTime? CreateDate { get; set; }
+        [Display(Name = "Datum vytvoření")]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd HH:mm}", ApplyFormatInEditMode = true)]
+        public DateTime CreateDate { get; set; } = DateTime.UtcNow;
 
         [Required(ErrorMessage = "Prosím uveďte splatnost faktury (v celých dnech).")]
         [Display(Name = "Splatnost")]
         public int? InvoiceDueDays { get; set; }
 
-        [Display(Name = "Poznámky"), Column(TypeName = "ntext")]
+        [Display(Name = "Poznámky"), Column(TypeName = "nvarchar(max)")]
         public string Notes { get; set; }
 
         [Display(Name = "Aktivní")]
-        public bool Active { get; set; }
+        public bool Active { get; set; } = true;
 
         [InverseProperty("Company")]
         public virtual ICollection<Offer> Offers { get; set; }

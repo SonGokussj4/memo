@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using memo.Data;
@@ -32,12 +33,12 @@ namespace memo.Controllers
         public async Task<ActionResult> Index(BugReportVM vm)
         {
             BugReport bugReport = vm.BugReport;
-            bugReport.User = User.GetLoggedInUserName();
+            bugReport.Username = User.GetLoggedInUserName();
 
             if (ModelState.IsValid)
             {
                 _db.Add(bugReport);
-                await _db.SaveChangesAsync();
+                await _db.SaveChangesAsync(User.GetLoggedInUserName());
                 TempData["Success"] = "Hlášení úspěšně přidáno";
                 return RedirectToAction("Index");
             }
@@ -54,7 +55,7 @@ namespace memo.Controllers
             if (bugReport != null)
             {
                 // _db.Remove(bugReport);
-                // await _db.SaveChangesAsync();
+                // await _db.SaveChangesAsync(User.GetLoggedInUserName());
                 TempData["Success"] = "!! Prozatím nefunguje !!";
                 return RedirectToAction("Index");
             }
@@ -73,7 +74,7 @@ namespace memo.Controllers
             if (bugReport != null)
             {
                 _db.Remove(bugReport);
-                await _db.SaveChangesAsync();
+                _db.SaveChanges(User.GetLoggedInUserName());
                 TempData["Success"] = "Úspěšně smazáno";
                 return RedirectToAction("Index");
             }
@@ -88,9 +89,23 @@ namespace memo.Controllers
         {
             IEnumerable<BugReport> bugReports = await _db.BugReport.ToListAsync();
 
+            IEnumerable<Audit> audits = (IEnumerable<Audit>)_db.Audit
+                .AsEnumerable()
+                .GroupBy(x => new {
+                    x.PK,
+                    x.UpdateDate
+                })
+                .Select(g => new {
+                    g.Key.PK,
+                    Type = g.First().Type,
+                    TableName = g.First().TableName,
+                    UpdateBy = g.First().UpdateBy,
+                });
+
             BugReportVM vm = new BugReportVM
             {
                 BugReports = bugReports,
+                Audits = audits,
             };
 
             return vm;
@@ -98,3 +113,28 @@ namespace memo.Controllers
 
     }
 }
+
+
+
+//Company
+// Audit.OrderByDescending(x => x.UpdateDate).Take(10).Dump();
+
+// Audit
+// 	.AsEnumerable()
+// 	.GroupBy(l => new {
+// 		l.PK,
+// 		l.UpdateDate
+// 	})
+// 	.Select(g => new {
+// 		//g.Key.PK,
+// 		Type = g.First().Type,
+// 		TableName = g.First().TableName,
+// 		KeyName = Regex.Match(g.First().PK, @"<\[(.+?)\]=(.+?)>").Groups[1].Value,
+// 		KeyValue = Regex.Match(g.First().PK, @"<\[(.+?)\]=(.+?)>").Groups[2].Value,
+// 		g.Key.UpdateDate,
+// 		UpdateBy = g.First().UpdateBy,
+// 		LogList = g.Select(i => @$"{{""FieldName"": ""{i.FieldName}"", ""OldValue"": ""{i.OldValue}"", ""NewValue"": ""{i.NewValue}""}}"),
+// 		LogJson = "[" + string.Join(", ", g.Select(i => @$"{{""FieldName"": ""{i.FieldName}"", ""OldValue"": ""{i.OldValue}"", ""NewValue"": ""{i.NewValue}""}}")) + "]"
+// 	})
+// 	.OrderByDescending(x => x.UpdateDate)
+// 	.Dump();

@@ -30,7 +30,7 @@ namespace memo.Models
         public bool Resolved { get; set; } = false;
 
         [StringLength(50)]
-        public string User { get; set; }
+        public string Username { get; set; }
 
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd HH:mm}", ApplyFormatInEditMode = true)]
         public DateTime Created { get; set; } = DateTime.Now;

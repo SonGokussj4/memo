@@ -106,7 +106,7 @@ namespace memo.Controllers
             if (ModelState.IsValid)
             {
                 _db.Add(offer);
-                _db.SaveChanges();
+                _db.SaveChanges(User.GetLoggedInUserName());
                 TempData["Success"] = "Nová nabídka vytvořena.";
                 return RedirectToAction("Index");
             }
@@ -172,7 +172,7 @@ namespace memo.Controllers
                 {
                     model.PriceCzk = Convert.ToInt32(model.Price * model.ExchangeRate);  // 1000 * 26,243
                     _db.Update(model);
-                    _db.SaveChanges();
+                    _db.SaveChanges(User.GetLoggedInUserName());
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -242,7 +242,7 @@ namespace memo.Controllers
             }
 
             _db.Offer.Remove(offer);
-            await _db.SaveChangesAsync();
+            _db.SaveChanges(User.GetLoggedInUserName());
 
             return RedirectToAction("Index");
         }
@@ -264,7 +264,8 @@ namespace memo.Controllers
             offer.Active = false;
 
             _db.Offer.Update(offer);
-            await _db.SaveChangesAsync();
+            // TODO: bylo async
+            _db.SaveChanges(User.GetLoggedInUserName());
 
             return RedirectToAction("Index");
         }
@@ -288,7 +289,7 @@ namespace memo.Controllers
             offer.OfferStatusId = btnOfferStatusId;
 
             _db.Update(offer);
-            _db.SaveChanges();
+            _db.SaveChanges(User.GetLoggedInUserName());
 
             switch (btnOfferStatusId)
             {
@@ -296,14 +297,14 @@ namespace memo.Controllers
                     // Status changes to Wait, reset potential `LostReason` value
                     offer.LostReason = string.Empty;
                     _db.Update(offer);
-                    _db.SaveChanges();
+                    _db.SaveChanges(User.GetLoggedInUserName());
                     return RedirectToAction("Edit", "Offers", new {Id = id});
 
                 case 2:
                     // Status changes to Won, reset potential `LostReason` value
                     offer.LostReason = string.Empty;
                     _db.Update(offer);
-                    _db.SaveChanges();
+                    _db.SaveChanges(User.GetLoggedInUserName());
                     return RedirectToAction("Edit", "Offers", new {Id = id});
 
                 case 3:
@@ -332,7 +333,7 @@ namespace memo.Controllers
             model.Active = false;
 
             _db.Offer.Update(model);
-            await _db.SaveChangesAsync();
+            _db.SaveChanges(User.GetLoggedInUserName());
 
             return RedirectToAction("Index", new { showInactive });
         }
@@ -349,7 +350,7 @@ namespace memo.Controllers
             model.Active = true;
 
             _db.Offer.Update(model);
-            await _db.SaveChangesAsync();
+            _db.SaveChanges(User.GetLoggedInUserName());
 
             return RedirectToAction("Index", new { showInactive });
         }
