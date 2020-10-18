@@ -125,6 +125,7 @@ namespace memo.Controllers
                 return hashText ^ hashValue;
             }
         }
+
     }
 
     public static class ClaimsPrincipalExtensions

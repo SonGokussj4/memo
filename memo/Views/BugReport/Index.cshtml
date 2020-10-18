@@ -1,4 +1,10 @@
 @model memo.ViewModels.BugReportVM
+@using memo.ViewModels
+@using memo.Helpers
+@using Newtonsoft.Json
+@using System.Globalization
+@using System.Reflection
+@using System.ComponentModel.DataAnnotations
 
 <style>
     .has-float-label {
@@ -113,24 +119,6 @@
                 </div>
             </div>
         }
-    </div>
-</div>
-
-
-<div class="audit-log">
-    <div class="card">
-
-        <div class="card-header">
-            Hlava
-        </div>
-
-        <div class="card-body">
-            @foreach (Audit item in Model.Audits.OrderByDescending(x => x.UpdateDate))
-            {
-                <p>PK: @item.PK</p>
-            }
-        </div>
-
     </div>
 </div>
 

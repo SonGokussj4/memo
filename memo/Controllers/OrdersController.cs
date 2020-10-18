@@ -34,20 +34,22 @@ namespace memo.Controllers
         {
             ViewBag.showInactive = showInactive;
 
-            List<Order> model = new List<Order>();
-
-            model = await _db.Order
-                .Include(x => x.Offer)
-                .Include(z => z.Offer.Currency)
-                .ToListAsync();
+            OrdersViewModel vm = new OrdersViewModel {
+                cOrdersAll = await _eveDb.cOrders.ToListAsync(),
+                Orders = await _db.Order
+                    .Include(x => x.Offer).ThenInclude(z => z.Currency)
+                    .Include(x => x.OtherCosts)
+                    .Include(x => x.Invoices)
+                    .ToListAsync(),  // .ToListAsync()
+            };
 
             // Filtr - Pouze aktivní
             if (showInactive is false)
             {
-                model = model.Where(x => x.Active == true).ToList();
+                vm.Orders = vm.Orders.Where(x => x.Active == true);
             }
 
-            foreach (Order order in model)
+            foreach (Order order in vm.Orders)
             {
                 SumMinutesSP sumMinutes = GetSumMinutes(order.OrderCode);
 
@@ -60,17 +62,13 @@ namespace memo.Controllers
                 {
                     order.Burned = 0;
                 }
-            }
-            // Fill Invoices OtherCosts  // TODO: Can this be done cleverly?
-            foreach (Order order in model)
-            {
-                order.Invoices = await _db.Invoice.ToListAsync();
-                order.OtherCosts = await _db.OtherCost.ToListAsync();
+
+                // Fill Invoices OtherCosts  // TODO: Can this be done cleverly?
+                // order.Invoices = await _db.Invoice.ToListAsync();
+                // order.OtherCosts = await _db.OtherCost.ToListAsync();
             }
 
-            ViewBag.cOrdersAll = await _eveDb.cOrders.ToListAsync();
-
-            return View(model);
+            return View(vm);
         }
 
         [HttpPost]
@@ -450,7 +448,7 @@ namespace memo.Controllers
         {
             return _eveDb.SumMinutesSP
                 .FromSqlRaw<SumMinutesSP>("memo.spSumMinutesByOrderName {0}", orderName)
-                .ToList()
+                .AsEnumerable()
                 .SingleOrDefault();
         }
 

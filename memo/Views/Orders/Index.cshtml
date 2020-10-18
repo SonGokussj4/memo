@@ -4,7 +4,9 @@
     ViewData["Title"] = "Zakázky";
 }
 
-@model IList<memo.Models.Order>
+@* @model IList<memo.Models.Order> *@
+@model memo.ViewModels.OrdersViewModel
+
 
 <style>
     .notesWrap {
@@ -48,11 +50,11 @@
     </button>
     @if (ViewBag.ShowInactive == true)
     {
-        <a asp-action="index" class="btn btn-outline-secondary" data-toggle="tooltip" title="Zobrazit pouze aktivní"><i class="fa fa-eye"></i> Vše (@Model.Count())</a>
+        <a asp-action="index" class="btn btn-outline-secondary" data-toggle="tooltip" title="Zobrazit pouze aktivní"><i class="fa fa-eye"></i> Vše (@Model.Orders.Count())</a>
     }
     else
     {
-        <a asp-action="index" class="btn btn-outline-secondary" asp-route-ShowInactive="true" data-toggle="tooltip" title="Zobrazit vše"><i class="fa fa-eye-slash"></i> Aktivní (@Model.Count())</a>
+        <a asp-action="index" class="btn btn-outline-secondary" asp-route-ShowInactive="true" data-toggle="tooltip" title="Zobrazit vše"><i class="fa fa-eye-slash"></i> Aktivní (@Model.Orders.Count())</a>
     }
 </div>
 
@@ -60,11 +62,13 @@
 <table
     id="table"
     class="table table-sm text-xsmall text-nowrap"
-    @* style="width:100%" *@
+    style="width:100%"
     data-cookie="true"
     data-cookie-id-table="ordersTableCookie"
     data-filter-control="false"
     data-footer-style="footerStyle"
+    data-height="800"
+    @* data-pagination="true" *@
     data-show-search-clear-button="true"
     data-show-toggle="true"
     data-show-columns-toggle-all="true"
@@ -77,11 +81,10 @@
     data-show-footer="true"
     data-toolbar="#toolbar"
     data-toggle="table"
+    data-virtual-scroll="true"
     data-visible-search="true"
     @* data-reorderable-columns="true" *@
     @* data-show-pagination-switch="true" *@
-    @* data-pagination="true" *@
-    @* data-height="800" *@
     @* data-page-size="50" *@
     @* data-page-list="[10, 25, 50, 100, 200, All]" *@
     style="font-size: 0.9em;"
@@ -108,7 +111,7 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
+        @foreach (Order item in Model.Orders)
         {
             <tr id="row_@item.OrderId" class="@(item.Active ? Html.Raw("itemActive") : Html.Raw("itemInactive"))">
                 @* Edit *@
@@ -136,7 +139,8 @@
                 @* Č. obj. zákazníka *@
                 <th scope="row" class="text-left">@item.OrderName</th>
                 @{
-                    string OrderCodeTooltip = ((IEnumerable<dynamic>)ViewBag.cOrdersAll)
+                    @* string OrderCodeTooltip = ((IEnumerable<dynamic>)Model.cOrdersAll) *@
+                    string OrderCodeTooltip = Model.cOrdersAll
                         .Where(x => x.OrderCode == item.OrderCode)
                         .Select(x => x.OrderName)
                         .FirstOrDefault();
@@ -303,18 +307,17 @@
         if (btn.children[0].className == "fa fa-eye-slash") {
             // Change icon and text
             btn.children[0].className = "fa fa-eye"
-            btn.lastChild.nodeValue = " Všichni (@Model.Count())"
+            btn.lastChild.nodeValue = " Všichni (@Model.Orders.Count())"
             var hiddenRows = document.querySelectorAll(".hide");
             console.log(hiddenRows);
             for(var i = 0; i < hiddenRows.length; i++){
                 hiddenRows[i].className = "show hiddenBefore";
             }
-
         }
         else {
             // Change icon and text
             btn.children[0].className = "fa fa-eye-slash"
-            btn.lastChild.nodeValue = " Aktivní (@Model.Count(m => m.Active) / @Model.Count())"
+            btn.lastChild.nodeValue = " Aktivní (@Model.Orders.Count(m => m.Active) / @Model.Orders.Count())"
             var hiddenRows = document.querySelectorAll(".show.hiddenBefore");
             for(var i = 0; i < hiddenRows.length; i++){
                 hiddenRows[i].className = "hide";
@@ -356,7 +359,7 @@
                 .replaceAllTxt(" ", "")
                 .replaceAllTxt("Kč", "")
                 ) || 0;
-            console.log(`CostCz: ${cost}`);
+            //console.log(`CostCz: ${cost}`);
             return + cost
         }).reduce(function (sum, i) {
             return sum + i
@@ -376,7 +379,7 @@
                 .replaceAllTxt(" ", "")
                 .replaceAllTxt("Kč", "")
                 ) || 0;
-            console.log(`CostProgress: ${cost}`);
+            //console.log(`CostProgress: ${cost}`);
             return + cost
         }).reduce(function (sum, i) {
             return sum + i

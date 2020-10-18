@@ -18,9 +18,6 @@ namespace memo.ViewModels
 
         public IEnumerable<BugReport> BugReports { get; set; }
 
-        public Audit Audit { get; set; }
-        public IEnumerable<Audit> Audits { get; set; }
-
         // SelectLists
         public List<SelectListItem> PriorityList { get; } = new List<SelectListItem>
         {

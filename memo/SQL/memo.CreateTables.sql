@@ -202,16 +202,17 @@ IF OBJECT_ID('memo.Audit', 'U') IS NOT NULL
   DROP TABLE [memo].[Audit]
 GO
 -----------------------------------------------------------------------------------------
-CREATE TABLE [memo].[Audit]
+CREATE TABLE [memo].[Audits]
   (
+    AuditId INT IDENTITY PRIMARY KEY,
     Type CHAR(1),
-    TableName VARCHAR(128),
-    PK VARCHAR(1000),
-    FieldName VARCHAR(128),
-    OldValue VARCHAR(1000),
-    NewValue VARCHAR(1000),
-    UpdateDate datetime,
-    UserName VARCHAR(128),
-    UpdateBy VARCHAR(128)
+    TableName NVARCHAR(128),
+    PK NVARCHAR(1000),
+    FieldName NVARCHAR(128),
+    OldValue NVARCHAR(1000),
+    NewValue NVARCHAR(1000),
+    UpdateDate DATETIME,
+    UserName NVARCHAR(128),
+    UpdateBy NVARCHAR(128)
   )
 GO

@@ -27,7 +27,7 @@ namespace memo.Models
         public decimal Cost { get; set; }
 
         [Required]
-        [Display(Name = "ČástkaCzk")]
+        [Display(Name = "Částka v Czk")]
         [Column(TypeName = "decimal(18,3)")]
         public decimal CostCzk { get; set; }
     }

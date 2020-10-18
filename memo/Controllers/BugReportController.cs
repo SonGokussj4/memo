@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using memo.Data;
 using memo.Models;
@@ -89,25 +90,9 @@ namespace memo.Controllers
         {
             IEnumerable<BugReport> bugReports = await _db.BugReport.ToListAsync();
 
-            var audits = _db.Audit
-                .AsEnumerable()
-                .GroupBy(x => new {
-                    x.PK,
-                    x.UpdateDate
-                })
-                .Select(g => new {
-                    Id = g.Key.PK,
-                    Type = g.First().Type,
-                    // TableName = g.First().TableName,
-                    // UpdateBy = g.First().UpdateBy,
-                });
-
-            var results = audits.ToList();
-
             BugReportVM vm = new BugReportVM
             {
                 BugReports = bugReports,
-                Audits = (IEnumerable<Audit>)audits,
             };
 
             return vm;

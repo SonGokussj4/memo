@@ -38,78 +38,74 @@
 <body>
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container">
-                @* <img src="~/images/EvektorLogo.png" alt="" class="img-fluid pr-2" style="max-height: 30px;"> *@
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index"><img src="~/images/EvektorLogo.png" alt="" class="img-fluid pr-2" style="max-height: 30px;">Memo</a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
-                    <partial name="_LoginPartial" />
-                    <ul class="navbar-nav flex-grow-1">
+            <div class="container-fluid justify-content-center">
+                <div class="row">
+                    @* <img src="~/images/EvektorLogo.png" alt="" class="img-fluid pr-2" style="max-height: 30px;"> *@
+                    <a class="navbar-brand mr-5" asp-area="" asp-controller="Home" asp-action="Index"><img src="~/images/EvektorLogo.png" alt="" class="img-fluid pr-2" style="max-height: 30px;">Memo</a>
+                    @* <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button> *@
+                    <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
 
-                        <span class="nav-item border-left"></span>
+                        <ul class="navbar-nav flex-grow-1">
 
-                        <li class="nav-item mx-2">
-                            <a class="nav-link text-dark" asp-controller="Offers" asp-action="Index">
-                                <i class="fa fa-list-alt" style="color:#5182ee"></i> Nabídky
-                            </a>
-                        </li>
+                            <span class="nav-item border-left"></span>
 
-                        <li class="nav-item mx-2">
-                            <a class="nav-link text-dark" asp-controller="Orders" asp-action="Index">
-                                <i class="fa fa-handshake-o" style="color:green"></i> Zakázky
-                            </a>
-                        </li>
+                            <li class="nav-item mx-2">
+                                <a class="nav-link text-dark" asp-controller="Offers" asp-action="Index"><i class="fa fa-list-alt" style="color:#5182ee"></i> Nabídky</a>
+                            </li>
 
-                        <span class="nav-item border-left"></span>
+                            <li class="nav-item mx-2">
+                                <a class="nav-link text-dark" asp-controller="Orders" asp-action="Index"><i class="fa fa-handshake-o" style="color:green"></i> Zakázky</a>
+                            </li>
 
-                        <li class="nav-item mx-2">
-                            <a class="nav-link" asp-controller="Contacts" asp-action="Index">
-                                <i class="fa fa-address-book-o"></i> Kontakty
-                            </a>
-                        </li>
+                            <span class="nav-item border-left"></span>
 
-                        <li class="nav-item mx-2">
-                            <a class="nav-link" asp-controller="Companies" asp-action="Index">
-                                <i class="fa fa-building-o"></i> Firmy
-                            </a>
-                        </li>
+                            <li class="nav-item mx-2">
+                                <a class="nav-link" asp-controller="Contacts" asp-action="Index"><i class="fa fa-address-book-o"></i> Kontakty</a>
+                            </li>
 
-                        <span class="nav-item border-left"></span>
+                            <li class="nav-item mx-2">
+                                <a class="nav-link" asp-controller="Companies" asp-action="Index"><i class="fa fa-building-o"></i> Firmy</a>
+                            </li>
 
-                        <li class="nav-item mx-2">
-                            <a class="nav-link text-dark" asp-controller="Dashboards" asp-action="Index">
-                                <i class="fa fa-bar-chart"></i> Vyhodnocení
-                            </a>
-                        </li>
+                            <span class="nav-item border-left"></span>
 
-                        <span class="nav-item border-left"></span>
+                            <li class="nav-item mx-2">
+                                <a class="nav-link text-dark" asp-controller="Dashboards" asp-action="Index"><i class="fa fa-bar-chart"></i> Vyhodnocení</a>
+                            </li>
 
-                        <li class="nav-item ml-2">
-                            <a class="nav-link text-dark" asp-controller="BugReport" asp-action="Index"
-                               data-toggle="tooltip" title="Zobrazit/oznámit poznatky, nápady">
-                                <i class="fa fa-bug"></i> <span style="color: grey;">Hlášení chyb</span>
-                            </a>
-                        </li>
+                            <span class="nav-item border-left"></span>
 
-                        @* <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fa fa-address-book-o"> Data</i>
-                            </a>
-                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <a class="dropdown-item" asp-controller="Contacts" asp-action="Index">Kontakty</a>
-                                <a class="dropdown-item" asp-controller="Companies" asp-action="Index">Firmy</a>
-                                <div class="dropdown-divider"></div>
-                                <a href="#" class="dropdown-item">Cokoli jineho</a>
-                            </div>
-                        </li> *@
-                        @* <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li> *@
-                    </ul>
+                            <li class="nav-item mx-2">
+                                <a class="nav-link text-dark" asp-controller="BugReport" asp-action="Index" data-toggle="tooltip" title="Zobrazit/oznámit poznatky, nápady"><i class="fa fa-bug"></i> <span style="color: grey;">Hlášení chyb</span></a>
+                            </li>
+
+                            <li class="nav-item mx-2">
+                                <a class="nav-link text-dark" asp-controller="Audits" asp-action="Index" data-toggle="tooltip" title="Audit změn"><i class="fa fa-commenting"></i> <span style="color: grey;">Audit</span></a>
+                            </li>
+
+                            <span class="nav-item border-left mr-5"></span>
+
+                            <partial name="_LoginPartial" />
+
+                            @* <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fa fa-address-book-o"> Data</i>
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    <a class="dropdown-item" asp-controller="Contacts" asp-action="Index">Kontakty</a>
+                                    <a class="dropdown-item" asp-controller="Companies" asp-action="Index">Firmy</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a href="#" class="dropdown-item">Cokoli jineho</a>
+                                </div>
+                            </li> *@
+                            @* <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            </li> *@
+                        </ul>
+                    </div>
                 </div>
             </div>
         </nav>
