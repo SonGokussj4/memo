@@ -47,7 +47,9 @@
         <div class="form-group row">
             <label asp-for="CompanyId" class="required col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-3">
-                @Html.DropDownListFor(model => model.CompanyId, ViewBag.CompanyList as SelectList, "-- Vyber firmu --", new { @class = "form-control selectpicker" })
+                <select asp-for="CompanyId" asp-items="@ViewBag.CompanyList" class="form-control selectpicker">
+                    <option>-- Vyber firmu --</option>
+                </select>
                 <span asp-validation-for="CompanyId" class="text-danger"></span>
             </div>
             <div class="col-lg-3">
@@ -83,7 +85,10 @@
         <div class="form-group row">
             <label asp-for="Notes" class="col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-9">
-                <textarea asp-for="Notes" class="form-control"></textarea>
+                <span class="has-float-label">
+                    <textarea asp-for="Notes" class="form-control" placeholder=" "></textarea>
+                    <label asp-for="Phone">Poznámky</label>
+                </span>
                 @* @Html.TextAreaFor(m => m.Notes, additionalViewData: new { htmlAttributes = new { @class = "form-control" }}) *@
                 <span asp-validation-for="Notes" class="text-danger"></span>
             </div>

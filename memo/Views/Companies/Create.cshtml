@@ -16,75 +16,73 @@
         @* <input type="hidden" asp-for="CompanyId" /> *@
 
         <div class="form-group row">
-                <label asp-for="Name" class="required col-lg-3 col-form-label form-control-label control-label"></label>
-                <div class="col-lg-4">
-                    <div class="field-wrapper">
-                        <input asp-for="Name" class="form-control" type="text" />
-                        <div class="field-placeholder"><span>Název firmy</span></div>
-                    </div>
-                    <span asp-validation-for="Name" class="text-danger"></span>
-                </div>
-            </div>
-
-            <div class="form-group row">
-                <label asp-for="City" class="col-lg-3 col-form-label form-control-label control-label">Adresa</label>
-                <div class="col-lg-4">
-                    <div class="field-wrapper">
-                        <input asp-for="City" class="form-control" type="text" />
-                        <div class="field-placeholder"><span>Město</span></div>
-                    </div>
-                    <span asp-validation-for="City" class="text-danger"></span>
-                </div>
-                <div class="col-lg-5">
-                    <div class="field-wrapper">
-                        <input asp-for="Address" class="form-control" type="text" />
-                        <div class="field-placeholder"><span>Ulice a č. p.</span></div>
-                    </div>
-                    <span asp-validation-for="Address" class="text-danger"></span>
-                </div>
-            </div>
-
-            <div class="form-group row">
-                <label asp-for="Phone" class="col-lg-3 col-form-label form-control-label control-label">Kontakt</label>
-                <div class="col-lg-4">
-                    <div class="field-wrapper">
-                        <input asp-for="Phone" class="form-control" type="text" />
-                        <div class="field-placeholder"><span>Telefonní číslo</span></div>
-                    </div>
-                    <span asp-validation-for="Phone" class="text-danger"></span>
-                </div>
-                <div class="col-lg-5">
-                    <div class="field-wrapper">
-                        <input asp-for="Web" class="form-control" type="text" />
-                        <div class="field-placeholder"><span>Webová stránka</span></div>
-                    </div>
-                    <span asp-validation-for="Web" class="text-danger"></span>
-                </div>
-            </div>
-
-        <div class="form-group row">
-                <label asp-for="InvoiceDueDays" class="required col-lg-3 col-form-label form-control-label control-label">Splatnost faktury</label>
-                <div class="col-lg-3">
-                    <div class="field-wrapper">
-                        <div class="input-group mb-2 mr-sm-2">
-                            <input asp-for="InvoiceDueDays" class="form-control" type="text" required="" />
-                            <div class="input-group-append">
-                                <div class="input-group-text">dní</div>
-                            </div>
-                        <div class="field-placeholder"><span>Splatnost</span></div>
-                        </div>
-                    </div>
-                    <span asp-validation-for="InvoiceDueDays" class="text-danger"></span>
-                </div>
-            </div>
-
-        <div class="form-group row">
-            <label asp-for="Notes" class="col-lg-3 col-form-label form-control-label control-label"></label>
-            <div class="col-lg-9">
-                <textarea asp-for="Notes" class="form-control"></textarea>
-                <span asp-validation-for="Notes" class="text-danger"></span>
+            <label asp-for="Name" class="required col-lg-3 col-form-label form-control-label control-label"></label>
+            <div class="col-lg-4">
+                <span class="has-float-label">
+                    <input asp-for="Name" class="form-control" type="text" placeholder=" " />
+                    <label asp-for="Name">Název firmy</label>
+                </span>
+                <span asp-validation-for="Name" class="text-danger"></span>
             </div>
         </div>
+
+        <div class="form-group row">
+            <label asp-for="City" class="col-lg-3 col-form-label form-control-label control-label">Adresa</label>
+            <div class="col-lg-4">
+                <span class="has-float-label">
+                    <input asp-for="City" class="form-control" type="text" placeholder=" " />
+                    <label asp-for="City">Město</label>
+                </span>
+                <span asp-validation-for="City" class="text-danger"></span>
+            </div>
+            <div class="col-lg-5">
+                <span class="has-float-label">
+                    <input asp-for="Address" class="form-control" type="text" placeholder=" " />
+                    <label asp-for="Address">Ulice a č. p.</label>
+                </span>
+                <span asp-validation-for="Address" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label asp-for="Phone" class="col-lg-3 col-form-label form-control-label control-label">Kontakt</label>
+            <div class="col-lg-4">
+                <span class="has-float-label">
+                    <input asp-for="Phone" class="form-control" type="text" placeholder=" " />
+                    <label asp-for="Phone">Telefonní číslo</label>
+                </span>
+                <span asp-validation-for="Phone" class="text-danger"></span>
+            </div>
+            <div class="col-lg-5">
+                <span class="has-float-label">
+                    <input asp-for="Web" class="form-control" type="text" placeholder=" " />
+                    <label asp-for="Web">Webová stránka</label>
+                </span>
+                <span asp-validation-for="Web" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label asp-for="InvoiceDueDays" class="required col-lg-3 col-form-label form-control-label control-label">Splatnost faktury</label>
+            <div class="col-lg-3">
+                <span class="has-float-label">
+                    <input asp-for="InvoiceDueDays" class="form-control" type="text" required="" placeholder="Zadejte počet dní" />
+                    <label asp-for="InvoiceDueDays">Splatnost [dní]</label>
+                </span>
+                <span asp-validation-for="InvoiceDueDays" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-group row">
+                <label asp-for="Notes" class="col-lg-3 col-form-label form-control-label control-label"></label>
+                <div class="col-lg-9">
+                    <span class="has-float-label">
+                        <textarea asp-for="Notes" class="form-control" placeholder="Vložte připomínky"></textarea>
+                        <label asp-for="Notes">Poznámky</label>
+                    </span>
+                    <span asp-validation-for="Notes" class="text-danger"></span>
+                </div>
+            </div>
 
         <div class="form-group row">
             <div class="col-lg-3">
