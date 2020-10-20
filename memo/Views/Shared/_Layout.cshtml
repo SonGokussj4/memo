@@ -4,26 +4,32 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Memo</title>
-    <!-- Datepicker -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css"/>
+    <!-- Bootstrap Datepicker -->
+    <link rel="stylesheet" href="~/lib/bootstrap-datepicker-1.9.0/css/bootstrap-datepicker3.min.css"/>
     <!-- Awesome Fonts (4.7 free, 5.x free-ish, 6.x paid) -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+    @* <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" /> *@
+    <link rel="stylesheet" href="~/lib/font-awesome-4.7.0/css/font-awesome.min.css" />
     <!-- Bootstrap Table -->
-    <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.16.0/dist/bootstrap-table.min.css">
+    @* <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.16.0/dist/bootstrap-table.min.css"> *@
+    <link rel="stylesheet" href="~/lib/bootstrap-table-1.18.0/dist/bootstrap-table.min.css">
+    <link rel="stylesheet" href="~/lib/bootstrap-table-1.18.0/dist/extensions/filter-control/bootstrap-table-filter-control.min.css">
     <!-- Bootstrap Select -->
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
+    @* <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" /> *@
+    <link rel="stylesheet" href="~/lib/select2-4.1.0-beta.1/dist/css/select2.min.css" />
     <!-- Pretty CheckBoxes -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretty-checkbox@3.0/dist/pretty-checkbox.min.css">
+    @* <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretty-checkbox@3.0/dist/pretty-checkbox.min.css"> *@
+    <link rel="stylesheet" href="~/lib/pretty-checkbox-master/dist/pretty-checkbox.min.css">
     <!-- Bootstrap -->
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />  <!-- 4.5.1 -->
+    @* <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />  <!-- 4.5.1 --> *@
+    <link rel="stylesheet" href="~/lib/bootstrap-4.5.3-dist/css/bootstrap.min.css" />  <!-- 4.5.3 -->
     <!-- DataTables -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
+    @* <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css"> *@
     <!-- Chart JS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.css" integrity="sha512-/zs32ZEJh+/EO2N1b0PEdoA10JkdC3zJ8L5FTiQu82LR9S/rOQNfQN7U59U9BC12swNeRAz3HSzIL2vpp4fv3w==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="~/lib/chart.js-2.9.4/package/dist/Chart.min.css">
     <!-- Pure CSS Floating Labels -->
-    <link rel="stylesheet" href="~/css/bootstrap-float-label-master/bootstrap-float-label.css"/>
+    <link rel="stylesheet" href="~/lib/bootstrap-float-label-master/bootstrap-float-label.css"/>
     <!-- Summernote Editor -->
-    <link href="~/js/summernote-0.8.18-dist/summernote-lite.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="~/lib/summernote-0.8.18/summernote-lite.min.css">
     <!-- Base CSS -->
     <link rel="stylesheet" href="~/css/site.css" />
 
@@ -123,29 +129,35 @@
     </footer> *@
 
     <!-- jQuery -->
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script type="text/javascript" src="~/lib/jquery/dist/jquery.min.js"></script>
     <!-- Bootstrap -->
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Datepicker -->
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
+    <script type="text/javascript" src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Bootstrap Datepicker -->
+    <script type="text/javascript" src="~/lib/bootstrap-datepicker-1.9.0/js/bootstrap-datepicker.min.js"></script>
+    <script type="text/javascript" src="~/lib/bootstrap-datepicker-1.9.0/locales/bootstrap-datepicker.cs.min.js"></script>
     <!-- Bootstrap Table -->
-    <script src="https://unpkg.com/bootstrap-table@1.16.0/dist/bootstrap-table.min.js"></script>
-    <script src="https://unpkg.com/bootstrap-table@1.16.0/dist/extensions/filter-control/bootstrap-table-filter-control.min.js"></script>
-    <script src="https://unpkg.com/bootstrap-table@1.16.0/dist/extensions/cookie/bootstrap-table-cookie.min.js"></script>
+    @* <script type="text/javascript" src="https://unpkg.com/bootstrap-table@1.16.0/dist/bootstrap-table.min.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/bootstrap-table@1.16.0/dist/extensions/filter-control/bootstrap-table-filter-control.min.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/bootstrap-table@1.16.0/dist/extensions/cookie/bootstrap-table-cookie.min.js"></script> *@
+    <script type="text/javascript" src="~/lib/bootstrap-table-1.18.0/dist/bootstrap-table.min.js"></script>
+    <script type="text/javascript" src="~/lib/bootstrap-table-1.18.0/dist/extensions/filter-control/bootstrap-table-filter-control.min.js"></script>
+    <script type="text/javascript" src="~/lib/bootstrap-table-1.18.0/dist/extensions/filter-control/cookie/bootstrap-table-cookie.min.js"></script>
     <!-- Bootstrap Select -->
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
-    <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+    @* <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script> *@
+    <script type="text/javascript" src="~/lib/select2-4.1.0-beta.1/dist/js/select2.min.js"></script>
+    <!-- DataTables -->
+    @* <script type="text/javascript" src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script> *@
     <!-- Charts -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js" integrity="sha512-s+xg36jbIujB2S2VKfpGmlC3T5V2TF3lY48DX7u2r9XzGzgPsa6wTpOQA7J9iffvdeBN0q9tKzRxVxw1JviZPg==" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="~/lib/chart.js-2.9.4/package/dist/Chart.min.js"></script>
     <!-- BootBox -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.4.0/bootbox.min.js" integrity="sha512-8vfyGnaOX2EeMypNMptU+MwwK206Jk1I/tMQV4NkhOz+W8glENoMhGyU6n/6VgQUhQcJH8NqQgHhMtZjJJBv3A==" crossorigin="anonymous"></script>
+    @* <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.4.0/bootbox.min.js" integrity="sha512-8vfyGnaOX2EeMypNMptU+MwwK206Jk1I/tMQV4NkhOz+W8glENoMhGyU6n/6VgQUhQcJH8NqQgHhMtZjJJBv3A==" crossorigin="anonymous"></script> *@
     <!-- Summernote Editor -->
-    <script src="~/js/summernote-0.8.18-dist/summernote-lite.min.js"></script>
+    <script type="text/javascript" src="~/lib/summernote-0.8.18/summernote-lite.min.js"></script>
 
     <!-- Personal JS -->
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    <script src="~/js/moment.js" asp-append-version="true"></script>
-    <script src="~/js/chartkick.js" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/js/site.js" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/lib/moment/moment.js" asp-append-version="true"></script>
+    @* <script type="text/javascript" src="~/js/chartkick.js" asp-append-version="true"></script> *@
 
 
     @RenderSection("Scripts", required: false)
