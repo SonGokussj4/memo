@@ -98,7 +98,8 @@ CREATE TABLE [memo].[Offer] (
   [EstimatedFinishDate] date,
   [Notes] nvarchar(max),
   [Active] bit DEFAULT 1,
-  [CreateDate] date DEFAULT GETDATE(),
+  [ModifiedDate] datetime,
+  [CreateDate] datetime DEFAULT GETDATE(),
   CONSTRAINT [FK_memo.Offer_memo_Contact_ContactId] FOREIGN KEY ([ContactId])
     REFERENCES [memo].[Contact] ([ContactId]),
   CONSTRAINT [FK_memo.Offer_memo_Company_CompanyId] FOREIGN KEY ([CompanyId])
@@ -132,7 +133,8 @@ CREATE TABLE [memo].[Order] (
   [Username] nvarchar(30),
   [Notes] nvarchar(max),
   [Active] bit DEFAULT 1,
-  [CreateDate] date DEFAULT GETDATE()
+  [ModifiedDate] datetime,
+  [CreateDate] datetime
   CONSTRAINT [FK_memo.Order_memo_Offer_OfferId] FOREIGN KEY ([OfferId])
     REFERENCES [memo].[Offer] ([OfferId])
 )

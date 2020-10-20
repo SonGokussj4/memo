@@ -6,6 +6,8 @@
 
 @model memo.ViewModels.DashboardVM
 
+@await Html.PartialAsync("_PartialToastNotification")
+
 <div class="text-center">
     <h1 class="display-6">@ViewData["Title"]</h1>
     <hr />

@@ -9,7 +9,13 @@ namespace memo.Models
     [Table("Offer", Schema = "memo")]
     public partial class Offer
     {
+        public Offer()
+        {
+            ModifiedDate = DateTime.Now;
+        }
+
         [Key]
+        [Display(Name = "ID")]
         public int OfferId { get; set; }
 
         [Required]
@@ -88,9 +94,11 @@ namespace memo.Models
         [Display(Name = "Poznámky"), Column(TypeName = "nvarchar(max)")]
         public string Notes { get; set; }
 
-        [Display(Name = "Datum vytvoření"), Column(TypeName = "date")]
-        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
-        public DateTime? CreateDate { get; set; }
+        [Display(Name = "Poslední změna"), Column(TypeName = "datetime")]
+        public DateTime ModifiedDate { get; set; }
+
+        [Display(Name = "Datum vytvoření"), Column(TypeName = "datetime")]
+        public DateTime CreateDate { get; set; }
 
         [Display(Name = "Aktivní")]
         public Boolean Active { get; set; } = true;  // Default: Active

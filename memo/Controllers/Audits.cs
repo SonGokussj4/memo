@@ -22,16 +22,14 @@ namespace memo.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult> Index()
+        public ActionResult Index()
         {
-
-
-            AuditsViewModel vm = initViewModelAsync();
+            AuditsViewModel vm = initViewModel();
 
             return View(vm);
         }
 
-        private AuditsViewModel initViewModelAsync()
+        private AuditsViewModel initViewModel()
         {
             IEnumerable<AuditViewModel> audits = _db.Audit
                 .AsEnumerable()
@@ -42,6 +40,7 @@ namespace memo.Controllers
                 })
                 .Select(g => new AuditViewModel
                 {
+                    AuditId = g.First().AuditId,
                     Type = g.First().Type,
                     TableName = g.First().TableName,
                     UpdateBy = g.First().UpdateBy,

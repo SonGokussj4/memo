@@ -34,6 +34,10 @@ namespace memo.Controllers
         {
             ViewBag.showInactive = showInactive;
 
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+            string text = stopwatch.Elapsed.ToString() + "; ";
+
             OrdersViewModel vm = new OrdersViewModel {
                 cOrdersAll = await _eveDb.cOrders.ToListAsync(),
                 Orders = await _db.Order
@@ -42,6 +46,8 @@ namespace memo.Controllers
                     .Include(x => x.Invoices)
                     .ToListAsync(),  // .ToListAsync()
             };
+
+            text += stopwatch.Elapsed.ToString() + "; ";
 
             // Filtr - Pouze aktivní
             if (showInactive is false)
@@ -67,6 +73,9 @@ namespace memo.Controllers
                 // order.Invoices = await _db.Invoice.ToListAsync();
                 // order.OtherCosts = await _db.OtherCost.ToListAsync();
             }
+
+            text += stopwatch.Elapsed.ToString();
+            TempData["Success"] = text;
 
             return View(vm);
         }
@@ -352,6 +361,9 @@ namespace memo.Controllers
                         vm.Order.PriceFinalCzk += Convert.ToInt32(otherCost.Cost * vm.Order.ExchangeRate);
                         vm.UnspentMoney -= Convert.ToInt32(otherCost.Cost);
                     }
+
+                    vm.Order.ModifiedDate = DateTime.Now;
+
                     _db.Update(vm.Order);
                     _db.SaveChanges(User.GetLoggedInUserName());
                 }

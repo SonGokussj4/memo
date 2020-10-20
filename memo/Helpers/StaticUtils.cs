@@ -19,6 +19,7 @@ namespace memo.Helpers
 
         public static Dictionary<string, Type> modelTypeFromString = new Dictionary<string, Type>
         {
+            {"BugReport", typeof(BugReport)},
             {"Offer", typeof(Offer)},
             {"Order", typeof(Order)},
             {"Invoice", typeof(Invoice)},
@@ -29,6 +30,7 @@ namespace memo.Helpers
 
         public static Dictionary<string, string> modelNameFromString = new Dictionary<string, string>
         {
+            {"BugReport", "Hlášení chyb"},
             {"Offer", "Nabídka"},
             {"Order", "Zakázka"},
             {"Invoice", "Faktura"},
@@ -39,6 +41,7 @@ namespace memo.Helpers
 
         public static Dictionary<string, string> controllerLink = new Dictionary<string, string>
         {
+            {"BugReport", "BugReport"},
             {"Offer", "Offers"},
             {"Order", "Orders"},
             {"Invoice", "Orders"},

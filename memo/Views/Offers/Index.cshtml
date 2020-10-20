@@ -184,8 +184,7 @@
                     </th>
                 }
 
-                @{ string dateText = item.CreateDate.HasValue != false ? item.CreateDate.Value.ToString("yyyy-MM-dd") : ""; }
-                <th scope="row" class="text-left">@dateText</th>
+                <th scope="row" class="text-left">@item.CreateDate.ToString("dd.MM.yyyy HH:mm")</th>
                 <th scope="row" class="text-left">@item.OfferName</th>
                 <th scope="row" class="text-left">@item.ReceiveDate.Value.ToString("yyyy-MM-dd")</th>
                 @{

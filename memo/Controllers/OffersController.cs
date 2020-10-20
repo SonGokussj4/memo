@@ -27,33 +27,42 @@ namespace memo.Controllers
             _eveDbDochna = eveDbDochna;
         }
 
-        public IActionResult Index(bool showInactive = false)
+        public async Task<IActionResult> Index(bool showInactive = false)
         {
             ViewBag.showInactive = showInactive;
 
-            List<Offer> model = new List<Offer>();
+            // List<Offer> model = new List<Offer>();
+
+            List<Offer> model = await _db.Offer
+                .Include(x => x.Company)
+                .Include(y => y.Contact)
+                .Include(z => z.Currency)
+                .Include(a => a.OfferStatus)
+                .ToListAsync();
 
             if (showInactive is false)
             {
-                model = _db.Offer
-                    .Include(x => x.Company)
-                    .Include(y => y.Contact)
-                    .Include(z => z.Currency)
-                    .Include(a => a.OfferStatus)
-                    .Where(x => x.Active == true)
-                    .ToList();
+                model = model.Where(x => x.Active == true).ToList();
             }
-            else
-            {
-                model = _db.Offer
-                    .Include(x => x.Company)
-                    .Include(y => y.Contact)
-                    .Include(z => z.Currency)
-                    .Include(a => a.OfferStatus)
-                    .ToList();
-            }
+                // model = _db.Offer
+                //     .Include(x => x.Company)
+                //     .Include(y => y.Contact)
+                //     .Include(z => z.Currency)
+                //     .Include(a => a.OfferStatus)
+                //     .Where(x => x.Active == true)
+                //     .ToList();
+            // }
+            // else
+            // {
+            //     model = _db.Offer
+            //         .Include(x => x.Company)
+            //         .Include(y => y.Contact)
+            //         .Include(z => z.Currency)
+            //         .Include(a => a.OfferStatus)
+            //         .ToList();
+            // }
 
-            List<Order> allOrders = _db.Order.ToList();
+            List<Order> allOrders = await _db.Order.ToListAsync();
             ViewBag.AllOrders = allOrders;
 
             return View(model);
@@ -88,8 +97,7 @@ namespace memo.Controllers
         {
             // offer.OfferName = getNewOfferNum();  // TODO Tohle vratit zpet, az tam budou vsechny aktualni
             offer.PriceCzk = Convert.ToInt32(offer.Price * offer.ExchangeRate);  // 1000 * 26,243
-            // offer.LostReason = "";
-            offer.Notes = String.IsNullOrEmpty(offer.Notes) ? "" : offer.Notes;
+            // offer.Notes = String.IsNullOrEmpty(offer.Notes) ? "" : offer.Notes;
             offer.CreateDate = DateTime.Now;
 
             // Check if OfferName exists, if yes, add model error...
@@ -139,19 +147,20 @@ namespace memo.Controllers
                 return NotFound();
             }
 
-            ViewBag.DepartmentList = getDepartmentList(_eveDbDochna);
-            ViewBag.CompanyList = new SelectList( _db.Company.ToList(), "CompanyId", "Name");
-            ViewBag.ContactList = new SelectList((from s in _db.Contact.ToList() select new {
-                ContactId = s.ContactId,
-                FullName = s.PersonName + " " + s.PersonLastName
-            }), "ContactId", "FullName");
-            ViewBag.EveContactList = getEveContacts(_eveDbDochna);
-            ViewBag.CurrencyList = new SelectList( _db.Currency.ToList(), "CurrencyId", "Name");
-            ViewBag.OfferStatusList = new SelectList( _db.OfferStatus.ToList(), "OfferStatusId", "Status");
-            ViewBag.OfferStatusName = offer.OfferStatus.Name;
+            // ViewBag.DepartmentList = getDepartmentList(_eveDbDochna);
+            // ViewBag.CompanyList = new SelectList( _db.Company.ToList(), "CompanyId", "Name");
+            // ViewBag.ContactList = new SelectList((from s in _db.Contact.ToList() select new {
+            //     ContactId = s.ContactId,
+            //     FullName = s.PersonName + " " + s.PersonLastName
+            // }), "ContactId", "FullName");
+            // ViewBag.EveContactList = getEveContacts(_eveDbDochna);
+            // ViewBag.CurrencyList = new SelectList( _db.Currency.ToList(), "CurrencyId", "Name");
+            // ViewBag.OfferStatusList = new SelectList( _db.OfferStatus.ToList(), "OfferStatusId", "Status");
+            // ViewBag.OfferStatusName = offer.OfferStatus.Name;
+            populateModel(offer, (int)id);
 
-            List<Order> createdOrders = _db.Order.Where(x => x.OfferId == id).ToList();
-            ViewBag.CreatedOrders = createdOrders;
+            // List<Order> createdOrders = _db.Order.Where(x => x.OfferId == id).ToList();
+            // ViewBag.CreatedOrders = createdOrders;
 
             return View(offer);
         }
@@ -171,6 +180,8 @@ namespace memo.Controllers
                 try
                 {
                     model.PriceCzk = Convert.ToInt32(model.Price * model.ExchangeRate);  // 1000 * 26,243
+                    model.ModifiedDate = DateTime.Now;
+
                     _db.Update(model);
                     _db.SaveChanges(User.GetLoggedInUserName());
                 }
@@ -181,23 +192,10 @@ namespace memo.Controllers
                                              "see your system administrator.");
                 }
 
-                // Populate
-                ViewBag.DepartmentList = getDepartmentList(_eveDbDochna);
-                ViewBag.CompanyList = new SelectList(_db.Company.ToList(), "CompanyId", "Name");
-                ViewBag.ContactList = new SelectList((
-                    from s in _db.Contact.ToList()
-                    select new {
-                        ContactId = s.ContactId,
-                        FullName = s.PersonName + " " + s.PersonLastName
-                    }
-                ), "ContactId", "FullName");
-                ViewBag.EveContactList = getEveContacts(_eveDbDochna);
-                ViewBag.CurrencyList = new SelectList(_db.Currency.ToList(), "CurrencyId", "Name");
-                ViewBag.OfferStatusName = _db.OfferStatus.Find(model.OfferStatusId).Name;
-                ViewBag.CreatedOrders = _db.Order.Where(x => x.OfferId == id).ToList();
 
                 if (actionType == "Uložit")
                 {
+                    populateModel(model, id);
                     return View(model);
                 }
                 else
@@ -206,22 +204,7 @@ namespace memo.Controllers
                 }
             }
 
-            // // Errors
-            // var errors = ModelState.Where(x => x.Value.Errors.Any())
-            //     .Select(x => new { x.Key, x.Value.Errors });
-            // Console.WriteLine(errors.ToString());
-
-            // Populate
-            ViewBag.DepartmentList = getDepartmentList(_eveDbDochna);
-            ViewBag.CompanyList = new SelectList(_db.Company.ToList(), "CompanyId", "Name");
-            ViewBag.ContactList = new SelectList((from s in _db.Contact.ToList() select new {
-                ContactId = s.ContactId,
-                FullName = s.PersonName + " " + s.PersonLastName
-            }), "ContactId", "FullName");
-            ViewBag.EveContactList = getEveContacts(_eveDbDochna);
-            ViewBag.CurrencyList = new SelectList(_db.Currency.ToList(), "CurrencyId", "Name");
-            ViewBag.OfferStatusName = _db.OfferStatus.Find(model.OfferStatusId).Name;
-            ViewBag.CreatedOrders = _db.Order.Where(x => x.OfferId == id).ToList();
+            populateModel(model, id);
 
             return View(model);
         }
@@ -289,26 +272,32 @@ namespace memo.Controllers
             offer.OfferStatusId = btnOfferStatusId;
 
             _db.Update(offer);
-            _db.SaveChanges(User.GetLoggedInUserName());
 
             switch (btnOfferStatusId)
             {
                 case 1:
-                    // Status changes to Wait, reset potential `LostReason` value
-                    offer.LostReason = string.Empty;
+                    // Status WAIT, reset potential `LostReason` value
+                    if (!String.IsNullOrEmpty(offer.LostReason))
+                    {
+                        offer.LostReason = "";
+                    }
                     _db.Update(offer);
                     _db.SaveChanges(User.GetLoggedInUserName());
                     return RedirectToAction("Edit", "Offers", new {Id = id});
 
                 case 2:
-                    // Status changes to Won, reset potential `LostReason` value
-                    offer.LostReason = string.Empty;
+                    // Status WON, reset potential `LostReason` value
+                    if (!String.IsNullOrEmpty(offer.LostReason))
+                    {
+                        offer.LostReason = "";
+                    }
                     _db.Update(offer);
                     _db.SaveChanges(User.GetLoggedInUserName());
                     return RedirectToAction("Edit", "Offers", new {Id = id});
 
                 case 3:
-                    // Status changes to Lost
+                    // Status LOST
+                    _db.SaveChanges(User.GetLoggedInUserName());
                     return RedirectToAction("Edit", "Offers", new {Id = id});
 
                 default:
@@ -373,5 +362,24 @@ namespace memo.Controllers
 
             return newOfferNum;
         }
+
+        private void populateModel(Offer model, int id)
+        {
+            // Populate
+            ViewBag.DepartmentList = getDepartmentList(_eveDbDochna);
+            ViewBag.CompanyList = new SelectList(_db.Company.ToList(), "CompanyId", "Name");
+            ViewBag.ContactList = new SelectList((
+                from s in _db.Contact.ToList()
+                select new {
+                    ContactId = s.ContactId,
+                    FullName = s.PersonName + " " + s.PersonLastName
+                }
+            ), "ContactId", "FullName");
+            ViewBag.EveContactList = getEveContacts(_eveDbDochna);
+            ViewBag.CurrencyList = new SelectList(_db.Currency.ToList(), "CurrencyId", "Name");
+            ViewBag.OfferStatusName = _db.OfferStatus.Find(model.OfferStatusId).Name;
+            ViewBag.CreatedOrders = _db.Order.Where(x => x.OfferId == id).ToList();
+        }
+
     }
 }

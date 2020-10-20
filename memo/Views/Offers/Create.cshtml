@@ -163,7 +163,9 @@
             </div>
         </div>
 
-        @Html.CheckBoxFor(m => m.Active, new { style = "display:none", @checked="checked" })
+        @* @Html.CheckBoxFor(m => m.Active, new { style = "display:none", @checked="checked" }) *@
+        @* <input asp-for="Active" type="checkbox" checked hidden />
+        <input asp-for="CreateDate" type="text" readonly hidden /> *@
 
         </form>
     </div>

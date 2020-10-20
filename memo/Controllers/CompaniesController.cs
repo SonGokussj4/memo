@@ -23,7 +23,7 @@ namespace memo.Controllers
         }
 
         [HttpGet]
-        public IActionResult Index(bool showInactive = false)
+        public async Task<IActionResult> Index(bool showInactive = false)
         {
             ViewBag.showInactive = showInactive;
 
@@ -31,14 +31,14 @@ namespace memo.Controllers
 
             if (showInactive is false)
             {
-                model = _db.Company
+                model = await _db.Company
                     .Where(x => x.Active == true)
-                    .ToList();
+                    .ToListAsync();
             }
             else
             {
-                model = _db.Company
-                    .ToList();
+                model = await _db.Company
+                    .ToListAsync();
             }
 
             return View(model);
@@ -51,12 +51,12 @@ namespace memo.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(Company model)
+        public async Task<IActionResult> Create(Company model)
         {
             if (ModelState.IsValid)
             {
                 _db.Add(model);
-                _db.SaveChanges(User.GetLoggedInUserName());
+                await _db.SaveChangesAsync(User.GetLoggedInUserName());
                 return RedirectToAction("Index");
             }
 

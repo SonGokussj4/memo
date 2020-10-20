@@ -13,11 +13,12 @@ namespace memo.ViewModels
         {
         }
 
+        public int AuditId { get; set; }
         public string Type { get; set; }
         public string TableName { get; set; }
         public string UpdateBy { get; set; }
         public IEnumerable<string> LogList { get; set; }
-        public string LogJson { get; set; }
+        // public string LogJson { get; set; }
         public DateTime UpdateDate { get; set; }
         public string KeyName { get; set; }
         public string KeyValue { get; set; }

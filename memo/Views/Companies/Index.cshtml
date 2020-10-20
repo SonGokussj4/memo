@@ -14,13 +14,6 @@
     .centerHeader {
         text-align: center;
     }
-    @* .container {
-        max-width: 1680px;
-    } *@
-
-    @* th {
-        font-weight: 400;
-    } *@
 
     .bootstrap-table .fixed-table-container .table thead th .sortable {
         padding-right: 20px!important;
@@ -31,6 +24,7 @@
     }
 </style>
 
+@await Html.PartialAsync("_PartialToastNotification")
 
 <div class="text-center">
     <h1 class="display-4">Firmy</h1>

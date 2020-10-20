@@ -15,8 +15,11 @@ namespace memo.Models
             Active = true;
             PriceFinalCzk = 0;
             Username = "";
+            ModifiedDate = DateTime.Now;
         }
+
         [Key]
+        [Display(Name = "ID")]
         public int OrderId { get; set; }
 
         // [Required]
@@ -65,8 +68,10 @@ namespace memo.Models
         [Display(Name = "Poznámky"), Column(TypeName = "nvarchar(max)")]
         public string Notes { get; set; } = "";
 
-        [Display(Name = "Datum vytvoření"), Column(TypeName = "date")]
-        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+        [Display(Name = "Poslední změna"), Column(TypeName = "datetime")]
+        public DateTime ModifiedDate { get; set; }
+
+        [Display(Name = "Datum vytvoření"), Column(TypeName = "datetime")]
         public DateTime? CreateDate { get; set; }
 
         [Display(Name = "Aktivní")]
@@ -76,6 +81,7 @@ namespace memo.Models
         [Display(Name = "Spáleno")]
         public int Burned { get; set; }
 
+        [Display(Name = "Vytvořil")]
         public string Username { get; set; }
 
         // [InverseProperty("Invoice")]
