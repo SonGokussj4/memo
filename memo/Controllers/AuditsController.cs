@@ -12,11 +12,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace memo.Controllers
 {
-    public class Audits : BaseController
+    public class AuditsController : BaseController
     {
         public ApplicationDbContext _db { get; }
 
-        public Audits(ApplicationDbContext db)
+        public AuditsController(ApplicationDbContext db)
         {
             _db = db;
         }
@@ -47,7 +47,7 @@ namespace memo.Controllers
                     UpdateDate = g.First().UpdateDate,
                     KeyName = Regex.Match(g.First().PK, @"<\[(.+?)\]=(.+?)>").Groups[1].Value,
                     KeyValue = Regex.Match(g.First().PK, @"<\[(.+?)\]=(.+?)>").Groups[2].Value,
-                    LogList = g.Select(i => @$"{{""FieldName"": ""{i.FieldName}"", ""OldValue"": ""{i.OldValue}"", ""NewValue"": ""{i.NewValue}""}}"),
+                    LogList = g.Select(i => @$"{{""FieldName"": ""{i.FieldName}"", ""OldValue"": ""{i.OldValue}"", ""NewValue"": ""{i.NewValue}""}}"),  // TODO: .Replace("\"", "'")
                     // LogJson = "[" + string.Join(", ", g.Select(i => @$"{{""FieldName"": ""{i.FieldName}"", ""OldValue"": ""{i.OldValue}"", ""NewValue"": ""{i.NewValue}""}}")) + "]"
                 })
                 .OrderByDescending(x => x.UpdateDate);

@@ -99,7 +99,7 @@ namespace memo.Data
 
             modelBuilder.Entity<Company>(entity =>
             {
-                entity.Property(e => e.CreateDate).HasDefaultValueSql("(getdate())");
+                entity.Property(e => e.CreatedDate).HasDefaultValueSql("(getdate())");
             });
 
             modelBuilder.Entity<Offer>(entity =>

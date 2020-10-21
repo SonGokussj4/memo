@@ -22,7 +22,10 @@ CREATE TABLE [memo].[Company] (
   [InvoiceDueDays] int,
   [Notes] nvarchar(max),
   [Active] bit DEFAULT 1,
-  [CreateDate] date DEFAULT GETDATE()
+  [CreatedBy] nvarchar(50),
+  [ModifiedBy] nvarchar(50),
+  [CreatedDate] datetime,
+  [ModifiedDate] datetime
 )
 GO
 
@@ -43,7 +46,10 @@ CREATE TABLE [memo].[Contact] (
   [Email] nvarchar(255),
   [Notes] nvarchar(max),
   [Active] bit DEFAULT 1,
-  [CreateDate] date DEFAULT GETDATE()
+  [CreatedBy] nvarchar(50),
+  [ModifiedBy] nvarchar(50),
+  [CreatedDate] datetime,
+  [ModifiedDate] datetime
 )
 GO
 
@@ -98,8 +104,10 @@ CREATE TABLE [memo].[Offer] (
   [EstimatedFinishDate] date,
   [Notes] nvarchar(max),
   [Active] bit DEFAULT 1,
+  [CreatedBy] nvarchar(50),
+  [ModifiedBy] nvarchar(50),
+  [CreatedDate] datetime,
   [ModifiedDate] datetime,
-  [CreateDate] datetime DEFAULT GETDATE(),
   CONSTRAINT [FK_memo.Offer_memo_Contact_ContactId] FOREIGN KEY ([ContactId])
     REFERENCES [memo].[Contact] ([ContactId]),
   CONSTRAINT [FK_memo.Offer_memo_Company_CompanyId] FOREIGN KEY ([CompanyId])
@@ -130,11 +138,12 @@ CREATE TABLE [memo].[Order] (
   [TotalHours] int,
   [ExchangeRate] decimal(18,3),
   [PriceFinalCzk] int,
-  [Username] nvarchar(30),
   [Notes] nvarchar(max),
   [Active] bit DEFAULT 1,
-  [ModifiedDate] datetime,
-  [CreateDate] datetime
+  [CreatedBy] nvarchar(50),
+  [ModifiedBy] nvarchar(50),
+  [CreatedDate] datetime,
+  [ModifiedDate] datetime
   CONSTRAINT [FK_memo.Order_memo_Offer_OfferId] FOREIGN KEY ([OfferId])
     REFERENCES [memo].[Offer] ([OfferId])
 )
@@ -191,8 +200,10 @@ CREATE TABLE [memo].[BugReport] (
   [Priority] nvarchar(25),
   [Category] nvarchar(25),
   [Resolved] bit DEFAULT 0,
-  [User] nvarchar(50),
-  [Created] datetime
+  [CreatedBy] nvarchar(50),
+  [ModifiedBy] nvarchar(50),
+  [CreatedDate] datetime,
+  [ModifiedDate] datetime
 )
 GO
 

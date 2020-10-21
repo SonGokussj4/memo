@@ -129,10 +129,13 @@
             </div>
 
             <div class="form-group row">
-                <label asp-for="CreateDate" class="col-lg-3 col-form-label form-control-label control-label"></label>
-                <div class="col-lg-3 mycalendar">
-                    <input asp-for="CreateDate" class="form-control" type="text" readonly/>
-                    <span asp-validation-for="CreateDate" class="text-danger"></span>
+                <div class="col-lg-12">
+                    <div class="d-flex justify-content-between">
+                        <label asp-for="CreateDate" ></label>
+                        <b>@Model.CreateDate</b>
+                        <label asp-for="ModifiedDate"></label>
+                        <b>@Model.ModifiedDate</b>
+                    </div>
                 </div>
             </div>
 
@@ -147,6 +150,8 @@
                     <a href="#" class="btn btn-danger pull-right" onclick="ConfirmDelete(@Model.ContactId)">Smazat</a>
                 </div>
             </div>
+
+            <input asp-for="CreateDate" type="text" readonly hidden />
 
         </form>
     </div>

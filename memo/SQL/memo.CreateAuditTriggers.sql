@@ -20,15 +20,15 @@ DECLARE @bit            INT,
         @field          INT,
         @maxfield       INT,
         @char           INT,
-        @fieldname      VARCHAR(128),
-        @TableName      VARCHAR(128),
-        @PKCols         VARCHAR(1000),
-        @sql            VARCHAR(2000),
-        @UpdateDate     VARCHAR(21),
-        @UpdateBy       VARCHAR(128),
-        @UserName       VARCHAR(128),
+        @fieldname      NVARCHAR(128),
+        @TableName      NVARCHAR(128),
+        @PKCols         NVARCHAR(1000),
+        @sql            NVARCHAR(2000),
+        @UpdateDate     NVARCHAR(21),
+        @UpdateBy       NVARCHAR(128),
+        @UserName       NVARCHAR(128),
         @Type           CHAR(1),
-        @PKSelect       VARCHAR(1000)
+        @PKSelect       NVARCHAR(1000)
 
 -- You will need to change @TableName to match the table to be audited.
 -- Here we made GUESTS for your example.
@@ -64,7 +64,7 @@ WHERE pk.TABLE_NAME = @TableName
   AND c.CONSTRAINT_NAME = pk.CONSTRAINT_NAME
 
 -- Get primary key select for insert
-SELECT @PKSelect = COALESCE(@PKSelect + '+', '') + '''<[' + COLUMN_NAME + ']=''+convert(varchar(100), coalesce(i.[' + COLUMN_NAME + '],d.[' + COLUMN_NAME + ']))+''>'''
+SELECT @PKSelect = COALESCE(@PKSelect + '+', '') + '''<[' + COLUMN_NAME + ']=''+convert(nvarchar(100), coalesce(i.[' + COLUMN_NAME + '],d.[' + COLUMN_NAME + ']))+''>'''
 FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS pk, INFORMATION_SCHEMA.KEY_COLUMN_USAGE c
 WHERE pk.TABLE_NAME = @TableName
   AND CONSTRAINT_TYPE = 'PRIMARY KEY'
@@ -114,8 +114,8 @@ BEGIN
            select ''' + @Type + ''','''
                       + @TableName + ''',' + @PKSelect
                       + ',''' + @fieldname + ''''
-                      + ',convert(varchar(1000),d.' + @fieldname + ')'
-                      + ',convert(varchar(1000),i.' + @fieldname + ')'
+                      + ',convert(nvarchar(1000),d.' + @fieldname + ')'
+                      + ',convert(nvarchar(1000),i.' + @fieldname + ')'
                       + ',''' + @UpdateDate + ''''
                       + ',''' + @UserName + ''''
                       + ',''' + @UpdateBy + ''''
@@ -147,15 +147,15 @@ DECLARE @bit            INT,
         @field          INT,
         @maxfield       INT,
         @char           INT,
-        @fieldname      VARCHAR(128),
-        @TableName      VARCHAR(128),
-        @PKCols         VARCHAR(1000),
-        @sql            VARCHAR(2000),
-        @UpdateDate     VARCHAR(21),
-        @UpdateBy       VARCHAR(128),
-        @UserName       VARCHAR(128),
+        @fieldname      NVARCHAR(128),
+        @TableName      NVARCHAR(128),
+        @PKCols         NVARCHAR(1000),
+        @sql            NVARCHAR(2000),
+        @UpdateDate     NVARCHAR(21),
+        @UpdateBy       NVARCHAR(128),
+        @UserName       NVARCHAR(128),
         @Type           CHAR(1),
-        @PKSelect       VARCHAR(1000)
+        @PKSelect       NVARCHAR(1000)
 
 -- You will need to change @TableName to match the table to be audited.
 -- Here we made GUESTS for your example.
@@ -191,7 +191,7 @@ WHERE pk.TABLE_NAME = @TableName
   AND c.CONSTRAINT_NAME = pk.CONSTRAINT_NAME
 
 -- Get primary key select for insert
-SELECT @PKSelect = COALESCE(@PKSelect + '+', '') + '''<[' + COLUMN_NAME + ']=''+convert(varchar(100), coalesce(i.[' + COLUMN_NAME + '],d.[' + COLUMN_NAME + ']))+''>'''
+SELECT @PKSelect = COALESCE(@PKSelect + '+', '') + '''<[' + COLUMN_NAME + ']=''+convert(nvarchar(100), coalesce(i.[' + COLUMN_NAME + '],d.[' + COLUMN_NAME + ']))+''>'''
 FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS pk, INFORMATION_SCHEMA.KEY_COLUMN_USAGE c
 WHERE pk.TABLE_NAME = @TableName
   AND CONSTRAINT_TYPE = 'PRIMARY KEY'
@@ -241,8 +241,8 @@ BEGIN
            select ''' + @Type + ''','''
                       + @TableName + ''',' + @PKSelect
                       + ',''' + @fieldname + ''''
-                      + ',convert(varchar(1000),d.' + @fieldname + ')'
-                      + ',convert(varchar(1000),i.' + @fieldname + ')'
+                      + ',convert(nvarchar(1000),d.' + @fieldname + ')'
+                      + ',convert(nvarchar(1000),i.' + @fieldname + ')'
                       + ',''' + @UpdateDate + ''''
                       + ',''' + @UserName + ''''
                       + ',''' + @UpdateBy + ''''
@@ -274,15 +274,15 @@ DECLARE @bit            INT,
         @field          INT,
         @maxfield       INT,
         @char           INT,
-        @fieldname      VARCHAR(128),
-        @TableName      VARCHAR(128),
-        @PKCols         VARCHAR(1000),
-        @sql            VARCHAR(2000),
-        @UpdateDate     VARCHAR(21),
-        @UpdateBy       VARCHAR(128),
-        @UserName       VARCHAR(128),
+        @fieldname      NVARCHAR(128),
+        @TableName      NVARCHAR(128),
+        @PKCols         NVARCHAR(1000),
+        @sql            NVARCHAR(2000),
+        @UpdateDate     NVARCHAR(21),
+        @UpdateBy       NVARCHAR(128),
+        @UserName       NVARCHAR(128),
         @Type           CHAR(1),
-        @PKSelect       VARCHAR(1000)
+        @PKSelect       NVARCHAR(1000)
 
 -- You will need to change @TableName to match the table to be audited.
 -- Here we made GUESTS for your example.
@@ -318,7 +318,7 @@ WHERE pk.TABLE_NAME = @TableName
   AND c.CONSTRAINT_NAME = pk.CONSTRAINT_NAME
 
 -- Get primary key select for insert
-SELECT @PKSelect = COALESCE(@PKSelect + '+', '') + '''<[' + COLUMN_NAME + ']=''+convert(varchar(100), coalesce(i.[' + COLUMN_NAME + '],d.[' + COLUMN_NAME + ']))+''>'''
+SELECT @PKSelect = COALESCE(@PKSelect + '+', '') + '''<[' + COLUMN_NAME + ']=''+convert(nvarchar(100), coalesce(i.[' + COLUMN_NAME + '],d.[' + COLUMN_NAME + ']))+''>'''
 FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS pk, INFORMATION_SCHEMA.KEY_COLUMN_USAGE c
 WHERE pk.TABLE_NAME = @TableName
   AND CONSTRAINT_TYPE = 'PRIMARY KEY'
@@ -368,8 +368,8 @@ BEGIN
            select ''' + @Type + ''','''
                       + @TableName + ''',' + @PKSelect
                       + ',''' + @fieldname + ''''
-                      + ',convert(varchar(1000),d.' + @fieldname + ')'
-                      + ',convert(varchar(1000),i.' + @fieldname + ')'
+                      + ',convert(nvarchar(1000),d.' + @fieldname + ')'
+                      + ',convert(nvarchar(1000),i.' + @fieldname + ')'
                       + ',''' + @UpdateDate + ''''
                       + ',''' + @UserName + ''''
                       + ',''' + @UpdateBy + ''''
@@ -401,15 +401,15 @@ DECLARE @bit            INT,
         @field          INT,
         @maxfield       INT,
         @char           INT,
-        @fieldname      VARCHAR(128),
-        @TableName      VARCHAR(128),
-        @PKCols         VARCHAR(1000),
-        @sql            VARCHAR(2000),
-        @UpdateDate     VARCHAR(21),
-        @UpdateBy       VARCHAR(128),
-        @UserName       VARCHAR(128),
+        @fieldname      NVARCHAR(128),
+        @TableName      NVARCHAR(128),
+        @PKCols         NVARCHAR(1000),
+        @sql            NVARCHAR(2000),
+        @UpdateDate     NVARCHAR(21),
+        @UpdateBy       NVARCHAR(128),
+        @UserName       NVARCHAR(128),
         @Type           CHAR(1),
-        @PKSelect       VARCHAR(1000)
+        @PKSelect       NVARCHAR(1000)
 
 -- You will need to change @TableName to match the table to be audited.
 -- Here we made GUESTS for your example.
@@ -445,7 +445,7 @@ WHERE pk.TABLE_NAME = @TableName
   AND c.CONSTRAINT_NAME = pk.CONSTRAINT_NAME
 
 -- Get primary key select for insert
-SELECT @PKSelect = COALESCE(@PKSelect + '+', '') + '''<[' + COLUMN_NAME + ']=''+convert(varchar(100), coalesce(i.[' + COLUMN_NAME + '],d.[' + COLUMN_NAME + ']))+''>'''
+SELECT @PKSelect = COALESCE(@PKSelect + '+', '') + '''<[' + COLUMN_NAME + ']=''+convert(nvarchar(100), coalesce(i.[' + COLUMN_NAME + '],d.[' + COLUMN_NAME + ']))+''>'''
 FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS pk, INFORMATION_SCHEMA.KEY_COLUMN_USAGE c
 WHERE pk.TABLE_NAME = @TableName
   AND CONSTRAINT_TYPE = 'PRIMARY KEY'
@@ -495,8 +495,8 @@ BEGIN
            select ''' + @Type + ''','''
                       + @TableName + ''',' + @PKSelect
                       + ',''' + @fieldname + ''''
-                      + ',convert(varchar(1000),d.' + @fieldname + ')'
-                      + ',convert(varchar(1000),i.' + @fieldname + ')'
+                      + ',convert(nvarchar(1000),d.' + @fieldname + ')'
+                      + ',convert(nvarchar(1000),i.' + @fieldname + ')'
                       + ',''' + @UpdateDate + ''''
                       + ',''' + @UserName + ''''
                       + ',''' + @UpdateBy + ''''
@@ -528,15 +528,15 @@ DECLARE @bit            INT,
         @field          INT,
         @maxfield       INT,
         @char           INT,
-        @fieldname      VARCHAR(128),
-        @TableName      VARCHAR(128),
-        @PKCols         VARCHAR(1000),
-        @sql            VARCHAR(2000),
-        @UpdateDate     VARCHAR(21),
-        @UpdateBy       VARCHAR(128),
-        @UserName       VARCHAR(128),
+        @fieldname      NVARCHAR(128),
+        @TableName      NVARCHAR(128),
+        @PKCols         NVARCHAR(1000),
+        @sql            NVARCHAR(2000),
+        @UpdateDate     NVARCHAR(21),
+        @UpdateBy       NVARCHAR(128),
+        @UserName       NVARCHAR(128),
         @Type           CHAR(1),
-        @PKSelect       VARCHAR(1000)
+        @PKSelect       NVARCHAR(1000)
 
 -- You will need to change @TableName to match the table to be audited.
 -- Here we made GUESTS for your example.
@@ -572,7 +572,7 @@ WHERE pk.TABLE_NAME = @TableName
   AND c.CONSTRAINT_NAME = pk.CONSTRAINT_NAME
 
 -- Get primary key select for insert
-SELECT @PKSelect = COALESCE(@PKSelect + '+', '') + '''<[' + COLUMN_NAME + ']=''+convert(varchar(100), coalesce(i.[' + COLUMN_NAME + '],d.[' + COLUMN_NAME + ']))+''>'''
+SELECT @PKSelect = COALESCE(@PKSelect + '+', '') + '''<[' + COLUMN_NAME + ']=''+convert(nvarchar(100), coalesce(i.[' + COLUMN_NAME + '],d.[' + COLUMN_NAME + ']))+''>'''
 FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS pk, INFORMATION_SCHEMA.KEY_COLUMN_USAGE c
 WHERE pk.TABLE_NAME = @TableName
   AND CONSTRAINT_TYPE = 'PRIMARY KEY'
@@ -622,8 +622,8 @@ BEGIN
            select ''' + @Type + ''','''
                       + @TableName + ''',' + @PKSelect
                       + ',''' + @fieldname + ''''
-                      + ',convert(varchar(1000),d.' + @fieldname + ')'
-                      + ',convert(varchar(1000),i.' + @fieldname + ')'
+                      + ',convert(nvarchar(1000),d.' + @fieldname + ')'
+                      + ',convert(nvarchar(1000),i.' + @fieldname + ')'
                       + ',''' + @UpdateDate + ''''
                       + ',''' + @UserName + ''''
                       + ',''' + @UpdateBy + ''''
@@ -655,15 +655,15 @@ DECLARE @bit            INT,
         @field          INT,
         @maxfield       INT,
         @char           INT,
-        @fieldname      VARCHAR(128),
-        @TableName      VARCHAR(128),
-        @PKCols         VARCHAR(1000),
-        @sql            VARCHAR(2000),
-        @UpdateDate     VARCHAR(21),
-        @UpdateBy       VARCHAR(128),
-        @UserName       VARCHAR(128),
+        @fieldname      NVARCHAR(128),
+        @TableName      NVARCHAR(128),
+        @PKCols         NVARCHAR(1000),
+        @sql            NVARCHAR(2000),
+        @UpdateDate     NVARCHAR(21),
+        @UpdateBy       NVARCHAR(128),
+        @UserName       NVARCHAR(128),
         @Type           CHAR(1),
-        @PKSelect       VARCHAR(1000)
+        @PKSelect       NVARCHAR(1000)
 
 -- You will need to change @TableName to match the table to be audited.
 -- Here we made GUESTS for your example.
@@ -699,7 +699,7 @@ WHERE pk.TABLE_NAME = @TableName
   AND c.CONSTRAINT_NAME = pk.CONSTRAINT_NAME
 
 -- Get primary key select for insert
-SELECT @PKSelect = COALESCE(@PKSelect + '+', '') + '''<[' + COLUMN_NAME + ']=''+convert(varchar(100), coalesce(i.[' + COLUMN_NAME + '],d.[' + COLUMN_NAME + ']))+''>'''
+SELECT @PKSelect = COALESCE(@PKSelect + '+', '') + '''<[' + COLUMN_NAME + ']=''+convert(nvarchar(100), coalesce(i.[' + COLUMN_NAME + '],d.[' + COLUMN_NAME + ']))+''>'''
 FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS pk, INFORMATION_SCHEMA.KEY_COLUMN_USAGE c
 WHERE pk.TABLE_NAME = @TableName
   AND CONSTRAINT_TYPE = 'PRIMARY KEY'
@@ -749,8 +749,8 @@ BEGIN
            select ''' + @Type + ''','''
                       + @TableName + ''',' + @PKSelect
                       + ',''' + @fieldname + ''''
-                      + ',convert(varchar(1000),d.' + @fieldname + ')'
-                      + ',convert(varchar(1000),i.' + @fieldname + ')'
+                      + ',convert(nvarchar(1000),d.' + @fieldname + ')'
+                      + ',convert(nvarchar(1000),i.' + @fieldname + ')'
                       + ',''' + @UpdateDate + ''''
                       + ',''' + @UserName + ''''
                       + ',''' + @UpdateBy + ''''
@@ -782,15 +782,15 @@ DECLARE @bit            INT,
         @field          INT,
         @maxfield       INT,
         @char           INT,
-        @fieldname      VARCHAR(128),
-        @TableName      VARCHAR(128),
-        @PKCols         VARCHAR(1000),
-        @sql            VARCHAR(2000),
-        @UpdateDate     VARCHAR(21),
-        @UpdateBy       VARCHAR(128),
-        @UserName       VARCHAR(128),
+        @fieldname      NVARCHAR(128),
+        @TableName      NVARCHAR(128),
+        @PKCols         NVARCHAR(1000),
+        @sql            NVARCHAR(2000),
+        @UpdateDate     NVARCHAR(21),
+        @UpdateBy       NVARCHAR(128),
+        @UserName       NVARCHAR(128),
         @Type           CHAR(1),
-        @PKSelect       VARCHAR(1000)
+        @PKSelect       NVARCHAR(1000)
 
 -- You will need to change @TableName to match the table to be audited.
 -- Here we made GUESTS for your example.
@@ -826,7 +826,7 @@ WHERE pk.TABLE_NAME = @TableName
   AND c.CONSTRAINT_NAME = pk.CONSTRAINT_NAME
 
 -- Get primary key select for insert
-SELECT @PKSelect = COALESCE(@PKSelect + '+', '') + '''<[' + COLUMN_NAME + ']=''+convert(varchar(100), coalesce(i.[' + COLUMN_NAME + '],d.[' + COLUMN_NAME + ']))+''>'''
+SELECT @PKSelect = COALESCE(@PKSelect + '+', '') + '''<[' + COLUMN_NAME + ']=''+convert(nvarchar(100), coalesce(i.[' + COLUMN_NAME + '],d.[' + COLUMN_NAME + ']))+''>'''
 FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS pk, INFORMATION_SCHEMA.KEY_COLUMN_USAGE c
 WHERE pk.TABLE_NAME = @TableName
   AND CONSTRAINT_TYPE = 'PRIMARY KEY'
@@ -876,8 +876,8 @@ BEGIN
            select ''' + @Type + ''','''
                       + @TableName + ''',' + @PKSelect
                       + ',''' + @fieldname + ''''
-                      + ',convert(varchar(1000),d.' + @fieldname + ')'
-                      + ',convert(varchar(1000),i.' + @fieldname + ')'
+                      + ',convert(nvarchar(1000),d.' + @fieldname + ')'
+                      + ',convert(nvarchar(1000),i.' + @fieldname + ')'
                       + ',''' + @UpdateDate + ''''
                       + ',''' + @UserName + ''''
                       + ',''' + @UpdateBy + ''''

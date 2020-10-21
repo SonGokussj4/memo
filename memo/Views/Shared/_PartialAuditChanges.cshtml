@@ -1,22 +1,33 @@
-@model memo.ViewModels.AuditsViewModel
-
 @using memo.ViewModels
 @using Newtonsoft.Json
-@using System.Globalization
 @using memo.Helpers
-@using System.ComponentModel.DataAnnotations
 @using System.Reflection
+@using System.ComponentModel.DataAnnotations
 
-@await Html.PartialAsync("_PartialToastNotification")
+<style>
+    .audit-log {
+        padding: 8rem;
+    }
+</style>
 
-
-@await Html.PartialAsync("_PartialAuditChanges")
-
-<!--
-<div class="audit-log">
+<div class="audit-log pt-5">
     @* @foreach (AuditViewModel item in Model.Audits.OrderByDescending(x => x.UpdateDate)) *@
+    @{
+        int i = -1;
+        string showStatus = "";
+    }
     @foreach (AuditViewModel item in Model.Audits)
     {
+        i++;
+        if (i < 3)
+        {
+            showStatus = "show";
+        }
+        else
+        {
+            showStatus = "";
+        }
+
         <div class="card py-0 p-0 mb-3">
             @{string bgColor = item.Type == "I" ? "#b1fbb8b0" : (item.Type == "U" ? "#fbe6b1b0" : "#fbb1b1b0");}
             <div class="card-header px-3 mx-0 py-1 clickable" style="background-color: @bgColor;">
@@ -30,27 +41,34 @@
                         @{string targetId = StaticUtils.getOrderIdFromInvoice(item.TableName, item.KeyValue);}
 
                         <span class="badge badge-@pillText py-1" style="font-size: 0.8rem; width: 70px;"
-                              data-toggle="tooltip" title="Aktivita">
+                            data-toggle="tooltip" title="Aktivita">
                             @typeText
                         </span>
                         <span class="badge badge-info ml-3 py-1" style="font-size: 0.8rem; width: 105px;"
-                              data-toggle="tooltip" title="Tabulka">
+                            data-toggle="tooltip" title="Tabulka">
                             @tableNameCz
                         </span>
                         <span class="badge badge-primary ml-3 py-1">
                             <a target="_blank" asp-action="Edit" asp-controller="@{@targetTable}" asp-route-id="@targetId"
-                               data-toggle="tooltip" title="Otevřít položku">
+                            data-toggle="tooltip" title="Otevřít položku">
                                 <i class="fa fa-fw fa-external-link text-light"></i> <span class="text-light pr-2">Přejít</span>
                             </a>
                         </span>
-                        <span class="badge badge-secondary ml-3" style="font-size: 0.8rem; width: 25px;"
-                              data-toggle="tooltip" title="Počet změn">
-                            @item.LogList.Count()
-                        </span>
-                        <a class="btn btn-sm collapsed ml-3" style="font-size: 0.8rem;" href="#collapsible-@item.AuditId" data-toggle="collapse" role="button" >
+                        @{
+                            int numberOfChanges = item.LogList.Count() - 1;  // Because there is "ModifiedTime" change every time
+                            if (item.TableName ==  "OtherCost" || item.TableName == "Invoice")
+                            {
+                                numberOfChanges += 1;  // No "ModifiedTime" field in these tables
+                            }
+                        }
+                        @* <span class="badge badge-secondary ml-3" style="font-size: 0.8rem; width: 25px;"
+                            data-toggle="tooltip" title="Počet změn">
+                            @numberOfChanges
+                        </span> *@
+                        <a class="btn btn-sm collapsed ml-3 btn-light py-0 border" style="font-size: 0.8rem;" href="#collapsible-@item.AuditId" data-toggle="collapse" role="button" >
                             <i class="if-collapsed fa fa-fw fa-chevron-down"></i>
                             <i class="if-not-collapsed fa fa-fw fa-chevron-up"></i>
-                            detaily
+                            detaily <span class="badge badge-pill badge-secondary">@numberOfChanges</span>
                         </a>
                     </div>
                     <div class="flex-row">
@@ -60,7 +78,7 @@
             </div>
 
             <div class="card-body" style="padding: 0.3rem 1.25rem;">
-                <div class="collapse show" id="collapsible-@item.AuditId">
+                <div class="collapse @showStatus" id="collapsible-@item.AuditId">
                     <table class="table table-sm" style="border-bottom: 0px; font-size: 0.9rem;">
                         <thead>
                             <tr>
@@ -74,6 +92,12 @@
                             @foreach (string listItem in @item.LogList)
                             {
                                 dynamic items = JsonConvert.DeserializeObject(listItem);
+
+                                @if (items.FieldName == "ModifiedDate")
+                                {
+                                    continue;
+                                }
+
                                 <tr>
                                     @* FIELD NAME *@
                                     <td scope="row">
@@ -121,22 +145,3 @@
         </div>
     }
 </div>
--->
-
-@section scripts{
-<script>
-
-//    $(document).ready(function() {
-//            $('.card-header.clickable').click(function() {
-//                //console.log($(this).find('a').attr('href'));
-//                let allLinks = $(this).find("a.collapsed");
-//                allLinks.each(function() {
-//                    let linkHref = $(this).attr('href');
-//                    window.location.href = linkHref;
-//                    return false;
-//                });
-//            });
-//        } );
-
-</script>
-}
