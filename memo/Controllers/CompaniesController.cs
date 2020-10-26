@@ -76,10 +76,7 @@ namespace memo.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(int? id)
         {
-            // Company model = _db.Company.Find(id);
-            Company company = await _db.Company
-                // .Include(x => x.Offers)
-                .FirstOrDefaultAsync(x => x.CompanyId == id);
+            Company company = await _db.Company.FirstOrDefaultAsync(x => x.CompanyId == id);
 
             if (company == null)
             {

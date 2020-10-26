@@ -93,17 +93,16 @@ namespace memo.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(Offer offer)
+        public async Task<IActionResult> Create(Offer offer)
         {
             // offer.OfferName = getNewOfferNum();  // TODO Tohle vratit zpet, az tam budou vsechny aktualni
             offer.PriceCzk = Convert.ToInt32(offer.Price * offer.ExchangeRate);  // 1000 * 26,243
-            // offer.Notes = String.IsNullOrEmpty(offer.Notes) ? "" : offer.Notes;
             offer.CreatedDate = DateTime.Now;
 
             // Check if OfferName exists, if yes, add model error...
-            Offer existingOffer = _db.Offer
+            Offer existingOffer = await _db.Offer
                 .Where(x => x.OfferName == offer.OfferName)
-                .FirstOrDefault();
+                .FirstOrDefaultAsync();
 
             if (existingOffer != null)
             {
@@ -113,9 +112,11 @@ namespace memo.Controllers
             // Save new offer to the DB
             if (ModelState.IsValid)
             {
-                _db.Add(offer);
-                _db.SaveChanges(User.GetLoggedInUserName());
+                await _db.AddAsync(offer);
+                await _db.SaveChangesAsync(User.GetLoggedInUserName());
+
                 TempData["Success"] = "Nová nabídka vytvořena.";
+
                 return RedirectToAction("Index");
             }
 

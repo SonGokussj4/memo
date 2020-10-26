@@ -10,9 +10,9 @@ namespace memo.Models
     {
         public Contact()
         {
-            Active = true;
             Offers = new HashSet<Offer>();
-            ModifiedDate = DateTime.Now;
+            Active = true;
+            // ModifiedDate = DateTime.Now;
         }
 
         [Key]
@@ -46,10 +46,10 @@ namespace memo.Models
         [Display(Name = "Poznámky"), Column(TypeName = "nvarchar(max)")]
         public string Notes { get; set; }
 
-        [Display(Name = "Vytvořeno"), StringLength(50)]
+        [Display(Name = "Vytvořil"), StringLength(50)]
         public string CreatedBy { get; set; }
 
-        [Display(Name = "Upraveno"), StringLength(50)]
+        [Display(Name = "Upravil"), StringLength(50)]
         public string ModifiedBy { get; set; }
 
         [Display(Name = "Datum vytvoření"), Column(TypeName = "datetime")]

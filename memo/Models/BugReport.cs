@@ -29,10 +29,10 @@ namespace memo.Models
 
         public bool Resolved { get; set; } = false;
 
-        [Display(Name = "Vytvořeno"), StringLength(50)]
+        [Display(Name = "Vytvořil"), StringLength(50)]
         public string CreatedBy { get; set; }
 
-        [Display(Name = "Upraveno"), StringLength(50)]
+        [Display(Name = "Upravil"), StringLength(50)]
         public string ModifiedBy { get; set; }
 
         [Display(Name = "Datum vytvoření"), Column(TypeName = "datetime")]

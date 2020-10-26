@@ -7,18 +7,17 @@
     ViewData["Title"] = "Úprava firmy";
 }
 
-
-<div class="text-center">
-    <h1 class="display-6">@ViewData["Title"]</h1>
-    <hr />
-</div>
-
 <style>
     .cardTitleMerged {
         display: flex;
         justify-content: space-between;
     }
 </style>
+
+<div class="text-center">
+    <h1 class="display-6">@ViewData["Title"]</h1>
+    <hr />
+</div>
 
 @await Html.PartialAsync("_PartialToastNotification")
 
@@ -136,7 +135,6 @@
                     <a asp-action="Index" class="btn btn-light border"><i class="fa fa-arrow-left"></i> Zpět</a>
                 </div>
                 <div class="col-lg-9">
-                    @* <input type="reset" class="btn btn-secondary" value="Resetovat pole" data-toggle="tooltip" title="Vrátí neuložené úpravy"/> *@
                     <input type="submit" class="btn btn-primary" name="actionType" value="Uložit" />
                     <input type="submit" class="btn btn-primary" name="actionType" value="Uložit a zavřít" />
                     <a href="#" class="btn btn-danger pull-right" onclick="ConfirmDelete(@Model.Company.CompanyId)">Smazat</a>

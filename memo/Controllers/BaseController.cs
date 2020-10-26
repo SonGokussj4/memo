@@ -15,6 +15,8 @@ using System.Net;
 using System.Globalization;
 using System.Data;
 using System.Security.Claims;
+using memo.ViewModels;
+using System.Text.RegularExpressions;
 
 namespace memo.Controllers
 {
@@ -126,45 +128,75 @@ namespace memo.Controllers
             }
         }
 
+        public AuditsViewModel getAuditViewModel(ApplicationDbContext db)
+        {
+            IEnumerable<AuditViewModel> audits = db.Audit
+                .AsEnumerable()
+                .GroupBy(x => new
+                {
+                    x.PK,
+                    x.UpdateDate
+                })
+                .Select(g => new AuditViewModel
+                {
+                    AuditId = g.First().AuditId,
+                    Type = g.First().Type,
+                    TableName = g.First().TableName,
+                    UpdateBy = g.First().UpdateBy,
+                    UpdateDate = g.First().UpdateDate,
+                    KeyName = Regex.Match(g.First().PK, @"<\[(.+?)\]=(.+?)>").Groups[1].Value,
+                    KeyValue = Regex.Match(g.First().PK, @"<\[(.+?)\]=(.+?)>").Groups[2].Value,
+                    LogList = g.Select(i => @$"{{""FieldName"": ""{i.FieldName}"", ""OldValue"": ""{i.OldValue}"", ""NewValue"": ""{i.NewValue}""}}"),
+                    // LogJson = "[" + string.Join(", ", g.Select(i => @$"{{""FieldName"": ""{i.FieldName}"", ""OldValue"": ""{i.OldValue}"", ""NewValue"": ""{i.NewValue}""}}")) + "]"
+                })
+                .OrderByDescending(x => x.UpdateDate);
+
+            AuditsViewModel vm = new AuditsViewModel
+            {
+                Audits = audits,
+            };
+
+            return vm;
+        }
     }
 
     public static class ClaimsPrincipalExtensions
+    {
+        public static T GetLoggedInUserId<T>(this ClaimsPrincipal principal)
         {
-            public static T GetLoggedInUserId<T>(this ClaimsPrincipal principal)
+            if (principal == null)
+                throw new ArgumentNullException(nameof(principal));
+
+            var loggedInUserId = principal.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (typeof(T) == typeof(string))
             {
-                if (principal == null)
-                    throw new ArgumentNullException(nameof(principal));
-
-                var loggedInUserId = principal.FindFirstValue(ClaimTypes.NameIdentifier);
-
-                if (typeof(T) == typeof(string))
-                {
-                    return (T)Convert.ChangeType(loggedInUserId, typeof(T));
-                }
-                else if (typeof(T) == typeof(int) || typeof(T) == typeof(long))
-                {
-                    return loggedInUserId != null ? (T)Convert.ChangeType(loggedInUserId, typeof(T)) : (T)Convert.ChangeType(0, typeof(T));
-                }
-                else
-                {
-                    throw new Exception("Invalid type provided");
-                }
+                return (T)Convert.ChangeType(loggedInUserId, typeof(T));
             }
-
-            public static string GetLoggedInUserName(this ClaimsPrincipal principal)
+            else if (typeof(T) == typeof(int) || typeof(T) == typeof(long))
             {
-                if (principal == null)
-                    throw new ArgumentNullException(nameof(principal));
-
-                return principal.FindFirstValue(ClaimTypes.Name);
+                return loggedInUserId != null ? (T)Convert.ChangeType(loggedInUserId, typeof(T)) : (T)Convert.ChangeType(0, typeof(T));
             }
-
-            public static string GetLoggedInUserEmail(this ClaimsPrincipal principal)
+            else
             {
-                if (principal == null)
-                    throw new ArgumentNullException(nameof(principal));
-
-                return principal.FindFirstValue(ClaimTypes.Email);
+                throw new Exception("Invalid type provided");
             }
         }
+
+        public static string GetLoggedInUserName(this ClaimsPrincipal principal)
+        {
+            if (principal == null)
+                throw new ArgumentNullException(nameof(principal));
+
+            return principal.FindFirstValue(ClaimTypes.Name);
+        }
+
+        public static string GetLoggedInUserEmail(this ClaimsPrincipal principal)
+        {
+            if (principal == null)
+                throw new ArgumentNullException(nameof(principal));
+
+            return principal.FindFirstValue(ClaimTypes.Email);
+        }
+    }
 }
