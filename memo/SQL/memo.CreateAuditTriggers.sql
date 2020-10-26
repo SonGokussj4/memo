@@ -100,16 +100,16 @@ BEGIN
     WHERE TABLE_NAME = @TableName
       AND COLUMNPROPERTY(OBJECT_ID(TABLE_SCHEMA + '.' + @TableName), COLUMN_NAME, 'ColumnID') = @field
     SELECT @sql ='
-           insert into memo.Audit (
-           Type,
-           TableName,
-           PK,
-           FieldName,
-           OldValue,
-           NewValue,
-           UpdateDate,
-           UserName,
-           UpdateBy
+            insert into memo.Audit (
+              Type,
+              TableName,
+              PK,
+              FieldName,
+              OldValue,
+              NewValue,
+              UpdateDate,
+              UserName,
+              UpdateBy
            )
            select ''' + @Type + ''','''
                       + @TableName + ''',' + @PKSelect
@@ -227,16 +227,16 @@ BEGIN
     WHERE TABLE_NAME = @TableName
       AND COLUMNPROPERTY(OBJECT_ID(TABLE_SCHEMA + '.' + @TableName), COLUMN_NAME, 'ColumnID') = @field
     SELECT @sql ='
-           insert into memo.Audit (
-           Type,
-           TableName,
-           PK,
-           FieldName,
-           OldValue,
-           NewValue,
-           UpdateDate,
-           UserName,
-           UpdateBy
+            insert into memo.Audit (
+              Type,
+              TableName,
+              PK,
+              FieldName,
+              OldValue,
+              NewValue,
+              UpdateDate,
+              UserName,
+              UpdateBy
            )
            select ''' + @Type + ''','''
                       + @TableName + ''',' + @PKSelect
@@ -354,16 +354,16 @@ BEGIN
     WHERE TABLE_NAME = @TableName
       AND COLUMNPROPERTY(OBJECT_ID(TABLE_SCHEMA + '.' + @TableName), COLUMN_NAME, 'ColumnID') = @field
     SELECT @sql ='
-           insert into memo.Audit (
-           Type,
-           TableName,
-           PK,
-           FieldName,
-           OldValue,
-           NewValue,
-           UpdateDate,
-           UserName,
-           UpdateBy
+            insert into memo.Audit (
+              Type,
+              TableName,
+              PK,
+              FieldName,
+              OldValue,
+              NewValue,
+              UpdateDate,
+              UserName,
+              UpdateBy
            )
            select ''' + @Type + ''','''
                       + @TableName + ''',' + @PKSelect
@@ -481,16 +481,16 @@ BEGIN
     WHERE TABLE_NAME = @TableName
       AND COLUMNPROPERTY(OBJECT_ID(TABLE_SCHEMA + '.' + @TableName), COLUMN_NAME, 'ColumnID') = @field
     SELECT @sql ='
-           insert into memo.Audit (
-           Type,
-           TableName,
-           PK,
-           FieldName,
-           OldValue,
-           NewValue,
-           UpdateDate,
-           UserName,
-           UpdateBy
+            insert into memo.Audit (
+              Type,
+              TableName,
+              PK,
+              FieldName,
+              OldValue,
+              NewValue,
+              UpdateDate,
+              UserName,
+              UpdateBy
            )
            select ''' + @Type + ''','''
                       + @TableName + ''',' + @PKSelect
@@ -608,16 +608,16 @@ BEGIN
     WHERE TABLE_NAME = @TableName
       AND COLUMNPROPERTY(OBJECT_ID(TABLE_SCHEMA + '.' + @TableName), COLUMN_NAME, 'ColumnID') = @field
     SELECT @sql ='
-           insert into memo.Audit (
-           Type,
-           TableName,
-           PK,
-           FieldName,
-           OldValue,
-           NewValue,
-           UpdateDate,
-           UserName,
-           UpdateBy
+            insert into memo.Audit (
+              Type,
+              TableName,
+              PK,
+              FieldName,
+              OldValue,
+              NewValue,
+              UpdateDate,
+              UserName,
+              UpdateBy
            )
            select ''' + @Type + ''','''
                       + @TableName + ''',' + @PKSelect
@@ -735,16 +735,16 @@ BEGIN
     WHERE TABLE_NAME = @TableName
       AND COLUMNPROPERTY(OBJECT_ID(TABLE_SCHEMA + '.' + @TableName), COLUMN_NAME, 'ColumnID') = @field
     SELECT @sql ='
-           insert into memo.Audit (
-           Type,
-           TableName,
-           PK,
-           FieldName,
-           OldValue,
-           NewValue,
-           UpdateDate,
-           UserName,
-           UpdateBy
+            insert into memo.Audit (
+              Type,
+              TableName,
+              PK,
+              FieldName,
+              OldValue,
+              NewValue,
+              UpdateDate,
+              UserName,
+              UpdateBy
            )
            select ''' + @Type + ''','''
                       + @TableName + ''',' + @PKSelect
@@ -862,16 +862,16 @@ BEGIN
     WHERE TABLE_NAME = @TableName
       AND COLUMNPROPERTY(OBJECT_ID(TABLE_SCHEMA + '.' + @TableName), COLUMN_NAME, 'ColumnID') = @field
     SELECT @sql ='
-           insert into memo.Audit (
-           Type,
-           TableName,
-           PK,
-           FieldName,
-           OldValue,
-           NewValue,
-           UpdateDate,
-           UserName,
-           UpdateBy
+            insert into memo.Audit (
+              Type,
+              TableName,
+              PK,
+              FieldName,
+              OldValue,
+              NewValue,
+              UpdateDate,
+              UserName,
+              UpdateBy
            )
            select ''' + @Type + ''','''
                       + @TableName + ''',' + @PKSelect

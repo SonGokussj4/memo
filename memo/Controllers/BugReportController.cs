@@ -27,6 +27,7 @@ namespace memo.Controllers
             BugReportVM vm = await initViewModelAsync();
             ViewBag.User = User.GetLoggedInUserName();
             ViewBag.Role = User.FindFirstValue(ClaimTypes.Role);
+
             return View(vm);
         }
 
@@ -34,13 +35,17 @@ namespace memo.Controllers
         public async Task<ActionResult> Index(BugReportVM vm)
         {
             BugReport bugReport = vm.BugReport;
-            bugReport.Username = User.GetLoggedInUserName();
+            bugReport.CreatedBy = User.GetLoggedInUserName();
+            bugReport.CreatedDate = DateTime.Now;
+            bugReport.ModifiedBy = bugReport.CreatedBy;
+            bugReport.ModifiedDate = bugReport.CreatedDate;
 
             if (ModelState.IsValid)
             {
-                _db.Add(bugReport);
+                await _db.AddAsync(bugReport);
                 await _db.SaveChangesAsync(User.GetLoggedInUserName());
-                TempData["Success"] = "Hlášení úspěšně přidáno";
+                TempData["Success"] = "Úspěšně přidáno";
+
                 return RedirectToAction("Index");
             }
 
@@ -75,7 +80,7 @@ namespace memo.Controllers
             if (bugReport != null)
             {
                 _db.Remove(bugReport);
-                _db.SaveChanges(User.GetLoggedInUserName());
+                await _db.SaveChangesAsync(User.GetLoggedInUserName());
                 TempData["Success"] = "Úspěšně smazáno";
                 return RedirectToAction("Index");
             }

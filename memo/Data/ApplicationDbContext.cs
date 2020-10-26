@@ -92,50 +92,50 @@ namespace memo.Data
                 entity.HasNoKey();
             });
 
-            modelBuilder.Entity<Contact>(entity =>
-            {
-                entity.Property(e => e.CreateDate).HasDefaultValueSql("(getdate())");
-            });
+            // modelBuilder.Entity<Contact>(entity =>
+            // {
+            //     entity.Property(e => e.CreatedDate).HasDefaultValueSql("(getdate())");
+            // });
 
-            modelBuilder.Entity<Company>(entity =>
-            {
-                entity.Property(e => e.CreatedDate).HasDefaultValueSql("(getdate())");
-            });
+            // modelBuilder.Entity<Company>(entity =>
+            // {
+            //     entity.Property(e => e.CreatedDate).HasDefaultValueSql("(getdate())");
+            // });
 
-            modelBuilder.Entity<Offer>(entity =>
-            {
-                entity.Property(e => e.CreateDate).HasDefaultValueSql("(getdate())");
+            // modelBuilder.Entity<Offer>(entity =>
+            // {
+            //     entity.Property(e => e.CreatedDate).HasDefaultValueSql("(getdate())");
 
-                entity.HasOne(d => d.Company)
-                    .WithMany(p => p.Offers)
-                    .HasForeignKey(d => d.CompanyId)
-                    .HasConstraintName("FK__Offer__CompanyId__30C33EC3");
+            //     entity.HasOne(d => d.Company)
+            //         .WithMany(p => p.Offers)
+            //         .HasForeignKey(d => d.CompanyId)
+            //         .HasConstraintName("FK__Offer__CompanyId__30C33EC3");
 
-                entity.HasOne(d => d.Contact)
-                    .WithMany(p => p.Offers)
-                    .HasForeignKey(d => d.ContactId)
-                    .HasConstraintName("FK__Offer__ContactId__2FCF1A8A");
+            //     entity.HasOne(d => d.Contact)
+            //         .WithMany(p => p.Offers)
+            //         .HasForeignKey(d => d.ContactId)
+            //         .HasConstraintName("FK__Offer__ContactId__2FCF1A8A");
 
-                entity.HasOne(d => d.Currency)
-                    .WithMany(p => p.Offer)
-                    .HasForeignKey(d => d.CurrencyId)
-                    .HasConstraintName("FK__Offer__CurrencyI__3493CFA7");
+            //     entity.HasOne(d => d.Currency)
+            //         .WithMany(p => p.Offer)
+            //         .HasForeignKey(d => d.CurrencyId)
+            //         .HasConstraintName("FK__Offer__CurrencyI__3493CFA7");
 
-                entity.HasOne(d => d.OfferStatus)
-                    .WithMany(p => p.Offer)
-                    .HasForeignKey(d => d.OfferStatusId)
-                    .HasConstraintName("FK__Offer__OfferStatusId__31B762FC");
-            });
+            //     entity.HasOne(d => d.OfferStatus)
+            //         .WithMany(p => p.Offer)
+            //         .HasForeignKey(d => d.OfferStatusId)
+            //         .HasConstraintName("FK__Offer__OfferStatusId__31B762FC");
+            // });
 
-            modelBuilder.Entity<Order>(entity =>
-            {
-                entity.HasIndex(e => e.OrderName)
-                    .HasName("UQ_OrderName")
-                    .IsUnique();
+            // modelBuilder.Entity<Order>(entity =>
+            // {
+            //     entity.HasIndex(e => e.OrderName)
+            //         .HasName("UQ_OrderName")
+            //         .IsUnique();
 
-                entity.Property(e => e.CreateDate)
-                    .HasDefaultValueSql("(getdate())");
-            });
+            //     entity.Property(e => e.CreatedDate)
+            //         .HasDefaultValueSql("(getdate())");
+            // });
 
             // If this is missing, it gives exception:
             // The entity type 'IdentityUserLogin<string>' requires a primary key to be defined. If you intended to use a keyless entity type call 'HasNoKey()'

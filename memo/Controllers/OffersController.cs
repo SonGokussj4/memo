@@ -98,7 +98,7 @@ namespace memo.Controllers
             // offer.OfferName = getNewOfferNum();  // TODO Tohle vratit zpet, az tam budou vsechny aktualni
             offer.PriceCzk = Convert.ToInt32(offer.Price * offer.ExchangeRate);  // 1000 * 26,243
             // offer.Notes = String.IsNullOrEmpty(offer.Notes) ? "" : offer.Notes;
-            offer.CreateDate = DateTime.Now;
+            offer.CreatedDate = DateTime.Now;
 
             // Check if OfferName exists, if yes, add model error...
             Offer existingOffer = _db.Offer

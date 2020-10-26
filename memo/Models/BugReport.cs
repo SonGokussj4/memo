@@ -29,10 +29,19 @@ namespace memo.Models
 
         public bool Resolved { get; set; } = false;
 
-        [StringLength(50)]
-        public string Username { get; set; }
+        [Display(Name = "Vytvořeno"), StringLength(50)]
+        public string CreatedBy { get; set; }
 
-        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd HH:mm}", ApplyFormatInEditMode = true)]
-        public DateTime Created { get; set; } = DateTime.Now;
+        [Display(Name = "Upraveno"), StringLength(50)]
+        public string ModifiedBy { get; set; }
+
+        [Display(Name = "Datum vytvoření"), Column(TypeName = "datetime")]
+        public DateTime CreatedDate { get; set; }
+
+        [Display(Name = "Poslední úprava"), Column(TypeName = "datetime")]
+        public DateTime ModifiedDate { get; set; }
+
+        // [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd HH:mm}", ApplyFormatInEditMode = true)]
+        // public DateTime CreatedDate { get; set; } = DateTime.Now;
     }
 }

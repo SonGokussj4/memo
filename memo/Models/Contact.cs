@@ -46,11 +46,17 @@ namespace memo.Models
         [Display(Name = "Poznámky"), Column(TypeName = "nvarchar(max)")]
         public string Notes { get; set; }
 
-        [Display(Name = "Poslední úprava"), Column(TypeName = "datetime")]
-        public DateTime ModifiedDate { get; set; }
+        [Display(Name = "Vytvořeno"), StringLength(50)]
+        public string CreatedBy { get; set; }
+
+        [Display(Name = "Upraveno"), StringLength(50)]
+        public string ModifiedBy { get; set; }
 
         [Display(Name = "Datum vytvoření"), Column(TypeName = "datetime")]
-        public DateTime CreateDate { get; set; }
+        public DateTime CreatedDate { get; set; }
+
+        [Display(Name = "Poslední úprava"), Column(TypeName = "datetime")]
+        public DateTime ModifiedDate { get; set; }
 
         [Display(Name = "Aktivní")]
         public bool Active { get; set; }

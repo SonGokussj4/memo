@@ -241,7 +241,7 @@ namespace memo.Controllers
                     vm.Order.TotalHours = totalMinutes / 60;
                 }
 
-                vm.Order.Username = User.GetLoggedInUserName();
+                vm.Order.CreatedBy = User.GetLoggedInUserName();
 
                 try
                 {
