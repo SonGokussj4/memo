@@ -50,6 +50,7 @@ namespace memo.Controllers
         {
             Contact model = new Contact();
             ViewBag.CompanyList = new SelectList(_db.Company.ToList(), "CompanyId", "Name");
+
             return View(model);
         }
 
@@ -94,6 +95,11 @@ namespace memo.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(int? id)
         {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
             Contact contact = await _db.Contact.FirstOrDefaultAsync(x => x.ContactId == id);
 
             if (contact == null)
@@ -109,7 +115,12 @@ namespace memo.Controllers
             {
                 Contact = contact,
                 Audits = audits,
-                CompanyList = _db.Company.Select(x => new SelectListItem { Value = x.CompanyId.ToString(), Text = x.Name }).ToList(),
+                CompanyList = _db.Company.Select(x => new SelectListItem()
+                {
+                    Value = x.CompanyId.ToString(),
+                    Text = x.Name
+                // }).ToList(),
+                }),
             };
 
             // ViewBag.CompanyList =
@@ -120,6 +131,22 @@ namespace memo.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(string actionType, ContactViewModel vm)
         {
+            // TODO: Zakomponovat takto
+            // if (!ModelState.IsValid)
+            // {
+            //     ConfigureViewModel(vm);
+            //     return View(vm);
+            // }
+            // // Get your data model and update its properties based on the view model
+            // Booking booking = db.Bookings.Find(id);
+            // booking.PracticeId = bookingViewModel.PracticeId;
+            // booking.OpticianId = bookingViewModel.OpticianId;
+            // .... // etc
+
+            // db.Entry(booking).State = EntityState.Modified;
+            // db.SaveChanges();
+
+
             AuditsViewModel auditsViewModel = new AuditsViewModel();
             List<AuditViewModel> audits = new List<AuditViewModel>();
             // ContactViewModel vm = new ContactViewModel();
@@ -278,5 +305,38 @@ namespace memo.Controllers
 
             return RedirectToAction("Index", new { showInactive });
         }
+
+        // // Initilises Select List
+        // public void ConfigureViewModel(BookingViewModel bookingViewModel)
+        // {
+        //     // Displays Opticians Name - Needs changed to full name
+        //     bookingViewModel.OpticiansList = db.Opticians.Select(o => new SelectListItem()
+        //     {
+        //         Value = o.OpticianId.ToString(),
+        //         Text = o.User.FirstName
+        //     });
+
+        //     // Displays Patients name - needs changed to full name DOB
+        //     bookingViewModel.PatientList = db.Patients.Select(p => new SelectListItem()
+        //     {
+        //         Value = p.PatientId.ToString(),
+        //         Text = p.User.FirstName
+        //     });
+
+        //     // Displays Practice Name
+        //     bookingViewModel.PracticeList = db.Practices.Select(p => new SelectListItem()
+        //     {
+        //         Value = p.PracticeId.ToString(),
+        //         Text = p.PracticeName
+        //     });
+
+        //     // Displays Appointment Times
+        //     bookingViewModel.TimeList = db.Times.Select(t => new SelectListItem()
+        //     {
+        //         Value = t.TimeId.ToString(),
+        //         Text = t.AppointmentTime
+        //     });
+        // }
+
     }
 }

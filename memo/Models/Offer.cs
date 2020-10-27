@@ -11,7 +11,6 @@ namespace memo.Models
     {
         public Offer()
         {
-            ModifiedDate = DateTime.Now;
         }
 
         [Key]
@@ -55,9 +54,11 @@ namespace memo.Models
         };
 
         [Display(Name = "EVE oddělení"), StringLength(50)]
+        [Required]
         public string EveDepartment { get; set; }
 
         [Display(Name = "EVE zadal"), StringLength(50)]
+        [Required]
         public string EveCreatedUser { get; set; }
 
         [Required]
