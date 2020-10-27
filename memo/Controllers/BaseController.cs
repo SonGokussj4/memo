@@ -7,16 +7,18 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.AspNetCore.Mvc;
-using memo.Data;
-using memo.Models;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Net;
 using System.Globalization;
 using System.Data;
 using System.Security.Claims;
-using memo.ViewModels;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using memo.Data;
+using memo.Models;
+using memo.ViewModels;
 
 namespace memo.Controllers
 {
@@ -83,6 +85,21 @@ namespace memo.Controllers
             return new SelectList(eveContactsList, "Value", "Text");
         }
 
+        public async Task<List<SelectListItem>> getEveContactsAsync(EvektorDochnaDbContext _eveDbDochna)
+        {
+            // EVE - Del = 1 and nemáš TxAccount a nejsi IntAccType == 1 -> nepracuješ
+	        // EVAT - Del = 0 and máš BranchID 1 a zároveň WorkMask non NULL -> pracuješ v EVATu
+            IOrderedQueryable<SelectListItem> eveContactsList = _eveDbDochna.vEmployees
+                .Where(x => x.EVE == 1)
+                .Select(x => new SelectListItem {
+                    Value = x.FormatedName,
+                    Text = x.FormatedName,
+                })
+                .OrderBy(x => x.Text);
+
+            return await eveContactsList.ToListAsync();
+        }
+
         public SelectList getDepartmentList(EvektorDochnaDbContext _eveDbDochna)
         {
             IEnumerable<SelectListItem> eveDepartmentList = _eveDbDochna.vEmployees
@@ -112,7 +129,23 @@ namespace memo.Controllers
             return new SelectList(eveOrderCodes, "Value", "Text");
         }
 
-        // Used by 'getDepartmentList()' when getting 'Distinct(new SelectListItemComparer())' values
+        public async Task<List<SelectListItem>> getOrderCodesAsync(EvektorDbContext _eveDb)
+        {
+            IOrderedQueryable<SelectListItem> eveOrderCodes = _eveDb.cOrders
+                .Select(m => new SelectListItem {
+                    // Text = string.Format($"{m.OrderCode} - {m.OrderName}"),
+                    // Text = m.OrderCode,
+                    Text = m.OrderCode + " - " + m.OrderName,
+                    Value = m.OrderCode
+                })
+                .OrderBy(x => x.Value);
+
+            return await eveOrderCodes.ToListAsync();
+        }
+
+        /// <summary>
+        /// Used by 'getDepartmentList()' when getting 'Distinct(new SelectListItemComparer())' values
+        /// </summary>
         public class SelectListItemComparer : IEqualityComparer<SelectListItem>
         {
             public bool Equals(SelectListItem x, SelectListItem y)

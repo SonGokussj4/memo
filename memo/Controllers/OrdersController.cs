@@ -101,8 +101,8 @@ namespace memo.Controllers
                 .ToList();
             ViewBag.WonOffersList = new SelectList(wonOffersList, "OfferId", "OfferName");
             ViewBag.CurrencyList = new SelectList(_db.Currency.ToList(), "CurrencyId", "Name");
-            ViewBag.EveContactList = getEveContacts(_eveDbDochna);
-            ViewBag.EveOrderCodes = getOrderCodes(_eveDb);
+            ViewBag.EveContactList = await getEveContactsAsync(_eveDbDochna);
+            ViewBag.EveOrderCodes = await getOrderCodesAsync(_eveDb);
 
             string offerCompanyName = string.Empty;
             int invoiceDueDays = 0;
