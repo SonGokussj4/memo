@@ -376,10 +376,8 @@
                 <a asp-action="Index" class="btn btn-light border"><i class="fa fa-arrow-left"></i> Zpět</a>
             </div>
             <div class="col-lg-9">
-                <input type="reset" class="btn btn-secondary"  value="Resetovat pole" data-toggle="tooltip" title="Vrátí neuložené úpravy" />
                 <input type="submit" class="btn btn-primary" name="actionType" value="Uložit" />
                 <input type="submit" class="btn btn-primary" name="actionType" value="Uložit a zavřít" />
-                @* <p class="text-danger">@ViewData["ErrorMessage"]</p> *@
                 <a href="#" class="btn btn-danger pull-right" onclick="ConfirmDelete(@Model.OfferId)">Smazat</a>
             </div>
         </div>
@@ -703,6 +701,7 @@
                 var html =
                     '<div class="row form-group justify-content-end" id="dynamic-row-other-costs-' + idOtherCosts + '">'+
                         '<input type="number" hidden="true" data-val="true" data-val-required="The OtherCostId field is required." id="Order_OtherCosts_' + idOtherCosts + '__OtherCostId" name="Order.OtherCosts[' + idOtherCosts + '].OtherCostId" value="0">'+
+
                         '<div class="col-lg-6">'+
                             '<input class="form-control" type="text" autocomplete="off" placeholder="Popis" data-val="true" data-val-required="Je třeba přidat popis dalšího nákladu" id="Order_OtherCosts_' + idOtherCosts + '__Subject" name="Order.OtherCosts[' + idOtherCosts + '].Subject" value="">'+
                             '<span class="text-danger field-validation-valid" data-valmsg-for="Order.OtherCosts[' + idOtherCosts + '].Subject" data-valmsg-replace="true"></span>'+
@@ -713,7 +712,7 @@
                                 '<input class="form-control" type="text" placeholder="Částka" data-val="true" data-val-number="The field Částka must be a number." data-val-required="The Částka field is required." id="Order_OtherCosts_' + idOtherCosts + '__Cost" name="Order.OtherCosts[' + idOtherCosts + '].Cost" value="" />'+
                                 '<label for="Částka [@Model.CurrencyName]">Částka [@Model.CurrencyName]</label>'+
                             '</span>'+
-                            '<span class="text-danger field-validation-valid" data-valmsg-for="Order.OtherCosts[' + idInvoice + '].Cost" data-valmsg-replace="true"></span>'+
+                            '<span class="text-danger field-validation-valid" data-valmsg-for="Order.OtherCosts[' + idOtherCosts + '].Cost" data-valmsg-replace="true"></span>'+
                         '</div>'+
 
                         '<div class="col-lg-1">'+

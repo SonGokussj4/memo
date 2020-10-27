@@ -23,6 +23,8 @@
     }
 </style>
 
+@await Html.PartialAsync("_PartialToastNotification")
+
 <div class="text-center">
     <h1 class="display-6">@ViewData["Title"]</h1>
     <hr />
@@ -44,9 +46,11 @@
 
         <div class="form-group row">
             <label asp-for="Order.OfferId" class="required col-lg-3 col-form-label form-control-label control-label"></label>
-            <div class="col-lg-4">
+            <div class="col-lg-7">
                 <input type="hidden" asp-for="Order.OrderId" />
-                @Html.DropDownList("OfferId", ViewBag.WonOffersList as SelectList, "-- Vyber nabídku --", new { @class = "form-control selectpicker", onchange = @"this.form.submit();" })
+                <select asp-for="OfferId" asp-items="ViewBag.WonOffersList" class="form-control selectpicker" onchange = "this.form.submit();">
+                    <option select="">-- Vyber nabídku --</option>
+                </select>
                 <span asp-validation-for="Order.OfferId" class="text-danger"></span>
             </div>
         </div>
@@ -303,7 +307,6 @@
                 <a asp-action="Index" class="btn btn-light border"><i class="fa fa-arrow-left"></i> Zpět</a>
             </div>
             <div class="col-lg-9">
-                <input type="reset" class="btn btn-secondary" value="Vyprázdnit pole" data-toggle="tooltip" title="Vyprázdní všechna pole" />
                 <input type="submit" class="btn btn-primary" value="Vytvořit zakázku" />
             </div>
         </div>
@@ -371,7 +374,8 @@
         $(document).ready(function(){
 
             // Upon page load, check if OfferId != 0 (offer is selected) then set orderForm as visible
-            if (@Model.Order.OfferId != 0) {
+            //if (@Model.Order.OfferId != 0) {
+            if (@Model.Order?.OfferId != 0) {
                 console.log("OfferId: " + @Model.Order.OfferId);
                 document.getElementById("orderForm").style.visibility = "visible";
             }
@@ -509,10 +513,10 @@
 
                         '<div class="col-lg-3">'+
                             '<span class="has-float-label">'+
-                                '<input class="form-control" type="text" placeholder="Částka" data-val="true" data-val-number="The field Částka must be a number." data-val-required="The Částka field is required." id="Order_Invoices_' + idInvoice + '__Cost" name="Order.Invoices[' + idInvoice + '].Cost" value="" placeholder=" " />'+
-                                '<label for="Order_Invoices_' + idInvoice + '__Cost">Částka [@Model.CurrencyName]</label>'+
+                                '<input class="form-control" type="text" placeholder="Částka" data-val="true" data-val-number="The field Částka must be a number." data-val-required="The Částka field is required." id="Order_OtherCosts_' + idOtherCosts + '__Cost" name="Order.OtherCosts[' + idOtherCosts + '].Cost" value="" />'+
+                                '<label for="Částka [@Model.CurrencyName]">Částka [@Model.CurrencyName]</label>'+
                             '</span>'+
-                            '<span class="text-danger field-validation-valid" data-valmsg-for="Order.Invoices[' + idInvoice + '].Cost" data-valmsg-replace="true"></span>'+
+                            '<span class="text-danger field-validation-valid" data-valmsg-for="Order.Invoices[' + idOtherCosts + '].Cost" data-valmsg-replace="true"></span>'+
                         '</div>'+
 
                         '<div class="col-lg-1">'+

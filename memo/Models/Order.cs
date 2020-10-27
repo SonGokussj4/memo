@@ -13,9 +13,9 @@ namespace memo.Models
         public Order()
         {
             Active = true;
-            PriceFinalCzk = 0;
-            CreatedBy = "";
-            ModifiedDate = DateTime.Now;
+            // PriceFinalCzk = 0;
+            // CreatedBy = "";
+            // ModifiedDate = DateTime.Now;
         }
 
         [Key]

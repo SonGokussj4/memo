@@ -133,7 +133,7 @@
                     </th>
                 }
                 @* Vytvořeno *@
-                <th scope="row" class="text-left">@String.Format("{0:yyyy-MM-dd}", @item.CreatedDate)</th>
+                <th scope="row" class="text-left">@String.Format("{0:dd.MM.yyyy HH:mm}", @item.CreatedDate)</th>
                 @* Nabídka *@
                 <th scope="row" class="text-left">@item.Offer?.OfferName</th>
                 @* Č. obj. zákazníka *@
@@ -160,8 +160,8 @@
                         string progressBarWidth = percentValue <= 100 ? (percentValue).ToString() : "100";
                         string progressbarClassColor = percentValue <= 100 ? "" : "bg-danger";
                     }
-                    <div class="progress-bar @progressbarClassColor progress-bar-striped" role="progressbar" style="width: @progressBarWidth%;"></div>
-                </div>
+                        <div class="progress-bar @progressbarClassColor progress-bar-striped" role="progressbar" style="width: @progressBarWidth%;"></div>
+                    </div>
                 </th>
                 @* Zbývá *@
                 <th scope="row" class="text-right">@string.Format(CultureInfo.CreateSpecificCulture(@item.Offer?.Currency.CultureCode), "{0:C0}", @item.NegotiatedPrice - @item.PriceFinal)</th>
