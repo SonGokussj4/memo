@@ -1,6 +1,6 @@
 
 -- ----------------------------------------------------------------------------------------------------------------------
--- Update rows of 'FieldName' column from 'CreateDate' to 'CreatedDate'
+-- Audit: Update rows of 'FieldName' column from 'CreateDate' to 'CreatedDate'
 -- ----------------------------------------------------------------------------------------------------------------------
 UPDATE [memo].[Audit]
 SET [memo].[Audit].FieldName = 'CreatedDate'
@@ -93,6 +93,11 @@ SET [memo].[Offer].ModifiedBy = [memo].[Offer].CreatedBy
 FROM [memo].[Offer];
 GO
 
+UPDATE [memo].[Offer]
+SET [memo].[Offer].ModifiedDate = [memo].[Offer].CreatedDate
+FROM [memo].[Offer];
+GO
+
 -- ----------------------------------------------------------------------------------------------------------------------
 -- Contact: Rename column names, Add, Fill them with default values
 -- ----------------------------------------------------------------------------------------------------------------------
@@ -113,6 +118,13 @@ BEGIN
 END;
 GO
 
+IF COL_LENGTH ('memo.Contact', 'ModifiedDate') IS NULL
+BEGIN
+    ALTER TABLE [memo].[Contact]
+    ADD ModifiedDate DATETIME NULL
+END;
+GO
+
 UPDATE [memo].[Contact]
 SET [memo].[Contact].CreatedBy = 'jverner@evektor.cz'
 FROM [memo].[Contact];
@@ -121,6 +133,57 @@ GO
 UPDATE [memo].[Contact]
 SET [memo].[Contact].ModifiedBy = [memo].[Contact].CreatedBy
 FROM [memo].[Contact];
+GO
+
+UPDATE [memo].[Contact]
+SET [memo].[Contact].ModifiedDate = [memo].[Contact].CreatedDate
+FROM [memo].[Contact];
+GO
+
+-- ----------------------------------------------------------------------------------------------------------------------
+-- Company: Rename column names, Add, Fill them with default values
+-- ----------------------------------------------------------------------------------------------------------------------
+EXEC sp_rename 'memo.Company.CreateDate', 'CreatedDate', 'COLUMN';
+GO
+
+ALTER TABLE [memo].[Company]
+ALTER COLUMN CreatedDate DATETIME NULL;
+GO
+
+IF COL_LENGTH ('memo.Company', 'CreatedBy') IS NULL
+BEGIN
+    ALTER TABLE [memo].[Company]
+    ADD CreatedBy NVARCHAR(50) NULL
+END;
+GO
+
+IF COL_LENGTH ('memo.Company', 'ModifiedBy') IS NULL
+BEGIN
+    ALTER TABLE [memo].[Company]
+    ADD ModifiedBy NVARCHAR(50) NULL
+END;
+GO
+
+IF COL_LENGTH ('memo.Company', 'ModifiedDate') IS NULL
+BEGIN
+    ALTER TABLE [memo].[Company]
+    ADD ModifiedDate DATETIME NULL
+END;
+GO
+
+UPDATE [memo].[Company]
+SET [memo].[Company].CreatedBy = 'jverner@evektor.cz'
+FROM [memo].[Company];
+GO
+
+UPDATE [memo].[Company]
+SET [memo].[Company].ModifiedBy = [memo].[Company].CreatedBy
+FROM [memo].[Company];
+GO
+
+UPDATE [memo].[Company]
+SET [memo].[Company].ModifiedDate = [memo].[Company].CreatedDate
+FROM [memo].[Company];
 GO
 
 -- ----------------------------------------------------------------------------------------------------------------------
@@ -155,3 +218,18 @@ SET [memo].[Order].ModifiedBy = [memo].[Order].CreatedBy
 FROM [memo].[Order];
 GO
 
+IF COL_LENGTH ('memo.Order', 'ModifiedDate') IS NULL
+BEGIN
+    ALTER TABLE [memo].[Order]
+    ADD ModifiedDate DATETIME NULL
+END;
+GO
+
+UPDATE [memo].[Order]
+SET [memo].[Order].ModifiedDate = [memo].[Order].CreatedDate
+FROM [memo].[Order];
+GO
+
+ALTER TABLE [memo].[Order]
+ALTER COLUMN CreatedDate DATETIME NULL;
+GO
