@@ -32,6 +32,8 @@ namespace memo.ViewModels
         [Display(Name = "Zbývá k vyčerpání")]
         public int UnspentMoney { get; set; }
 
+        public IEnumerable<AuditViewModel> Audits { get; set; }
+
         // public string ReturnUrl {get;set;}
     }
 }
