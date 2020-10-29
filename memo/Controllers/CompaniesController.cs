@@ -15,7 +15,7 @@ using System.Text.RegularExpressions;
 
 namespace memo.Controllers
 {
-    public class CompaniesController : Controller
+    public class CompaniesController : BaseController
     {
         public ApplicationDbContext _db { get; }
 
@@ -83,9 +83,7 @@ namespace memo.Controllers
                 return NotFound();
             }
 
-            AuditsViewModel auditsViewModel = initViewModel();
-
-            List<AuditViewModel> audits = auditsViewModel.Audits
+            List<AuditViewModel> audits = getAuditViewModel(_db).Audits
                 .Where(x => x.TableName == "Company" && x.KeyValue == id.ToString())
                 .ToList();
 

@@ -3,16 +3,13 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using memo.Models;
-using Microsoft.AspNetCore.Identity;
-using System.Security.Claims;
-using memo.ViewModels;
-using memo.Data;
 using System.Globalization;
-using Microsoft.EntityFrameworkCore.SqlServer;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using memo.Data;
+using memo.Models;
+using memo.ViewModels;
 
 namespace memo.Controllers
 {
@@ -26,20 +23,20 @@ namespace memo.Controllers
         }
 
         [HttpGet]
-        public IActionResult Index(DashboardVM vm = null)
+        public async Task<IActionResult> Index(DashboardVM vm = null)
         {
             // Fill DepartmentList ComboBox with only used Offer Department values
-            vm.DepartmentList.Add( new SelectListItem { Value = "All", Text = "Vše" });
-            vm.CustomerList.Add( new SelectListItem { Value = "All", Text = "Vše" });
+            vm.DepartmentList.Add( new SelectListItem { Value = "All", Text = "Vše" } );
+            vm.CustomerList.Add( new SelectListItem { Value = "All", Text = "Vše" } );
 
-            List<string> filteredDepartments = _db.Offer.Select(x => x.EveDepartment).Distinct().ToList();
+            List<string> filteredDepartments = await _db.Offer.Select(x => x.EveDepartment).Distinct().ToListAsync();
             foreach (string department in filteredDepartments)
             {
                 vm.DepartmentList.Add(new SelectListItem { Value = department, Text = department });
             }
 
-            List<int?> companyIds = _db.Offer.Select(x => x.CompanyId).Distinct().ToList();
-            List<Company> filteredCompanies = _db.Company.Where(x => companyIds.Contains(x.CompanyId)).ToList();
+            List<int?> companyIds = await _db.Offer.Select(x => x.CompanyId).Distinct().ToListAsync();
+            List<Company> filteredCompanies = await _db.Company.Where(x => companyIds.Contains(x.CompanyId)).ToListAsync();
 
             foreach (Company company in filteredCompanies)
             {
@@ -63,36 +60,36 @@ namespace memo.Controllers
             // Filter - Department, get offers == department and then invoices from those offers
             if (vm.Department != "All")
             {
-                List<int> offerIds = (from r in _db.Offer
+                List<int> offerIds = await (from r in _db.Offer
                                 where r.EveDepartment == vm.Department
-                                select r.OfferId).ToList();
+                                select r.OfferId).ToListAsync();
 
                 // IQueryable<Order> orders = _db.Order.Where(x => offerIds.Contains((int)x.OfferId));
-                List<int> orderIds = (from r in _db.Order
+                List<int> orderIds = await (from r in _db.Order
                                 where offerIds.Contains((int)r.OfferId)
-                                select r.OrderId).ToList();
+                                select r.OrderId).ToListAsync();
 
-                invoices = _db.Invoice.Where(x => orderIds.Contains(x.OrderId)).ToList();
+                invoices = await _db.Invoice.Where(x => orderIds.Contains(x.OrderId)).ToListAsync();
             }
             else
             {
-                invoices = _db.Invoice.ToList();
+                invoices = await _db.Invoice.ToListAsync();
             }
 
             // Filter - Customer on existing invoices
             if (vm.Customer != "All")
             {
-                int companyId = _db.Company.Where(x => x.Name == vm.Customer).Select(x => x.CompanyId).FirstOrDefault();
+                int companyId = await _db.Company.Where(x => x.Name == vm.Customer).Select(x => x.CompanyId).FirstOrDefaultAsync();
 
-                List<int> offerIdsList = (
+                List<int> offerIdsList = await (
                     from r in _db.Offer
                     where r.CompanyId == companyId
-                    select r.OfferId).ToList();
+                    select r.OfferId).ToListAsync();
 
-                List<int> orderIds = (
+                List<int> orderIds = await (
                     from r in _db.Order
                     where offerIdsList.Contains((int)r.OfferId)
-                    select r.OrderId).ToList();
+                    select r.OrderId).ToListAsync();
 
                 invoices = invoices.Where(x => orderIds.Contains(x.OrderId)).ToList();
             }
@@ -115,9 +112,10 @@ namespace memo.Controllers
                         Month = new DateTime(vm.Year, g.Key, 1),
                         Cash = (int)g.Sum(gi => gi.CostCzk),
                     })
+                    .OrderBy(x => x.Month)
                     .ToList();
             }
-            else
+            else  // Weeks
             {
                 viewModelCash = invoices
                     .Where(a => a.InvoiceDueDate.Value.Year == vm.Year)
@@ -131,6 +129,14 @@ namespace memo.Controllers
                     .OrderBy(x => x.Week)
                     .ToList();
             }
+
+            // TODO: Doplnit tydny / mesice, ktere schazeji
+            // var result = Enumerable.Range(0, 12).Except(ls);
+            // foreach (var item in result)
+            // {
+            //     ls.Add(item);
+            // }
+
             vm.DashboardCashVM = viewModelCash;
 
             List<DashboardWonOffersVM> viewModelWonOffers = _db.Offer
@@ -146,20 +152,20 @@ namespace memo.Controllers
                     Lost = (int)g.Count(row => row.OfferStatusId == 3),
                 })
                 .ToList();
+
             vm.DashboardWonOffersVM = viewModelWonOffers;
 
             List<DashboardTableVM> dashboardTableVMs = new List<DashboardTableVM>();
-            var departments = _db.Offer.Select(x => x.EveDepartment).Distinct().ToList();
+            var departments = await _db.Offer.Select(x => x.EveDepartment).Distinct().ToListAsync();
             foreach (var department in departments)
             {
                 var allOffers = _db.Offer.Where(x => x.EveDepartment == department);
-                var wonOffers = allOffers.Where(x => x.OfferStatusId == 2).ToList();
-                var lostOffers = allOffers.Where(x => x.OfferStatusId == 3).ToList();
+                var wonOffers = await allOffers.Where(x => x.OfferStatusId == 2).ToListAsync();
+                var lostOffers = await allOffers.Where(x => x.OfferStatusId == 3).ToListAsync();
 
                 // Get hours
-                List<int> offersIds = allOffers.Select(x => x.OfferId).ToList();
-                IEnumerable<Order> orders = _db.Order.Where(x => offersIds.Contains((int)x.OfferId));
-                // int hours = orders.Select(x => x.Burned).ToList().Sum();
+                // List<int> offersIds = await allOffers.Select(x => x.OfferId).ToListAsync();
+                // IEnumerable<Order> orders = _db.Order.Where(x => offersIds.Contains((int)x.OfferId));
 
                 DashboardTableVM dashboardTableVM = new DashboardTableVM()
                 {
@@ -167,7 +173,6 @@ namespace memo.Controllers
                     SuccessRate = wonOffers.Count() / (float)allOffers.Count(),
                     WonSum = wonOffers.Count(),
                     LostSum = lostOffers.Count(),
-                    // HoursSum = hours,
                 };
                 dashboardTableVMs.Add(dashboardTableVM);
             }
@@ -175,13 +180,6 @@ namespace memo.Controllers
 
             return View(vm);
         }
-
-        // [HttpPost]
-        // [ValidateAntiForgeryToken]
-        // public IActionResult FilterIndex(DashboardVM vm)
-        // {
-        //     return RedirectToAction("Index", new { vm });
-        // }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
@@ -191,34 +189,3 @@ namespace memo.Controllers
 
     }
 }
-
-
-
-// public DashboardVM GetPlannedCash()
-//         {
-//             return _db.DashboardVM
-//                 .FromSqlRaw<DashboardVM>("spGetPlannedCash")
-//                 .FirstOrDefault();
-//         }
-
-//         public IActionResult Index()
-//         {
-//             DashboardVM viewModel = new DashboardVM();
-
-//             // SELECT
-//             //     MONTH(InvoiceDueDate),
-//             //     SUM(PriceFinalCzk)
-//             // FROM
-//             //     [MemoDB].[memo].[Order]
-//             // WHERE
-//             //     YEAR(InvoiceDueDate) = '2020'
-//             // GROUP BY
-//             //     MONTH(InvoiceDueDate)
-
-//             // DashboardVM dashboardVM = GetPlannedCash();
-
-//             viewModel.Months = _db.Order.Select(x => x.InvoiceDueDate).ToList();
-//             viewModel.PlannedCashPerMonth = _db.Order.Select(x => x.PriceFinalCzk).ToList();
-
-//             return View(viewModel);
-//         }

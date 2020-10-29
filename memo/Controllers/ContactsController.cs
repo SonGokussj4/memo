@@ -97,11 +97,6 @@ namespace memo.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
             Contact contact = await _db.Contact.FirstOrDefaultAsync(x => x.ContactId == id);
 
             if (contact == null)
@@ -121,11 +116,9 @@ namespace memo.Controllers
                 {
                     Value = x.CompanyId.ToString(),
                     Text = x.Name
-                // }).ToList(),
                 }),
             };
 
-            // ViewBag.CompanyList =
             return View(vm);
         }
 
@@ -148,10 +141,8 @@ namespace memo.Controllers
             // db.Entry(booking).State = EntityState.Modified;
             // db.SaveChanges();
 
-
             AuditsViewModel auditsViewModel = new AuditsViewModel();
             List<AuditViewModel> audits = new List<AuditViewModel>();
-            // ContactViewModel vm = new ContactViewModel();
 
             if (ModelState.IsValid)
             {

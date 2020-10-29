@@ -44,12 +44,15 @@
                             data-toggle="tooltip" title="Tabulka">
                             @tableNameCz
                         </span>
-                        <span class="badge badge-primary ml-3 py-1">
-                            <a target="_blank" asp-action="Edit" asp-controller="@{@targetTable}" asp-route-id="@targetId"
-                            data-toggle="tooltip" title="Otevřít položku">
-                                <i class="fa fa-fw fa-external-link text-light"></i> <span class="text-light pr-2">Přejít</span>
-                            </a>
-                        </span>
+                        @if (item.Type != "D")
+                        {
+                            <span class="badge badge-primary ml-3 py-1">
+                                <a target="_blank" asp-action="Edit" asp-controller="@{@targetTable}" asp-route-id="@targetId"
+                                data-toggle="tooltip" title="Otevřít položku">
+                                    <i class="fa fa-fw fa-external-link text-light"></i> <span class="text-light pr-2">Přejít</span>
+                                </a>
+                            </span>
+                        }
                         @{
                             int numberOfChanges = item.LogList.Count() - 1;  // Because there is "ModifiedTime" change every time
                             if (item.TableName ==  "OtherCost" || item.TableName == "Invoice")
