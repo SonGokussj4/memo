@@ -83,6 +83,8 @@ namespace memo.Controllers
                 await _db.AddAsync(model);
                 await _db.SaveChangesAsync(User.GetLoggedInUserName());
 
+                TempData["Success"] = "Úspěšně přidáno";
+
                 return RedirectToAction("Index");
             }
 
@@ -163,6 +165,7 @@ namespace memo.Controllers
                     oldVm.Contact.Department == vm.Contact.Department &&
                     oldVm.Contact.Phone == vm.Contact.Phone &&
                     oldVm.Contact.Email == vm.Contact.Email &&
+                    oldVm.Contact.Active == vm.Contact.Active &&
                     oldVm.Contact.Notes == vm.Contact.Notes)
                 {
                     TempData["Info"] = "Nebyla provedena změna, není co uložit";

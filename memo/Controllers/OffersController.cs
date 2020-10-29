@@ -47,6 +47,9 @@ namespace memo.Controllers
             List<Order> allOrders = await _db.Order.ToListAsync();
             ViewBag.AllOrders = allOrders;
 
+            List<Offer> allOffers = await _db.Offer.ToListAsync();
+            ViewBag.AllOffersCount = allOffers.Count();
+
             TimeSpan ts = stopwatch.Elapsed;
             string message = string.Format("Stránka načtena za: {0:D1}.{1:D3}s", ts.Seconds, ts.Milliseconds);
             TempData["Info"] = message;

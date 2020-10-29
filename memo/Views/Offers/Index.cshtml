@@ -33,6 +33,7 @@
         position: absolute;
         left: 2rem;
         width: calc(100% - 4rem);
+        overflow-x: inherit;
     }
 </style>
 
@@ -81,7 +82,7 @@
     }
     else
     {
-        <a asp-action="index" class="btn btn-outline-secondary" asp-route-ShowInactive="true" data-toggle="tooltip" title="Zobrazit vše"><i class="fa fa-eye-slash"></i> Aktivní (@Model.Count())</a>
+        <a asp-action="index" class="btn btn-outline-secondary" asp-route-ShowInactive="true" data-toggle="tooltip" title="Zobrazit vše"><i class="fa fa-eye-slash"></i> Aktivní (@Model.Count()/@ViewBag.AllOffersCount)</a>
     }
     @* <span data-toggle="tooltip" title="Zobrazit legendu">
         <a class="btn btn-light border" href="#showLegend" data-toggle="collapse" role="button">

@@ -50,25 +50,17 @@ namespace memo.Controllers
             {
                 vm.Orders = vm.Orders.Where(x => x.Active == true);
             }
+            Dictionary<int, int> dc = await GetAllSumMinutesAsync();
 
             foreach (Order order in vm.Orders)
             {
-                SumMinutesSP sumMinutes = GetSumMinutes(order.OrderCode);
-
-                if (sumMinutes != null)
-                {
-                    int var = sumMinutes.SumMinutes;
-                    order.Burned = var;
-                }
-                else
-                {
-                    order.Burned = 0;
-                }
-
-                // Fill Invoices OtherCosts  // TODO: Can this be done cleverly?
-                // order.Invoices = await _db.Invoice.ToListAsync();
-                // order.OtherCosts = await _db.OtherCost.ToListAsync();
+                // order.Burned = dc[Convert.ToInt32(order.OrderCode)];
+                order.Burned = await GetSumMinutesAsync(order.OrderCode);
             }
+
+            List<Order> allOrders = await _db.Order.ToListAsync();
+            ViewBag.AllOrdersCount = allOrders.Count();
+
             TimeSpan ts = stopwatch.Elapsed;
             string message = string.Format("Stránka načtena za: {0:D1}.{1:D3}s", ts.Seconds, ts.Milliseconds);
             TempData["Info"] = message;
@@ -78,7 +70,6 @@ namespace memo.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        // public IActionResult Refresh(int? offerId, OfferOrderVM vm)
         public IActionResult Refresh(int offerId)
         {
             return RedirectToAction("Create", new { id = offerId });
@@ -106,6 +97,7 @@ namespace memo.Controllers
                     Offer = new Offer(),
                     Order = new Order(),
                 };
+
                 return View(vmm);
             }
 
@@ -474,12 +466,39 @@ namespace memo.Controllers
             return RedirectToAction("Index");
         }
 
-        public SumMinutesSP GetSumMinutes(string orderName)
+        public SumMinutesSP GetSumMinutes(string orderCode)
         {
             return _eveDb.SumMinutesSP
-                .FromSqlRaw<SumMinutesSP>("memo.spSumMinutesByOrderName {0}", orderName)
+                .FromSqlRaw<SumMinutesSP>("memo.spSumMinutesByOrderName {0}", orderCode)
                 .AsEnumerable()
                 .SingleOrDefault();
+        }
+
+        public async Task<int> GetSumMinutesAsync(string orderCode)
+        {
+            int idOrder = await _eveDb.cOrders
+                .Where(x => x.OrderCode == orderCode)
+                .Select(x => x.Idorder)
+                .FirstOrDefaultAsync();
+            int sumMinutes = await _eveDb.tWorks
+                .Where(x => x.Idorder == idOrder)
+                .SumAsync(x => x.Minutes);
+
+            return sumMinutes;
+        }
+
+        public async Task<Dictionary<int, int>> GetAllSumMinutesAsync()
+        {
+            var sumMinutes = await _eveDb.tWorks
+                // .Join(cOrders, x => x.Idorder)
+                .GroupBy(x => x.Idorder)
+                .Select(gi => new {
+                    key = gi.Key,
+                    value = gi.Sum(x => x.Minutes)
+                })
+            .ToDictionaryAsync(x => x.key, x => x.value);
+
+            return sumMinutes;
         }
 
         private bool OrderExists(int id)
@@ -588,36 +607,31 @@ namespace memo.Controllers
         }
 
         [HttpPost]
-        public ActionResult DeleteInvoice(int id)
+        public async Task<ActionResult> DeleteInvoice(int id)
         {
-            Invoice invoice = _db.Invoice.Find(id);
+            Invoice invoice = await _db.Invoice.FindAsync(id);
 
             List<Invoice> thisOrderInvoices = _db.Invoice.Where(x => x.OrderId == invoice.OrderId).ToList();
 
             if (thisOrderInvoices.Count() <= 1)
             {
-                // throw new Exception("ERROR!");
-                // Dictionary<string, object> error = new Dictionary<string, object>();
-                // error.Add("ErrorCode", -1);
-                // error.Add("ErrorMessage", "Nelze odstranit všechny fakturace");
-                // return Json(error);
                 Response.StatusCode = (int)HttpStatusCode.InternalServerError;
                 return Json(new { errorMessage = "Nelze odstranit všechny fakturace" });
             }
 
             _db.Invoice.Remove(invoice);
-            _db.SaveChanges(User.GetLoggedInUserName());
+            await _db.SaveChangesAsync(User.GetLoggedInUserName());
 
             return Json(new { success = true });
         }
 
         [HttpPost]
-        public ActionResult DeleteOtherCost(int id)
+        public async Task<ActionResult> DeleteOtherCost(int id)
         {
-            OtherCost otherCost = _db.OtherCost.Find(id);
+            OtherCost otherCost = await _db.OtherCost.FindAsync(id);
 
             _db.OtherCost.Remove(otherCost);
-            _db.SaveChanges(User.GetLoggedInUserName());
+            await _db.SaveChangesAsync(User.GetLoggedInUserName());
 
             return Json(new { success = true });
         }

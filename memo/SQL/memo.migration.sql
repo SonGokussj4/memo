@@ -140,6 +140,10 @@ SET [memo].[Contact].ModifiedDate = [memo].[Contact].CreatedDate
 FROM [memo].[Contact];
 GO
 
+ALTER TABLE [memo].[Contact]
+ALTER COLUMN CreatedDate DATETIME NULL;
+GO
+
 -- ----------------------------------------------------------------------------------------------------------------------
 -- Company: Rename column names, Add, Fill them with default values
 -- ----------------------------------------------------------------------------------------------------------------------

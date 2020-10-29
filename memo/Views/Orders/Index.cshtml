@@ -31,6 +31,7 @@
         position: absolute;
         left: 2rem;
         width: calc(100% - 4rem);
+        overflow-x: inherit;
     }
 </style>
 
@@ -50,7 +51,7 @@
     </button>
     @if (ViewBag.ShowInactive == true)
     {
-        <a asp-action="index" class="btn btn-outline-secondary" data-toggle="tooltip" title="Zobrazit pouze aktivní"><i class="fa fa-eye"></i> Vše (@Model.Orders.Count())</a>
+        <a asp-action="index" class="btn btn-outline-secondary" data-toggle="tooltip" title="Zobrazit pouze aktivní"><i class="fa fa-eye"></i> Vše (@Model.Orders.Count()/@ViewBag.AllOrdersCount)</a>
     }
     else
     {
@@ -173,23 +174,14 @@
                 <th scope="row" class="text-right">@String.Format(CultureInfo.CreateSpecificCulture(@item.Offer?.Currency.CultureCode), "{0:C0}", @item.HourWage)</th>
                 @* Vyčerpáno *@
                 @{
-                    string burnedText = "";
-                    if (@item.Burned != 0)
-                    {
-                        burnedText = String.Format("{0:# ### ###} hod", item.Burned / 60);
-                    }
-                    <th scope="row" class="text-right">@burnedText</th>
+                    string burnedText = @item.Burned != 0 ?  String.Format("{0:# ### ###} hod", item.Burned / 60) : "";
                 }
+                <th scope="row" class="text-right">@burnedText</th>
                 @* Plánované hod *@
                 @{
-                    string totalHoursText = "";
-                    if (@item.TotalHours != 0)
-                    {
-                        totalHoursText = String.Format("{0:# ### ###} hod", item.TotalHours);
-                    }
-                    //string totalHoursText = @item.TotalHours is null ? "" : String.Format("{0:# ### ###} hod", item.TotalHours);
-                    <th scope="row" class="text-right">@totalHoursText</th>
+                    string totalHoursText = (@item.TotalHours != 0 && @item.TotalHours != null) ? totalHoursText = String.Format("{0:# ### ###} hod", item.TotalHours) : "";
                 }
+                <th scope="row" class="text-right">@totalHoursText</th>
                 @* Využito *@
                 @{
                     decimal currentVal = 0;
