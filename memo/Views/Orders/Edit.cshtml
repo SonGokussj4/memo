@@ -152,7 +152,7 @@
             <div class="form-group row ">
                 <label asp-for="Order.OrderCode" class="required col-lg-3 col-form-label form-control-label control-label"></label>
                 <div class="col-lg-5">
-                    @Html.DropDownListFor(model => model.Order.OrderCode, ViewBag.EveOrderCodes as SelectList, "-- Vyber kód --", new { @class = "form-control selectpicker", @style = "min-width: 500px !important" })
+                    <select asp-for="Order.OrderCode" asp-items="ViewBag.EveOrderCodes" class="form-control selectpicker"></select>
                     <span asp-validation-for="Order.OrderCode" class="text-danger"></span>
                     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                     @* <span>Spáleno/Plánováno: @(Model.Order.Burned / 60) / @Model.Order.TotalHours [hod]</span> *@
@@ -174,7 +174,8 @@
             <div class="form-group row">
                 <label asp-for="Order.EveContactName" class="required col-lg-3 col-form-label form-control-label control-label"></label>
                 <div class="col-lg-9">
-                    @Html.DropDownListFor(model => model.Order.EveContactName, ViewBag.EveContactList as SelectList, "-- Vyber kontakt --", new { @class = "form-control selectpicker" })
+                    @* @Html.DropDownListFor(model => model.Order.EveContactName, ViewBag.EveContactList as SelectList, "-- Vyber kontakt --", new { @class = "form-control selectpicker" }) *@
+                    <select asp-for="Order.EveContactName" asp-items="ViewBag.EveContactList" class="form-control selectpicker"></select>
                     <span asp-validation-for="Order.EveContactName" class="text-danger"></span>
                 </div>
             </div>
@@ -309,7 +310,7 @@
                 <span asp-validation-for="UnspentMoney" class="text-danger"></span>
                 <div class="progress" style="height: 5px;">
                     @{
-                        int percentValue = (int)Math.Ceiling(Model.UnspentMoney / (decimal)Model.Order.NegotiatedPrice * 100);
+                        int percentValue = Model.Order.NegotiatedPrice != 0 ? (int)Math.Ceiling(Model.UnspentMoney / (decimal)Model.Order.NegotiatedPrice * 100) : 0;
                         string progressBarWidth = percentValue >= 0 ? (100 - percentValue).ToString() : "100";
                         string progressbarClassColor = percentValue >= 0 ? "" : "bg-danger";
                     }

@@ -272,7 +272,7 @@ namespace memo.Controllers
 
         // GET: Order/Edit/5
         [HttpGet]
-        public IActionResult Edit(int? id, int? offerId)
+        public async Task<IActionResult> Edit(int? id, int? offerId)
         // public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -287,10 +287,10 @@ namespace memo.Controllers
             // ViewBag.WonOffersList = new SelectList(wonOffersList, "OfferId", "OfferName");
 
             ViewBag.CurrencyList = new SelectList(_db.Currency.ToList(), "CurrencyId", "Name");
-            ViewBag.EveContactList = getEveContacts(_eveDbDochna);
-            ViewBag.EveOrderCodes = getOrderCodes(_eveDb);
+            ViewBag.EveContactList = await getEveContactsAsync(_eveDbDochna);
+            ViewBag.EveOrderCodes = await getOrderCodesAsync(_eveDb);
 
-            Order order = _db.Order.Find(id);
+            Order order = await _db.Order.FindAsync(id);
             if (order == null)
             {
                 return NotFound();
@@ -300,33 +300,35 @@ namespace memo.Controllers
             {
                 order.OfferId = offerId;
             }
-            order.Invoices = _db.Invoice.Where(x => x.OrderId == id).ToList();
-            order.OtherCosts = _db.OtherCost.Where(x => x.OrderId == id).ToList();
+            order.Invoices = await _db.Invoice.Where(x => x.OrderId == id).ToListAsync();
+            order.OtherCosts = await _db.OtherCost.Where(x => x.OrderId == id).ToListAsync();
 
-            Offer offer = _db.Offer.Find(order.OfferId);
+            Offer offer = await _db.Offer.FindAsync(order.OfferId);
             if (offer == null)
             {
                 return NotFound();
             }
+            Company company = await _db.Company.FindAsync(offer.CompanyId);
+            Currency currency= await _db.Currency.FindAsync(offer.CurrencyId);
 
-            OfferOrderVM viewModel = new OfferOrderVM()
+            OfferOrderVM vm = new OfferOrderVM()
             {
                 Offer = offer,
                 Order = order,
                 OfferId = (int)order.OfferId,
-                OfferCompanyName = _db.Company.Find(offer.CompanyId).Name,
-                InvoiceDueDays = (int)_db.Company.Find(offer.CompanyId).InvoiceDueDays,
-                CurrencyName = _db.Currency.Find(offer.CurrencyId).Name,
+                OfferCompanyName = company.Name,
+                InvoiceDueDays = (int)company.InvoiceDueDays,
+                CurrencyName = currency.Name,
                 UnspentMoney = (int)(order.NegotiatedPrice - order.PriceFinal),
             };
 
-            if (offerId == 0 && viewModel.Edit != "true")
+            if (offerId == 0 && vm.Edit != "true")
             {
                 ModelState.AddModelError(string.Empty, "Nelze vybrat prázdnou nabídku");
                 return View();
             }
 
-            return View(viewModel);
+            return View(vm);
         }
 
         [HttpPost]

@@ -1,8 +1,11 @@
-@using memo.ViewModels
-@using Newtonsoft.Json
-@using memo.Helpers
 @using System.Reflection
 @using System.ComponentModel.DataAnnotations
+@using Newtonsoft.Json
+@using memo.ViewModels
+@using memo.Helpers
+@using memo.Data
+
+@inject ApplicationDbContext db
 
 <style>
     .audit-log {
@@ -14,19 +17,12 @@
     @* @foreach (AuditViewModel item in Model.Audits.OrderByDescending(x => x.UpdateDate)) *@
     @{
         int i = -1;
-        string showStatus = "";
+        @* string showStatus = ""; *@
     }
     @foreach (AuditViewModel item in Model.Audits)
     {
         i++;
-        if (i < 3)
-        {
-            showStatus = "show";
-        }
-        else
-        {
-            showStatus = "";
-        }
+        string showStatus = i < 3 ? "show" : "";
 
         <div class="card py-0 p-0 mb-3">
             @{string bgColor = item.Type == "I" ? "#b1fbb8b0" : (item.Type == "U" ? "#fbe6b1b0" : "#fbb1b1b0");}
@@ -38,7 +34,7 @@
                         @{string tableNameCz = @StaticUtils.modelNameFromString[@item.TableName];}
                         @{string targetTable = StaticUtils.controllerLink[item.TableName];}
                         @* TODO: #1 Tohle zatim vraci "0", pokud se jedna o Invoice nebo OtherCost, nejsem schopen vratit spravne ID *@
-                        @{string targetId = StaticUtils.getOrderIdFromInvoice(item.TableName, item.KeyValue);}
+                        @{string targetId = StaticUtils.getOrderIdFromInvoice(item, db);}
 
                         <span class="badge badge-@pillText py-1" style="font-size: 0.8rem; width: 70px;"
                             data-toggle="tooltip" title="Aktivita">
@@ -72,7 +68,7 @@
                         </a>
                     </div>
                     <div class="flex-row">
-                            <i class="fa fa-fw fa-user"></i> @item.UpdateBy <i class="fa fa-fw fa-calendar ml-3"></i> @item.UpdateDate.ToString("dd.MM.yyyy HH:mm")
+                        <i class="fa fa-fw fa-user"></i> @item.UpdateBy <i class="fa fa-fw fa-calendar ml-3"></i> @item.UpdateDate.ToString("dd.MM.yyyy HH:mm")
                     </div>
                 </div>
             </div>
