@@ -10,6 +10,8 @@ using memo.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.Data.SqlClient;
+using memo.ViewModels;
+using System.Text.RegularExpressions;
 
 namespace memo.Controllers
 {
@@ -51,53 +53,112 @@ namespace memo.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(Company model)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(Company company)
         {
             if (ModelState.IsValid)
+            // if (TryValidateModel(vm.Company))
             {
-                _db.Add(model);
-                await _db.SaveChangesAsync(User.GetLoggedInUserName());
+                company.CreatedDate = DateTime.Now;
+                company.ModifiedDate = company.CreatedDate;
+                company.CreatedBy = User.GetLoggedInUserName();
+                company.ModifiedBy = company.CreatedBy;
+
+                _db.Add(company);
+                await _db.SaveChangesAsync(company.CreatedBy);
+
                 return RedirectToAction("Index");
             }
 
-            return View(model);
+            return View(company);
         }
 
         [HttpGet]
-        public IActionResult Edit(int? id)
+        public async Task<IActionResult> Edit(int? id)
         {
-            Company model = _db.Company.Find(id);
-            if (model == null)
+            Company company = await _db.Company.FirstOrDefaultAsync(x => x.CompanyId == id);
+
+            if (company == null)
             {
                 return NotFound();
             }
-            return View(model);
+
+            AuditsViewModel auditsViewModel = initViewModel();
+
+            List<AuditViewModel> audits = auditsViewModel.Audits
+                .Where(x => x.TableName == "Company" && x.KeyValue == id.ToString())
+                .ToList();
+
+            CompanyViewModel vm = new CompanyViewModel()
+            {
+                Company = company,
+                Audits = audits,
+            };
+
+            return View(vm);
         }
 
         [HttpPost]
-        public IActionResult Edit(string actionType, Company model)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(string actionType, CompanyViewModel vm)
         {
             if (ModelState.IsValid)
             {
-                model.Phone = model.Phone?.Replace(" ", "");
+                CompanyViewModel oldVm = new CompanyViewModel();
+                oldVm.Company = await _db.Company.AsNoTracking().FirstOrDefaultAsync(x => x.CompanyId == vm.Company.CompanyId);
 
-                _db.Update(model);
-                _db.SaveChanges(User.GetLoggedInUserName());
+                if (oldVm.Company.InvoiceDueDays == vm.Company.InvoiceDueDays &&
+                    oldVm.Company.Phone == vm.Company.Phone &&
+                    oldVm.Company.Name == vm.Company.Name &&
+                    oldVm.Company.Notes == vm.Company.Notes &&
+                    oldVm.Company.Address == vm.Company.Address &&
+                    oldVm.Company.City == vm.Company.City &&
+                    oldVm.Company.Active == vm.Company.Active &&
+                    oldVm.Company.Web == vm.Company.Web)
+                {
+                    TempData["Info"] = "Nebyla provedena změna, není co uložit";
+
+                    // Fill Audits list
+                    vm.Audits = initViewModel().Audits
+                        .Where(x => x.TableName == "Company" && x.KeyValue == vm.Company.CompanyId.ToString())
+                        .ToList();
+                    return View(vm);
+                }
+
+                vm.Company.Phone = vm.Company.Phone?.Replace(" ", "");
+                vm.Company.ModifiedBy = User.GetLoggedInUserName();
+                vm.Company.ModifiedDate = DateTime.Now;
+
+                _db.Update(vm.Company);
+                await _db.SaveChangesAsync(vm.Company.ModifiedBy);
+
+                TempData["Success"] = "Editace uložena";
 
                 if (actionType == "Uložit")
                 {
-                    return View(model);
+                    // Fill Audits list
+                    vm.Audits = initViewModel().Audits
+                        .Where(x => x.TableName == "Company" && x.KeyValue == vm.Company.CompanyId.ToString())
+                        .ToList();
+                    return View(vm);
                 }
                 else
                 {
                     return RedirectToAction(nameof(Index));
                 }
-
             }
-            return View();
+
+            TempData["Error"] = "Při editaci došlo k problému. ModelStateErrorCount: " + ModelState.ErrorCount;
+
+            // Fill Audits list
+            vm.Audits = initViewModel().Audits
+                .Where(x => x.TableName == "Company" && x.KeyValue == vm.Company.CompanyId.ToString())
+                .ToList();
+            return View(vm);
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<ActionResult> Delete(int? id)
         {
             if (id == null)
@@ -105,13 +166,21 @@ namespace memo.Controllers
                 return BadRequest("You have to specify 'id' to delete");
             }
 
-            Company company = await _db.Company.FindAsync(id);
+            Company company = await _db.Company
+                .Include(x => x.Offers)
+                .FirstOrDefaultAsync(x => x.CompanyId == id);
+
             if (company == null)
             {
                 return NotFound();
             }
             // TODO: overit, zda neni v nejakem Offer/Order uveden kontakt, popr co delat pak?
 
+            if (company.Offers.Count() != 0)
+            {
+                TempData["Error"] = $"Nemohu odstranit, je na to navázáno [{company.Offers.Count()}] nabídek";
+                return BadRequest(TempData["Error"]);
+            }
             _db.Company.Remove(company);
             _db.SaveChanges(User.GetLoggedInUserName());
 
@@ -137,6 +206,7 @@ namespace memo.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Deactivate(int? id)
         {
             if (id == null)
@@ -190,6 +260,37 @@ namespace memo.Controllers
             _db.SaveChanges(User.GetLoggedInUserName());
 
             return RedirectToAction("Index", new { showInactive });
+        }
+
+        private AuditsViewModel initViewModel()
+        {
+            IEnumerable<AuditViewModel> audits = _db.Audit
+                .AsEnumerable()
+                .GroupBy(x => new
+                {
+                    x.PK,
+                    x.UpdateDate
+                })
+                .Select(g => new AuditViewModel
+                {
+                    AuditId = g.First().AuditId,
+                    Type = g.First().Type,
+                    TableName = g.First().TableName,
+                    UpdateBy = g.First().UpdateBy,
+                    UpdateDate = g.First().UpdateDate,
+                    KeyName = Regex.Match(g.First().PK, @"<\[(.+?)\]=(.+?)>").Groups[1].Value,
+                    KeyValue = Regex.Match(g.First().PK, @"<\[(.+?)\]=(.+?)>").Groups[2].Value,
+                    LogList = g.Select(i => @$"{{""FieldName"": ""{i.FieldName}"", ""OldValue"": ""{i.OldValue}"", ""NewValue"": ""{i.NewValue}""}}"),
+                    // LogJson = "[" + string.Join(", ", g.Select(i => @$"{{""FieldName"": ""{i.FieldName}"", ""OldValue"": ""{i.OldValue}"", ""NewValue"": ""{i.NewValue}""}}")) + "]"
+                })
+                .OrderByDescending(x => x.UpdateDate);
+
+            AuditsViewModel vm = new AuditsViewModel
+            {
+                Audits = audits,
+            };
+
+            return vm;
         }
     }
 }

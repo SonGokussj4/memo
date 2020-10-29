@@ -9,10 +9,11 @@ using memo.Models;
 using memo.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using memo.ViewModels;
 
 namespace memo.Controllers
 {
-    public class ContactsController : Controller
+    public class ContactsController : BaseController
     {
         public ApplicationDbContext _db { get; }
 
@@ -45,41 +46,171 @@ namespace memo.Controllers
         }
 
         [HttpGet]
-        public IActionResult Edit(int? id)
+        public IActionResult Create()
         {
-            Contact model = _db.Contact.Find(id);
-            if (model == null)
-            {
-                return NotFound();
-            }
+            Contact model = new Contact();
             ViewBag.CompanyList = new SelectList(_db.Company.ToList(), "CompanyId", "Name");
+
             return View(model);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(string actionType, Contact model)
+        public async Task<IActionResult> Create(Contact model)
         {
+            Contact contact = _db.Contact
+                .Where(x => x.PersonLastName == model.PersonLastName
+                    && x.PersonName == model.PersonName
+                    && x.CompanyId == model.CompanyId)
+                .FirstOrDefault();
+
+            // Check for existing contact with the same Name, LastName, Company
+            if (contact != null)
+            {
+                ModelState.AddModelError("", "Kontakt se stejným jménem, příjmením a firmou již existuje...");
+                ViewBag.CompanyList = new SelectList(_db.Company.ToList(), "CompanyId", "Name");
+                return View(model);
+            }
+
             if (ModelState.IsValid)
             {
                 model.Phone = model.Phone?.Replace(" ", "");
+                model.CreatedBy = User.GetLoggedInUserName();
+                model.CreatedDate = DateTime.Now;
+                model.ModifiedBy = model.CreatedBy;
+                model.ModifiedDate = model.CreatedDate;
 
-                _db.Update(model);
-                _db.SaveChanges(User.GetLoggedInUserName());
+                await _db.AddAsync(model);
+                await _db.SaveChangesAsync(User.GetLoggedInUserName());
 
-                ViewBag.CompanyList = new SelectList(_db.Company.ToList(), "CompanyId", "Name");
+                TempData["Success"] = "Úspěšně přidáno";
+
+                return RedirectToAction("Index");
+            }
+
+            // Fallback
+            ViewBag.CompanyList = new SelectList(_db.Company.ToList(), "CompanyId", "Name");
+
+            return View(model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            Contact contact = await _db.Contact.FirstOrDefaultAsync(x => x.ContactId == id);
+
+            if (contact == null)
+            {
+                return NotFound();
+            }
+
+            List<AuditViewModel> audits = getAuditViewModel(_db).Audits
+                .Where(x => x.TableName == "Contact" && x.KeyValue == id.ToString())
+                .ToList();
+
+            ContactViewModel vm = new ContactViewModel()
+            {
+                Contact = contact,
+                Audits = audits,
+                CompanyList = _db.Company.Select(x => new SelectListItem()
+                {
+                    Value = x.CompanyId.ToString(),
+                    Text = x.Name
+                // }).ToList(),
+                }),
+            };
+
+            // ViewBag.CompanyList =
+            return View(vm);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(string actionType, ContactViewModel vm)
+        {
+            // TODO: Zakomponovat takto
+            // if (!ModelState.IsValid)
+            // {
+            //     ConfigureViewModel(vm);
+            //     return View(vm);
+            // }
+            // // Get your data model and update its properties based on the view model
+            // Booking booking = db.Bookings.Find(id);
+            // booking.PracticeId = bookingViewModel.PracticeId;
+            // booking.OpticianId = bookingViewModel.OpticianId;
+            // .... // etc
+
+            // db.Entry(booking).State = EntityState.Modified;
+            // db.SaveChanges();
+
+
+            AuditsViewModel auditsViewModel = new AuditsViewModel();
+            List<AuditViewModel> audits = new List<AuditViewModel>();
+            // ContactViewModel vm = new ContactViewModel();
+
+            if (ModelState.IsValid)
+            {
+                ContactViewModel oldVm = new ContactViewModel();
+                oldVm.Contact = await _db.Contact.AsNoTracking().FirstOrDefaultAsync(x => x.ContactId == vm.Contact.ContactId);
+
+                if (oldVm.Contact.PersonName == vm.Contact.PersonName &&
+                    oldVm.Contact.PersonLastName == vm.Contact.PersonLastName &&
+                    oldVm.Contact.PersonTitle == vm.Contact.PersonTitle &&
+                    oldVm.Contact.CompanyId == vm.Contact.CompanyId &&
+                    oldVm.Contact.Department == vm.Contact.Department &&
+                    oldVm.Contact.Phone == vm.Contact.Phone &&
+                    oldVm.Contact.Email == vm.Contact.Email &&
+                    oldVm.Contact.Active == vm.Contact.Active &&
+                    oldVm.Contact.Notes == vm.Contact.Notes)
+                {
+                    TempData["Info"] = "Nebyla provedena změna, není co uložit";
+
+                    // Populate VM
+                    vm.CompanyList = _db.Company.Select(x => new SelectListItem { Value = x.CompanyId.ToString(), Text = x.Name }).ToList();
+                    vm.Audits = getAuditViewModel(_db).Audits
+                        .Where(x => x.TableName == "Contact" && x.KeyValue == vm.Contact.CompanyId.ToString())
+                        .ToList();
+
+                    return View(vm);
+                }
+
+                vm.Contact.Phone = vm.Contact.Phone?.Replace(" ", "");
+                vm.Contact.ModifiedBy = User.GetLoggedInUserName();
+                vm.Contact.ModifiedDate = DateTime.Now;
+
+                _db.Update(vm.Contact);
+                await _db.SaveChangesAsync(User.GetLoggedInUserName());
+
+                TempData["Success"] = "Editace uložena";
 
                 if (actionType == "Uložit")
                 {
-                    return View(model);
+                    // Populate VM
+                    vm.CompanyList = _db.Company.Select(x => new SelectListItem { Value = x.CompanyId.ToString(), Text = x.Name }).ToList();
+                    vm.Audits = getAuditViewModel(_db).Audits
+                        .Where(x => x.TableName == "Contact" && x.KeyValue == vm.Contact.ContactId.ToString())
+                        .ToList();
+
+                    return View(vm);
                 }
                 else
                 {
                     return RedirectToAction(nameof(Index));
                 }
             }
-            ViewBag.CompanyList = new SelectList(_db.Company.ToList(), "CompanyId", "Name");
-            return View();
+
+            // Populate VM
+            vm.CompanyList = _db.Company.Select(x => new SelectListItem { Value = x.CompanyId.ToString(), Text = x.Name }).ToList();
+            vm.Audits = getAuditViewModel(_db).Audits
+                .Where(x => x.TableName == "Contact" && x.KeyValue == vm.Contact.ContactId.ToString())
+                .ToList();
+
+            return View(vm);
         }
 
         [HttpPost]
@@ -102,46 +233,6 @@ namespace memo.Controllers
             await _db.SaveChangesAsync(User.GetLoggedInUserName());
 
             return RedirectToAction("Index");
-        }
-
-        [HttpGet]
-        public IActionResult Create()
-        {
-            Contact model = new Contact();
-            ViewBag.CompanyList = new SelectList(_db.Company.ToList(), "CompanyId", "Name");
-            return View(model);
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Create(Contact model)
-        {
-            Contact contact = _db.Contact
-                .Where(x => x.PersonLastName == model.PersonLastName
-                    && x.PersonName == model.PersonName
-                    && x.CompanyId == model.CompanyId)
-                .FirstOrDefault();
-
-            if (contact != null)
-            {
-                ModelState.AddModelError("", "Kontakt se stejným jménem, příjmením a firmou již existuje...");
-                ViewBag.CompanyList = new SelectList(_db.Company.ToList(), "CompanyId", "Name");
-                return View(model);
-            }
-
-            if (ModelState.IsValid)
-            {
-                model.Active = true;  // default
-
-                _db.Add(model);
-                _db.SaveChanges(User.GetLoggedInUserName());
-                return RedirectToAction("Index");
-            }
-
-            // Fallback
-            ViewBag.CompanyList = new SelectList(_db.Company.ToList(), "CompanyId", "Name");
-
-            return View(model);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
@@ -217,5 +308,38 @@ namespace memo.Controllers
 
             return RedirectToAction("Index", new { showInactive });
         }
+
+        // // Initilises Select List
+        // public void ConfigureViewModel(BookingViewModel bookingViewModel)
+        // {
+        //     // Displays Opticians Name - Needs changed to full name
+        //     bookingViewModel.OpticiansList = db.Opticians.Select(o => new SelectListItem()
+        //     {
+        //         Value = o.OpticianId.ToString(),
+        //         Text = o.User.FirstName
+        //     });
+
+        //     // Displays Patients name - needs changed to full name DOB
+        //     bookingViewModel.PatientList = db.Patients.Select(p => new SelectListItem()
+        //     {
+        //         Value = p.PatientId.ToString(),
+        //         Text = p.User.FirstName
+        //     });
+
+        //     // Displays Practice Name
+        //     bookingViewModel.PracticeList = db.Practices.Select(p => new SelectListItem()
+        //     {
+        //         Value = p.PracticeId.ToString(),
+        //         Text = p.PracticeName
+        //     });
+
+        //     // Displays Appointment Times
+        //     bookingViewModel.TimeList = db.Times.Select(t => new SelectListItem()
+        //     {
+        //         Value = t.TimeId.ToString(),
+        //         Text = t.AppointmentTime
+        //     });
+        // }
+
     }
 }

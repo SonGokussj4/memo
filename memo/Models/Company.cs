@@ -11,6 +11,8 @@ namespace memo.Models
         public Company()
         {
             Offers = new HashSet<Offer>();
+            Active = true;
+            // ModifiedDate = DateTime.Now;
         }
 
         [Key]
@@ -32,10 +34,6 @@ namespace memo.Models
         [Display(Name = "Web"), StringLength(50)]
         public string Web { get; set; }
 
-        [Display(Name = "Datum vytvoření")]
-        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd HH:mm}", ApplyFormatInEditMode = true)]
-        public DateTime CreateDate { get; set; } = DateTime.UtcNow;
-
         [Required(ErrorMessage = "Prosím uveďte splatnost faktury (v celých dnech).")]
         [Display(Name = "Splatnost")]
         public int? InvoiceDueDays { get; set; }
@@ -44,7 +42,19 @@ namespace memo.Models
         public string Notes { get; set; }
 
         [Display(Name = "Aktivní")]
-        public bool Active { get; set; } = true;
+        public bool Active { get; set; }
+
+        [Display(Name = "Vytvořil"), StringLength(50)]
+        public string CreatedBy { get; set; }
+
+        [Display(Name = "Upravil"), StringLength(50)]
+        public string ModifiedBy { get; set; }
+
+        [Display(Name = "Datum vytvoření"), Column(TypeName = "datetime")]
+        public DateTime CreatedDate { get; set; }
+
+        [Display(Name = "Poslední úprava"), Column(TypeName = "datetime")]
+        public DateTime ModifiedDate { get; set; }
 
         [InverseProperty("Company")]
         public virtual ICollection<Offer> Offers { get; set; }

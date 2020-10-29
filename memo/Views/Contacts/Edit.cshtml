@@ -1,4 +1,4 @@
-@model memo.Models.Contact
+@model memo.ViewModels.ContactViewModel
 
 @{
     ViewData["Title"] = "Úprava kontaktu";
@@ -11,12 +11,12 @@
     }
 </style>
 
-@await Html.PartialAsync("_PartialToastNotification")
-
 <div class="text-center">
     <h1 class="display-6">@ViewData["Title"]</h1>
     <hr />
 </div>
+
+@await Html.PartialAsync("_PartialToastNotification")
 
 <div class="container d-flex justify-content-center">
     <div class="col-lg-10 personal-info">
@@ -24,7 +24,7 @@
 
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-            <input type="hidden" asp-for="ContactId" />
+            <input type="hidden" asp-for="Contact.ContactId" />
 
             <div class="cardTitleMerged">
 
@@ -32,7 +32,7 @@
 
                 <div class="form-group">
                     <div class="pretty p-bigger p-default p-curve p-toggle">
-                        <input asp-for="Active" type="checkbox"/>
+                        <input asp-for="Contact.Active" type="checkbox"/>
                         <div class="state p-success p-on">
                             <label>Aktivní</label>
                         </div>
@@ -40,7 +40,7 @@
                             <label>Neaktivní </label>
                         </div>
                     </div>
-                    <span asp-validation-for="Active" class="text-danger"></span>
+                    <span asp-validation-for="Contact.Active" class="text-danger"></span>
                 </div>
 
             </div>
@@ -48,91 +48,94 @@
             <hr />
 
             <div class="form-group row">
-                <label asp-for="PersonTitle" class="col-lg-3 col-form-label form-control-label control-label"></label>
+                <label asp-for="Contact.PersonTitle" class="col-lg-3 col-form-label form-control-label control-label"></label>
                 <div class="col-lg-3">
                     <span class="has-float-label">
-                        <input asp-for="PersonTitle" class="form-control" type="text"  placeholder=" " />
-                        <label asp-for="PersonTitle">Titul</label>
+                        <input asp-for="Contact.PersonTitle" class="form-control" type="text"  placeholder=" " />
+                        <label asp-for="Contact.PersonTitle">Titul</label>
                     </span>
-                    <span asp-validation-for="PersonTitle" class="text-danger"></span>
+                    <span asp-validation-for="Contact.PersonTitle" class="text-danger"></span>
                 </div>
             </div>
 
             <div class="form-group row">
-                <label asp-for="PersonName" class="required col-lg-3 col-form-label form-control-label control-label">Celé jméno</label>
+                <label asp-for="Contact.PersonName" class="required col-lg-3 col-form-label form-control-label control-label">Celé jméno</label>
                 <div class="col-lg-3">
                     <span class="has-float-label">
-                        <input asp-for="PersonName" class="form-control" type="text" placeholder=" " />
-                        <label asp-for="PersonName">Křestní jméno</label>
+                        <input asp-for="Contact.PersonName" class="form-control" type="text" placeholder=" " />
+                        <label asp-for="Contact.PersonName">Křestní jméno</label>
                     </span>
-                    <span asp-validation-for="PersonName" class="text-danger"></span>
+                    <span asp-validation-for="Contact.PersonName" class="text-danger"></span>
                 </div>
                 <div class="col-lg-3">
                     <span class="has-float-label">
-                        <input asp-for="PersonLastName" class="form-control" type="text" placeholder=" " />
-                        <label asp-for="PersonLastName">Příjmení</label>
+                        <input asp-for="Contact.PersonLastName" class="form-control" type="text" placeholder=" " />
+                        <label asp-for="Contact.PersonLastName">Příjmení</label>
                     </span>
-                    <span asp-validation-for="PersonLastName" class="text-danger"></span>
+                    <span asp-validation-for="Contact.PersonLastName" class="text-danger"></span>
                 </div>
             </div>
 
             <div class="form-group row">
-                <label asp-for="CompanyId" class="required col-lg-3 col-form-label form-control-label control-label"></label>
+                <label asp-for="Contact.CompanyId" class="required col-lg-3 col-form-label form-control-label control-label"></label>
                 <div class="col-lg-3">
                     @* <span class="has-float-label"> *@
-                        <select class="form-control selectpicker" asp-for="CompanyId" asp-items="@ViewBag.CompanyList">
+                        <select class="form-control selectpicker" asp-for="Contact.CompanyId" asp-items="@Model.CompanyList">
                             <option>-- Vyber firmu --</option>
                         </select>
-                        @* <label asp-for="CompanyId">Firma</label> *@
+                        @* <label asp-for="Contact.CompanyId">Firma</label> *@
                     @* </span> *@
-                    <span asp-validation-for="CompanyId" class="text-danger"></span>
+                    <span asp-validation-for="Contact.CompanyId" class="text-danger"></span>
                 </div>
                 <div class="col-lg-3">
                     <span class="has-float-label">
-                        <input asp-for="Department" class="form-control" type="text" placeholder=" " />
-                        <label asp-for="Department">Oddělení</label>
+                        <input asp-for="Contact.Department" class="form-control" type="text" placeholder=" " />
+                        <label asp-for="Contact.Department">Oddělení</label>
                     </span>
-                    <span asp-validation-for="Department" class="text-danger"></span>
+                    <span asp-validation-for="Contact.Department" class="text-danger"></span>
                 </div>
             </div>
 
             <div class="form-group row">
-                <label asp-for="Email" class="col-lg-3 col-form-label form-control-label control-label"></label>
+                <label asp-for="Contact.Email" class="col-lg-3 col-form-label form-control-label control-label"></label>
                 <div class="col-lg-6">
                     <span class="has-float-label">
-                        <input asp-for="Email" class="form-control" type="text" placeholder=" " />
-                        <label asp-for="Email">E-mail</label>
+                        <input asp-for="Contact.Email" class="form-control" type="text" placeholder=" " />
+                        <label asp-for="Contact.Email">E-mail</label>
                     </span>
-                    <span asp-validation-for="Email" class="text-danger"></span>
+                    <span asp-validation-for="Contact.Email" class="text-danger"></span>
                 </div>
             </div>
             <div class="form-group row">
-                <label asp-for="Phone" class="col-lg-3 col-form-label form-control-label control-label"></label>
+                <label asp-for="Contact.Phone" class="col-lg-3 col-form-label form-control-label control-label"></label>
                 <div class="col-lg-3">
                     <span class="has-float-label">
-                        <input asp-for="Phone" class="form-control" type="text" placeholder=" " />
-                        <label asp-for="Phone">Telefon</label>
+                        <input asp-for="Contact.Phone" class="form-control" type="text" placeholder=" " />
+                        <label asp-for="Contact.Phone">Telefon</label>
                     </span>
-                    <span asp-validation-for="Phone" class="text-danger"></span>
+                    <span asp-validation-for="Contact.Phone" class="text-danger"></span>
                 </div>
             </div>
 
             <div class="form-group row">
-                <label asp-for="Notes" class="col-lg-3 col-form-label form-control-label control-label"></label>
+                <label asp-for="Contact.Notes" class="col-lg-3 col-form-label form-control-label control-label"></label>
                 <div class="col-lg-9">
                     <span class="has-float-label">
-                        <textarea asp-for="Notes" class="form-control" placeholder=" "></textarea>
-                        <label asp-for="Phone">Poznámky</label>
+                        <textarea asp-for="Contact.Notes" class="form-control" placeholder=" "></textarea>
+                        <label asp-for="Contact.Notes">Poznámky</label>
                     </span>
-                    <span asp-validation-for="Notes" class="text-danger"></span>
+                    <span asp-validation-for="Contact.Notes" class="text-danger"></span>
                 </div>
             </div>
 
             <div class="form-group row">
-                <label asp-for="CreateDate" class="col-lg-3 col-form-label form-control-label control-label"></label>
-                <div class="col-lg-3 mycalendar">
-                    <input asp-for="CreateDate" class="form-control" type="text" readonly/>
-                    <span asp-validation-for="CreateDate" class="text-danger"></span>
+                <div class="col-lg-12">
+                    <div class="d-flex justify-content-between">
+                        <label asp-for="Contact.CreatedDate" ></label>
+                        <b>@Model.Contact.CreatedDate</b>
+                        <label asp-for="Contact.ModifiedDate"></label>
+                        <b>@Model.Contact.ModifiedDate</b>
+                    </div>
                 </div>
             </div>
 
@@ -141,17 +144,31 @@
                     <a asp-action="Index" class="btn btn-light border"><i class="fa fa-arrow-left"></i> Zpět</a>
                 </div>
                 <div class="col-lg-9">
-                    <input type="reset" class="btn btn-secondary" value="Resetovat pole" data-toggle="tooltip" title="Vrátí neuložené úpravy"/>
                     <input type="submit" class="btn btn-primary" name="actionType" value="Uložit" />
                     <input type="submit" class="btn btn-primary" name="actionType" value="Uložit a zavřít" />
-                    <a href="#" class="btn btn-danger pull-right" onclick="ConfirmDelete(@Model.ContactId)">Smazat</a>
+                    <a href="#" class="btn btn-danger pull-right" onclick="ConfirmDelete(@Model.Contact.ContactId)">Smazat</a>
                 </div>
             </div>
+
+            <input asp-for="Contact.CreatedDate" type="text" readonly hidden />
+            <input asp-for="Contact.CreatedBy" type="text" readonly hidden />
+            <input asp-for="Contact.ModifiedDate" type="text" readonly hidden />
 
         </form>
     </div>
 </div>
 
+<div class="d-flex justify-content-center pt-3">
+    <a href="#collapsible-audits" class="btn-sm btn-primary collapsed" data-toggle="collapse">
+        <i class="if-collapsed fa fa-fw fa-chevron-down"></i>
+        <i class="if-not-collapsed fa fa-fw fa-chevron-up"></i>
+        Poslední změny <span class="badge badge-pill badge-light">@Model.Audits.Count()</span>
+    </a>
+</div>
+
+<div class="collapse" id="collapsible-audits">
+    @await Html.PartialAsync("_PartialAuditChanges", Model)
+</div>
 
 <!-- Modal Confirm Delete-->
 <div class="modal fade" id="deleteConfirmModal" tabindex="-1" role="dialog" aria-labelledby="deleteConfirmModalLabel">
@@ -165,8 +182,8 @@
             <!-- body -->
             <div class="modal-body">
                 Opravdu smazat?<br />
-                Jméno: <b>@Model.PersonLastName @Model.PersonName @Model.PersonTitle</b><br />
-                Email: <b>@Model.Email</b>
+                Jméno: <b>@Model.Contact.PersonLastName @Model.Contact.PersonName @Model.Contact.PersonTitle</b><br />
+                Email: <b>@Model.Contact.Email</b>
             </div>
             <!-- footer -->
             <div class="modal-footer">
@@ -198,7 +215,7 @@
             $.ajax({
                 type: "POST",
                 url: '@Url.Action("Delete")',
-                data: { Id: @Model.ContactId },
+                data: { Id: @Model.Contact.ContactId },
                 beforeSend: function (request) {
                     request.setRequestHeader("RequestVerificationToken", $("[name='__RequestVerificationToken']").val());
                 },
@@ -219,10 +236,10 @@
             $.ajax({
                 type: "POST",
                 url: '@Url.Action("Deactivate")',
-                data: { Id: @Model.ContactId },
+                data: { Id: @Model.Contact.ContactId },
                 success: function () {
                     $("#deleteConfirmModal").modal("hide")
-                    window.location.href = './' + @Model.ContactId
+                    window.location.href = './' + @Model.Contact.ContactId
                 },
                 error: function() {
                     alert("Nelze z nějakého důvodu deaktivovat...");

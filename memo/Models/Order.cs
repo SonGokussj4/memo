@@ -13,9 +13,9 @@ namespace memo.Models
         public Order()
         {
             Active = true;
-            PriceFinalCzk = 0;
-            Username = "";
-            ModifiedDate = DateTime.Now;
+            // PriceFinalCzk = 0;
+            // CreatedBy = "";
+            // ModifiedDate = DateTime.Now;
         }
 
         [Key]
@@ -37,7 +37,7 @@ namespace memo.Models
         [Display(Name = "Aktuální čerpání")]
         public int? PriceFinal { get; set; }
 
-        [Display(Name = "Nevyčerpáno")]
+        [Display(Name = "Sleva z nabídky")]
         public int? PriceDiscount { get; set; }
 
         [Required]
@@ -68,11 +68,17 @@ namespace memo.Models
         [Display(Name = "Poznámky"), Column(TypeName = "nvarchar(max)")]
         public string Notes { get; set; } = "";
 
-        [Display(Name = "Poslední změna"), Column(TypeName = "datetime")]
-        public DateTime ModifiedDate { get; set; }
+        [Display(Name = "Vytvořil"), StringLength(50)]
+        public string CreatedBy { get; set; }
+
+        [Display(Name = "Upravil"), StringLength(50)]
+        public string ModifiedBy { get; set; }
 
         [Display(Name = "Datum vytvoření"), Column(TypeName = "datetime")]
-        public DateTime? CreateDate { get; set; }
+        public DateTime CreatedDate { get; set; }
+
+        [Display(Name = "Poslední úprava"), Column(TypeName = "datetime")]
+        public DateTime ModifiedDate { get; set; }
 
         [Display(Name = "Aktivní")]
         public Boolean Active { get; set; }
@@ -80,9 +86,6 @@ namespace memo.Models
         [NotMapped]
         [Display(Name = "Spáleno")]
         public int Burned { get; set; }
-
-        [Display(Name = "Vytvořil")]
-        public string Username { get; set; }
 
         // [InverseProperty("Invoice")]
         public virtual List<Invoice> Invoices { get; set; } = new List<Invoice>();

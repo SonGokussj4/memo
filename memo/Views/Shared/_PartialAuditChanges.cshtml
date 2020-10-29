@@ -1,0 +1,143 @@
+@using System.Reflection
+@using System.ComponentModel.DataAnnotations
+@using Newtonsoft.Json
+@using memo.ViewModels
+@using memo.Helpers
+@using memo.Data
+
+@inject ApplicationDbContext db
+
+<style>
+    .audit-log {
+        padding: 8rem;
+    }
+</style>
+
+<div class="audit-log pt-5">
+    @* @foreach (AuditViewModel item in Model.Audits.OrderByDescending(x => x.UpdateDate)) *@
+    @{
+        int i = -1;
+        @* string showStatus = ""; *@
+    }
+    @foreach (AuditViewModel item in Model.Audits)
+    {
+        i++;
+        string showStatus = i < 3 ? "show" : "";
+
+        <div class="card py-0 p-0 mb-3">
+            @{string bgColor = item.Type == "I" ? "#b1fbb8b0" : (item.Type == "U" ? "#fbe6b1b0" : "#fbb1b1b0");}
+            <div class="card-header px-3 mx-0 py-1 clickable" style="background-color: @bgColor;">
+                <div class="d-flex justify-content-between">
+                    <div class="flex-row">
+                        @{string typeText = item.Type == "I" ? "Nové" : (item.Type == "U" ? "Úprava" : "Smazání");}
+                        @{string pillText = item.Type == "I" ? "success" : (item.Type == "U" ? "warning" : "danger");}
+                        @{string tableNameCz = @StaticUtils.modelNameFromString[@item.TableName];}
+                        @{string targetTable = StaticUtils.controllerLink[item.TableName];}
+                        @* TODO: #1 Tohle zatim vraci "0", pokud se jedna o Invoice nebo OtherCost, nejsem schopen vratit spravne ID *@
+                        @{string targetId = StaticUtils.getOrderIdFromInvoice(item, db);}
+
+                        <span class="badge badge-@pillText py-1" style="font-size: 0.8rem; width: 70px;"
+                            data-toggle="tooltip" title="Aktivita">
+                            @typeText
+                        </span>
+                        <span class="badge badge-info ml-3 py-1" style="font-size: 0.8rem; width: 105px;"
+                            data-toggle="tooltip" title="Tabulka">
+                            @tableNameCz
+                        </span>
+                        <span class="badge badge-primary ml-3 py-1">
+                            <a target="_blank" asp-action="Edit" asp-controller="@{@targetTable}" asp-route-id="@targetId"
+                            data-toggle="tooltip" title="Otevřít položku">
+                                <i class="fa fa-fw fa-external-link text-light"></i> <span class="text-light pr-2">Přejít</span>
+                            </a>
+                        </span>
+                        @{
+                            int numberOfChanges = item.LogList.Count() - 1;  // Because there is "ModifiedTime" change every time
+                            if (item.TableName ==  "OtherCost" || item.TableName == "Invoice")
+                            {
+                                numberOfChanges += 1;  // No "ModifiedTime" field in these tables
+                            }
+                        }
+                        @* <span class="badge badge-secondary ml-3" style="font-size: 0.8rem; width: 25px;"
+                            data-toggle="tooltip" title="Počet změn">
+                            @numberOfChanges
+                        </span> *@
+                        <a class="btn btn-sm collapsed ml-3 btn-light py-0 border" style="font-size: 0.8rem;" href="#collapsible-@item.AuditId" data-toggle="collapse" role="button" >
+                            <i class="if-collapsed fa fa-fw fa-chevron-down"></i>
+                            <i class="if-not-collapsed fa fa-fw fa-chevron-up"></i>
+                            detaily <span class="badge badge-pill badge-secondary">@numberOfChanges</span>
+                        </a>
+                    </div>
+                    <div class="flex-row">
+                        <i class="fa fa-fw fa-user"></i> @item.UpdateBy <i class="fa fa-fw fa-calendar ml-3"></i> @item.UpdateDate.ToString("dd.MM.yyyy HH:mm")
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-body" style="padding: 0.3rem 1.25rem;">
+                <div class="collapse @showStatus" id="collapsible-@item.AuditId">
+                    <table class="table table-sm" style="border-bottom: 0px; font-size: 0.9rem;">
+                        <thead>
+                            <tr>
+                                <th scope="col" style="border: 0px;">Položka</th>
+                                <th scope="col" style="border: 0px;">Stará hodnota</th>
+                                <th scope="col" style="border: 0px;"></th>
+                                <th scope="col" style="border: 0px;">Nová hodnota</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (string listItem in @item.LogList)
+                            {
+                                dynamic items = JsonConvert.DeserializeObject(listItem);
+
+                                @if (items.FieldName == "ModifiedDate")
+                                {
+                                    continue;
+                                }
+
+                                <tr>
+                                    @* FIELD NAME *@
+                                    <td scope="row">
+                                        @{
+                                            Type myType = StaticUtils.modelTypeFromString[item.TableName];
+                                            string jsonString = items.FieldName;
+                                            MemberInfo property = myType.GetProperty(jsonString);
+                                            var dd = property.GetCustomAttribute(typeof(DisplayAttribute)) as DisplayAttribute;
+                                            string fieldName = dd != null ? dd.Name : items.FieldName;
+                                        }
+                                        @fieldName
+                                    </td>
+
+                                    @* OLD VALUE *@
+                                    @{string oldValue = @items.OldValue;}
+                                    @* @if (int.TryParse(oldValue, out int oldValueInt))
+                                    {
+                                        oldValue = string.Format(CultureInfo.CreateSpecificCulture("cs-CZ"), "{0:C0}", oldValueInt);
+                                    } *@
+                                    @if (DateTime.TryParse(oldValue, out DateTime oldValueDate))
+                                    {
+                                        oldValue = oldValueDate.ToString("dd.MM.yyyy HH:mm");
+                                    }
+                                    <td scope="row">@oldValue</td>
+
+                                    <td scope="row"><i class="fa fa-fw fa-arrow-right"></i></td>
+
+                                    @* NEW VALUE *@
+                                    @{string newValue = @items.NewValue;}
+                                    @* @if (int.TryParse(newValue, out int newValueInt))
+                                    {
+                                        newValue = string.Format(CultureInfo.CreateSpecificCulture("cs-CZ"), "{0:C0}", newValueInt);
+                                    } *@
+                                    @if (DateTime.TryParse(newValue, out DateTime newValueDate))
+                                    {
+                                        newValue = newValueDate.ToString("dd.MM.yyyy HH:mm");
+                                    }
+                                    <td scope="row">@newValue</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+</div>

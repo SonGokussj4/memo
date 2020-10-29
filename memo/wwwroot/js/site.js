@@ -120,7 +120,10 @@ $(function () {
 $("#success-alert").fadeTo(4000, 500).slideUp(500, function(){
     $("#success-alert").slideUp(500);
 });
-$("#error-alert").fadeTo(10000, 500).slideUp(500, function(){
+$("#info-alert").fadeTo(4000, 500).slideUp(500, function(){
+    $("#info-alert").slideUp(500);
+});
+$("#error-alert").fadeTo(60000, 500).slideUp(500, function(){
     $("#error-alert").slideUp(500);
 });
 

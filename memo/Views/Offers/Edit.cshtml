@@ -1,18 +1,10 @@
 @using System.Globalization;
 
-@model memo.Models.Offer
+@model memo.ViewModels.OfferViewModel
 
 @{
-    if (Model.OfferStatusId == 2)
-    {
-        ViewData["Title"] = "Úprava nabídky";
-        ViewData["SubTitle"] = "Upravit informace o nabídce";
-    }
-    else
-    {
-        ViewData["Title"] = "Úprava nabídky";
-        ViewData["SubTitle"] = "Upravit informace o nabídce";
-    }
+    ViewData["Title"] = "Úprava nabídky";
+    ViewData["SubTitle"] = "Upravit informace o nabídce";
 }
 
 
@@ -63,8 +55,8 @@
         <form class="card" role="form" autocomplete="on" asp-action="Edit" method="post">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-        <input type="hidden" asp-for="OfferId" />
-        <input type="hidden" asp-for="OfferStatusId" />
+        <input type="hidden" asp-for="Offer.OfferId" />
+        <input type="hidden" asp-for="Offer.OfferStatusId" />
 
         <div class="cardTitleMerged">
 
@@ -72,7 +64,7 @@
 
             <div class="form-group">
                 <div class="pretty p-bigger p-default p-curve p-toggle">
-                    <input asp-for="Active" type="checkbox"/>
+                    <input asp-for="Offer.Active" type="checkbox"/>
                     <div class="state p-success p-on">
                         <label>Aktivní</label>
                     </div>
@@ -80,7 +72,7 @@
                         <label>Neaktivní </label>
                     </div>
                 </div>
-                <span asp-validation-for="Active" class="text-danger"></span>
+                <span asp-validation-for="Offer.Active" class="text-danger"></span>
             </div>
 
         </div>
@@ -88,17 +80,17 @@
         <hr />
 
         <div class="form-group row">
-            <label asp-for="OfferName" class="col-lg-3 col-form-label form-control-label control-label"></label>
+            <label asp-for="Offer.OfferName" class="col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-9">
-                <input asp-for="OfferName" class="form-control" placeholder="EV(E)-quo/rrrr/dddd" type="text" />
-                <span asp-validation-for="OfferName" class="text-danger"></span>
+                <input asp-for="Offer.OfferName" class="form-control" placeholder="EV(E)-quo/rrrr/dddd" type="text" />
+                <span asp-validation-for="Offer.OfferName" class="text-danger"></span>
             </div>
         </div>
 
         <div class="form-group row">
-            <label asp-for="OfferStatusId" class="col-lg-3 col-form-label form-control-label control-label"></label>
+            <label asp-for="Offer.OfferStatusId" class="col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-2">
-                @Html.TextBox("OfferStatusName", (string)@ViewBag.OfferStatusName, new { @class = "form-control btn btn-dark offerStatus_" + Model.OfferStatusId, @readonly = "readonly" })
+                @Html.TextBox("Offer.OfferStatusName", (string)@ViewBag.OfferStatusName, new { @class = "form-control btn btn-dark offerStatus_" + Model.Offer.OfferStatusId, @readonly = "readonly" })
             </div>
             <div class="col-lg-1">
             </div>
@@ -109,14 +101,14 @@
             <div class="col-lg-2 offerWait" style="display: none;">
                 <button class="btn btn-secondary form-control" type="submit"
                         asp-action="ChangeOfferStatus" asp-controller="Offers"
-                        asp-route-id="@Model.OfferId" asp-route-btnOfferStatusId="1">
+                        asp-route-id="@Model.Offer.OfferId" asp-route-btnOfferStatusId="1">
                     <i class="fa fa-hourglass-half"></i> Čeká
                 </button>
             </div>
             <div class="col-lg-2 offerWon" style="display: none;">
                 <button class="btn btn-success form-control" type="submit"
                         asp-action="ChangeOfferStatus" asp-controller="Offers"
-                        asp-route-id="@Model.OfferId" asp-route-btnOfferStatusId="2">
+                        asp-route-id="@Model.Offer.OfferId" asp-route-btnOfferStatusId="2">
                     <i class="fa fa-smile-o"></i> Výhra
                 </button>
             </div>
@@ -124,7 +116,7 @@
             <div class="col-lg-2 offerLost" style="display: none;">
                 <button class="btn btn-danger form-control" type="submit"
                         asp-action="ChangeOfferStatus" asp-controller="Offers"
-                        asp-route-id="@Model.OfferId" asp-route-btnOfferStatusId="3">
+                        asp-route-id="@Model.Offer.OfferId" asp-route-btnOfferStatusId="3">
                     <i class="fa fa-frown-o"></i> Prohra
                 </button>
             </div>
@@ -132,31 +124,52 @@
 
         <div class="createOffer" style="display: none;">
 
-            <hr />
-            <h5>Stávající zakázky</h5>
+            @* <hr /> *@
             <div class="form-group row">
-                <ul>
+
+                <table class="table table-sm mt-3" style="font-size: 0.9em;">
+                    <thead>
+                        <tr>
+                            <th class="text-center">Vytvořené zakázky</th>
+                            <th class="text-center">Vyjednaná cena</th>
+                            <th class="text-center">Aktuálně</th>
+                            <th class="text-center">Vyčerpáno</th>
+                        </tr>
+                    </thead>
+                    <tbody>
                     @foreach (Order order in ViewBag.CreatedOrders)
                     {
-                        <li>
-                            <a asp-action="Edit" asp-controller="Orders" asp-route-id="@order.OrderId">
-                                @order.OrderName
-                            </a>
-                            [ @order.OrderCode ] ... Celková cena: @String.Format(CultureInfo.CreateSpecificCulture("cs-CZ"), "{0:C0}", order.PriceFinalCzk) ...
-                            Vyčerpáno: @( order.Burned / 60 ) h / @order.TotalHours h ... @( (float)order.Burned / 60 / order.TotalHours * 100 ) %
-                        </li>
+                        <tr>
+                            <td class="pl-3"><a asp-action="Edit" asp-controller="Orders" asp-route-id="@order.OrderId">@order.OrderName</a></td>
+                            <td class="text-right">@string.Format(CultureInfo.CreateSpecificCulture(@order.Offer?.Currency.CultureCode), "{0:C0}", @order.NegotiatedPrice)</td>
+                            <td class="text-right">
+                                @string.Format(CultureInfo.CreateSpecificCulture(@order.Offer?.Currency.CultureCode), "{0:C0}", @order.PriceFinal)
+                                <div class="progress" style="height: 5px; margin-left: 25%;">
+                                @{
+                                    int percentValue = (int)Math.Ceiling((double)order.PriceFinal / order.NegotiatedPrice * 100);
+                                    string progressBarWidth = percentValue <= 100 ? (percentValue).ToString() : "100";
+                                    string progressbarClassColor = percentValue <= 100 ? "" : "bg-danger";
+                                }
+                                    <div class="progress-bar @progressbarClassColor progress-bar-striped" role="progressbar" style="width: @progressBarWidth%;"></div>
+                                </div>
+                            </td>
+                            <td class="text-right pr-3">
+                                @( order.Burned / 60 )/@order.TotalHours hod = @( (float)order.Burned / 60 / order.TotalHours * 100 ) %
+                            </td>
+                        </tr>
                     }
-                </ul>
+                    </tbody>
+                </table>
             </div>
         </div>
 
         <div class="createOffer" style="display: none;">
-            <hr />
+            @* <hr /> *@
             <div class="form-group row text-center">
                 <div class="col-md-12 from-control">
                     <button class="col-md-4 btn btn-success mt-3" type="submit"
                             asp-action="ChangeOfferStatus" asp-controller="Offers"
-                            asp-route-id="@Model.OfferId" asp-route-btnOfferStatusId="0">
+                            asp-route-id="@Model.Offer.OfferId" asp-route-btnOfferStatusId="0">
                         <i class="fa fa-plus"></i> Vytvořit novou zakázku
                     </button>
                 </div>
@@ -164,13 +177,13 @@
         </div>
 
         @* Lost offer textarea only visible if Offer was Lost *@
-        @if (Model.OfferStatusId == 3)
+        @if (Model.Offer.OfferStatusId == 3)
         {
             <div class="form-group row lostOffer">
-                <label asp-for="LostReason" class="col-lg-3 col-form-label form-control-label control-label"></label>
+                <label asp-for="Offer.LostReason" class="col-lg-3 col-form-label form-control-label control-label"></label>
                 <div class="col-lg-9">
-                    <textarea asp-for="LostReason" class="form-control"></textarea>
-                    <span asp-validation-for="LostReason" class="text-danger"></span>
+                    <textarea asp-for="Offer.LostReason" class="form-control"></textarea>
+                    <span asp-validation-for="Offer.LostReason" class="text-danger"></span>
                 </div>
             </div>
         }
@@ -178,35 +191,35 @@
         <hr />
 
         <div class="form-group row">
-            <label asp-for="ReceiveDate" class="required col-lg-3 col-form-label form-control-label control-label"></label>
+            <label asp-for="Offer.ReceiveDate" class="required col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-9 mycalendar">
                 <span class="has-float-label">
-                    <input asp-for="ReceiveDate" class="form-control" type="text" placeholder=" " required="" autocomplete="off"/>
-                    <label asp-for="ReceiveDate">Datum přijetí poptávky</label>
+                    <input asp-for="Offer.ReceiveDate" class="form-control" type="text" placeholder=" " required="" autocomplete="off"/>
+                    <label asp-for="Offer.ReceiveDate">Datum přijetí poptávky</label>
                 </span>
-                <span asp-validation-for="ReceiveDate" class="text-danger"></span>
+                <span asp-validation-for="Offer.ReceiveDate" class="text-danger"></span>
             </div>
         </div>
 
         <div class="form-group row">
-            <label asp-for="SentDate" class="col-lg-3 col-form-label form-control-label control-label"></label>
+            <label asp-for="Offer.SentDate" class="col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-9 mycalendar">
                 <span class="has-float-label">
-                    <input asp-for="SentDate" class="form-control" type="text" placeholder=" " autocomplete="off"/>
-                    <label asp-for="SentDate">Datum odeslání nabídky</label>
+                    <input asp-for="Offer.SentDate" class="form-control" type="text" placeholder=" " autocomplete="off"/>
+                    <label asp-for="Offer.SentDate">Datum odeslání nabídky</label>
                 </span>
-                <span asp-validation-for="SentDate" class="text-danger"></span>
+                <span asp-validation-for="Offer.SentDate" class="text-danger"></span>
             </div>
         </div>
 
         <div class="form-group row">
-            <label asp-for="Subject" class="required col-lg-3 col-form-label form-control-label control-label"></label>
+            <label asp-for="Offer.Subject" class="required col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-9">
                 <span class="has-float-label">
-                    <input asp-for="Subject" class="form-control" placeholder="Krátký popis nabídky" type="text" />
-                    <label asp-for="Subject">Předmět nabídky</label>
+                    <input asp-for="Offer.Subject" class="form-control" placeholder="Krátký popis nabídky" type="text" />
+                    <label asp-for="Offer.Subject">Předmět nabídky</label>
                 </span>
-                <span asp-validation-for="Subject" class="text-danger"></span>
+                <span asp-validation-for="Offer.Subject" class="text-danger"></span>
             </div>
         </div>
 
@@ -214,30 +227,33 @@
             <label class="required col-lg-3 col-form-label form-control-label control-label">Evektor</label>
             <div class="col-lg-2">
                 <span class="has-float-label">
-                    @Html.DropDownList("EveDivision", new SelectList(Model.EveDivisionList, "Value", "Text", "-- Divize --"), new { @class = "form-control"})
-                    <label asp-for="EveDivision">Divize</label>
+                    <select class="form-control" asp-for="Offer.EveDivision" asp-items="@Model.Offer.EveDivisionList"></select>
+                    <label asp-for="Offer.EveDivision">Divize</label>
                 </span>
-                <span asp-validation-for="EveDivision" class="text-danger"></span>
+                <span asp-validation-for="Offer.EveDivision" class="text-danger"></span>
             </div>
             <div class="col-lg-3">
                 <span class="has-float-label">
-                    <select asp-for="EveDepartment" asp-items="ViewBag.DepartmentList" class="form-control"></select>
-                    <label asp-for="EveDepartment">Oddělení</label>
+                    <select asp-for="Offer.EveDepartment" asp-items="ViewBag.DepartmentList" class="form-control"></select>
+                    <label asp-for="Offer.EveDepartment">Oddělení</label>
                 </span>
-                <span asp-validation-for="EveDepartment" class="text-danger"></span>
+                <span asp-validation-for="Offer.EveDepartment" class="text-danger"></span>
             </div>
             <div class="col-lg-4">
                 <div data-toggle="tooltip" title="Nabídku vytvořil">
-                    @Html.DropDownList("EveCreatedUser", new SelectList(ViewBag.EveContactList, "Value", "Text"), new { @class = "form-control selectpicker"})
+                    <select class="form-control selectpicker" asp-for="Offer.EveCreatedUser" asp-items="@ViewBag.EveContactList"></select>
                 </div>
-                <span asp-validation-for="EveCreatedUser" class="text-danger"></span>
+                <span asp-validation-for="Offer.EveCreatedUser" class="text-danger"></span>
             </div>
         </div>
 
         <div class="form-group row customerOffer">
             <label class="col-lg-3 col-form-label form-control-label control-label">Zákazník</label>
             <div class="col-lg-4">
-                @Html.DropDownListFor(model => model.CompanyId, ViewBag.CompanyList as SelectList, "-- Vyber firmu --", new { @class = "form-control selectpicker", @style = "width: 100%;" })
+                @* @Html.DropDownListFor(model => model.CompanyId, ViewBag.CompanyList as SelectList, "-- Vyber firmu --", new { @class = "form-control selectpicker", @style = "width: 100%;" }) *@
+                <select class="form-control selectpicker" asp-for="Offer.CompanyId" asp-items="@Model.CompanyList">
+                    <option>-- Vyber firmu --</option>
+                </select>
                 <span asp-validation-for="CompanyId" class="text-danger"></span>
             </div>
             <div class="col-lg-1" data-toggle="tooltip" title="Nová firma">
@@ -246,7 +262,7 @@
                 </a>
             </div>
             <div class="col-lg-3">
-                @Html.DropDownListFor(model => model.ContactId, ViewBag.ContactList as SelectList, "-- Vyber kontakt --", new { @class = "form-control selectpicker", @style = "width: 100%;" })
+                <select class="form-control selectpicker" asp-for="Offer.ContactId" asp-items="@ViewBag.ContactList"></select>
                 <span asp-validation-for="ContactId" class="text-danger"></span>
             </div>
             <div class="col-lg-1" data-toggle="tooltip" title="Nový kontakt">
@@ -257,59 +273,59 @@
         </div>
 
         <div class="form-group row">
-            <label asp-for="Price" class="required col-lg-3 col-form-label form-control-label control-label"></label>
+            <label asp-for="Offer.Price" class="required col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-5">
                 <span class="has-float-label">
-                    <input asp-for="Price" class="form-control" type="text" placeholder=" "/>
-                    <label asp-for="Price">Cena bez DPH</label>
+                    <input asp-for="Offer.Price" class="form-control" type="text" placeholder=" "/>
+                    <label asp-for="Offer.Price">Cena bez DPH</label>
                 </span>
-                <span asp-validation-for="Price" class="text-danger"></span>
+                <span asp-validation-for="Offer.Price" class="text-danger"></span>
             </div>
             <div class="col-lg-2">
                 <span class="has-float-label">
-                    <select asp-for="CurrencyId" asp-items="ViewBag.CurrencyList" class="form-control"></select>
-                    <label asp-for="CurrencyId">Měna</label>
+                    <select asp-for="Offer.CurrencyId" asp-items="ViewBag.CurrencyList" class="form-control"></select>
+                    <label asp-for="Offer.CurrencyId">Měna</label>
                 </span>
-                <span asp-validation-for="Currency" class="text-danger"></span>
+                <span asp-validation-for="Offer.Currency" class="text-danger"></span>
             </div>
             <div class="col-lg-2">
                 <span class="has-float-label">
-                    <input asp-for="ExchangeRate" class="form-control" type="text" data-toggle="tooltip" data-placement="top" title="Měnový kurz z ČNB" />
-                    <label asp-for="ExchangeRate">Kurz</label>
+                    <input asp-for="Offer.ExchangeRate" class="form-control" type="text" data-toggle="tooltip" data-placement="top" title="Měnový kurz z ČNB" />
+                    <label asp-for="Offer.ExchangeRate">Kurz</label>
                 </span>
-                <span asp-validation-for="ExchangeRate" class="text-danger"></span>
+                <span asp-validation-for="Offer.ExchangeRate" class="text-danger"></span>
             </div>
         </div>
 
         <div class="form-group row">
-            <label asp-for="EstimatedFinishDate" class="col-lg-3 col-form-label form-control-label control-label"></label>
+            <label asp-for="Offer.EstimatedFinishDate" class="col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-9 mycalendar">
                 <span class="has-float-label">
-                    <input asp-for="EstimatedFinishDate" class="form-control" type="text" autocomplete="off" placeholder=" "/>
-                    <label asp-for="EstimatedFinishDate">Předpodkládaný termín ukončení</label>
+                    <input asp-for="Offer.EstimatedFinishDate" class="form-control" type="text" autocomplete="off" placeholder=" "/>
+                    <label asp-for="Offer.EstimatedFinishDate">Předpodkládaný termín ukončení</label>
                 </span>
-                <span asp-validation-for="EstimatedFinishDate" class="text-danger"></span>
+                <span asp-validation-for="Offer.EstimatedFinishDate" class="text-danger"></span>
             </div>
         </div>
 
         <div class="form-group row">
-            <label asp-for="Notes" class="col-lg-3 col-form-label form-control-label control-label"></label>
+            <label asp-for="Offer.Notes" class="col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-9">
                 <span class="has-float-label">
-                    <textarea asp-for="Notes" class="form-control" placeholder=" "></textarea>
-                    <label asp-for="Notes">Poznámky</label>
+                    <textarea asp-for="Offer.Notes" class="form-control" placeholder=" "></textarea>
+                    <label asp-for="Offer.Notes">Poznámky</label>
                 </span>
-                <span asp-validation-for="Notes" class="text-danger"></span>
+                <span asp-validation-for="Offer.Notes" class="text-danger"></span>
             </div>
         </div>
 
         <div class="form-group row">
             <div class="col-lg-12">
                 <div class="d-flex justify-content-between">
-                    <label asp-for="CreateDate" ></label>
-                    <b>@Model.CreateDate</b>
-                    <label asp-for="ModifiedDate"></label>
-                    <b>@Model.ModifiedDate</b>
+                    <label asp-for="Offer.CreatedDate" ></label>
+                    <b>@Model.Offer.CreatedDate</b>
+                    <label asp-for="Offer.ModifiedDate"></label>
+                    <b>@Model.Offer.ModifiedDate</b>
                 </div>
             </div>
         </div>
@@ -319,19 +335,31 @@
                 <a asp-action="Index" class="btn btn-light border"><i class="fa fa-arrow-left"></i> Zpět</a>
             </div>
             <div class="col-lg-9">
-                <input type="reset" class="btn btn-secondary" value="Resetovat pole" data-toggle="tooltip" title="Vrátí neuložené úpravy"/>
                 <input type="submit" class="btn btn-primary" name="actionType" value="Uložit" />
                 <input type="submit" class="btn btn-primary" name="actionType" value="Uložit a zavřít" />
-                <a href="javascript:void(0)" class="btn btn-danger pull-right" onclick="ConfirmDelete(@Model.OfferId)">Smazat</a>
+                <a href="javascript:void(0)" class="btn btn-danger pull-right" onclick="ConfirmDelete(@Model.Offer.OfferId)">Smazat</a>
             </div>
         </div>
 
-        <input asp-for="CreateDate" type="text" readonly hidden />
+        <input asp-for="Offer.CreatedDate" type="text" readonly hidden />
+        <input asp-for="Offer.CreatedBy" type="text" readonly hidden />
+        <input asp-for="Offer.ModifiedBy" type="text" readonly hidden />
 
         </form>
     </div>
 </div>
 
+<div class="d-flex justify-content-center pt-3">
+    <a href="#collapsible-audits" class="btn-sm btn-primary collapsed" data-toggle="collapse">
+        <i class="if-collapsed fa fa-fw fa-chevron-down"></i>
+        <i class="if-not-collapsed fa fa-fw fa-chevron-up"></i>
+        Poslední změny <span class="badge badge-pill badge-light">@Model.Audits.Count()</span>
+    </a>
+</div>
+
+<div class="collapse" id="collapsible-audits">
+    @await Html.PartialAsync("_PartialAuditChanges", Model)
+</div>
 
 <!-- Modal Confirm Delete-->
 <div class="modal fade" id="deleteConfirmModal" tabindex="-1" role="dialog" aria-labelledby="deleteConfirmModalLabel">
@@ -345,8 +373,8 @@
             <!-- body -->
             <div class="modal-body">
                 Opravdu smazat?<br />
-                Ev. Číslo: <b>@Model.OfferName</b><br />
-                Předmět: <b>@Model.Subject</b>
+                Ev. Číslo: <b>@Model.Offer.OfferName</b><br />
+                Předmět: <b>@Model.Offer.Subject</b>
             </div>
             <!-- footer -->
             <div class="modal-footer">
@@ -378,7 +406,7 @@
             $.ajax({
                 type: "POST",
                 url: '@Url.Action("Delete")',
-                data: { Id: @Model.OfferId },
+                data: { Id: @Model.Offer.OfferId },
                 beforeSend: function (request) {
                     request.setRequestHeader("RequestVerificationToken", $("[name='__RequestVerificationToken']").val());
                 },
@@ -399,10 +427,10 @@
             $.ajax({
                 type: "POST",
                 url: '@Url.Action("Deactivate")',
-                data: { Id: @Model.OfferId },
+                data: { Id: @Model.Offer.OfferId },
                 success: function () {
                     $("#deleteConfirmModal").modal("hide")
-                    window.location.href = './' + @Model.OfferId
+                    window.location.href = './' + @Model.Offer.OfferId
                 },
                 error: function() {
                     alert("Nelze z nějakého důvodu deaktivovat...");
@@ -417,7 +445,7 @@
 
             // By default, .offerWon/Lost/Wait divs are hidden
             // Depending on the Status (Won), show Modifiable divs (Wait, Lost)
-            switch(@Model.OfferStatusId) {
+            switch(@Model.Offer.OfferStatusId) {
                 case 1:
                     $('.offerWon').show();
                     $('.offerLost').show();

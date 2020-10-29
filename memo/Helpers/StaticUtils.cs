@@ -4,6 +4,8 @@ using memo.Models;
 using memo.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using memo.ViewModels;
+using Newtonsoft.Json;
 
 namespace memo.Helpers
 {
@@ -50,14 +52,20 @@ namespace memo.Helpers
             {"OtherCost", "Orders"},
         };
 
-        public static string getOrderIdFromInvoice(string targetTable, string targetId)
+        public static string getOrderIdFromInvoice(AuditViewModel item, ApplicationDbContext db)
         {
-            if (targetTable == "Invoice" || targetTable == "OtherCost")
+            if (item.TableName == "Invoice")
             {
-                return "0";
+                Invoice invoice = db.Invoice.Where(x => x.InvoiceId.ToString() == item.KeyValue).FirstOrDefault();
+                return invoice != null ? invoice.OrderId.ToString() : "0";
+            }
+            else if (item.TableName == "OtherCost")
+            {
+                OtherCost otherCost = db.OtherCost.Where(x => x.OtherCostId.ToString() == item.KeyValue).FirstOrDefault();
+                return otherCost != null ? otherCost.OrderId.ToString() : "0";
             }
 
-            return targetId;
+            return item.KeyValue;
         }
 
     }

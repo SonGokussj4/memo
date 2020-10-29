@@ -13,7 +13,6 @@
     <div class="col-lg-10 personal-info">
         <form class="card" role="form" autocomplete="on" asp-action="Create" method="post">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-        @* <input type="hidden" asp-for="CompanyId" /> *@
 
         <div class="form-group row">
             <label asp-for="Name" class="required col-lg-3 col-form-label form-control-label control-label"></label>
@@ -89,12 +88,9 @@
                 <a asp-action="Index" class="btn btn-light border"><i class="fa fa-arrow-left"></i> Zpět</a>
             </div>
             <div class="col-lg-9">
-                <input type="reset" class="btn btn-secondary" value="Vyprázdnit pole" />
                 <input type="submit" class="btn btn-primary" value="Vytvořit firmu" />
             </div>
         </div>
-
-        @Html.CheckBoxFor(m => m.Active, new { style = "display:none", @checked="checked" })
 
         </form>
     </div>

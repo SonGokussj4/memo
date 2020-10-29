@@ -31,6 +31,7 @@
         position: absolute;
         left: 2rem;
         width: calc(100% - 4rem);
+        overflow-x: inherit;
     }
 </style>
 
@@ -54,7 +55,7 @@
     }
     else
     {
-        <a asp-action="index" class="btn btn-outline-secondary" asp-route-ShowInactive="true" data-toggle="tooltip" title="Zobrazit vše"><i class="fa fa-eye-slash"></i> Aktivní (@Model.Orders.Count())</a>
+        <a asp-action="index" class="btn btn-outline-secondary" asp-route-ShowInactive="true" data-toggle="tooltip" title="Zobrazit vše"><i class="fa fa-eye-slash"></i> Aktivní (@Model.Orders.Count()/@ViewBag.AllOrdersCount)</a>
     }
 </div>
 
@@ -133,7 +134,7 @@
                     </th>
                 }
                 @* Vytvořeno *@
-                <th scope="row" class="text-left">@String.Format("{0:yyyy-MM-dd}", @item.CreateDate)</th>
+                <th scope="row" class="text-left">@String.Format("{0:dd.MM.yyyy HH:mm}", @item.CreatedDate)</th>
                 @* Nabídka *@
                 <th scope="row" class="text-left">@item.Offer?.OfferName</th>
                 @* Č. obj. zákazníka *@
@@ -160,8 +161,8 @@
                         string progressBarWidth = percentValue <= 100 ? (percentValue).ToString() : "100";
                         string progressbarClassColor = percentValue <= 100 ? "" : "bg-danger";
                     }
-                    <div class="progress-bar @progressbarClassColor progress-bar-striped" role="progressbar" style="width: @progressBarWidth%;"></div>
-                </div>
+                        <div class="progress-bar @progressbarClassColor progress-bar-striped" role="progressbar" style="width: @progressBarWidth%;"></div>
+                    </div>
                 </th>
                 @* Zbývá *@
                 <th scope="row" class="text-right">@string.Format(CultureInfo.CreateSpecificCulture(@item.Offer?.Currency.CultureCode), "{0:C0}", @item.NegotiatedPrice - @item.PriceFinal)</th>
@@ -173,23 +174,14 @@
                 <th scope="row" class="text-right">@String.Format(CultureInfo.CreateSpecificCulture(@item.Offer?.Currency.CultureCode), "{0:C0}", @item.HourWage)</th>
                 @* Vyčerpáno *@
                 @{
-                    string burnedText = "";
-                    if (@item.Burned != 0)
-                    {
-                        burnedText = String.Format("{0:# ### ###} hod", item.Burned / 60);
-                    }
-                    <th scope="row" class="text-right">@burnedText</th>
+                    string burnedText = @item.Burned != 0 ?  String.Format("{0:# ### ###} hod", item.Burned / 60) : "";
                 }
+                <th scope="row" class="text-right">@burnedText</th>
                 @* Plánované hod *@
                 @{
-                    string totalHoursText = "";
-                    if (@item.TotalHours != 0)
-                    {
-                        totalHoursText = String.Format("{0:# ### ###} hod", item.TotalHours);
-                    }
-                    //string totalHoursText = @item.TotalHours is null ? "" : String.Format("{0:# ### ###} hod", item.TotalHours);
-                    <th scope="row" class="text-right">@totalHoursText</th>
+                    string totalHoursText = (@item.TotalHours != 0 && @item.TotalHours != null) ? totalHoursText = String.Format("{0:# ### ###} hod", item.TotalHours) : "";
                 }
+                <th scope="row" class="text-right">@totalHoursText</th>
                 @* Využito *@
                 @{
                     decimal currentVal = 0;
