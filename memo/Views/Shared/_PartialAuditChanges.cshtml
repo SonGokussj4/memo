@@ -33,7 +33,7 @@
             <div class="card-header px-3 mx-0 py-1 clickable" style="background-color: @bgColor;">
                 <div class="d-flex justify-content-between">
                     <div class="flex-row">
-                        @{string typeText = item.Type == "I" ? "Vytvoření" : (item.Type == "U" ? "Úprava" : "Smazání");}
+                        @{string typeText = item.Type == "I" ? "Nové" : (item.Type == "U" ? "Úprava" : "Smazání");}
                         @{string pillText = item.Type == "I" ? "success" : (item.Type == "U" ? "warning" : "danger");}
                         @{string tableNameCz = @StaticUtils.modelNameFromString[@item.TableName];}
                         @{string targetTable = StaticUtils.controllerLink[item.TableName];}

@@ -37,7 +37,7 @@ namespace memo.Models
         [Display(Name = "Aktuální čerpání")]
         public int? PriceFinal { get; set; }
 
-        [Display(Name = "Nevyčerpáno")]
+        [Display(Name = "Sleva z nabídky")]
         public int? PriceDiscount { get; set; }
 
         [Required]

@@ -331,7 +331,7 @@ namespace memo.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(string actionType, int id, OfferOrderVM vm)
+        public async Task<IActionResult> Edit(string actionType, int id, OfferOrderVM vm)
         {
 
             if (id != vm.Order.OrderId)
@@ -343,14 +343,18 @@ namespace memo.Controllers
             {
                 try
                 {
-                    int? totalMinutes = _eveDb.cOrders  // Planned hours
+                    int? totalMinutes = await _eveDb.cOrders  // Planned hours
                         .Where(t => t.OrderCode == vm.Order.OrderCode)
-                        .Select(t => t.Planned).FirstOrDefault();
+                        .Select(t => t.Planned).FirstOrDefaultAsync();
 
                     // TODO tohle delat v ramci zobrazeni a do ViewModelu, NEUKLADAT V DATABAZI....
-                    if (totalMinutes != null)
+                    if (totalMinutes != null || totalMinutes != 0)
                     {
                         vm.Order.TotalHours = totalMinutes / 60;
+                    }
+                    else
+                    {
+                        totalMinutes = 0;
                     }
 
                     vm.Order.PriceFinal = 0;
@@ -367,15 +371,18 @@ namespace memo.Controllers
                     }
                     foreach (OtherCost otherCost in vm.Order.OtherCosts)
                     {
+                        otherCost.CostCzk = Convert.ToInt32(otherCost.Cost * vm.Order.ExchangeRate);
+
                         vm.Order.PriceFinal += Convert.ToInt32(otherCost.Cost);
                         vm.Order.PriceFinalCzk += Convert.ToInt32(otherCost.Cost * vm.Order.ExchangeRate);
                         vm.UnspentMoney -= Convert.ToInt32(otherCost.Cost);
                     }
 
                     vm.Order.ModifiedDate = DateTime.Now;
+                    vm.Order.ModifiedBy = User.GetLoggedInUserName();
 
                     _db.Update(vm.Order);
-                    _db.SaveChanges(User.GetLoggedInUserName());
+                    await _db.SaveChangesAsync(User.GetLoggedInUserName());
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -400,34 +407,33 @@ namespace memo.Controllers
                 }
             }
 
-            List<Offer> wonOffersList = _db.Offer
+            List<Offer> wonOffersList = await _db.Offer
                 .Where(t => t.OfferStatusId == 2)
                 .OrderBy(t => t.OfferName)
-                .ToList();
+                .ToListAsync();
             ViewBag.WonOffersList = new SelectList(wonOffersList, "OfferId", "OfferName");
             ViewBag.CurrencyList = new SelectList(_db.Currency.ToList(), "CurrencyId", "Name");
-            ViewBag.EveContactList = getEveContacts(_eveDbDochna);
-            ViewBag.EveOrderCodes = getOrderCodes(_eveDb);
+            ViewBag.EveContactList = await getEveContactsAsync(_eveDbDochna);
+            ViewBag.EveOrderCodes = await getOrderCodesAsync(_eveDb);
 
-            var offer = _db.Offer.Find(vm.Order.OfferId);
-            var order = vm.Order;
-            var offerId = Convert.ToInt32(vm.Order.OfferId);
-            var offerCompanyName = _db.Company.Find(offer.CompanyId).Name;
-            var invoiceDueDays = _db.Company.Find(offer.CompanyId).InvoiceDueDays;
-            var currencyName = _db.Currency.Find(offer.CurrencyId).Name;
+            int offerId = Convert.ToInt32(vm.Order.OfferId);
+            Offer offer = await _db.Offer.FindAsync(vm.Order.OfferId);
+            Company company = await _db.Company.FindAsync(offer.CompanyId);
+            Currency currency = await _db.Currency.FindAsync(offer.CurrencyId);
+            vm.Order.Invoices = await _db.Invoice.Where(x => x.OrderId == id).ToListAsync();
 
-            order.Invoices = _db.Invoice.Where(x => x.OrderId == id).ToList();
             OfferOrderVM viewModel = new OfferOrderVM()
             {
                 Offer = offer,
-                Order = order,
+                Order = vm.Order,
                 OfferId = offerId,
-                OfferCompanyName = offerCompanyName,
-                InvoiceDueDays = (int)invoiceDueDays,
-                CurrencyName = currencyName,
+                OfferCompanyName = company.Name,
+                InvoiceDueDays = (int)company.InvoiceDueDays,
+                CurrencyName = currency.Name,
             };
 
-            ViewBag.message = "Něco se porouchalo";
+            TempData["Error"] = "Něco se porouchalo";
+
             return View(viewModel);
         }
 
