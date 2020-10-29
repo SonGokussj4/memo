@@ -197,17 +197,7 @@ namespace memo.Controllers
 
     public static class DictionaryHelper
     {
-        // public static TVal Get<TKey, TVal>(this Dictionary<TKey, TVal> dictionary, TKey key, TVal defaultVal = default(TVal))
-        // {
-        //     TVal val;
-        //     if( dictionary.TryGetValue(key, out val) )
-        //     {
-        //         return val;
-        //     }
-        //     return defaultVal;
-        // }
-
-        public static TV GetValue<TK, TV>(this IDictionary<TK, TV> dict, TK key, TV defaultValue = default(TV))
+        public static TV Get<TK, TV>(this IDictionary<TK, TV> dict, TK key, TV defaultValue = default(TV))
         {
             TV value;
             return dict.TryGetValue(key, out value) ? value : defaultValue;

@@ -50,11 +50,11 @@ namespace memo.Controllers
             {
                 vm.Orders = vm.Orders.Where(x => x.Active == true);
             }
-            Dictionary<string, int> dc = await GetAllSumMinutesAsync();
 
+            Dictionary<string, int> dc = await GetOrderSumHoursDictAsync();
             foreach (Order order in vm.Orders)
             {
-                order.Burned = dc.GetValue(order.OrderCode, 0);
+                order.Burned = dc.Get(order.OrderCode, 0);
             }
 
             List<Order> allOrders = await _db.Order.ToListAsync();
@@ -194,17 +194,6 @@ namespace memo.Controllers
             vm.InvoiceDueDays = invoiceDueDays;
             vm.CurrencyName = curSymbol;
 
-            // ==== INFO START ====
-            // NON-LAMBDA SYNTAX
-            // var name = from i in DataContext.MyTable
-            //     where i.ID == 0
-            //     select i.Name
-            // LAMBDA SYNTAX
-            // var name = DataContext.MyTable.Where(i => i.ID == 0)
-            //     .Select(i => new { Name = i.Name });
-            // ===== INFO END =====
-            // Order row = _db.Order.SingleOrDefault(x => x.OrderName == vm.Order.OrderName);
-            // string orderName = row != null ? row.OrderName : String.Empty;
             string orderName = await _db.Order
                 .Where(x => x.OrderName == vm.Order.OrderName)
                 .Select(x => x.OrderName)
@@ -268,7 +257,6 @@ namespace memo.Controllers
         // GET: Order/Edit/5
         [HttpGet]
         public async Task<IActionResult> Edit(int? id, int? offerId)
-        // public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
             {
@@ -385,7 +373,7 @@ namespace memo.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!OrderExists(vm.Order.OrderId))
+                    if ( !(await OrderExists(vm.Order.OrderId)) )
                     {
                         return NotFound();
                     }
@@ -483,6 +471,13 @@ namespace memo.Controllers
             return RedirectToAction("Index");
         }
 
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error()
+        {
+            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        // TODO: odstranit SP
         public SumMinutesSP GetSumMinutes(string orderCode)
         {
             return _eveDb.SumMinutesSP
@@ -510,10 +505,10 @@ namespace memo.Controllers
         }
 
         /// <summary>
-        /// Get dictionary of OrderCode: Sum(Minutes)
+        /// Get dictionary of OrderCode: Sum(Hours)
         /// </summary>
         /// <returns></returns>
-        public async Task<Dictionary<string, int>> GetAllSumMinutesAsync()
+        public async Task<Dictionary<string, int>> GetOrderSumHoursDictAsync()
         {
             var sumMinutes = await _eveDb.tWorks
                 .Join(_eveDb.cOrders,
@@ -527,7 +522,7 @@ namespace memo.Controllers
                 .GroupBy(x => x.OrderCode)
                 .Select( gi => new {
                     OrderCode = gi.Key,
-                    Minutes = gi.Sum(x => x.Minutes),
+                    // Minutes = gi.Sum(x => x.Minutes),
                     Hours = gi.Sum(x => (x.Minutes / 60)),
                 })
                 .OrderBy(x => x.OrderCode)
@@ -536,24 +531,31 @@ namespace memo.Controllers
             return sumMinutes;
         }
 
-        private bool OrderExists(int id)
+        /// <summary>
+        /// Check if Order (cOrders table) exists by OrderId
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        private async Task<bool> OrderExists(int id)
         {
-            return _db.Order.Any(e => e.OrderId == id);
+            return await _db.Order.AnyAsync(e => e.OrderId == id);
         }
 
-        private bool isOrderCodeValid(string orderCode)
+        /// <summary>
+        /// Check if OrderCode is valid (found in cOrders table and is Active ==1)
+        /// </summary>
+        /// <param name="orderCode"></param>
+        /// <returns></returns>
+        private async Task<bool> isOrderCodeValid(string orderCode)
         {
-            cOrders cOrder = _eveDb.cOrders
-                .Where(x => x.OrderCode == orderCode && x.Active == 1)
-                .FirstOrDefault();
+            cOrders cOrder = await _eveDb.cOrders
+                .Where(x =>
+                    x.OrderCode == orderCode &&
+                    x.Active == 1
+                )
+                .FirstOrDefaultAsync();
 
-            if (cOrder == null)
-            {
-                return false;
-            }
-
-            System.Console.WriteLine(cOrder?.OrderCode + " " + cOrder?.OrderName);
-            return true;
+            return cOrder != null ? true : false;
         }
 
         public IActionResult CreateEveProject()
@@ -583,15 +585,9 @@ namespace memo.Controllers
             order.Active = false;
 
             _db.Order.Update(order);
-            _db.SaveChanges(User.GetLoggedInUserName());
+            await _db.SaveChangesAsync(User.GetLoggedInUserName());
 
             return RedirectToAction("Index");
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
         [HttpGet]
@@ -606,7 +602,7 @@ namespace memo.Controllers
             model.Active = false;
 
             _db.Order.Update(model);
-            _db.SaveChanges(User.GetLoggedInUserName());
+            await _db.SaveChangesAsync(User.GetLoggedInUserName());
 
             return RedirectToAction("Index", new { showInactive });
         }
@@ -623,20 +619,20 @@ namespace memo.Controllers
             model.Active = true;
 
             _db.Order.Update(model);
-            _db.SaveChanges(User.GetLoggedInUserName());
+            await _db.SaveChangesAsync(User.GetLoggedInUserName());
 
             return RedirectToAction("Index", new { showInactive });
         }
 
         [HttpPost]
-        public ActionResult AddInvoice(Invoice invoice, string mode = "edit")
+        public async Task<ActionResult> AddInvoice(Invoice invoice, string mode = "edit")
         {
             Invoice newInvoice = new Invoice();
             newInvoice.OrderId = invoice.OrderId;
             newInvoice.Cost = invoice.Cost;
 
-            _db.Add(newInvoice);
-            _db.SaveChanges(User.GetLoggedInUserName());
+            await _db.AddAsync(newInvoice);
+            await _db.SaveChangesAsync(User.GetLoggedInUserName());
 
             return Json(new { success = true });
         }
@@ -646,7 +642,7 @@ namespace memo.Controllers
         {
             Invoice invoice = await _db.Invoice.FindAsync(id);
 
-            List<Invoice> thisOrderInvoices = _db.Invoice.Where(x => x.OrderId == invoice.OrderId).ToList();
+            List<Invoice> thisOrderInvoices = await _db.Invoice.Where(x => x.OrderId == invoice.OrderId).ToListAsync();
 
             if (thisOrderInvoices.Count() <= 1)
             {

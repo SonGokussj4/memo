@@ -138,7 +138,9 @@ namespace memo.Controllers
                 return NotFound();
             }
 
-            Offer offer = await _db.Offer.Include(x => x.Currency).FirstOrDefaultAsync(x => x.OfferId == id);
+            Offer offer = await _db.Offer
+                .Include(x => x.Currency)
+                .FirstOrDefaultAsync(x => x.OfferId == id);
 
             if (offer == null)
             {
@@ -168,7 +170,6 @@ namespace memo.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(string actionType, int id, OfferViewModel vm)
-        // public IActionResult Edit(int id, Offer model, string offerStatusId)
         {
             if (id != vm.Offer.OfferId)
             {
