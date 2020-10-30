@@ -11,6 +11,7 @@ namespace memo.ViewModels
         public int OffersSum { get; set; }
         public int WonSum { get; set; }
         public int LostSum { get; set; }
+        public int WaitingSum { get; set; }
         public float SuccessRate { get; set; }
         public int HoursSum { get; set; }
     }

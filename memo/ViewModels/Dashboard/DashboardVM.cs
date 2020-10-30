@@ -22,12 +22,12 @@ namespace memo.ViewModels
         // SelectLists
         public List<SelectListItem> DepartmentList { get; set; } = new List<SelectListItem>();
         public List<SelectListItem> CustomerList { get; set; } = new List<SelectListItem>();
-        public List<SelectListItem> YearList { get; } = new List<SelectListItem>
-        {
-            new SelectListItem { Value = "2020", Text = "2020" },
-            new SelectListItem { Value = "2021", Text = "2021" },
-            new SelectListItem { Value = "2022", Text = "2022"},
-        };
+        public List<SelectListItem> YearList { get; set; }  // = new List<SelectListItem>
+        // {
+        //     new SelectListItem { Value = "2020", Text = "2020" },
+        //     new SelectListItem { Value = "2021", Text = "2021" },
+        //     new SelectListItem { Value = "2022", Text = "2022"},
+        // };
         public List<SelectListItem> TimePeriodList { get; } = new List<SelectListItem>
         {
             // new SelectListItem { Value = "range", Text = "Rozsah" },

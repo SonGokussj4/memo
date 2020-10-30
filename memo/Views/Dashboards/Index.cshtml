@@ -26,36 +26,26 @@
 *@
 
 <form class="form-inline" asp-action="Index" method="get">
-    <div class="container d-flex" style="justify-content: space-around;">
-        <div class="d-flex">
-            <label class="border-right mx-2 pr-2 font-weight-bold">Období:</label>
+    <div class="container d-flex justify-content-around">
+        <div class="d-flex" style="flex-direction: column;">
+            <label class="mb-2 font-weight-bold">Období</label>
             <select asp-for="TimePeriod" asp-items="@Model.TimePeriodList" class="form-control shadow-sm auto-post" data-toggle="tooltip" title="Vyberte časové rozmezí"></select>
         </div>
-        <div class="d-flex">
-            <label class="border-right mx-2 pr-2 font-weight-bold">Rok:</label>
+        <div class="d-flex" style="flex-direction: column;">
+            <label class="mb-2 font-weight-bold">Rok</label>
             <select asp-for="Year" asp-items="@Model.YearList" class="form-control shadow-sm auto-post" data-toggle="tooltip" title="Zvolte rok"></select>
         </div>
-        <div class="d-flex">
-            <label class="border-right mx-2 pr-2 font-weight-bold">Oddělení:</label>
+        <div class="d-flex" style="flex-direction: column;">
+            <label class="mb-2 font-weight-bold">Oddělení</label>
             <select asp-for="Department" asp-items="@Model.DepartmentList" class="form-control shadow-sm auto-post" data-toggle="tooltip" title="Zvolte oddělení"></select>
         </div>
-        <div class="d-flex">
-            <label class="border-right mx-2 pr-2 font-weight-bold">Zákazník:</label>
+        <div class="d-flex" style="flex-direction: column;">
+            <label class="mb-2 font-weight-bold">Zákazník</label>
             <select asp-for="Customer" asp-items="@Model.CustomerList" class="form-control shadow-sm auto-post" data-toggle="tooltip" title="Zvolte zákazníka"></select>
         </div>
-        <button id="btnFilter" type="submit" class="btn btn-primary" style="visibility: hidden;"><i class="fa fa-filter fa-fw"></i>Filtrovat</button>
+        @* <button id="btnFilter" type="submit" class="btn btn-primary" style="visibility: hidden;"><i class="fa fa-filter fa-fw"></i>Filtrovat</button> *@
     </div>
 </form>
-
-<hr />
-
-@* <div class="container d-flex" style="justify-content: space-around;">
-    <p>(DEBUG)</p>
-    <p>TimePeriod: @Model.TimePeriod</p>
-    <p>Year: @Model.Year</p>
-    <p>Department: @Model.Department</p>
-    <p>Customer: @Model.Customer</p>
-</div> *@
 
 <hr />
 
@@ -65,6 +55,7 @@
         <div class="card">
             <div class="card-title text-center">
                 <h5>Očekávaný příjem</h5>
+                <h6>(Dle data a částky splatnosti faktur)</h6>
             </div>
             <div style="display: flex; align-items: center; justify-content: center;">
                 <div id="chart_container" style="width: 400px;">
@@ -94,14 +85,18 @@
 
 <div class="container d-flex justify-content-center">
 
-<table id="table" class="table table-sm text-xsmall text-nowrap">
+<table
+    id="table"
+    class="table table-sm text-xsmall text-nowrap">
     <thead>
         <tr>
             <th class="text-center">Oddělení</th>
-            <th>Úspěšnost</th>
+            @* <th><span data-toggle="tooltip" title="Vyhrané / (Vyhrané + Prohrané)">Úspěšnost</span></th> *@
+            <th scope="col" data-toggle="tooltip" title="Vyhrané / (Vyhrané + Prohrané)">Úspěšnost</th>
             <th>(Vyhrané)</th>
             <th>(Prohrané)</th>
-            <th>Hodiny</th>
+            <th>(Čekající)</th>
+            @* <th>Hodiny</th> *@
         </tr>
     </thead>
     <tbody>
@@ -112,11 +107,13 @@
             <td class="text-right">@item.SuccessRate.ToString("P")</td>
             <td class="text-right">@item.WonSum</td>
             <td class="text-right">@item.LostSum</td>
-            <td class="text-right">---</td>
+            <td class="text-right">@item.WaitingSum</td>
+            @* <td class="text-right">---</td> *@
         </tr>
         }
     </tbody>
 </table>
+
 
 </div>
 
