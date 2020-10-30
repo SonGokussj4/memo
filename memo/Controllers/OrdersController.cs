@@ -8,7 +8,6 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.EntityFrameworkCore;
 using memo.Data;
 using memo.Models;
@@ -79,15 +78,7 @@ namespace memo.Controllers
         {
             Offer offer = await _db.Offer.FirstOrDefaultAsync(x => x.OfferId == id);
 
-            ViewBag.WonOffersList = await _db.Offer
-                .Where(t => t.OfferStatusId == 2)
-                .OrderBy(t => t.OfferName)
-                .Select(x => new SelectListItem
-                {
-                    Text = x.OfferName + " - " + x.Subject,
-                    Value = x.OfferId.ToString(),
-                }
-                ).ToListAsync();
+            await populateModel(null, 0);
 
             if (offer == null)
             {
@@ -99,10 +90,6 @@ namespace memo.Controllers
 
                 return View(vmm);
             }
-
-            ViewBag.CurrencyList = new SelectList(_db.Currency.ToList(), "CurrencyId", "Name");
-            ViewBag.EveContactList = await getEveContactsAsync(_eveDbDochna);
-            ViewBag.EveOrderCodes = await getOrderCodesAsync(_eveDb);
 
             string offerCompanyName = string.Empty;
             int invoiceDueDays = 0;
@@ -133,6 +120,8 @@ namespace memo.Controllers
             order.PriceFinalCzk = finalPriceCzk;
             order.NegotiatedPrice = negotiatedPrice;
 
+            await populateModel(order, (int)id);
+
             OfferOrderVM vm = new OfferOrderVM()
             {
                 Offer = offer,
@@ -150,15 +139,7 @@ namespace memo.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(OfferOrderVM vm)
         {
-            List<Offer> wonOffersList = await _db.Offer
-                .Where(t => t.OfferStatusId == 2)
-                .OrderBy(t => t.OfferName)
-                .ToListAsync();
-
-            ViewBag.WonOffersList = new SelectList(wonOffersList, "OfferId", "OfferName");
-            ViewBag.CurrencyList = new SelectList(_db.Currency.ToList(), "CurrencyId", "Name");
-            ViewBag.EveContactList = getEveContacts(_eveDbDochna);
-            ViewBag.EveOrderCodes = getOrderCodes(_eveDb);
+            await populateModel(vm.Order, vm.Order.OrderId);
 
             string offerCompanyName = string.Empty;
             int invoiceDueDays = 0;
@@ -263,9 +244,7 @@ namespace memo.Controllers
                 return NotFound();
             }
 
-            ViewBag.CurrencyList = new SelectList(_db.Currency.ToList(), "CurrencyId", "Name");
-            ViewBag.EveContactList = await getEveContactsAsync(_eveDbDochna);
-            ViewBag.EveOrderCodes = await getOrderCodesAsync(_eveDb);
+            await populateModel(null, 0);
 
             Order order = await _db.Order.FindAsync(id);
             if (order == null)
@@ -273,14 +252,13 @@ namespace memo.Controllers
                 return NotFound();
             }
 
+            order.Invoices = await _db.Invoice.Where(x => x.OrderId == id).ToListAsync();
+            order.OtherCosts = await _db.OtherCost.Where(x => x.OrderId == id).ToListAsync();
+
             if (offerId != null)
             {
                 order.OfferId = offerId;
             }
-
-            order.Invoices = await _db.Invoice.Where(x => x.OrderId == id).ToListAsync();
-            order.OtherCosts = await _db.OtherCost.Where(x => x.OrderId == id).ToListAsync();
-
             Offer offer = await _db.Offer.FindAsync(order.OfferId);
             if (offer == null)
             {
@@ -336,6 +314,37 @@ namespace memo.Controllers
             {
                 try
                 {
+                    OfferOrderVM oldVm = new OfferOrderVM();
+                    oldVm.Order = await _db.Order.AsNoTracking().FirstOrDefaultAsync(x => x.OrderId == vm.Order.OrderId);
+
+                    if (oldVm.Order.OrderName == vm.Order.OrderName &&
+                        oldVm.Order.NegotiatedPrice == vm.Order.NegotiatedPrice &&
+                        oldVm.Order.PriceFinal == vm.Order.PriceFinal &&
+                        oldVm.Order.PriceDiscount == vm.Order.PriceDiscount &&
+                        oldVm.Order.OrderCode == vm.Order.OrderCode &&
+                        oldVm.Order.EveContactName == vm.Order.EveContactName &&
+                        oldVm.Order.HourWage == vm.Order.HourWage &&
+                        oldVm.Order.TotalHours== vm.Order.TotalHours&&
+                        oldVm.Order.ExchangeRate == vm.Order.ExchangeRate &&
+                        oldVm.Order.PriceFinalCzk == vm.Order.PriceFinalCzk &&
+                        oldVm.Order.Notes == vm.Order.Notes &&
+                        oldVm.Order.ModifiedBy == vm.Order.ModifiedBy &&
+                        oldVm.Order.Active == vm.Order.Active &&
+                        oldVm.Order.Burned == vm.Order.Burned)
+                    {
+                        TempData["Info"] = "Nebyla provedena změna, není co uložit";
+
+                        // Populate VM
+                        List<AuditViewModel> auditss = getAuditViewModel(_db).Audits
+                            .Where(x => x.TableName == "Order" && x.KeyValue == id.ToString())
+                            .ToList();
+                        vm.Audits = auditss;
+
+                        await populateModel(vm.Order, id);
+
+                        return View(vm);
+                    }
+
                     // TODO tohle delat v ramci zobrazeni a do ViewModelu, NEUKLADAT V DATABAZI....
                     int? totalMinutes = await _eveDb.cOrders  // Planned
                         .Where(t => t.OrderCode == vm.Order.OrderCode)
@@ -394,14 +403,7 @@ namespace memo.Controllers
                 }
             }
 
-            List<Offer> wonOffersList = await _db.Offer
-                .Where(t => t.OfferStatusId == 2)
-                .OrderBy(t => t.OfferName)
-                .ToListAsync();
-            ViewBag.WonOffersList = new SelectList(wonOffersList, "OfferId", "OfferName");
-            ViewBag.CurrencyList = new SelectList(_db.Currency.ToList(), "CurrencyId", "Name");
-            ViewBag.EveContactList = await getEveContactsAsync(_eveDbDochna);
-            ViewBag.EveOrderCodes = await getOrderCodesAsync(_eveDb);
+            await populateModel(vm.Order, id);
 
             int offerId = Convert.ToInt32(vm.Order.OfferId);
             Offer offer = await _db.Offer.FindAsync(vm.Order.OfferId);
@@ -466,7 +468,7 @@ namespace memo.Controllers
             // }
 
             _db.Order.Remove(order);
-            _db.SaveChanges(User.GetLoggedInUserName());
+            await _db.SaveChangesAsync(User.GetLoggedInUserName());
 
             return RedirectToAction("Index");
         }
@@ -475,6 +477,36 @@ namespace memo.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        private async Task<object> populateModel(Order model, int id)
+        {
+            // Populate
+            ViewBag.WonOffersList = await _db.Offer
+                .Where(t => t.OfferStatusId == 2)
+                .OrderBy(t => t.OfferName)
+                .Select(x => new SelectListItem
+                {
+                    Text = x.OfferName + " - " + x.Subject,
+                    Value = x.OfferId.ToString(),
+                }
+                ).ToListAsync();
+            ViewBag.CurrencyList = new SelectList(_db.Currency.ToList(), "CurrencyId", "Name");
+            ViewBag.EveContactList = await getEveContactsAsync(_eveDbDochna);
+            ViewBag.EveOrderCodes = await getOrderCodesAsync(_eveDb);
+
+            return null;
+        //     // ViewBag.OfferStatusList = new SelectList(_db.OfferStatus.ToList(), "OfferStatusId", "Status");
+
+        //     if (model != null)
+        //     {
+        //         ViewBag.OfferStatusName = _db.OfferStatus.Find(model.OfferStatusId).Name;
+        //     }
+
+        //     if (id != 0)
+        //     {
+        //         ViewBag.CreatedOrders = _db.Order.Include(x => x.Offer).Where(x => x.OfferId == id).ToList();
+        //     }
         }
 
         // TODO: odstranit SP
