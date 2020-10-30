@@ -83,6 +83,13 @@ BEGIN
 END;
 GO
 
+IF COL_LENGTH ('memo.Offer', 'ModifiedDate') IS NULL
+BEGIN
+    ALTER TABLE [memo].[Offer]
+    ADD ModifiedDate DATETIME NULL
+END;
+GO
+
 UPDATE [memo].[Offer]
 SET [memo].[Offer].CreatedBy = 'jverner@evektor.cz'
 FROM [memo].[Offer];
