@@ -21,28 +21,22 @@ namespace memo.Controllers
             _db = db;
         }
 
-        // public async Task<IActionResult> Index(bool showInactive = false)
-        public IActionResult Index(bool showInactive = false)
+        public async Task<IActionResult> Index(bool showInactive = false)
         {
             ViewBag.showInactive = showInactive;
 
-            List<Contact> model = new List<Contact>();
+            List<Contact> contacts = await _db.Contact
+                    .Include(x => x.Company)
+                    .ToListAsync();
+
+            ViewBag.AllContactsCount = contacts.Count();
 
             if (showInactive is false)
             {
-                model = _db.Contact
-                    .Include(x => x.Company)
-                    .Where(x => x.Active == true)
-                    .ToList();
-            }
-            else
-            {
-                model = _db.Contact
-                    .Include(x => x.Company)
-                    .ToList();
+                contacts = _db.Contact.Where(x => x.Active == true).ToList();
             }
 
-            return View(model);
+            return View(contacts);
         }
 
         [HttpGet]

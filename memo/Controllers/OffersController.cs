@@ -32,7 +32,7 @@ namespace memo.Controllers
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            List<Offer> model = await _db.Offer
+            List<Offer> offers = await _db.Offer
                 .Include(x => x.Company)
                 .Include(y => y.Contact)
                 .Include(z => z.Currency)
@@ -41,7 +41,7 @@ namespace memo.Controllers
 
             if (showInactive is false)
             {
-                model = model.Where(x => x.Active == true).ToList();
+                offers = offers.Where(x => x.Active == true).ToList();
             }
 
             List<Order> allOrders = await _db.Order.ToListAsync();
@@ -54,7 +54,7 @@ namespace memo.Controllers
             string message = string.Format("Stránka načtena za: {0:D1}.{1:D3}s", ts.Seconds, ts.Milliseconds);
             TempData["Info"] = message;
 
-            return View(model);
+            return View(offers);
         }
 
         [HttpGet]

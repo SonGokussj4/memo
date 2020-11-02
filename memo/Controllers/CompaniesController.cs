@@ -20,26 +20,20 @@ namespace memo.Controllers
             _db = db;
         }
 
-        [HttpGet]
         public async Task<IActionResult> Index(bool showInactive = false)
         {
             ViewBag.showInactive = showInactive;
 
-            List<Company> model = new List<Company>();
+            List<Company> companies = await _db.Company.ToListAsync();
+
+            ViewBag.AllCompaniesCount = companies.Count();
 
             if (showInactive is false)
             {
-                model = await _db.Company
-                    .Where(x => x.Active == true)
-                    .ToListAsync();
-            }
-            else
-            {
-                model = await _db.Company
-                    .ToListAsync();
+                companies = companies.Where(x => x.Active == true).ToList();
             }
 
-            return View(model);
+            return View(companies);
         }
 
         [HttpGet]
