@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using memo.Data;
 using memo.Models;
@@ -81,6 +80,7 @@ namespace memo.Controllers
             {
                 _db.Remove(bugReport);
                 await _db.SaveChangesAsync(User.GetLoggedInUserName());
+
                 TempData["Success"] = "Úspěšně smazáno";
                 return RedirectToAction("Index");
             }

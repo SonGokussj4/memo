@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using memo.Models;
 using memo.Data;
 using Microsoft.EntityFrameworkCore;
@@ -22,6 +21,7 @@ namespace memo.Controllers
             _db = db;
         }
 
+        // public async Task<IActionResult> Index(bool showInactive = false)
         public IActionResult Index(bool showInactive = false)
         {
             ViewBag.showInactive = showInactive;

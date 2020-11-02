@@ -11,6 +11,20 @@
     .audit-log {
         padding: 8rem;
     }
+
+    .wrapped-row {
+        max-width:200px;
+    }
+
+    .wrapped-row span {
+        width: 100%;
+        display:block;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        -o-text-overflow: ellipsis;
+    }
+
 </style>
 
 <div class="audit-log pt-5">
@@ -54,7 +68,7 @@
                             </span>
                         }
                         @{
-                            int numberOfChanges = item.LogList.Count() - 1;  // Because there is "ModifiedTime" change every time
+                            int numberOfChanges = item.Json.Count() - 1;  // Because there is "ModifiedTime" change every time
                             if (item.TableName ==  "OtherCost" || item.TableName == "Invoice")
                             {
                                 numberOfChanges += 1;  // No "ModifiedTime" field in these tables
@@ -88,7 +102,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (string listItem in @item.LogList)
+                            @foreach (string listItem in @item.Json)
                             {
                                 dynamic items = JsonConvert.DeserializeObject(listItem);
 
@@ -120,7 +134,7 @@
                                     {
                                         oldValue = oldValueDate.ToString("dd.MM.yyyy HH:mm");
                                     }
-                                    <td scope="row">@oldValue</td>
+                                    <td scope="row" class="wrapped-row"><span>@oldValue</span></td>
 
                                     <td scope="row"><i class="fa fa-fw fa-arrow-right"></i></td>
 
@@ -134,7 +148,7 @@
                                     {
                                         newValue = newValueDate.ToString("dd.MM.yyyy HH:mm");
                                     }
-                                    <td scope="row">@newValue</td>
+                                    <td scope="row" class="wrapped-row"><span>@newValue</span></td>
                                 </tr>
                             }
                         </tbody>

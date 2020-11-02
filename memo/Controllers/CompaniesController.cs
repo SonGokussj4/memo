@@ -4,14 +4,10 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
 using memo.Models;
 using memo.Data;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Microsoft.Data.SqlClient;
 using memo.ViewModels;
-using System.Text.RegularExpressions;
 
 namespace memo.Controllers
 {
@@ -117,7 +113,7 @@ namespace memo.Controllers
                     TempData["Info"] = "Nebyla provedena změna, není co uložit";
 
                     // Fill Audits list
-                    vm.Audits = initViewModel().Audits
+                    vm.Audits = getAuditViewModel(_db).Audits
                         .Where(x => x.TableName == "Company" && x.KeyValue == vm.Company.CompanyId.ToString())
                         .ToList();
                     return View(vm);
@@ -135,7 +131,7 @@ namespace memo.Controllers
                 if (actionType == "Uložit")
                 {
                     // Fill Audits list
-                    vm.Audits = initViewModel().Audits
+                    vm.Audits = getAuditViewModel(_db).Audits
                         .Where(x => x.TableName == "Company" && x.KeyValue == vm.Company.CompanyId.ToString())
                         .ToList();
                     return View(vm);
@@ -149,7 +145,7 @@ namespace memo.Controllers
             TempData["Error"] = "Při editaci došlo k problému. ModelStateErrorCount: " + ModelState.ErrorCount;
 
             // Fill Audits list
-            vm.Audits = initViewModel().Audits
+            vm.Audits = getAuditViewModel(_db).Audits
                 .Where(x => x.TableName == "Company" && x.KeyValue == vm.Company.CompanyId.ToString())
                 .ToList();
             return View(vm);
@@ -203,15 +199,32 @@ namespace memo.Controllers
             return RedirectToAction("Index", new { showInactive = true });
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Deactivate(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
+        // [HttpPost]
+        // [ValidateAntiForgeryToken]
+        // public async Task<IActionResult> Deactivate(int? id)
+        // {
+        //     if (id == null)
+        //     {
+        //         return NotFound();
+        //     }
 
+        //     Company company = await _db.Company.FirstOrDefaultAsync(m => m.CompanyId == id);
+        //     if (company == null)
+        //     {
+        //         return NotFound();
+        //     }
+
+        //     company.Active = false;
+
+        //     _db.Company.Update(company);
+        //     _db.SaveChanges(User.GetLoggedInUserName());
+
+        //     return RedirectToAction("Index");
+        // }
+
+        [HttpGet]
+        public async Task<IActionResult> Deactivate(int id, string showInactive)
+        {
             Company company = await _db.Company.FirstOrDefaultAsync(m => m.CompanyId == id);
             if (company == null)
             {
@@ -223,72 +236,55 @@ namespace memo.Controllers
             _db.Company.Update(company);
             _db.SaveChanges(User.GetLoggedInUserName());
 
-            return RedirectToAction("Index");
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> Deactivate(int id, string showInactive)
-        {
-            Company model = await _db.Company.FirstOrDefaultAsync(m => m.CompanyId == id);
-            if (model == null)
-            {
-                return NotFound();
-            }
-
-            model.Active = false;
-
-            _db.Company.Update(model);
-            _db.SaveChanges(User.GetLoggedInUserName());
-
             return RedirectToAction("Index", new { showInactive });
         }
 
         [HttpGet]
         public async Task<IActionResult> Activate(int id, string showInactive)
         {
-            Company model = await _db.Company.FirstOrDefaultAsync(m => m.CompanyId == id);
-            if (model == null)
+            Company company = await _db.Company.FirstOrDefaultAsync(m => m.CompanyId == id);
+            if (company == null)
             {
                 return NotFound();
             }
 
-            model.Active = true;
+            company.Active = true;
 
-            _db.Company.Update(model);
+            _db.Company.Update(company);
             _db.SaveChanges(User.GetLoggedInUserName());
 
             return RedirectToAction("Index", new { showInactive });
         }
 
-        private AuditsViewModel initViewModel()
-        {
-            IEnumerable<AuditViewModel> audits = _db.Audit
-                .AsEnumerable()
-                .GroupBy(x => new
-                {
-                    x.PK,
-                    x.UpdateDate
-                })
-                .Select(g => new AuditViewModel
-                {
-                    AuditId = g.First().AuditId,
-                    Type = g.First().Type,
-                    TableName = g.First().TableName,
-                    UpdateBy = g.First().UpdateBy,
-                    UpdateDate = g.First().UpdateDate,
-                    KeyName = Regex.Match(g.First().PK, @"<\[(.+?)\]=(.+?)>").Groups[1].Value,
-                    KeyValue = Regex.Match(g.First().PK, @"<\[(.+?)\]=(.+?)>").Groups[2].Value,
-                    LogList = g.Select(i => @$"{{""FieldName"": ""{i.FieldName}"", ""OldValue"": ""{i.OldValue}"", ""NewValue"": ""{i.NewValue}""}}"),
-                    // LogJson = "[" + string.Join(", ", g.Select(i => @$"{{""FieldName"": ""{i.FieldName}"", ""OldValue"": ""{i.OldValue}"", ""NewValue"": ""{i.NewValue}""}}")) + "]"
-                })
-                .OrderByDescending(x => x.UpdateDate);
+        // private AuditsViewModel initViewModel()
+        // {
+        //     IEnumerable<AuditViewModel> audits = _db.Audit
+        //         .AsEnumerable()
+        //         .GroupBy(x => new
+        //         {
+        //             x.PK,
+        //             x.UpdateDate
+        //         })
+        //         .Select(g => new AuditViewModel
+        //         {
+        //             AuditId = g.First().AuditId,
+        //             Type = g.First().Type,
+        //             TableName = g.First().TableName,
+        //             UpdateBy = g.First().UpdateBy,
+        //             UpdateDate = g.First().UpdateDate,
+        //             KeyName = Regex.Match(g.First().PK, @"<\[(.+?)\]=(.+?)>").Groups[1].Value,
+        //             KeyValue = Regex.Match(g.First().PK, @"<\[(.+?)\]=(.+?)>").Groups[2].Value,
+        //             LogList = g.Select(i => @$"{{""FieldName"": ""{i.FieldName}"", ""OldValue"": ""{i.OldValue}"", ""NewValue"": ""{i.NewValue}""}}"),
+        //             // LogJson = "[" + string.Join(", ", g.Select(i => @$"{{""FieldName"": ""{i.FieldName}"", ""OldValue"": ""{i.OldValue}"", ""NewValue"": ""{i.NewValue}""}}")) + "]"
+        //         })
+        //         .OrderByDescending(x => x.UpdateDate);
 
-            AuditsViewModel vm = new AuditsViewModel
-            {
-                Audits = audits,
-            };
+        //     AuditsViewModel vm = new AuditsViewModel
+        //     {
+        //         Audits = audits,
+        //     };
 
-            return vm;
-        }
+        //     return vm;
+        // }
     }
 }

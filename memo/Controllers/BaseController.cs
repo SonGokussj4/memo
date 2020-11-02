@@ -19,6 +19,7 @@ using Microsoft.EntityFrameworkCore;
 using memo.Data;
 using memo.Models;
 using memo.ViewModels;
+using Newtonsoft.Json;
 
 namespace memo.Controllers
 {
@@ -179,8 +180,9 @@ namespace memo.Controllers
                     UpdateDate = g.First().UpdateDate,
                     KeyName = Regex.Match(g.First().PK, @"<\[(.+?)\]=(.+?)>").Groups[1].Value,
                     KeyValue = Regex.Match(g.First().PK, @"<\[(.+?)\]=(.+?)>").Groups[2].Value,
-                    LogList = g.Select(i => @$"{{""FieldName"": ""{i.FieldName}"", ""OldValue"": ""{i.OldValue}"", ""NewValue"": ""{i.NewValue}""}}"),
+                    // LogList = g.Select(i => @$"{{""FieldName"": ""{i.FieldName}"", ""OldValue"": ""{i.OldValue}"", ""NewValue"": ""{i.NewValue}""}}"),
                     // LogJson = "[" + string.Join(", ", g.Select(i => @$"{{""FieldName"": ""{i.FieldName}"", ""OldValue"": ""{i.OldValue}"", ""NewValue"": ""{i.NewValue}""}}")) + "]"
+                    Json = g.Select(i => JsonConvert.SerializeObject(i)),
                 })
                 .OrderByDescending(x => x.UpdateDate);
 
@@ -194,7 +196,9 @@ namespace memo.Controllers
     }
 
     // ---------------------------------------------------------------------------------------------------------------------
-
+    /// <summary>
+    /// Able to do have default value like in Python: val = dc.Get("tryThisValue", defaultValue)
+    /// </summary>
     public static class DictionaryHelper
     {
         public static TV Get<TK, TV>(this IDictionary<TK, TV> dict, TK key, TV defaultValue = default(TV))
