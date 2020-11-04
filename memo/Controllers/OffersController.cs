@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using memo.Data;
 using memo.Models;
 using memo.ViewModels;
+using Microsoft.AspNetCore.Hosting;
 
 namespace memo.Controllers
 {
@@ -18,7 +19,7 @@ namespace memo.Controllers
         public EvektorDbContext _eveDb { get; }
         public EvektorDochnaDbContext _eveDbDochna { get; }
 
-        public OffersController(ApplicationDbContext db, EvektorDbContext eveDb, EvektorDochnaDbContext eveDbDochna)
+        public OffersController(ApplicationDbContext db, EvektorDbContext eveDb, EvektorDochnaDbContext eveDbDochna, IWebHostEnvironment hostEnvironment) : base(hostEnvironment)
         {
             _db = db;
             _eveDb = eveDb;

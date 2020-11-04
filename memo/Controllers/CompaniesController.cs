@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using memo.Models;
 using memo.Data;
 using memo.ViewModels;
+using Microsoft.AspNetCore.Hosting;
 
 namespace memo.Controllers
 {
@@ -15,7 +16,7 @@ namespace memo.Controllers
     {
         public ApplicationDbContext _db { get; }
 
-        public CompaniesController(ApplicationDbContext db)
+        public CompaniesController(ApplicationDbContext db, IWebHostEnvironment hostEnvironment) : base(hostEnvironment)
         {
             _db = db;
         }

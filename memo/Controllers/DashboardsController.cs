@@ -10,14 +10,15 @@ using Microsoft.EntityFrameworkCore;
 using memo.Data;
 using memo.Models;
 using memo.ViewModels;
+using Microsoft.AspNetCore.Hosting;
 
 namespace memo.Controllers
 {
-    public class DashboardsController : Controller
+    public class DashboardsController : BaseController
     {
         public ApplicationDbContext _db { get; }
 
-        public DashboardsController(ApplicationDbContext db)
+        public DashboardsController(ApplicationDbContext db, IWebHostEnvironment hostEnvironment) : base(hostEnvironment)
         {
             _db = db;
         }

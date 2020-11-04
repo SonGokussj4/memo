@@ -20,11 +20,61 @@ using memo.Data;
 using memo.Models;
 using memo.ViewModels;
 using Newtonsoft.Json;
+using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
+using System.Runtime.CompilerServices;
 
 namespace memo.Controllers
 {
     public class BaseController : Controller
     {
+        protected readonly IWebHostEnvironment HostEnvironment;
+        public BaseController(IWebHostEnvironment hostEnvironment)
+        {
+            this.HostEnvironment = hostEnvironment;
+        }
+
+        public override void OnActionExecuting(ActionExecutingContext filterContext)
+        {
+            // Before any controller action check if the one that is logged in has the right Domain and Username
+            if (!this.HostEnvironment.IsDevelopment())
+            {
+                string loggedInUserName = User.GetLoggedInUserName();
+                //string loggedInUserEmail = User.GetLoggedInUserEmail();
+
+                string domainName = loggedInUserName.Split("\\").FirstOrDefault();
+                string userName = loggedInUserName.Split("\\").LastOrDefault();
+
+                string message = "";
+
+                //if (domainName != "KONSTRU")
+                if (domainName != "MERLIN")
+                {
+                    message = $"Chyba v přihlášení! Doména musí být 'KONSTRU'. Nyní je: '{domainName}' ";
+                }
+                else if (userName != "jverner")
+                {
+                    message = $"Chyba v přihlášení! Nepovolený uživatel... '{userName}' ";
+                }
+
+                if (message != "")
+                {
+                    TempData["Error"] = message;
+
+                    // Redirect to Home/Index
+                    filterContext.Result = new RedirectToRouteResult(
+                        new RouteValueDictionary
+                        {
+                        {"controller", "Home"},
+                        {"action", "Index"}
+                        }
+                    );
+                }
+            }
+        }
+
         public string getCurrencyStr(string symbol)
         {
             // CZK is missing from list, return 1, no conversion needed
@@ -72,7 +122,7 @@ namespace memo.Controllers
         {
 
             // EVE - Del = 1 and nemáš TxAccount a nejsi IntAccType == 1 -> nepracuješ
-	        // EVAT - Del = 0 and máš BranchID 1 a zároveň WorkMask non NULL -> pracuješ v EVATu
+            // EVAT - Del = 0 and máš BranchID 1 a zároveň WorkMask non NULL -> pracuješ v EVATu
 
             IEnumerable<SelectListItem> eveContactsList = _eveDbDochna.vEmployees
                 .Where(x => x.EVE == 1)
@@ -89,7 +139,7 @@ namespace memo.Controllers
         public async Task<List<SelectListItem>> getEveContactsAsync(EvektorDochnaDbContext _eveDbDochna)
         {
             // EVE - Del = 1 and nemáš TxAccount a nejsi IntAccType == 1 -> nepracuješ
-	        // EVAT - Del = 0 and máš BranchID 1 a zároveň WorkMask non NULL -> pracuješ v EVATu
+            // EVAT - Del = 0 and máš BranchID 1 a zároveň WorkMask non NULL -> pracuješ v EVATu
             IOrderedQueryable<SelectListItem> eveContactsList = _eveDbDochna.vEmployees
                 .Where(x => x.EVE == 1)
                 .Select(x => new SelectListItem {

@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using memo.Data;
 using memo.ViewModels;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 
 namespace memo.Controllers
 {
@@ -11,7 +13,7 @@ namespace memo.Controllers
     {
         public ApplicationDbContext _db { get; }
 
-        public AuditsController(ApplicationDbContext db)
+        public AuditsController(ApplicationDbContext db, IWebHostEnvironment hostEnvironment) : base(hostEnvironment)
         {
             _db = db;
         }

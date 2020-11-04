@@ -2,20 +2,16 @@ using System;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 
 namespace memo.Controllers
 {
     [AllowAnonymous]
     public class HelperController : BaseController
     {
-        // private readonly RoleManager<IdentityRole> roleManager;
-        // private readonly UserManager<IdentityUser> userManager;
-
-        // public HelperController(RoleManager<IdentityRole> roleManager, UserManager<IdentityUser> userManager)
-        public HelperController()
+        public HelperController(IWebHostEnvironment hostEnvironment) : base(hostEnvironment)
         {
-            // this.roleManager = roleManager;
-            // this.userManager = userManager;
+
         }
 
         public IActionResult LoginHandler()

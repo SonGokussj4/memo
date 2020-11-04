@@ -9,14 +9,18 @@ using memo.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using memo.ViewModels;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Hosting;
 
 namespace memo.Controllers
 {
     public class ContactsController : BaseController
     {
-        public ApplicationDbContext _db { get; }
+        private readonly ApplicationDbContext _db;
+        private readonly SignInManager<IdentityUser> signInManager;
+        private readonly UserManager<IdentityUser> userManager;
 
-        public ContactsController(ApplicationDbContext db)
+        public ContactsController(ApplicationDbContext db, IWebHostEnvironment hostEnvironment) : base(hostEnvironment)
         {
             _db = db;
         }
@@ -35,6 +39,9 @@ namespace memo.Controllers
             {
                 contacts = _db.Contact.Where(x => x.Active == true).ToList();
             }
+
+            var mujname = User.GetLoggedInUserName();
+
 
             return View(contacts);
         }

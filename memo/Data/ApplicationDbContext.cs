@@ -62,6 +62,11 @@ namespace memo.Data
         /// <param name="userId">User.GetLoggedInUserName()</param>
         public virtual void SetUserContext(string userId)
         {
+            // DEBUG ONLY
+            if (userId == "" || userId == null)
+            {
+                userId = "user@development";
+            }
             var idParam = new SqlParameter("@userId", userId);
             this.Database.ExecuteSqlRaw("memo.SetUserContext @userId", idParam);
         }
