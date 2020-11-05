@@ -51,8 +51,7 @@ namespace memo.Controllers
 
             string message = "";
 
-            if (domainName != "KONSTRU")
-            // if (domainName != "MERLIN")
+            if (domainName != "KONSTRU" && domainName != "MERLIN")
             {
                 message = $"Chyba v přihlášení! Doména musí být 'KONSTRU'. Nyní je: '{domainName}' ";
             }
