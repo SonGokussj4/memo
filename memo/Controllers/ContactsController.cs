@@ -17,8 +17,8 @@ namespace memo.Controllers
     public class ContactsController : BaseController
     {
         private readonly ApplicationDbContext _db;
-        private readonly SignInManager<IdentityUser> signInManager;
-        private readonly UserManager<IdentityUser> userManager;
+        // private readonly SignInManager<IdentityUser> signInManager;
+        // private readonly UserManager<IdentityUser> userManager;
 
         public ContactsController(ApplicationDbContext db, IWebHostEnvironment hostEnvironment) : base(hostEnvironment)
         {

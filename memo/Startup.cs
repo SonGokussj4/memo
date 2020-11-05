@@ -1,22 +1,27 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Globalization;
+using System.Runtime.InteropServices;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.EntityFrameworkCore;
-using memo.Data;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Negotiate;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System.Globalization;
-using Microsoft.AspNetCore.Localization;
-using System.Threading;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Localization;
+using Microsoft.AspNetCore.Server.IISIntegration;
+using memo.Data;
+using memo.Helpers;
 
 namespace memo
 {
@@ -55,17 +60,43 @@ namespace memo
                   options.UseSqlServer(Configuration.GetConnectionString("EvektorDbConnectionDochna")));
             // options.UseSqlServer(Configuration.GetConnectionString("EvektorDbConnectionMock")));
 
-            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            //services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            services.AddDefaultIdentity<IdentityUser>()
                 .AddEntityFrameworkStores<LoginDbContext>();
 
-            services.AddAuthorization(options =>
+            //services.AddAuthorization(options =>
+            //{
+            //    options.FallbackPolicy = new AuthorizationPolicyBuilder()
+            //        .RequireAuthenticatedUser()
+            //        .Build();
+            //    // Register other policies here
+            //});
+
+            // services.ConfigureApplicationCookie(o =>
+            // {
+            //     o.ExpireTimeSpan = TimeSpan.FromHours(12);
+            //     o.SlidingExpiration = true;
+            // });
+
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
-                options.FallbackPolicy = new AuthorizationPolicyBuilder()
-                    .RequireAuthenticatedUser()
-                    .Build();
-                // Register other policies here
-            });
+                services.AddSingleton<ValidateAuthentication>();
+            }
+
+            services.AddAuthentication(NegotiateDefaults.AuthenticationScheme)
+                .AddNegotiate();
+                // .AddNegotiate(options =>
+                // {
+                //     if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                //     {
+                //         options.EnableLdap("KONSTRU");
+                //         // options.MachineAccountName = "machineName";
+                //         // options.MachineAccountPassword = "PassW0rd";
+                //     }
+                // });
+
             services.AddControllersWithViews();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -98,6 +129,7 @@ namespace memo
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
@@ -106,14 +138,19 @@ namespace memo
             app.UseAuthentication();
             app.UseAuthorization();
 
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                app.UseMiddleware<ValidateAuthentication>();
+            }
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(name: "default",pattern: "{controller=Home}/{action=Index}/{id?}");
                 endpoints.MapRazorPages();
 
                 // Disable Register
-                endpoints.MapGet("/Identity/Account/Register", context => Task.Factory.StartNew(() => context.Response.Redirect("/Identity/Account/Login", true, true)));
-                endpoints.MapPost("/Identity/Account/Register", context => Task.Factory.StartNew(() => context.Response.Redirect("/Identity/Account/Login", true, true)));
+                // endpoints.MapGet("/Identity/Account/Register", context => Task.Factory.StartNew(() => context.Response.Redirect("/Identity/Account/Login", true, true)));
+                // endpoints.MapPost("/Identity/Account/Register", context => Task.Factory.StartNew(() => context.Response.Redirect("/Identity/Account/Login", true, true)));
             });
         }
     }

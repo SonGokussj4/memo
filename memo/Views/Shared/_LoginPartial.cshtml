@@ -8,7 +8,7 @@
             <i class="fa fa-user"></i> @User.Identity.Name
         </a>
     </li>
-@*@if (SignInManager.IsSignedIn(User))
+@if (SignInManager.IsSignedIn(User))
 {
     <li class="nav-item">
         <a  class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">
@@ -21,10 +21,10 @@
         </form>
     </li>
 }
-else
+@*else
 {
     <li class="nav-item">
         <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">Přihlásit</a>
     </li>
-}*@
-</ul>
+}
+</ul>*@

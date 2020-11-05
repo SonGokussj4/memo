@@ -25,12 +25,14 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using System.Runtime.CompilerServices;
+using Microsoft.AspNetCore.Identity;
 
 namespace memo.Controllers
 {
     public class BaseController : Controller
     {
         protected readonly IWebHostEnvironment HostEnvironment;
+
         public BaseController(IWebHostEnvironment hostEnvironment)
         {
             this.HostEnvironment = hostEnvironment;
@@ -39,40 +41,84 @@ namespace memo.Controllers
         public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
             // Before any controller action check if the one that is logged in has the right Domain and Username
-            if (!this.HostEnvironment.IsDevelopment())
+            //if (this.HostEnvironment.IsDevelopment())
+            //{
+            string loggedInUserName = User.GetLoggedInUserName();
+            //string loggedInUserEmail = User.GetLoggedInUserEmail();
+
+            string domainName = loggedInUserName != null ? loggedInUserName.Split("\\").FirstOrDefault() : "KONSTRU";
+            string userName = loggedInUserName != null ? loggedInUserName.Split("\\").LastOrDefault() : "jverner";
+
+            string message = "";
+
+            if (domainName != "KONSTRU")
+            // if (domainName != "MERLIN")
             {
-                string loggedInUserName = User.GetLoggedInUserName();
-                //string loggedInUserEmail = User.GetLoggedInUserEmail();
-
-                string domainName = loggedInUserName.Split("\\").FirstOrDefault();
-                string userName = loggedInUserName.Split("\\").LastOrDefault();
-
-                string message = "";
-
-                //if (domainName != "KONSTRU")
-                if (domainName != "MERLIN")
-                {
-                    message = $"Chyba v přihlášení! Doména musí být 'KONSTRU'. Nyní je: '{domainName}' ";
-                }
-                else if (userName != "jverner")
-                {
-                    message = $"Chyba v přihlášení! Nepovolený uživatel... '{userName}' ";
-                }
-
-                if (message != "")
-                {
-                    TempData["Error"] = message;
-
-                    // Redirect to Home/Index
-                    filterContext.Result = new RedirectToRouteResult(
-                        new RouteValueDictionary
-                        {
-                        {"controller", "Home"},
-                        {"action", "Index"}
-                        }
-                    );
-                }
+                message = $"Chyba v přihlášení! Doména musí být 'KONSTRU'. Nyní je: '{domainName}' ";
             }
+            else if (!userNameAuthorized(userName))
+            {
+                message = $"Chyba v přihlášení! Nepovolený uživatel... '{userName}' ";
+            }
+
+            if (message != "")
+            {
+                TempData["Error"] = message;
+
+                // Redirect to Home/Index
+                filterContext.Result = new RedirectToRouteResult(
+                    new RouteValueDictionary
+                    {
+                    {"controller", "Home"},
+                    {"action", "Index"}
+                    }
+                );
+            }
+            //}
+        }
+
+        private bool userNameAuthorized(string userName)
+        {
+            List<string> authorizedUserNames = new List<string>
+            {
+                "afilipensky",  // MANAGER
+                "astastny",
+                "dkrepelova",
+                "drajnstajn",
+                "dsamek",
+                "hfettersova",
+                "igrac",
+                "imega",
+                "irachunkova",
+                "jdohnal",
+                "jduda",
+                "jfoltynkova",  // ACCOUNTING
+                // "jhrachovsky",
+                "jhubacek",
+                "jkerndl",
+                "jmatuska",
+                "jverner",  // ADMIN
+                "kgalasova",
+                "kvsetula",
+                "mcermak",
+                "mjaksik",  // MANAGER
+                "mkrivan",
+                "mmartinak",
+                "mmladek",
+                "pruzicka",
+                "pvavra",
+                "rjanku",
+                "vcerny",
+                "zhlobil",
+                "zzednicek",
+            };
+
+            if (authorizedUserNames.Contains(userName))
+            {
+                return true;
+            }
+
+            return false;
         }
 
         public string getCurrencyStr(string symbol)
@@ -288,7 +334,14 @@ namespace memo.Controllers
             if (principal == null)
                 throw new ArgumentNullException(nameof(principal));
 
-            return principal.FindFirstValue(ClaimTypes.Name);
+            string userName = principal.FindFirstValue(ClaimTypes.Name);
+
+            // DEBUG ONLY
+            if (userName == null)
+            {
+                userName = "KONSTRU\\jverner";
+            }
+            return userName;
         }
 
         public static string GetLoggedInUserEmail(this ClaimsPrincipal principal)
