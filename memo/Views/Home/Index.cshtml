@@ -48,6 +48,8 @@
 
 </style>
 
+@await Html.PartialAsync("_PartialToastNotification")
+
 <div class="text-center">
     <h1 class="display-6">Evidence nabídek a zakázek</h1>
 </div>
@@ -96,141 +98,141 @@
         @* //////////////////////////////////////////////////////////////////////////////////////////// *@
         @* ------------------------------------  TODO ------------------------------------------------- *@
         @* //////////////////////////////////////////////////////////////////////////////////////////// *@
-@*
-        <hr />
-        <h4>Priorita</h4>
-        <hr />
+        @*
+            <hr />
+            <h4>Priorita</h4>
+            <hr />
 
-        <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
-            Globální: Udělat Debug záložku, pročistit úvod
-        </label></div>
+            <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
+                Globální: Udělat Debug záložku, pročistit úvod
+            </label></div>
 
-        <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
-            Globální: Přidat pole pro stížnosti/nápady (alespoň teď v testovací verzi)
-        </label></div>
+            <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
+                Globální: Přidat pole pro stížnosti/nápady (alespoň teď v testovací verzi)
+            </label></div>
 
-        <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
-            Globální: Znemožnit náhodným lidem se registrovat
-        </label></div>
+            <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
+                Globální: Znemožnit náhodným lidem se registrovat
+            </label></div>
 
-        <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
-            Nabídka: Pocitové číslo, jak je pravděpodobné udělat / vyhrát nabídku. (ComboBox) [Slightly behind, lehce nad konkurencí, zákazník silně preferuje nás]
-        </label></div>
+            <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
+                Nabídka: Pocitové číslo, jak je pravděpodobné udělat / vyhrát nabídku. (ComboBox) [Slightly behind, lehce nad konkurencí, zákazník silně preferuje nás]
+            </label></div>
 
-        <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
-            Globální: <del>Login systém</del> (Kerberos jindy) - Omezit delete na Admina
-        </label></div>
+            <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
+                Globální: <del>Login systém</del> (Kerberos jindy) - Omezit delete na Admina
+            </label></div>
 
-        <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
-            Zakázka: Přidat "Aktuální bilance", kde budu vědět "Objem zakázky" - "Jiné náklady" = "Aktuální bilance"
-        </label></div>
+            <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
+                Zakázka: Přidat "Aktuální bilance", kde budu vědět "Objem zakázky" - "Jiné náklady" = "Aktuální bilance"
+            </label></div>
 
-        <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
-            Vyhodnocení: Tabulka [Col: Název oddělení, úspěšnost %, Sum vyhraných, Sum hodin]
-        </label></div>
+            <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
+                Vyhodnocení: Tabulka [Col: Název oddělení, úspěšnost %, Sum vyhraných, Sum hodin]
+            </label></div>
 
-        <hr />
-        <h4>IM</h4>
-        <hr />
+            <hr />
+            <h4>IM</h4>
+            <hr />
 
-        <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
-            Nabídka/Objednávka: Předvybrat přihlášeného uživatele v EVE ComboBoxu
-        </label></div>
+            <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
+                Nabídka/Objednávka: Předvybrat přihlášeného uživatele v EVE ComboBoxu
+            </label></div>
 
-        <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
-            Nabídka/Objednávka: Když člověk vybere EVE oddělení, filtrovat pak osoby?
-        </label></div>
+            <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
+                Nabídka/Objednávka: Když člověk vybere EVE oddělení, filtrovat pak osoby?
+            </label></div>
 
-        <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
-            Nabídka: Po přidání zákazníka poté vrátit zpět do nabídky a preselektovat nově vytvořeného zákazníka
-        </label></div>
+            <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
+                Nabídka: Po přidání zákazníka poté vrátit zpět do nabídky a preselektovat nově vytvořeného zákazníka
+            </label></div>
 
-        <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
-            Nabídka: Výhra/Prohra terminologie?
-        </label></div>
+            <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
+                Nabídka: Výhra/Prohra terminologie?
+            </label></div>
 
-        <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
-            Zakázka: <i>Založení zakázky nemůže být vázáno na číslo objednávky, takový ideální svět funguju jen v nějakém světě, v našem světě objednávka se vyřeší často telefonicky, či potvrzení e-mailem, ale opravdu obejdnávka dojde později a někde (ŠKODA) dojde objednávka až po tom co už jsme jim zboží to dodali</i>
-        </label></div>
+            <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
+                Zakázka: <i>Založení zakázky nemůže být vázáno na číslo objednávky, takový ideální svět funguju jen v nějakém světě, v našem světě objednávka se vyřeší často telefonicky, či potvrzení e-mailem, ale opravdu obejdnávka dojde později a někde (ŠKODA) dojde objednávka až po tom co už jsme jim zboží to dodali</i>
+            </label></div>
 
-        <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
-            Zakázka: <i>U zakázky už žádné oddělení není a musím vybírat jen lidi – nekoncepčnost a pracne (mělo by být oddělní a předvybrané dle odd. přihlášeného a lidi jen dle vybraného oddělní).</i>
-        </label></div>
+            <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
+                Zakázka: <i>U zakázky už žádné oddělení není a musím vybírat jen lidi – nekoncepčnost a pracne (mělo by být oddělní a předvybrané dle odd. přihlášeného a lidi jen dle vybraného oddělní).</i>
+            </label></div>
 
-        <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
-            Poznámka: <i>OT: Hodinová zazba je v některých případech irelvantní a výkaz v zakázce bude jen nepatrným zlomkem účtované ceny (u RP)</i>
-        </label></div>
+            <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
+                Poznámka: <i>OT: Hodinová zazba je v některých případech irelvantní a výkaz v zakázce bude jen nepatrným zlomkem účtované ceny (u RP)</i>
+            </label></div>
 
-        <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
-            Poznámka: <i>K diskuzi: U RP nelze co případ to zakázka a vykazovat na ni práci, to by se z toho jeden zbláznil a uzakázkoval a u vykazoval, ale tím se nenenecte ovlivňovat, pokud tento případ nebude i jinde tak, to musíme spíš organizačně rozdiskutovat jak to řešit…</i>
-        </label></div>
+            <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
+                Poznámka: <i>K diskuzi: U RP nelze co případ to zakázka a vykazovat na ni práci, to by se z toho jeden zbláznil a uzakázkoval a u vykazoval, ale tím se nenenecte ovlivňovat, pokud tento případ nebude i jinde tak, to musíme spíš organizačně rozdiskutovat jak to řešit…</i>
+            </label></div>
 
-        <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
-            Poznámka: <i>K diskuzi: U RP nelze co případ to zakázka a vykazovat na ni práci, to by se z toho jeden zbláznil a uzakázkoval a u vykazoval, ale tím se nenenecte ovlivňovat, pokud tento případ nebude i jinde tak, to musíme spíš organizačně rozdiskutovat jak to řešit…</i>
-        </label></div>
+            <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
+                Poznámka: <i>K diskuzi: U RP nelze co případ to zakázka a vykazovat na ni práci, to by se z toho jeden zbláznil a uzakázkoval a u vykazoval, ale tím se nenenecte ovlivňovat, pokud tento případ nebude i jinde tak, to musíme spíš organizačně rozdiskutovat jak to řešit…</i>
+            </label></div>
 
-        <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
-            Poznámka: <i>Design s usazením na CENTER a PEVNÁ šířka ze šoupákem není user-friendly (maximalizaci jsem registroval)</i>
-        </label></div>
+            <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
+                Poznámka: <i>Design s usazením na CENTER a PEVNÁ šířka ze šoupákem není user-friendly (maximalizaci jsem registroval)</i>
+            </label></div>
 
-        <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
-            Poznámka: <i>ERR: Při práci mě to několikrát málo odhlásilo (FF), neanalyzoval jsme kdy, nicméně server-side přihlášení do adresáře aplikace (1) toto eliminuje</i>
-        </label></div>
+            <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
+                Poznámka: <i>ERR: Při práci mě to několikrát málo odhlásilo (FF), neanalyzoval jsme kdy, nicméně server-side přihlášení do adresáře aplikace (1) toto eliminuje</i>
+            </label></div>
 
-        <hr />
-        <h4>Později</h4>
-        <hr />
+            <hr />
+            <h4>Později</h4>
+            <hr />
 
-        <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
-            Nabídka: Vygenerovat šablonu nabídky? Která se pak zpětně například vypíše?
-        </label></div>
+            <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
+                Nabídka: Vygenerovat šablonu nabídky? Která se pak zpětně například vypíše?
+            </label></div>
 
-        <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
-            Globální: Nabídka/Objednávka: Rozšifrovat terminologii
-        </label></div>
+            <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
+                Globální: Nabídka/Objednávka: Rozšifrovat terminologii
+            </label></div>
 
-        <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
-            Globální: Přidat "info" modaly ke všem záznamům
-        </label></div>
+            <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
+                Globální: Přidat "info" modaly ke všem záznamům
+            </label></div>
 
-        <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
-            Globální: Notofications, která budou informovat o úspěšnosti/neúspěšnosti operací
-        </label></div>
+            <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
+                Globální: Notofications, která budou informovat o úspěšnosti/neúspěšnosti operací
+            </label></div>
 
-        <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
-            Globální: Lepčejší CSS input floating texty
-            <a href="https://w3bits.com/labs/css-floating-labels/3/">zde</a>,
-            <a href="https://w3bits.com/css-floating-labels/">nějaký</a>,
-            <a href="https://www.freakyjolly.com/gmail-login-input-field-style/">příklad</a>,
-        </label></div>
+            <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
+                Globální: Lepčejší CSS input floating texty
+                <a href="https://w3bits.com/labs/css-floating-labels/3/">zde</a>,
+                <a href="https://w3bits.com/css-floating-labels/">nějaký</a>,
+                <a href="https://www.freakyjolly.com/gmail-login-input-field-style/">příklad</a>,
+            </label></div>
 
-        <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
-            Globální: Export: Faktické / očekávané vyhodnocení - pdf/excel?
-        </label></div>
+            <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
+                Globální: Export: Faktické / očekávané vyhodnocení - pdf/excel?
+            </label></div>
 
-        <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
-            Zakázka: Fakturace navíc - otázka uživateli: navýšit cenu nabídky?
-        </label></div>
+            <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
+                Zakázka: Fakturace navíc - otázka uživateli: navýšit cenu nabídky?
+            </label></div>
 
-        <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
-            Zakázka: Možnost přiřadit více "Kódů vykazování" - pozn. jak pak počítat hodiny, částky, ...
-        </label></div>
+            <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
+                Zakázka: Možnost přiřadit více "Kódů vykazování" - pozn. jak pak počítat hodiny, částky, ...
+            </label></div>
 
-        <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
-            Zakázka: Vyřešit fakturaci - napojení na IT / Účetnictví (checkboxy souhlasu pro nový Projekt?)
-        </label></div>
+            <div class="form-group"><input type="checkbox" class="form-check-input"><label class="form-check-label">
+                Zakázka: Vyřešit fakturaci - napojení na IT / Účetnictví (checkboxy souhlasu pro nový Projekt?)
+            </label></div>
 
-        <div class="form-group "><input type="checkbox" class="form-check-input"><label class="form-check-label">
-            Daleká budoucnost: funkce připomenutí (e-mail), že se má fakturovat
-        </label></div>
+            <div class="form-group "><input type="checkbox" class="form-check-input"><label class="form-check-label">
+                Daleká budoucnost: funkce připomenutí (e-mail), že se má fakturovat
+            </label></div>
 
-        <div class="form-group "><input type="checkbox" class="form-check-input"><label class="form-check-label">
-            Daleká budoucnost: Evektor pohledávky - napárování faktur přes Variabilní Symbol z banky
-        </label></div>
+            <div class="form-group "><input type="checkbox" class="form-check-input"><label class="form-check-label">
+                Daleká budoucnost: Evektor pohledávky - napárování faktur přes Variabilní Symbol z banky
+            </label></div>
 
-        <hr />
-        <h4>Hotovo</h4>
-        <hr /> *@
+            <hr />
+            <h4>Hotovo</h4>
+            <hr /> *@
 
         @* //////////////////////////////////////////////////////////////////////////////////////////// *@
         @* ------------------------------------  DONE ------------------------------------------------- *@
@@ -238,249 +240,249 @@
 
         @* <div class="done">
 
-            <div class="form-group"><input type="checkbox" class="form-check-input" checked><label class="form-check-label">
-                Modul pohledávek: Fakturace - čísla "Kolik jsme nafakturovali" - Pozn. Hrachovský DB přístup / Gemco export Api
-            </label></div>
+                    <div class="form-group"><input type="checkbox" class="form-check-input" checked><label class="form-check-label">
+                        Modul pohledávek: Fakturace - čísla "Kolik jsme nafakturovali" - Pozn. Hrachovský DB přístup / Gemco export Api
+                    </label></div>
 
-            <div class="form-group"><input type="checkbox" class="form-check-input" checked><label class="form-check-label">
-                Vyhodnocení: Přidat filtr [Celá firma] / [Oddělení] + další [Po zákaznících]
-            </label></div>
+                    <div class="form-group"><input type="checkbox" class="form-check-input" checked><label class="form-check-label">
+                        Vyhodnocení: Přidat filtr [Celá firma] / [Oddělení] + další [Po zákaznících]
+                    </label></div>
 
-            <div class="form-group"><input type="checkbox" class="form-check-input" checked><label class="form-check-label">
-                Vyhodnocení: Filtr Vše/Oddělení
-            </label></div>
+                    <div class="form-group"><input type="checkbox" class="form-check-input" checked><label class="form-check-label">
+                        Vyhodnocení: Filtr Vše/Oddělení
+                    </label></div>
 
-            <div class="form-group"><input type="checkbox" class="form-check-input" checked><label class="form-check-label">
-                Zakázka: Edit - smazání fakturace přes for cyklus, ne přes post
-            </label></div>
+                    <div class="form-group"><input type="checkbox" class="form-check-input" checked><label class="form-check-label">
+                        Zakázka: Edit - smazání fakturace přes for cyklus, ne přes post
+                    </label></div>
 
-            <div class="form-group"><input type="checkbox" class="form-check-input" checked><label class="form-check-label">
-                Zakázka: Doplnění InvoiceDays event do stávajících input polí
-            </label></div>
+                    <div class="form-group"><input type="checkbox" class="form-check-input" checked><label class="form-check-label">
+                        Zakázka: Doplnění InvoiceDays event do stávajících input polí
+                    </label></div>
 
-            <div class="form-group"><input type="checkbox" class="form-check-input" checked><label class="form-check-label">
-                Zakázka: [Nabídka].PředpodkládanýTermínUkončení navázat na to, co je v zakázce - předvyplnit
-            </label></div>
+                    <div class="form-group"><input type="checkbox" class="form-check-input" checked><label class="form-check-label">
+                        Zakázka: [Nabídka].PředpodkládanýTermínUkončení navázat na to, co je v zakázce - předvyplnit
+                    </label></div>
 
-            <div class="form-group"><input type="checkbox" class="form-check-input" checked><label class="form-check-label">
-                Nabídka: Přidat předpokládaný termín ukončení
-            </label></div>
+                    <div class="form-group"><input type="checkbox" class="form-check-input" checked><label class="form-check-label">
+                        Nabídka: Přidat předpokládaný termín ukončení
+                    </label></div>
 
-            <div class="form-group"><input type="checkbox" class="form-check-input" checked><label class="form-check-label">
-                Zakázka: Možnost více "dalších nákladů" s individuálními [cenami] a [popisky]
-            </label></div>
+                    <div class="form-group"><input type="checkbox" class="form-check-input" checked><label class="form-check-label">
+                        Zakázka: Možnost více "dalších nákladů" s individuálními [cenami] a [popisky]
+                    </label></div>
 
-            <div class="form-group"><input type="checkbox" class="form-check-input" checked><label class="form-check-label">
-                Zakázka: "Další náklady" odečítat, ne přičítat.
-            </label></div>
+                    <div class="form-group"><input type="checkbox" class="form-check-input" checked><label class="form-check-label">
+                        Zakázka: "Další náklady" odečítat, ne přičítat.
+                    </label></div>
 
-            <div class="form-group"><input type="checkbox" class="form-check-input" checked><label class="form-check-label">
-                Zakázka: Pokud není známé číslo obj. zákazníka, vložit název Eve nabídky (tlačítko?)
-            </label></div>
+                    <div class="form-group"><input type="checkbox" class="form-check-input" checked><label class="form-check-label">
+                        Zakázka: Pokud není známé číslo obj. zákazníka, vložit název Eve nabídky (tlačítko?)
+                    </label></div>
 
-            <div class="form-group"><input type="checkbox" class="form-check-input" checked><label class="form-check-label">
-                Bug: Při aktivaci (a následné deaktivaci) filtru se nezobrazuje správně tooltip v tabulkách
-            </label></div>
+                    <div class="form-group"><input type="checkbox" class="form-check-input" checked><label class="form-check-label">
+                        Bug: Při aktivaci (a následné deaktivaci) filtru se nezobrazuje správně tooltip v tabulkách
+                    </label></div>
 
-            <div class="form-group"><input type="checkbox" class="form-check-input" checked><label class="form-check-label">
-                Zakázka: Doplnit možnost více [Termín] [Cena] [Fakturace]
-            </label></div>
+                    <div class="form-group"><input type="checkbox" class="form-check-input" checked><label class="form-check-label">
+                        Zakázka: Doplnit možnost více [Termín] [Cena] [Fakturace]
+                    </label></div>
 
-            <div class="form-group"><input type="checkbox" class="form-check-input" checked><label class="form-check-label">
-                Vyhodnocení: Filtr Rok/Měsíc/Týden
-            </label></div>
+                    <div class="form-group"><input type="checkbox" class="form-check-input" checked><label class="form-check-label">
+                        Vyhodnocení: Filtr Rok/Měsíc/Týden
+                    </label></div>
 
-            <div class="form-group"><input type="checkbox" class="form-check-input" checked><label class="form-check-label">
-                Globální: Kliknu na oko a tím deaktivuji/aktivuji položku
-            </label></div>
+                    <div class="form-group"><input type="checkbox" class="form-check-input" checked><label class="form-check-label">
+                        Globální: Kliknu na oko a tím deaktivuji/aktivuji položku
+                    </label></div>
 
-            <div class="form-group"><input type="checkbox" class="form-check-input" checked><label class="form-check-label">
-                Globální: Filtování Aktivní (default) / Neaktivní Nabídky/Zakázky/Kontakty/Firmy
-            </label></div>
+                    <div class="form-group"><input type="checkbox" class="form-check-input" checked><label class="form-check-label">
+                        Globální: Filtování Aktivní (default) / Neaktivní Nabídky/Zakázky/Kontakty/Firmy
+                    </label></div>
 
-            <div class="form-group"><input type="checkbox" class="form-check-input" checked><label class="form-check-label">
-                Zakázka: Přidat pole k vložení PDF odkazu na Dodací listy
-            </label></div>
+                    <div class="form-group"><input type="checkbox" class="form-check-input" checked><label class="form-check-label">
+                        Zakázka: Přidat pole k vložení PDF odkazu na Dodací listy
+                    </label></div>
 
-            <div class="form-group"><input type="checkbox" class="form-check-input" checked><label class="form-check-label">
-                Globální: Tooltip "vlozit dnesni kurz z CNB
-            </label></div>
+                    <div class="form-group"><input type="checkbox" class="form-check-input" checked><label class="form-check-label">
+                        Globální: Tooltip "vlozit dnesni kurz z CNB
+                    </label></div>
 
-            <div class="form-group"><input type="checkbox" class="form-check-input" checked><label class="form-check-label">
-                Možnost smazat záznam z Edit pohledu
-            </label></div>
+                    <div class="form-group"><input type="checkbox" class="form-check-input" checked><label class="form-check-label">
+                        Možnost smazat záznam z Edit pohledu
+                    </label></div>
 
-            <div class="form-group"><input type="checkbox" class="form-check-input" checked><label class="form-check-label">
-                Problém: Při aplikaci filtru tabulky (zak/nab) a překliknutí na jinou tab, se neresetuje filtr
-            </label></div>
+                    <div class="form-group"><input type="checkbox" class="form-check-input" checked><label class="form-check-label">
+                        Problém: Při aplikaci filtru tabulky (zak/nab) a překliknutí na jinou tab, se neresetuje filtr
+                    </label></div>
 
-            <div class="form-group"><input type="checkbox" class="form-check-input" checked><label class="form-check-label">
-                Zakázka: Změnit pole "Objednávka" na "Evektor nabídka"
-            </label></div>
+                    <div class="form-group"><input type="checkbox" class="form-check-input" checked><label class="form-check-label">
+                        Zakázka: Změnit pole "Objednávka" na "Evektor nabídka"
+                    </label></div>
 
-            <div class="form-group"><input type="checkbox" class="form-check-input" checked><label class="form-check-label">
-                Firma: Required fields: [Splatnost, název]
-            </label></div>
+                    <div class="form-group"><input type="checkbox" class="form-check-input" checked><label class="form-check-label">
+                        Firma: Required fields: [Splatnost, název]
+                    </label></div>
 
-            <div class="form-group"><input type="checkbox" class="form-check-input" checked><label class="form-check-label">
-                Kontakt: Required fields: [Jméno]
-            </label></div>
+                    <div class="form-group"><input type="checkbox" class="form-check-input" checked><label class="form-check-label">
+                        Kontakt: Required fields: [Jméno]
+                    </label></div>
 
-            <div class="form-group"><input type="checkbox" class="form-check-input" checked><label class="form-check-label">
-                Zakázka: Vedoucí projektu: Required
-            </label></div>
+                    <div class="form-group"><input type="checkbox" class="form-check-input" checked><label class="form-check-label">
+                        Zakázka: Vedoucí projektu: Required
+                    </label></div>
 
-            <div class="form-group"><input type="checkbox" class="form-check-input" checked><label class="form-check-label">
-                DB: Zjistit odkud vytáhnout aktivní Evektor lidi
-            </label></div>
-        </div>
-    </div>
+                    <div class="form-group"><input type="checkbox" class="form-check-input" checked><label class="form-check-label">
+                        DB: Zjistit odkud vytáhnout aktivní Evektor lidi
+                    </label></div>
+                </div>
+            </div>
 
-    <hr /> *@
+            <hr /> *@
 
-    @* <h4>Změny:</h4>
+        @* <h4>Změny:</h4>
 
-    <hr />
+                <hr />
 
-    <div class="pl-5">
+                <div class="pl-5">
 
-        <h6>
-            <i class="fa fa-calendar"></i> 2020-10-03
-            <a class="btn btn-light btn-sm" href="#show7" data-toggle="collapse" role="button" >
-                <i class="fa fa-chevron-down if-collapsed"></i><i class="fa fa-chevron-up if-not-collapsed"></i>
-            </a>
-        </h6>
-        <div class="collapse show" id="show7">
-            <ul style="list-style-type:none">
-                <li class="new">Globální: Floating Labels na většina controllů</li>
-                <li class="new">Vyhodnocení: Tabulka přehledu oddělení</li>
-                <li class="fix">Nabídka: Výběr EVE kontaktu a EVE oddělení opraven na správnou databázi</li>
-                <li class="fix">Nabídka: Výběr oddělení teď pouze Evektor, už ne EVAT</li>
-            </ul>
-        </div>
+                    <h6>
+                        <i class="fa fa-calendar"></i> 2020-10-03
+                        <a class="btn btn-light btn-sm" href="#show7" data-toggle="collapse" role="button" >
+                            <i class="fa fa-chevron-down if-collapsed"></i><i class="fa fa-chevron-up if-not-collapsed"></i>
+                        </a>
+                    </h6>
+                    <div class="collapse show" id="show7">
+                        <ul style="list-style-type:none">
+                            <li class="new">Globální: Floating Labels na většina controllů</li>
+                            <li class="new">Vyhodnocení: Tabulka přehledu oddělení</li>
+                            <li class="fix">Nabídka: Výběr EVE kontaktu a EVE oddělení opraven na správnou databázi</li>
+                            <li class="fix">Nabídka: Výběr oddělení teď pouze Evektor, už ne EVAT</li>
+                        </ul>
+                    </div>
 
-        <h6>
-            <i class="fa fa-calendar"></i> 2020-09-24
-            <a class="btn btn-light btn-sm collapsed" href="#show6" data-toggle="collapse" role="button" >
-                <i class="fa fa-chevron-down if-collapsed"></i><i class="fa fa-chevron-up if-not-collapsed"></i>
-            </a>
-        </h6>
-        <div class="collapse" id="show6">
-            <ul style="list-style-type:none">
-                <li class="new">TODO: Kontakty: Infokarta s informacemi bez editace</li>
-                <li class="new">TODO: Zakázka: objednávka - vylepšena grafická podoba</li>
-                <li class="new">TODO: Objednávka: Stávající zakázky - vylepšena grafická podoba</li>
-                <li class="new">TODO: Firmy: Přidána možnost doplnit PSČ a Stát</li>
-                <li class="new">Tabulky: Zakázka - Nový sloupec - Celkové skut. náklady [CZK]</li>
-                <li class="fix">Tabulky: Zakázka - Opraven problém při zobrazení neaktivních zakázek </li>
-                <li class="fix">Zakázka: Sleva přepsána na "nevyčerpáno"</li>
-                <li class="fix">Zakázka: Již správné počítání celkové ceny a nevyčerpáno (započítává i "další náklady")</li>
-                <li class="fix">Globální: Pár jazykových chyb a přešlapů</li>
-            </ul>
-        </div>
+                    <h6>
+                        <i class="fa fa-calendar"></i> 2020-09-24
+                        <a class="btn btn-light btn-sm collapsed" href="#show6" data-toggle="collapse" role="button" >
+                            <i class="fa fa-chevron-down if-collapsed"></i><i class="fa fa-chevron-up if-not-collapsed"></i>
+                        </a>
+                    </h6>
+                    <div class="collapse" id="show6">
+                        <ul style="list-style-type:none">
+                            <li class="new">TODO: Kontakty: Infokarta s informacemi bez editace</li>
+                            <li class="new">TODO: Zakázka: objednávka - vylepšena grafická podoba</li>
+                            <li class="new">TODO: Objednávka: Stávající zakázky - vylepšena grafická podoba</li>
+                            <li class="new">TODO: Firmy: Přidána možnost doplnit PSČ a Stát</li>
+                            <li class="new">Tabulky: Zakázka - Nový sloupec - Celkové skut. náklady [CZK]</li>
+                            <li class="fix">Tabulky: Zakázka - Opraven problém při zobrazení neaktivních zakázek </li>
+                            <li class="fix">Zakázka: Sleva přepsána na "nevyčerpáno"</li>
+                            <li class="fix">Zakázka: Již správné počítání celkové ceny a nevyčerpáno (započítává i "další náklady")</li>
+                            <li class="fix">Globální: Pár jazykových chyb a přešlapů</li>
+                        </ul>
+                    </div>
 
-        <h6>
-            <i class="fa fa-calendar"></i> 2020-09-23
-            <a class="btn btn-light btn-sm collapsed" href="#show5" data-toggle="collapse" role="button" >
-                <i class="fa fa-chevron-down if-collapsed"></i><i class="fa fa-chevron-up if-not-collapsed"></i>
-            </a>
-        </h6>
-        <div class="collapse" id="show5">
-            <ul style="list-style-type:none">
-                <li class="new">Globální: Indikace, ve kterém menu se nacházím</li>
-                <li class="new">Tabulky: Zakázka: Zobrazení sumy hod</li>
-                <li class="new">Tabulky: Zakázka: Ve sloupci Kód EVE vykazování přidán tooltip s popisem, o co se jedná</li>
-                <li class="new">Tabulky: Nabídky: Přidán sloupec s počty zakázek - ??? sčítat jen aktivní? Teď vše</li>
-                <li class="new">Tabulky: Nabídky: Ve sloupci s počtem zakázek přidán tooltip "jaké" zakázky</li>
-                <li class="new">Nabídka: Přidání předpokládaného termínu ukončení</li>
-                <li class="new">Zakázka: Automatické doplňování data splatnosti faktury, převzato ze splatnosti zákazníka</li>
-                <li class="new">Zakázka: Automatické doplňování Nabídka - Předp. termín dokončení do Zakázka - Termín vystavení</li>
-                <li class="new">Zakázka: <b>Možnost více dalších nákladů</b></li>
-                <li class="new">Zakázka: <b>Možnost více termínů splatnosti a ceny</b></li>
-                <li class="new">Zakázka: Tlačítko, které vloží název Evektor nabídky do pole "Číslo objednávky zákazníka"</li>
-                <li class="new">Zakázka: Tlačítko, které vloží upravené datum splatnosti</li>
-                <li class="new">Vyhodnoceni: Filtr pro Období/Rok</li>
-                <li class="new">Vyhodnoceni: Filtr pro Oddělení</li>
-                <li class="new">Vyhodnoceni: Filtr pro Zákazníka</li>
-                <li class="fix">Tabulky: Zakázka: opraven přepočet skutečných nákladů do CZK</li>
-                <li class="fix">Tabulky: Při aktivaci/filtrování v tabulkách se nesprávně objevoval tooltip</li>
-                <li class="fix">Tabulky: Zobrazení sumy v Kč</li>
-                <li class="fix">Zakázka: Nyní zobrazuje tooltipy u dynamicky přidaných input polí</li>
-                <li class="fix">Zakázka: Doplnění InvoiceDays event do stávajících input polí</li>
-                <li class="fix">Zakázka: Doplňování správného data při InvoiceDays</li>
-                <li class="fix">Zakázka: Další náklady odečítány, ne přičítány</li>
-                <li class="fix">Zakázka: Při úpravě opraveno mazání Faktur/Dalších nákladů</li>
-                <li class="fix">Nabídka: Nefunkční vytváření zákazníka/firmy</li>
-                <li class="fix">Nabídka: Vytvoření zákazníka/firmy se otevírá v novém okně</li>
-                <li class="fix">Vyhodnoceni: Znovuzprovoznění filtrů</li>
-            </ul>
-        </div>
+                    <h6>
+                        <i class="fa fa-calendar"></i> 2020-09-23
+                        <a class="btn btn-light btn-sm collapsed" href="#show5" data-toggle="collapse" role="button" >
+                            <i class="fa fa-chevron-down if-collapsed"></i><i class="fa fa-chevron-up if-not-collapsed"></i>
+                        </a>
+                    </h6>
+                    <div class="collapse" id="show5">
+                        <ul style="list-style-type:none">
+                            <li class="new">Globální: Indikace, ve kterém menu se nacházím</li>
+                            <li class="new">Tabulky: Zakázka: Zobrazení sumy hod</li>
+                            <li class="new">Tabulky: Zakázka: Ve sloupci Kód EVE vykazování přidán tooltip s popisem, o co se jedná</li>
+                            <li class="new">Tabulky: Nabídky: Přidán sloupec s počty zakázek - ??? sčítat jen aktivní? Teď vše</li>
+                            <li class="new">Tabulky: Nabídky: Ve sloupci s počtem zakázek přidán tooltip "jaké" zakázky</li>
+                            <li class="new">Nabídka: Přidání předpokládaného termínu ukončení</li>
+                            <li class="new">Zakázka: Automatické doplňování data splatnosti faktury, převzato ze splatnosti zákazníka</li>
+                            <li class="new">Zakázka: Automatické doplňování Nabídka - Předp. termín dokončení do Zakázka - Termín vystavení</li>
+                            <li class="new">Zakázka: <b>Možnost více dalších nákladů</b></li>
+                            <li class="new">Zakázka: <b>Možnost více termínů splatnosti a ceny</b></li>
+                            <li class="new">Zakázka: Tlačítko, které vloží název Evektor nabídky do pole "Číslo objednávky zákazníka"</li>
+                            <li class="new">Zakázka: Tlačítko, které vloží upravené datum splatnosti</li>
+                            <li class="new">Vyhodnoceni: Filtr pro Období/Rok</li>
+                            <li class="new">Vyhodnoceni: Filtr pro Oddělení</li>
+                            <li class="new">Vyhodnoceni: Filtr pro Zákazníka</li>
+                            <li class="fix">Tabulky: Zakázka: opraven přepočet skutečných nákladů do CZK</li>
+                            <li class="fix">Tabulky: Při aktivaci/filtrování v tabulkách se nesprávně objevoval tooltip</li>
+                            <li class="fix">Tabulky: Zobrazení sumy v Kč</li>
+                            <li class="fix">Zakázka: Nyní zobrazuje tooltipy u dynamicky přidaných input polí</li>
+                            <li class="fix">Zakázka: Doplnění InvoiceDays event do stávajících input polí</li>
+                            <li class="fix">Zakázka: Doplňování správného data při InvoiceDays</li>
+                            <li class="fix">Zakázka: Další náklady odečítány, ne přičítány</li>
+                            <li class="fix">Zakázka: Při úpravě opraveno mazání Faktur/Dalších nákladů</li>
+                            <li class="fix">Nabídka: Nefunkční vytváření zákazníka/firmy</li>
+                            <li class="fix">Nabídka: Vytvoření zákazníka/firmy se otevírá v novém okně</li>
+                            <li class="fix">Vyhodnoceni: Znovuzprovoznění filtrů</li>
+                        </ul>
+                    </div>
 
-        <h6>
-            <i class="fa fa-calendar"></i> 2020-09-10
-            <a class="btn btn-light btn-sm collapsed" href="#show4" data-toggle="collapse" role="button" >
-                <i class="fa fa-chevron-down if-collapsed"></i><i class="fa fa-chevron-up if-not-collapsed"></i>
-            </a>
-        </h6>
-        <div class="collapse" id="show4">
-            <ul style="list-style-type:none">
-                <li class="new">Vyhodnocení: Filtrování grafu očekávaného příjmu dle týdnů/měsíců</li>
-                <li class="new">Globální: Aktivace/Deaktivace záznamu kliknutím na okolo v tabulce</li>
-                <li class="new">Globální: Tlačítko <span class="btn btn-sm btn-outline-secondary">Aktivní/Vše</span> nad tabulkami pro zobrazení Aktivních/Neaktivních záznamů</li>
-                <li class="new">Globální: Přidána možnost mazat záznamy z "edit" karty</li>
-                <li class="new">Globální: Přidáno logo Eve, odstraněno <i class="fa fa-info-circle" style="color: grey;"></i></li>
-                <li class="new">Zakázky: Přidáno pole pro dodací list</li>
-                <li class="fix">Globální: Opravy chyb v ukládání Firem/Kontektů, grafická vylepšení</li>
-                <li class="fix">Globální: Pole FILTRU se již nepropisuje do jiných tabulek</li>
-                <li class="fix">Globální: Pár polí změněno na "povinné" a přejmenováno</li>
-                <li class="fix">Globální: Evektor lidé jsou nyní správně načítáni a mají správnou gramatiku</li>
-                <li class="fix">Zakázky: Toolip pro přidání kurzu opraven na "Vložit dnešní kurz z ČNB"</li>
-                <li class="fix">Firmy: Počet dní splatnosti faktury již nedoplňují automaticky 0</li>
-            </ul>
-        </div>
+                    <h6>
+                        <i class="fa fa-calendar"></i> 2020-09-10
+                        <a class="btn btn-light btn-sm collapsed" href="#show4" data-toggle="collapse" role="button" >
+                            <i class="fa fa-chevron-down if-collapsed"></i><i class="fa fa-chevron-up if-not-collapsed"></i>
+                        </a>
+                    </h6>
+                    <div class="collapse" id="show4">
+                        <ul style="list-style-type:none">
+                            <li class="new">Vyhodnocení: Filtrování grafu očekávaného příjmu dle týdnů/měsíců</li>
+                            <li class="new">Globální: Aktivace/Deaktivace záznamu kliknutím na okolo v tabulce</li>
+                            <li class="new">Globální: Tlačítko <span class="btn btn-sm btn-outline-secondary">Aktivní/Vše</span> nad tabulkami pro zobrazení Aktivních/Neaktivních záznamů</li>
+                            <li class="new">Globální: Přidána možnost mazat záznamy z "edit" karty</li>
+                            <li class="new">Globální: Přidáno logo Eve, odstraněno <i class="fa fa-info-circle" style="color: grey;"></i></li>
+                            <li class="new">Zakázky: Přidáno pole pro dodací list</li>
+                            <li class="fix">Globální: Opravy chyb v ukládání Firem/Kontektů, grafická vylepšení</li>
+                            <li class="fix">Globální: Pole FILTRU se již nepropisuje do jiných tabulek</li>
+                            <li class="fix">Globální: Pár polí změněno na "povinné" a přejmenováno</li>
+                            <li class="fix">Globální: Evektor lidé jsou nyní správně načítáni a mají správnou gramatiku</li>
+                            <li class="fix">Zakázky: Toolip pro přidání kurzu opraven na "Vložit dnešní kurz z ČNB"</li>
+                            <li class="fix">Firmy: Počet dní splatnosti faktury již nedoplňují automaticky 0</li>
+                        </ul>
+                    </div>
 
-        <h6>
-            <i class="fa fa-calendar"></i> 2020-09-03
-            <a class="btn btn-light btn-sm collapsed" href="#show20200903" data-toggle="collapse" role="button" >
-                <i class="fa fa-chevron-down if-collapsed"></i><i class="fa fa-chevron-up if-not-collapsed"></i>
-            </a>
-        </h6>
-        <div class="collapse" id="show20200903">
-            <ul style="list-style-type:none">
-                <li class="new">Nabídka/Objednávka - Legenda vysvětlující Čeká/Výhra/Prohra</li>
-                <li class="new">Nabídka/Objednávka - Přidání firmy/kontaktu z karty nabídky/objednávky</li>
-                <li class="fix">Nabídka/Objednávka - Kontakt zobrazuje i příjmení</li>
-                <li class="fix">Nabídka/Objednávka - Povinný předmět</li>
-                <li class="fix">Nabídka/Objednávka - Správně zapisuje datum vytvoření</li>
-            </ul>
-        </div>
+                    <h6>
+                        <i class="fa fa-calendar"></i> 2020-09-03
+                        <a class="btn btn-light btn-sm collapsed" href="#show20200903" data-toggle="collapse" role="button" >
+                            <i class="fa fa-chevron-down if-collapsed"></i><i class="fa fa-chevron-up if-not-collapsed"></i>
+                        </a>
+                    </h6>
+                    <div class="collapse" id="show20200903">
+                        <ul style="list-style-type:none">
+                            <li class="new">Nabídka/Objednávka - Legenda vysvětlující Čeká/Výhra/Prohra</li>
+                            <li class="new">Nabídka/Objednávka - Přidání firmy/kontaktu z karty nabídky/objednávky</li>
+                            <li class="fix">Nabídka/Objednávka - Kontakt zobrazuje i příjmení</li>
+                            <li class="fix">Nabídka/Objednávka - Povinný předmět</li>
+                            <li class="fix">Nabídka/Objednávka - Správně zapisuje datum vytvoření</li>
+                        </ul>
+                    </div>
 
-        <h6>
-            <i class="fa fa-calendar"></i> 2020-09-02
-            <a class="btn btn-light btn-sm collapsed" href="#show20200902" data-toggle="collapse" role="button" >
-                <i class="fa fa-chevron-down if-collapsed"></i><i class="fa fa-chevron-up if-not-collapsed"></i>
-            </a>
-        </h6>
-        <div class="collapse" id="show20200902">
-            <ul>
-                <li>Zakázka - Tlačítko pro vložení dnešního směnného kurzu</li>
-                <li>Zakázka - Při vytváření zakázky z: "Zakázky - Nová zakázka", už nelze založit s prázdnou zakázkou</li>
-                <li>Zakázka - Pole "Kód vykazování EVE" a "Konečná cena" nebyly povinné, nyní jsou.</li>
-                <li>Zakázka - Opraveno tvoření zakázek z "Zakázky - Nová zakázka"</li>
-            </ul>
-        </div>
+                    <h6>
+                        <i class="fa fa-calendar"></i> 2020-09-02
+                        <a class="btn btn-light btn-sm collapsed" href="#show20200902" data-toggle="collapse" role="button" >
+                            <i class="fa fa-chevron-down if-collapsed"></i><i class="fa fa-chevron-up if-not-collapsed"></i>
+                        </a>
+                    </h6>
+                    <div class="collapse" id="show20200902">
+                        <ul>
+                            <li>Zakázka - Tlačítko pro vložení dnešního směnného kurzu</li>
+                            <li>Zakázka - Při vytváření zakázky z: "Zakázky - Nová zakázka", už nelze založit s prázdnou zakázkou</li>
+                            <li>Zakázka - Pole "Kód vykazování EVE" a "Konečná cena" nebyly povinné, nyní jsou.</li>
+                            <li>Zakázka - Opraveno tvoření zakázek z "Zakázky - Nová zakázka"</li>
+                        </ul>
+                    </div>
 
-        <h6>
-            <i class="fa fa-calendar"></i> 2020-08-31
-            <a class="btn btn-light btn-sm collapsed" href="#show20200831" data-toggle="collapse" role="button">
-                <i class="fa fa-chevron-down if-collapsed"></i><i class="fa fa-chevron-up if-not-collapsed"></i>
-            </a>
-        </h6>
-        <div class="collapse" id="show20200831">
-            <ul>
-                <li>Vyhraná nabídka (objednávka) nyní zobrazuje "Založit zakázku"</li>
-            </ul>
-        </div>
-    </div>
+                    <h6>
+                        <i class="fa fa-calendar"></i> 2020-08-31
+                        <a class="btn btn-light btn-sm collapsed" href="#show20200831" data-toggle="collapse" role="button">
+                            <i class="fa fa-chevron-down if-collapsed"></i><i class="fa fa-chevron-up if-not-collapsed"></i>
+                        </a>
+                    </h6>
+                    <div class="collapse" id="show20200831">
+                        <ul>
+                            <li>Vyhraná nabídka (objednávka) nyní zobrazuje "Založit zakázku"</li>
+                        </ul>
+                    </div>
+                </div>
 
-</div> *@
+            </div> *@

@@ -78,7 +78,7 @@
             </div>
             <div class="col-lg-4">
                 <select class="form-control selectpicker" asp-for="Offer.EveCreatedUser" asp-items="@ViewBag.EveContactList" required>
-                    <option value="">-- Vyber uživatele --</option>
+                    @* <option value="">-- Vyber uživatele --</option> *@
                 </select>
                 <span asp-validation-for="Offer.EveCreatedUser" class="text-danger"></span>
             </div>

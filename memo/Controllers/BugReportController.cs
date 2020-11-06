@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using memo.Data;
 using memo.Models;
 using memo.ViewModels;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,7 +16,7 @@ namespace memo.Controllers
     {
         public ApplicationDbContext _db { get; }
 
-        public BugReportController(ApplicationDbContext db)
+        public BugReportController(ApplicationDbContext db, IWebHostEnvironment hostEnvironment) : base(hostEnvironment)
         {
             _db = db;
         }

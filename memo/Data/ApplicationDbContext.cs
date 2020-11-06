@@ -62,6 +62,11 @@ namespace memo.Data
         /// <param name="userId">User.GetLoggedInUserName()</param>
         public virtual void SetUserContext(string userId)
         {
+            // DEBUG ONLY - when running from LINUX, username is missing...
+            if (userId == "" || userId == null)
+            {
+                userId = "KONSTRU\\jverner";
+            }
             var idParam = new SqlParameter("@userId", userId);
             this.Database.ExecuteSqlRaw("memo.SetUserContext @userId", idParam);
         }
