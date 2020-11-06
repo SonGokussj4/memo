@@ -68,12 +68,12 @@ namespace memo.Controllers
         }
 
         [HttpGet]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
             Offer offer = new Offer();
 
             offer.ExchangeRate = decimal.Parse(getCurrencyStr("CZK"));
-            offer.OfferName = getNewOfferNum();
+            offer.OfferName = await getNewOfferNumAsync();
 
             OfferViewModel vm = new OfferViewModel()
             {
@@ -86,6 +86,17 @@ namespace memo.Controllers
             };
 
             populateModel(null, 0);
+
+            // TODO: Dat do PopulateModel nebo tak nejak
+            string domainUser = User.GetLoggedInUserName();
+            string username = domainUser.Split('\\').LastOrDefault();
+            int userId = await _eveDbDochna.tUsers.Where(x => x.TxAccount == username).Select(x => x.Id).FirstOrDefaultAsync();
+
+            vEmployees res = await _eveDbDochna.vEmployees.Where(x => x.Id == userId).FirstOrDefaultAsync();
+
+            vm.Offer.EveCreatedUser = res.FormatedName;
+            vm.Offer.EveDepartment = res.DepartName;
+            vm.Offer.EveDivision = res.EVE == 1 ? "EVE" : "EVAT";
 
             return View(vm);
         }
@@ -438,13 +449,13 @@ namespace memo.Controllers
         /// <br>- 'yyyy' is current year </br>
         /// <br>- 'dddd' is max offer number + 1 </br>
         /// </returns>
-        private string getNewOfferNum()
+        private async Task<string> getNewOfferNumAsync()
         {
-            string offerName = _db.Offer
+            string offerName = await _db.Offer
                 .Where(m => m.OfferName.Contains("/" + DateTime.Now.Year.ToString() + "/"))
                 .Select(m => m.OfferName)
                 .OrderByDescending(x => x)
-                .FirstOrDefault();
+                .FirstOrDefaultAsync();
 
             if (offerName == null)
             {
