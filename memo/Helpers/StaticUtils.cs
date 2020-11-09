@@ -28,6 +28,7 @@ namespace memo.Helpers
             {"Company", typeof(Company)},
             {"Contact", typeof(Contact)},
             {"OtherCost", typeof(OtherCost)},
+            {"HourWages", typeof(HourWages)},
         };
 
         public static Dictionary<string, string> modelNameFromString = new Dictionary<string, string>
@@ -39,6 +40,7 @@ namespace memo.Helpers
             {"Company", "Firma"},
             {"Contact", "Kontakt"},
             {"OtherCost", "Ostatní náklady"},
+            {"HourWages", "Hodinové mzdy"},
         };
 
         public static Dictionary<string, string> controllerLink = new Dictionary<string, string>
@@ -50,6 +52,7 @@ namespace memo.Helpers
             {"Company", "Companies"},
             {"Contact", "Contacts"},
             {"OtherCost", "Orders"},
+            {"HourWages", "Orders"},
         };
 
         public static string getOrderIdFromInvoice(AuditViewModel item, ApplicationDbContext db)
@@ -57,12 +60,20 @@ namespace memo.Helpers
             if (item.TableName == "Invoice")
             {
                 Invoice invoice = db.Invoice.Where(x => x.InvoiceId.ToString() == item.KeyValue).FirstOrDefault();
-                return invoice != null ? invoice.OrderId.ToString() : "0";
+                var orderId = invoice != null ? invoice.OrderId.ToString() : "0";
+                return orderId;
             }
             else if (item.TableName == "OtherCost")
             {
                 OtherCost otherCost = db.OtherCost.Where(x => x.OtherCostId.ToString() == item.KeyValue).FirstOrDefault();
-                return otherCost != null ? otherCost.OrderId.ToString() : "0";
+                var orderId = otherCost != null ? otherCost.OrderId.ToString() : "0";
+                return orderId;
+            }
+            else if (item.TableName == "HourWages")
+            {
+                HourWages hourWages = db.HourWages.Where(x => x.HourWagesId.ToString() == item.KeyValue).FirstOrDefault();
+                var orderId = hourWages != null ? hourWages.OrderId.ToString() : "0";
+                return orderId;
             }
 
             return item.KeyValue;

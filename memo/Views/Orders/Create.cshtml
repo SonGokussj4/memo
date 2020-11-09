@@ -247,15 +247,27 @@
             <span asp-validation-for="Order.OtherCosts" class="text-danger"></span>
         </div>
 
+        <div class="form-group row border-top pt-2">
+            <div class="col-lg-2 col-form-label d-flex justify-content-left">
+                <label class="form-control-label control-label">Hodinové sazby</label>
+            </div>
+            <div class="col-lg-10">
+                <a href="javascript:void(0)" class="btn btn-success col-lg-3 add-row-hour-wages mt-1" data-toggle="tooltip" title="Přidat hodinové sazby"><i class="fa fa-plus"></i> Hodinové sazby</a>
+            </div>
+        </div>
+
+        <div class="dynamic-rows-hour-wages" id="template-hour-wages" data-order="@Model.Order.HourWages.Count()">
+        </div>
+
         <div class="form-group row">
-            <label asp-for="Order.HourWage" class="required col-lg-3 col-form-label form-control-label control-label"></label>
+            @* <label asp-for="Order.HourWage" class="required col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-3">
                  <span class="has-float-label">
                     <input asp-for="Order.HourWage" class="form-control" type="text" onchange="this.value = this.value.replace(/,/g, '.')" placeholder=" " />
                     <label asp-for="Order.HourWage">Hod. sazba [@Model.CurrencyName]</label>
                 </span>
                 <span asp-validation-for="Order.HourWage" class="text-danger"></span>
-            </div>
+            </div> *@
             <label asp-for="Order.ExchangeRate" class="col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-3">
                  <div class="input-group mb-2 mr-sm-2">
@@ -334,6 +346,13 @@
         function DeleteOtherCost(otherCostId) {
             console.log(`Deleting otherCostId: ${otherCostId}`);
             var row = document.getElementById(`dynamic-row-other-costs-${otherCostId}`);
+            row.remove();
+        };
+
+        // Just delete the <div> element
+        function DeleteHourWages(HourWagesId) {
+            console.log(`Deleting hourWagesId: ${HourWagesId}`);
+            var row = document.getElementById(`dynamic-row-hour-wages-${HourWagesId}`);
             row.remove();
         };
 
@@ -513,6 +532,44 @@
                 $.validator.unobtrusive.parse($('form'));
 
                 idOtherCosts = idOtherCosts + 1;
+                return false;
+            });
+
+
+            // Add new HOUR WAGES row
+            var idHourWages = @Model.Order.HourWages.Count();
+            $('.add-row-hour-wages').click(function () {
+                var html =
+                    '<div class="row form-group justify-content-end" id="dynamic-row-hour-wages-' + idHourWages + '">'+
+                        '<input type="number" hidden="true" data-val="true" data-val-required="The HourWagesId field is required." id="Order_HourWages_' + idHourWages + '__HourWagesId" name="Order.HourWages[' + idHourWages + '].HourWagesId" value="0">'+
+
+                        '<div class="col-lg-6">'+
+                            '<input class="form-control" type="text" autocomplete="off" placeholder="Popis" data-val="true" data-val-required="Je třeba přidat popis dalšího nákladu" id="Order_HourWages_' + idHourWages + '__Subject" name="Order.HourWages[' + idHourWages + '].Subject" value="">'+
+                            '<span class="text-danger field-validation-valid" data-valmsg-for="Order.HourWages[' + idHourWages + '].Subject" data-valmsg-replace="true"></span>'+
+                        '</div>'+
+
+                        '<div class="col-lg-3">'+
+                            '<span class="has-float-label">'+
+                                '<input class="form-control" type="text" placeholder="Částka" data-val="true" data-val-number="The field Částka must be a number." data-val-required="The Částka field is required." id="Order_HourWages_' + idHourWages + '__Cost" name="Order.HourWages[' + idHourWages + '].Cost" value="" />'+
+                                '<label for="Částka [@Model.CurrencyName]">Částka [@Model.CurrencyName]</label>'+
+                            '</span>'+
+                            '<span class="text-danger field-validation-valid" data-valmsg-for="Order.HourWages[' + idHourWages + '].Cost" data-valmsg-replace="true"></span>'+
+                        '</div>'+
+
+                        '<div class="col-lg-1">'+
+                            '<a href="javascript:void(0)" class="btn btn-danger btn-sm mt-1" data-toggle="tooltip" title="" data-original-title="Odstranit záznam" onclick="DeleteHourWages(' + idHourWages + ')"><i class="fa fa-trash white"></i></a>'+
+                        '</div>'+
+                    '</div>';
+
+                //$("tbody").append($(html).clone(true))
+                var _formTemp = $("#template-hour-wages").clone(true)
+                var _targetForm = $(".dynamic-rows-hour-wages")
+                _targetForm.append(html)
+
+                $('form').data('validator', null);
+                $.validator.unobtrusive.parse($('form'));
+
+                idHourWages = idHourWages + 1;
                 return false;
             });
 

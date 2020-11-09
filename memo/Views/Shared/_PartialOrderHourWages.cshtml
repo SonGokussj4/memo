@@ -1,0 +1,28 @@
+
+@model memo.ViewModels.OfferOrderVM
+
+@{
+    int i = (int)ViewData["i"];
+}
+<div class="row form-group justify-content-end">
+    <input hidden="true" asp-for="@Model.Order.HourWages[i].HourWagesId" />
+    <div class="col-lg-6">
+        <span class="has-float-label">
+            <input asp-for="@Model.Order.HourWages[i].Subject" class="form-control" type="text" autocomplete="off" placeholder=" "/>
+            <label asp-for="@Model.Order.HourWages[i].Subject">Stručný popis</label>
+        </span>
+        <span asp-validation-for="@Model.Order.HourWages[i].Subject" class="text-danger"></span>
+        </div>
+
+    <div class="col-lg-3">
+        <span class="has-float-label">
+            <input asp-for="@Model.Order.HourWages[i].Cost" class="form-control" type="text" placeholder=" "/>
+            <label asp-for="@Model.Order.HourWages[i].Cost">Částka [@Model.CurrencyName]</label>
+        </span>
+        <span asp-validation-for="@Model.Order.HourWages[i].Cost" class="text-danger"></span>
+    </div>
+
+        <div class="col-lg-1">
+        <a href="javascript:void(0)" class="btn btn-danger btn-sm mt-1" data-toggle="tooltip" title="Odstranit záznam" onclick="DeleteHourWages(@Model.Order.HourWages[i].HourWagesId)"><i class="fa fa-trash"></i></a>
+    </div>
+</div>

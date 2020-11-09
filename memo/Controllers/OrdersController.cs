@@ -202,6 +202,10 @@ namespace memo.Controllers
                 vm.Order.PriceFinalCzk += Convert.ToInt32(otherCost.CostCzk);
                 vm.Order.PriceFinal += Convert.ToInt32(otherCost.Cost);
             }
+            foreach (HourWages hourWages in vm.Order.HourWages)
+            {
+                hourWages.CostCzk = Convert.ToInt32(hourWages.Cost * vm.Order.ExchangeRate);
+            }
 
             if (ModelState.IsValid)
             {
@@ -213,8 +217,8 @@ namespace memo.Controllers
                 vm.Order.TotalHours = totalMinutes != null ? totalMinutes / 60 : 0;
 
                 vm.Order.CreatedBy = User.GetLoggedInUserName();
-                vm.Order.ModifiedBy = vm.Order.CreatedBy;
                 vm.Order.CreatedDate = DateTime.Now;
+                vm.Order.ModifiedBy = vm.Order.CreatedBy;
                 vm.Order.ModifiedDate = vm.Order.CreatedDate;
 
                 try
@@ -255,6 +259,7 @@ namespace memo.Controllers
 
             order.Invoices = await _db.Invoice.Where(x => x.OrderId == id).ToListAsync();
             order.OtherCosts = await _db.OtherCost.Where(x => x.OrderId == id).ToListAsync();
+            order.HourWages = await _db.HourWages.Where(x => x.OrderId == id).ToListAsync();
 
             if (offerId != null)
             {
@@ -269,17 +274,21 @@ namespace memo.Controllers
             Company company = await _db.Company.FindAsync(offer.CompanyId);
             Currency currency= await _db.Currency.FindAsync(offer.CurrencyId);
 
+            // AUDITS
             List<int> orderIdInvoices = order.Invoices.Where(x => x.OrderId == id).Select(x => x.InvoiceId).ToList();
             List<int> orderIdOtherCosts = order.OtherCosts.Where(x => x.OrderId == id).Select(x => x.OtherCostId).ToList();
+            List<int> orderIdHourWages = order.HourWages.Where(x => x.OrderId == id).Select(x => x.HourWagesId).ToList();
 
             List<AuditViewModel> audits = getAuditViewModel(_db).Audits
                 .Where(x =>
                     (x.TableName == "Order" && x.KeyValue == id.ToString()) ||
                     (x.TableName == "Invoice" && orderIdInvoices.Contains(Convert.ToInt32(x.KeyValue))) ||
-                    (x.TableName == "OtherCost" && orderIdOtherCosts.Contains(Convert.ToInt32(x.KeyValue)))
+                    (x.TableName == "OtherCost" && orderIdOtherCosts.Contains(Convert.ToInt32(x.KeyValue))) ||
+                    (x.TableName == "HourWages" && orderIdHourWages.Contains(Convert.ToInt32(x.KeyValue)))
                 )
                 .ToList();
 
+            // VIEW MODEL
             OfferOrderVM vm = new OfferOrderVM()
             {
                 Offer = offer,
@@ -324,22 +333,23 @@ namespace memo.Controllers
                         oldVm.Order.PriceDiscount == vm.Order.PriceDiscount &&
                         oldVm.Order.OrderCode == vm.Order.OrderCode &&
                         oldVm.Order.EveContactName == vm.Order.EveContactName &&
-                        oldVm.Order.HourWage == vm.Order.HourWage &&
                         oldVm.Order.TotalHours== vm.Order.TotalHours&&
                         oldVm.Order.ExchangeRate == vm.Order.ExchangeRate &&
                         oldVm.Order.PriceFinalCzk == vm.Order.PriceFinalCzk &&
                         oldVm.Order.Notes == vm.Order.Notes &&
                         oldVm.Order.ModifiedBy == vm.Order.ModifiedBy &&
                         oldVm.Order.Active == vm.Order.Active &&
-                        oldVm.Order.Burned == vm.Order.Burned)
+                        oldVm.Order.Burned == vm.Order.Burned &&
+                        oldVm.Order.Invoices.Count() == vm.Order.Invoices.Count() &&
+                        oldVm.Order.OtherCosts.Count() == vm.Order.OtherCosts.Count() &&
+                        oldVm.Order.HourWages.Count() == vm.Order.HourWages.Count())
                     {
                         TempData["Info"] = "Nebyla provedena změna, není co uložit";
 
                         // Populate VM
-                        List<AuditViewModel> auditss = getAuditViewModel(_db).Audits
+                        vm.Audits = getAuditViewModel(_db).Audits
                             .Where(x => x.TableName == "Order" && x.KeyValue == id.ToString())
-                            .ToList();
-                        vm.Audits = auditss;
+                            .ToList(); ;
 
                         await populateModel(vm.Order, id);
 
@@ -373,6 +383,10 @@ namespace memo.Controllers
                         vm.Order.PriceFinal += Convert.ToInt32(otherCost.Cost);
                         vm.Order.PriceFinalCzk += Convert.ToInt32(otherCost.Cost * vm.Order.ExchangeRate);
                         vm.UnspentMoney -= Convert.ToInt32(otherCost.Cost);
+                    }
+                    foreach (HourWages hourWages in vm.Order.HourWages)
+                    {
+                        hourWages.CostCzk = Convert.ToInt32(hourWages.Cost * vm.Order.ExchangeRate);
                     }
 
                     vm.Order.ModifiedDate = DateTime.Now;
@@ -411,15 +425,19 @@ namespace memo.Controllers
             Company company = await _db.Company.FindAsync(offer.CompanyId);
             Currency currency = await _db.Currency.FindAsync(offer.CurrencyId);
             vm.Order.Invoices = await _db.Invoice.Where(x => x.OrderId == id).ToListAsync();
+            vm.Order.HourWages = await _db.HourWages.Where(x => x.OrderId == id).ToListAsync();
 
+            // AUDIT
             List<int> orderIdInvoices = vm.Order.Invoices.Where(x => x.OrderId == id).Select(x => x.InvoiceId).ToList();
             List<int> orderIdOtherCosts = vm.Order.OtherCosts.Where(x => x.OrderId == id).Select(x => x.OtherCostId).ToList();
+            List<int> orderIdHourWages = vm.Order.HourWages.Where(x => x.OrderId == id).Select(x => x.HourWagesId).ToList();
 
             List<AuditViewModel> audits = getAuditViewModel(_db).Audits
                 .Where(x =>
                     (x.TableName == "Order" && x.KeyValue == id.ToString()) ||
                     (x.TableName == "Invoice" && orderIdInvoices.Contains(Convert.ToInt32(x.KeyValue))) ||
-                    (x.TableName == "OtherCost" && orderIdOtherCosts.Contains(Convert.ToInt32(x.KeyValue)))
+                    (x.TableName == "OtherCost" && orderIdOtherCosts.Contains(Convert.ToInt32(x.KeyValue))) ||
+                    (x.TableName == "HourWages" && orderIdHourWages.Contains(Convert.ToInt32(x.KeyValue)))
                 )
                 .ToList();
 
@@ -695,6 +713,17 @@ namespace memo.Controllers
             OtherCost otherCost = await _db.OtherCost.FindAsync(id);
 
             _db.OtherCost.Remove(otherCost);
+            await _db.SaveChangesAsync(User.GetLoggedInUserName());
+
+            return Json(new { success = true });
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> DeleteHourWages(int id)
+        {
+            HourWages hourWages = await _db.HourWages.FindAsync(id);
+
+            _db.HourWages.Remove(hourWages);
             await _db.SaveChangesAsync(User.GetLoggedInUserName());
 
             return Json(new { success = true });

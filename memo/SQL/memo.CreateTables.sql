@@ -178,11 +178,30 @@ CREATE TABLE [memo].[OtherCost]
 (
   [OtherCostId] int IDENTITY(1, 1),
   [OrderId] int,
-  [Subject] nvarchar(max),
-  [Cost] decimal(18,3),
-  [CostCzk] decimal(18,3),
+  [Subject] nvarchar(max) NOT NULL,
+  [Cost] decimal(18,3) NOT NULL,
+  [CostCzk] decimal(18,3) NOT NULL,
   CONSTRAINT [PK__OtherCostId] PRIMARY KEY ([OtherCostId]),
   CONSTRAINT [FK__memo.OtherCost__memo.Order__OrderId] FOREIGN KEY ([OrderId])
+    REFERENCES [memo].[Order] ([OrderId])
+)
+GO
+
+
+-----------------------------------------------------------------------------------------
+IF OBJECT_ID('memo.HourWages', 'U') IS NOT NULL
+  DROP TABLE [memo].[HourWages]
+GO
+-----------------------------------------------------------------------------------------
+CREATE TABLE [memo].[HourWages]
+(
+  [HourWagesId] int IDENTITY(1, 1),
+  [OrderId] int,
+  [Subject] nvarchar(max),
+  [Cost] decimal(18,3) NOT NULL,
+  [CostCzk] decimal(18,3) NOT NULL,
+  CONSTRAINT [PK__HourWagesId] PRIMARY KEY ([HourWagesId]),
+  CONSTRAINT [FK__memo.HourWages__memo.Order__OrderId] FOREIGN KEY ([OrderId])
     REFERENCES [memo].[Order] ([OrderId])
 )
 GO

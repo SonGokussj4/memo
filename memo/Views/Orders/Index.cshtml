@@ -103,12 +103,11 @@
             <th scope="col" class="text-center" data-field="8" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatterProgress"><div data-toggle="tooltip" title="Součet fakturací + dalších nákladů">Aktuálně</div></th>
             <th scope="col" class="text-center" data-field="9" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatterCz"><div data-toggle="tooltip" title="Částka, která zbývá do vyjednané ceny">Zbývá</div></th>
             <th scope="col" class="text-center" data-field="10" data-sortable="true" data-filter-control="input">Poznámky</th>
-            <th scope="col" class="text-center" data-field="11" data-sortable="true" data-filter-control="input">Hod.<br />sazba</th>
-            <th scope="col" class="text-center" data-field="12" data-sortable="true" data-filter-control="input" data-footer-formatter="sumHoursFormatter">Vyčerpáno</th>
-            <th scope="col" class="text-center" data-field="13" data-sortable="true" data-filter-control="input" data-footer-formatter="sumHoursFormatter">Plánované<br />hod</th>
-            <th scope="col" class="text-center" data-field="14" data-sortable="true" data-filter-control="input">Využito</th>
-            <th scope="col" class="text-center" data-field="15" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatterCz">Skutečné<br />náklady [CZK]</th>
-            <th scope="col" class="text-center" data-field="16" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatterCz"><div data-toggle="tooltip" title="Skutečné náklady včetně dalších nákladů">Celkové skut.<br />náklady [CZK]</div></th>
+            <th scope="col" class="text-center" data-field="11" data-sortable="true" data-filter-control="input" data-footer-formatter="sumHoursFormatter">Vyčerpáno</th>
+            <th scope="col" class="text-center" data-field="12" data-sortable="true" data-filter-control="input" data-footer-formatter="sumHoursFormatter">Plánované<br />hod</th>
+            <th scope="col" class="text-center" data-field="13" data-sortable="true" data-filter-control="input">Využito</th>
+            <th scope="col" class="text-center" data-field="14" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatterCz">Skutečné<br />náklady [CZK]</th>
+            <th scope="col" class="text-center" data-field="15" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatterCz"><div data-toggle="tooltip" title="Skutečné náklady včetně dalších nákladů">Celkové skut.<br />náklady [CZK]</div></th>
         </tr>
     </thead>
     <tbody>
@@ -170,8 +169,6 @@
                 <th scope="row" class="notesWrap" data-toggle="tooltip" data-html="true" title="@item.Notes">
                     @item.Notes
                 </th>
-                @* Hod. sazba *@
-                <th scope="row" class="text-right">@String.Format(CultureInfo.CreateSpecificCulture(@item.Offer?.Currency.CultureCode), "{0:C0}", @item.HourWage)</th>
                 @* Vyčerpáno *@
                 @{
                     string burnedText = @item.Burned != 0 ?  String.Format("{0:# ### ###} hod", item.Burned / 60) : "";
@@ -204,14 +201,18 @@
                     </th>
                 }
                 @* Skutečné náklady [CZK] *@
-                <th scope="row" class="text-right">@string.Format(CultureInfo.CreateSpecificCulture("cs-CZ"), "{0:C0}", @item.Burned * (@item.HourWage * (double)@item.ExchangeRate) / 60 )</th>
+                @* TODO: CO TADY??? HourWage je pryc, ted je z toho LIST *@
+                @* <th scope="row" class="text-right">@string.Format(CultureInfo.CreateSpecificCulture("cs-CZ"), "{0:C0}", @item.Burned * (@item.HourWage * (double)@item.ExchangeRate) / 60 )</th> *@
+                <th scope="row" class="text-right">@string.Format(CultureInfo.CreateSpecificCulture("cs-CZ"), "{0:C0}", 66)</th>
+                @* TODO: CO TADY??? HourWage je pryc, ted je z toho LIST *@
                 @* Celkové skut. náklady [CZK] *@
-                @{
+                @* @{
                     var mujlist = item.OtherCosts;
                     var dalsi = item.OtherCosts.Where(x => x.OrderId == item.OrderId).Select(x => x.Cost).Sum() * item.ExchangeRate;
                     var totalkaCzk = (decimal)(item.Burned * (item.HourWage * (double)item.ExchangeRate) / 60) + dalsi;
-                }
-                <th scope="row" class="text-right">@string.Format(CultureInfo.CreateSpecificCulture("cs-CZ"), "{0:C0}", totalkaCzk)</th>
+                } *@
+                @* <th scope="row" class="text-right">@string.Format(CultureInfo.CreateSpecificCulture("cs-CZ"), "{0:C0}", totalkaCzk)</th> *@
+                <th scope="row" class="text-right">@string.Format(CultureInfo.CreateSpecificCulture("cs-CZ"), "{0:C0}", 69)</th>
 
             </tr>
         }
@@ -405,10 +406,6 @@
             }
         };
     };
-
-    $(document).ready(function() {
-        $('#example').DataTable();
-    } );
 
 </script>
 }

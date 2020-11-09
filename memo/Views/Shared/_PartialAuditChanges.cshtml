@@ -38,6 +38,17 @@
         i++;
         string showStatus = i < 3 ? "show" : "";
 
+        int numberOfChanges = item.Json.Count() - 1;  // Because there is "ModifiedTime" change every time
+        if (item.TableName ==  "OtherCost" || item.TableName == "Invoice" || item.TableName == "HourWages")
+        {
+            numberOfChanges += 1;  // No "ModifiedTime" field in these tables
+        }
+        // TODO: Nejak to necti cisla. Nekdy je zmena, ale je 0. Nekdy je naopak nula a uvnitr opravdu nic. Celkovy pocet vse, ne jen zmeny...
+        @* if (numberOfChanges == 0)
+        {
+            continue;
+        } *@
+
         <div class="card py-0 p-0 mb-3">
             @{string bgColor = item.Type == "I" ? "#b1fbb8b0" : (item.Type == "U" ? "#fbe6b1b0" : "#fbb1b1b0");}
             <div class="card-header px-3 mx-0 py-1 clickable" style="background-color: @bgColor;">
@@ -47,16 +58,13 @@
                         @{string pillText = item.Type == "I" ? "success" : (item.Type == "U" ? "warning" : "danger");}
                         @{string tableNameCz = @StaticUtils.modelNameFromString[@item.TableName];}
                         @{string targetTable = StaticUtils.controllerLink[item.TableName];}
-                        @* TODO: #1 Tohle zatim vraci "0", pokud se jedna o Invoice nebo OtherCost, nejsem schopen vratit spravne ID *@
                         @{string targetId = StaticUtils.getOrderIdFromInvoice(item, db);}
 
                         <span class="badge badge-@pillText py-1" style="font-size: 0.8rem; width: 70px;"
-                            data-toggle="tooltip" title="Aktivita">
-                            @typeText
+                            data-toggle="tooltip" title="Aktivita"> @typeText
                         </span>
                         <span class="badge badge-info ml-3 py-1" style="font-size: 0.8rem; width: 105px;"
-                            data-toggle="tooltip" title="Tabulka">
-                            @tableNameCz
+                            data-toggle="tooltip" title="Tabulka"> @tableNameCz
                         </span>
                         @if (item.Type != "D")
                         {
@@ -67,13 +75,13 @@
                                 </a>
                             </span>
                         }
-                        @{
+                        @* @{
                             int numberOfChanges = item.Json.Count() - 1;  // Because there is "ModifiedTime" change every time
-                            if (item.TableName ==  "OtherCost" || item.TableName == "Invoice")
+                            if (item.TableName ==  "OtherCost" || item.TableName == "Invoice" || item.TableName == "HourWages")
                             {
                                 numberOfChanges += 1;  // No "ModifiedTime" field in these tables
                             }
-                        }
+                        } *@
                         @* <span class="badge badge-secondary ml-3" style="font-size: 0.8rem; width: 25px;"
                             data-toggle="tooltip" title="Počet změn">
                             @numberOfChanges

@@ -49,10 +49,6 @@ namespace memo.Models
         [Display(Name = "Vedoucí projektu v EVEKTORu")]
         public string EveContactName { get; set; }
 
-        [Required]
-        [Display(Name = "Hod. sazba komerční")]
-        public double? HourWage { get; set; }
-
         [Display(Name = "Celkem hodin plánovaných")]
         public int? TotalHours { get; set; }
 
@@ -90,5 +86,6 @@ namespace memo.Models
         // [InverseProperty("Invoice")]
         public virtual List<Invoice> Invoices { get; set; } = new List<Invoice>();
         public virtual List<OtherCost> OtherCosts { get; set; } = new List<OtherCost>();
+        public virtual List<HourWages> HourWages { get; set; } = new List<HourWages>();
     }
 }
