@@ -191,28 +191,57 @@
 
         <div class="form-group row justify-content-center">
             <div class="col-lg-4">
-                    <a href="@Url.Action("CreateEveProject")" target="_blank" class="btn btn-outline-success form-control"
-                       data-toggle="tooltip" data-placement="top" title="Nová EVE zakázka">
+                <a href="@Url.Action("CreateEveProject")" target="_blank" class="btn btn-outline-success form-control"
+                    data-toggle="tooltip" data-placement="top" title="Nová EVE zakázka">
                     <i class="fa fa-plus-square"></i> Vytvořit eve zakázku
-                    </a>
-                </div>
+                </a>
+            </div>
             <div class="col-lg-4">
-                    <a href="@Url.Action("CreateEveProject")" target="_blank" class="btn btn-outline-success form-control"
-                    data-toggle="tooltip" data-placement="top" title="Nová EVE modulová zakázka">
+                <a href="@Url.Action("CreateEveProject")" target="_blank" class="btn btn-outline-success form-control"
+                data-toggle="tooltip" data-placement="top" title="Nová EVE modulová zakázka">
                     <i class="fa fa-plus-square"> </i> Vytvořit eve [M] zakázku
-                    </a>
-                </div>
+                </a>
             </div>
+        </div>
 
-            <div class="form-group row">
-                <label asp-for="Order.EveContactName" class="required col-lg-3 col-form-label form-control-label control-label"></label>
-                <div class="col-lg-9">
-                    @* @Html.DropDownListFor(model => model.Order.EveContactName, ViewBag.EveContactList as SelectList, "-- Vyber kontakt --", new { @class = "form-control selectpicker" }) *@
-                    <select asp-for="Order.EveContactName" asp-items="ViewBag.EveContactList" class="form-control selectpicker"></select>
-                    <span asp-validation-for="Order.EveContactName" class="text-danger"></span>
-                </div>
+        @* <div class="form-group row border-top pt-2">
+            <div class="col-lg-2 col-form-label d-flex justify-content-left">
+                <label class="form-control-label control-label">Kódy vykazování</label>
             </div>
+            <div class="col-lg-10">
+                <a href="javascript:void(0)" class="btn btn-success col-lg-3 add-row-order-codes mt-1" data-toggle="tooltip" title="Přidat kód vykazování"><i class="fa fa-plus"></i> Kód vykazování</a>
+            </div>
+        </div>
 
+        @Html.ValidationMessage("OrderCodesValidationMessage", "", new { @class = "text-danger" })
+        <div class="dynamic-rows-order-codes" id="template-order-codes" data-order="@Model.Order.OrderCodes.Count()">
+            @for (int i = 0; i < Model.Order.OrderCodes.Count(); i++)
+            {
+                <div class="row form-group">
+                    <input hidden="true" asp-for="@Model.Order.OrderCodes[i].OrderCodeId" />
+                    <div class="col-lg-2"></div>
+
+                    <div class="col-lg-9">
+                        <select asp-for="Order.OrderCodes[i].OrderCode" asp-items="ViewBag.EveOrderCodes" class="form-control selectpicker"></select>
+                        <span asp-validation-for="@Model.Order.OrderCodes[i].OrderCode" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-lg-1">
+                        <a href="javascript:void(0)" class="btn btn-danger btn-sm mt-1" data-toggle="tooltip" title="Odstranit záznam" onclick="DeleteOrderCost(@Model.Order.OrderCodes[i].OrderCodeId)"><i class="fa fa-trash"></i></a>
+                    </div>
+                </div>
+            }
+            <span asp-validation-for="Order.OrderCodes" class="text-danger"></span>
+        </div> *@
+
+        <div class="form-group row border-top pt-3">
+            <label asp-for="Order.OrderCode" class="required col-lg-3 col-form-label form-control-label control-label"></label>
+            <div class="col-lg-7">
+                <select asp-for="Order.OrderCode" asp-items="ViewBag.EveOrderCodes" class="form-control selectpicker"></select>
+                <span asp-validation-for="Order.OrderCode" class="text-danger"></span>
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                @* <span>Spáleno/Plánováno: @(Model.Order.Burned / 60) / @Model.Order.TotalHours [hod]</span> *@
+            </div>
         </div>
 
         <div class="form-group row border-top pt-2">
@@ -549,6 +578,37 @@
             }
         }
 
+        function DeleteOrderCode(orderCodeId) {
+            console.log(`Deleting invoice id: ${orderCodeId}`);
+            var row = document.getElementById(`dynamic-row-other-costs-${orderCodeId}`);
+            if (row != null) {
+                row.remove();
+            }
+            else {
+                $.ajax({
+                    //async: true,
+                    type: 'POST',
+                    dataType: 'JSON',
+                    ContentType: 'application/json; charset=utf-8',
+                    url: '@Url.Action("DeleteOrderCode")',
+                    data: { id: orderCodeId },
+                    cache: false,
+                    beforeSend:function(){
+                        return confirm(
+                            "Jste si jisti??? Tento úkon smaže označený kód vykazování!"
+                        );
+                    },
+                    success: function(data) {
+                        window.location = "@Model.Order.OrderId";  // return Orders/Edit/{OrderId}
+                    },
+                    error: function(data) {
+                        //alert(JSON.stringify(data.responseJSON.errorMessage));
+                        alert(data.responseJSON.errorMessage);
+                    }
+                });
+            }
+        }
+
 //        function changeExchangeRate(curSymbol) {
 //            $.ajax({
 //                url: '@Url.Action("getCurrencyStr", "Orders")',
@@ -821,6 +881,50 @@
                 $.validator.unobtrusive.parse($('form'));
 
                 idHourWages = idHourWages + 1;
+                return false;
+            });
+
+            // Add new HOUR WAGES row
+            var idOrderCode = @Model.Order.OrderCodes.Count();
+            $('.add-row-order-codes').click(function () {
+                var html =
+                    '<div class="row form-group" id="dynamic-row-order-codes-' + idOrderCode + '">'+
+                        '<input type="number" hidden="true" data-val="true" data-val-required="The OrderCodeId field is required." id="Order_OrderCodes_' + idOrderCode + '__OrderCodeId" name="Order.OrderCodes[' + idOrderCode + '].OrderCodeId" value="0">'+
+
+                        '<div class="col-lg-2"></div>'+
+
+                        '<div class="col-lg-9">'+
+                            '<select class="form-control selectpicker select2-hidden-accessible" id="Order_OrderCodes_' + idOrderCode + '__OrderCode" name="Order.OrderCodes[' + idOrderCode + '] data-select2-id="select2-data-Order_OrderCodes_' + idOrderCode + '__OrderCode" tabindex="-1" aria-hidden="true">'+
+                            '</select>'
+                            '<span class="select2 select2-container select2-container--default" dir="ltr" data-select2-id="select2-data-3-2gwm" style="width: 598.514px;">'+
+                                '<span class="selection">'+
+                                    '<span class="select2-selection__arrow" role="presentation"><b role="presentation"></b></span>'+
+                                '</span>'+
+                            '<span class="text-danger field-validation-valid" data-valmsg-for="Order.OrderCodes[' + idOrderCode + '].Subject" data-valmsg-replace="true"></span>'+
+                        '</div>'+
+
+                        '<div class="col-lg-3">'+
+                            '<span class="has-float-label">'+
+                                '<input class="form-control" type="text" placeholder="Částka" data-val="true" data-val-number="The field Částka must be a number." data-val-required="The Částka field is required." id="Order_OrderCodes_' + idOrderCode + '__Cost" name="Order.OrderCodes[' + idOrderCode + '].Cost" value="" />'+
+                                '<label for="Částka [@Model.CurrencyName]">Částka [@Model.CurrencyName]</label>'+
+                            '</span>'+
+                            '<span class="text-danger field-validation-valid" data-valmsg-for="Order.OrderCodes[' + idOrderCode + '].Cost" data-valmsg-replace="true"></span>'+
+                        '</div>'+
+
+                        '<div class="col-lg-1">'+
+                            '<a href="javascript:void(0)" class="btn btn-danger btn-sm mt-1" data-toggle="tooltip" title="" data-original-title="Odstranit záznam" onclick="DeleteOrderCode(' + idOrderCode + ')"><i class="fa fa-trash white"></i></a>'+
+                        '</div>'+
+                    '</div>';
+
+                //$("tbody").append($(html).clone(true))
+                var _formTemp = $("#template-order-codes").clone(true)
+                var _targetForm = $(".dynamic-rows-order-codes")
+                _targetForm.append(html)
+
+                $('form').data('validator', null);
+                $.validator.unobtrusive.parse($('form'));
+
+                idOrderCode = idOrderCode + 1;
                 return false;
             });
         })

@@ -29,6 +29,7 @@ namespace memo.Helpers
             {"Contact", typeof(Contact)},
             {"OtherCost", typeof(OtherCost)},
             {"HourWages", typeof(HourWages)},
+            {"HourWage", typeof(HourWages)},
         };
 
         public static Dictionary<string, string> modelNameFromString = new Dictionary<string, string>
@@ -41,6 +42,7 @@ namespace memo.Helpers
             {"Contact", "Kontakt"},
             {"OtherCost", "Ostatní náklady"},
             {"HourWages", "Hodinové mzdy"},
+            {"HourWage", "Hodinová mzda"},
         };
 
         public static Dictionary<string, string> controllerLink = new Dictionary<string, string>
@@ -53,6 +55,7 @@ namespace memo.Helpers
             {"Contact", "Contacts"},
             {"OtherCost", "Orders"},
             {"HourWages", "Orders"},
+            {"HourWage", "Orders"},
         };
 
         public static string getOrderIdFromInvoice(AuditViewModel item, ApplicationDbContext db)

@@ -209,7 +209,7 @@
                 @* Skutečné náklady [CZK] *@
                 @* TODO: CO TADY??? HourWage je pryc, ted je z toho LIST *@
                 @* <th scope="row" class="text-right">@string.Format(CultureInfo.CreateSpecificCulture("cs-CZ"), "{0:C0}", @item.Burned * (@item.HourWage * (double)@item.ExchangeRate) / 60 )</th> *@
-                <th scope="row" class="text-right">@string.Format(CultureInfo.CreateSpecificCulture("cs-CZ"), "{0:C0}", 66)</th>
+                <th scope="row" class="text-right">@string.Format(CultureInfo.CreateSpecificCulture("cs-CZ"), "{0:C0}", 0)</th>
                 @* TODO: CO TADY??? HourWage je pryc, ted je z toho LIST *@
                 @* Celkové skut. náklady [CZK] *@
                 @* @{
@@ -218,7 +218,7 @@
                     var totalkaCzk = (decimal)(item.Burned * (item.HourWage * (double)item.ExchangeRate) / 60) + dalsi;
                 } *@
                 @* <th scope="row" class="text-right">@string.Format(CultureInfo.CreateSpecificCulture("cs-CZ"), "{0:C0}", totalkaCzk)</th> *@
-                <th scope="row" class="text-right">@string.Format(CultureInfo.CreateSpecificCulture("cs-CZ"), "{0:C0}", 69)</th>
+                <th scope="row" class="text-right">@string.Format(CultureInfo.CreateSpecificCulture("cs-CZ"), "{0:C0}", 0)</th>
 
             </tr>
         }

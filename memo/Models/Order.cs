@@ -87,5 +87,6 @@ namespace memo.Models
         public virtual List<Invoice> Invoices { get; set; } = new List<Invoice>();
         public virtual List<OtherCost> OtherCosts { get; set; } = new List<OtherCost>();
         public virtual List<HourWages> HourWages { get; set; } = new List<HourWages>();
+        public virtual List<OrderCodes> OrderCodes { get; set; } = new List<OrderCodes>();
     }
 }

@@ -194,19 +194,19 @@ SELECT x.OrderId, x.OrderCode
 FROM [memo].[Order] x;
 GO
 
-
+--TODO
 -----------------------------------------------------------------------------------------
 -- VYMAZAT ORDERCODE SLOUPEC Z ORDER
 ALTER TABLE [memo].[Order] DROP COLUMN OrderCode;
 GO
 
-
+--TODO
 -----------------------------------------------------------------------------------------
 -- VYCISTIT ORDER CODE Z AUDIT TABULKY
 DELETE FROM [memo].[Audit]
 WHERE FieldName = 'OrderCode'
 
-
+--TODO
 -----------------------------------------------------------------------------------------
 -- VYTVORIT AUDIT TRIGGER PRO ORDERCODES
 IF OBJECT_ID('[memo].TR__OrderCodes__AUDIT', 'TR') IS NOT NULL

@@ -71,7 +71,7 @@ namespace memo.Controllers
             string message = string.Format("Stránka načtena za: {0:D1}.{1:D3}s", ts.Seconds, ts.Milliseconds);
             if (_env.IsDevelopment())
             {
-            TempData["Info"] = message;
+                TempData["Info"] = message;
             }
 
             return View(vm);
@@ -270,6 +270,7 @@ namespace memo.Controllers
             order.Invoices = await _db.Invoice.Where(x => x.OrderId == id).ToListAsync();
             order.OtherCosts = await _db.OtherCost.Where(x => x.OrderId == id).ToListAsync();
             order.HourWages = await _db.HourWages.Where(x => x.OrderId == id).ToListAsync();
+            order.OrderCodes = await _db.OrderCodes.Where(x => x.OrderId == id).ToListAsync();
 
             if (offerId != null)
             {
@@ -288,13 +289,15 @@ namespace memo.Controllers
             List<int> orderIdInvoices = order.Invoices.Where(x => x.OrderId == id).Select(x => x.InvoiceId).ToList();
             List<int> orderIdOtherCosts = order.OtherCosts.Where(x => x.OrderId == id).Select(x => x.OtherCostId).ToList();
             List<int> orderIdHourWages = order.HourWages.Where(x => x.OrderId == id).Select(x => x.HourWagesId).ToList();
+            List<int> orderIdOrderCodes = order.OrderCodes.Where(x => x.OrderId == id).Select(x => x.OrderCodeId).ToList();
 
             List<AuditViewModel> audits = getAuditViewModel(_db).Audits
                 .Where(x =>
                     (x.TableName == "Order" && x.KeyValue == id.ToString()) ||
                     (x.TableName == "Invoice" && orderIdInvoices.Contains(Convert.ToInt32(x.KeyValue))) ||
                     (x.TableName == "OtherCost" && orderIdOtherCosts.Contains(Convert.ToInt32(x.KeyValue))) ||
-                    (x.TableName == "HourWages" && orderIdHourWages.Contains(Convert.ToInt32(x.KeyValue)))
+                    (x.TableName == "HourWages" && orderIdHourWages.Contains(Convert.ToInt32(x.KeyValue))) ||
+                    (x.TableName == "OrderCodes" && orderIdOrderCodes.Contains(Convert.ToInt32(x.KeyValue)))
                 )
                 .ToList();
 
@@ -734,6 +737,17 @@ namespace memo.Controllers
             HourWages hourWages = await _db.HourWages.FindAsync(id);
 
             _db.HourWages.Remove(hourWages);
+            await _db.SaveChangesAsync(User.GetLoggedInUserName());
+
+            return Json(new { success = true });
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> DeleteOrderCode(int id)
+        {
+            OrderCodes orderCode = await _db.OrderCodes.FindAsync(id);
+
+            _db.OrderCodes.Remove(orderCode);
             await _db.SaveChangesAsync(User.GetLoggedInUserName());
 
             return Json(new { success = true });
