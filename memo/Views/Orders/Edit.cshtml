@@ -319,17 +319,6 @@
             </div>
         </div>
 
-        @* <div class="form-group row">
-            <label asp-for="Order.HourWage" class="required col-lg-3 col-form-label form-control-label control-label"></label>
-            <div class="col-lg-3">
-                <span class="has-float-label">
-                    <input asp-for="Order.HourWage" class="form-control" type="text" onchange="this.value = this.value.replace(/,/g, '.')" placeholder=" " />
-                    <label asp-for="Order.HourWage">Hod. sazba [@Model.CurrencyName]</label>
-                </span>
-                <span asp-validation-for="Order.HourWage" class="text-danger"></span>
-            </div>
-        </div> *@
-
         <div class="form-group row border-top pt-2">
             <div class="col-lg-2 col-form-label d-flex justify-content-left">
                 <label class="form-control-label control-label">Hodinové sazby</label>
@@ -345,29 +334,6 @@
             @for (int i = 0; i < Model.Order.HourWages.Count(); i++)
             {
                 @await Html.PartialAsync("_PartialOrderHourWages", Model, new ViewDataDictionary(ViewData) {{ "i", i }})
-
-                @* <div class="row form-group justify-content-end">
-                    <input hidden="true" asp-for="@Model.Order.HourWages[i].HourWagesId" />
-                    <div class="col-lg-6">
-                        <span class="has-float-label">
-                            <input asp-for="@Model.Order.HourWages[i].Subject" class="form-control" type="text" autocomplete="off" placeholder=" "/>
-                            <label asp-for="@Model.Order.HourWages[i].Subject">Stručný popis</label>
-                        </span>
-                        <span asp-validation-for="@Model.Order.HourWages[i].Subject" class="text-danger"></span>
-                    </div>
-
-                    <div class="col-lg-3">
-                        <span class="has-float-label">
-                            <input asp-for="@Model.Order.HourWages[i].Cost" class="form-control" type="text" placeholder=" "/>
-                            <label asp-for="@Model.Order.HourWages[i].Cost">Částka [@Model.CurrencyName]</label>
-                        </span>
-                        <span asp-validation-for="@Model.Order.HourWages[i].Cost" class="text-danger"></span>
-                    </div>
-
-                    <div class="col-lg-1">
-                        <a href="javascript:void(0)" class="btn btn-danger btn-sm mt-1" data-toggle="tooltip" title="Odstranit záznam" onclick="DeleteOtherCost(@Model.Order.HourWages[i].HourWagesId)"><i class="fa fa-trash"></i></a>
-                    </div>
-                </div> *@
             }
             <span asp-validation-for="Order.HourWages" class="text-danger"></span>
         </div>
@@ -829,7 +795,7 @@
                         '<input type="number" hidden="true" data-val="true" data-val-required="The HourWagesId field is required." id="Order_HourWages_' + idHourWages + '__HourWagesId" name="Order.HourWages[' + idHourWages + '].HourWagesId" value="0">'+
 
                         '<div class="col-lg-6">'+
-                            '<input class="form-control" type="text" autocomplete="off" placeholder="Popis" data-val="true" data-val-required="Je třeba přidat popis dalšího nákladu" id="Order_HourWages_' + idHourWages + '__Subject" name="Order.HourWages[' + idHourWages + '].Subject" value="">'+
+                            '<input class="form-control" type="text" autocomplete="off" placeholder="Popis" id="Order_HourWages_' + idHourWages + '__Subject" name="Order.HourWages[' + idHourWages + '].Subject" value="">'+
                             '<span class="text-danger field-validation-valid" data-valmsg-for="Order.HourWages[' + idHourWages + '].Subject" data-valmsg-replace="true"></span>'+
                         '</div>'+
 
