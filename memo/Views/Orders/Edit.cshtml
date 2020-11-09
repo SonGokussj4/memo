@@ -147,6 +147,39 @@
             </div>
         </div>
 
+        <div class="form-group row pt-2">
+            <label asp-for="Order.PriceFinal" class="col-lg-3 col-form-label form-control-label control-label"></label>
+            <div class="col-lg-3">
+                <div class="input-group mb-2 mr-sm-2">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text">@Model.CurrencyName</div>
+                    </div>
+                    <input asp-for="Order.PriceFinal" class="form-control" type="text" required="" readonly/>
+                </div>
+                <span asp-validation-for="Order.PriceFinal" class="text-danger"></span>
+            </div>
+            <div class="col-lg-3">
+                <label asp-for="UnspentMoney" class="col-form-label form-control-label control-label"></label>
+            </div>
+            <div class="col-lg-3">
+                <div class="input-group mb-2 mr-sm-2">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text">@Model.CurrencyName</div>
+                    </div>
+                    <input asp-for="UnspentMoney" class="form-control" type="text" readonly />
+                </div>
+                <span asp-validation-for="UnspentMoney" class="text-danger"></span>
+                <div class="progress" style="height: 5px;">
+                    @{
+                        int percentValue = Model.Order.NegotiatedPrice != 0 ? (int)Math.Ceiling(Model.UnspentMoney / (decimal)Model.Order.NegotiatedPrice * 100) : 0;
+                        string progressBarWidth = percentValue >= 0 ? (100 - percentValue).ToString() : "100";
+                        string progressbarClassColor = percentValue >= 0 ? "" : "bg-danger";
+                    }
+                    <div class="progress-bar @progressbarClassColor progress-bar-striped" role="progressbar" style="width: @progressBarWidth%;"></div>
+                </div>
+            </div>
+        </div>
+
         <div class="form-group eveOrder">
 
             <div class="form-group row ">
@@ -284,39 +317,6 @@
                 </div>
             }
             <span asp-validation-for="Order.OtherCosts" class="text-danger"></span>
-        </div>
-
-        <div class="form-group row border-top pt-2">
-            <label asp-for="Order.PriceFinal" class="col-lg-3 col-form-label form-control-label control-label"></label>
-            <div class="col-lg-3">
-                <div class="input-group mb-2 mr-sm-2">
-                    <div class="input-group-prepend">
-                        <div class="input-group-text">@Model.CurrencyName</div>
-                    </div>
-                    <input asp-for="Order.PriceFinal" class="form-control" type="text" required="" readonly/>
-                </div>
-                <span asp-validation-for="Order.PriceFinal" class="text-danger"></span>
-            </div>
-            <div class="col-lg-3">
-                <label asp-for="UnspentMoney" class="col-form-label form-control-label control-label"></label>
-            </div>
-            <div class="col-lg-3">
-                <div class="input-group mb-2 mr-sm-2">
-                    <div class="input-group-prepend">
-                        <div class="input-group-text">@Model.CurrencyName</div>
-                    </div>
-                    <input asp-for="UnspentMoney" class="form-control" type="text" readonly />
-                </div>
-                <span asp-validation-for="UnspentMoney" class="text-danger"></span>
-                <div class="progress" style="height: 5px;">
-                    @{
-                        int percentValue = Model.Order.NegotiatedPrice != 0 ? (int)Math.Ceiling(Model.UnspentMoney / (decimal)Model.Order.NegotiatedPrice * 100) : 0;
-                        string progressBarWidth = percentValue >= 0 ? (100 - percentValue).ToString() : "100";
-                        string progressbarClassColor = percentValue >= 0 ? "" : "bg-danger";
-                    }
-                    <div class="progress-bar @progressbarClassColor progress-bar-striped" role="progressbar" style="width: @progressBarWidth%;"></div>
-                </div>
-            </div>
         </div>
 
         <div class="form-group row border-top pt-2">
