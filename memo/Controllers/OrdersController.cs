@@ -40,6 +40,7 @@ namespace memo.Controllers
                 cOrdersAll = await _eveDb.cOrders.ToListAsync(),
                 Orders = await _db.Order
                     .Include(x => x.Offer).ThenInclude(z => z.Currency)
+                    .Include(x => x.Offer.Company)
                     .Include(x => x.OtherCosts)
                     .Include(x => x.Invoices)
                     .ToListAsync()
