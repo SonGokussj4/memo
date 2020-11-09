@@ -13,6 +13,7 @@ using memo.Data;
 using memo.Models;
 using memo.ViewModels;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
 
 namespace memo.Controllers
 {
@@ -21,12 +22,17 @@ namespace memo.Controllers
         public ApplicationDbContext _db { get; }
         public EvektorDbContext _eveDb { get; }
         public EvektorDochnaDbContext _eveDbDochna { get; }
+        protected readonly IWebHostEnvironment _env;
 
-        public OrdersController(ApplicationDbContext db, EvektorDbContext eveDb, EvektorDochnaDbContext eveDbDochna, IWebHostEnvironment hostEnvironment) : base(hostEnvironment)
+        public OrdersController(ApplicationDbContext db,
+                                EvektorDbContext eveDb,
+                                EvektorDochnaDbContext eveDbDochna,
+                                IWebHostEnvironment hostEnvironment) : base(hostEnvironment)
         {
             _db = db;
             _eveDb = eveDb;
             _eveDbDochna = eveDbDochna;
+            _env = hostEnvironment;
         }
 
         public async Task<IActionResult> Index(bool showInactive = false)
@@ -63,7 +69,10 @@ namespace memo.Controllers
 
             TimeSpan ts = stopwatch.Elapsed;
             string message = string.Format("Stránka načtena za: {0:D1}.{1:D3}s", ts.Seconds, ts.Milliseconds);
+            if (_env.IsDevelopment())
+            {
             TempData["Info"] = message;
+            }
 
             return View(vm);
         }

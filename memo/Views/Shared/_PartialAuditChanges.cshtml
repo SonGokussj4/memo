@@ -126,8 +126,16 @@
                                             Type myType = StaticUtils.modelTypeFromString[item.TableName];
                                             string jsonString = items.FieldName;
                                             MemberInfo property = myType.GetProperty(jsonString);
-                                            var dd = property.GetCustomAttribute(typeof(DisplayAttribute)) as DisplayAttribute;
-                                            string fieldName = dd != null ? dd.Name : items.FieldName;
+                                            string fieldName = "";
+                                            if (property != null)
+                                            {
+                                                var dd = property.GetCustomAttribute(typeof(DisplayAttribute)) as DisplayAttribute;
+                                                fieldName = dd != null ? dd.Name : items.FieldName;
+                                            }
+                                            else
+                                            {
+                                                fieldName = items.fieldName;
+                                            }
                                         }
                                         @fieldName
                                     </td>

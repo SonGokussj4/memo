@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace memo.Models
 {
@@ -10,8 +8,10 @@ namespace memo.Models
     public partial class HourWages
     {
         [Key]
+        [Display(Name = "Hodinová mzda")]
         public int HourWagesId { get; set; }
 
+        [ForeignKey("Order")]
         [Display(Name = "Zakázka")]
         public int OrderId { get; set; }
         public Order Order { get; set; }

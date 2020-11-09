@@ -127,6 +127,15 @@
         </div>
 
         <div class="form-group row">
+            <label asp-for="Order.EveContactName" class="required col-lg-3 col-form-label form-control-label control-label"></label>
+            <div class="col-lg-9">
+                @* @Html.DropDownListFor(model => model.Order.EveContactName, ViewBag.EveContactList as SelectList, "-- Vyber kontakt --", new { @class = "form-control selectpicker" }) *@
+                <select asp-for="Order.EveContactName" asp-items="ViewBag.EveContactList" class="form-control selectpicker"></select>
+                <span asp-validation-for="Order.EveContactName" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-group row">
             <label class="required col-lg-3 col-form-label form-control-label control-label">Cena dle jednacího protokolu</label>
             <div class="col-lg-3">
                 <span class="has-float-label">
@@ -147,7 +156,7 @@
             </div>
         </div>
 
-        <div class="form-group row pt-2">
+        <div class="form-group row">
             <label asp-for="Order.PriceFinal" class="col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-3">
                 <div class="input-group mb-2 mr-sm-2">
@@ -180,26 +189,17 @@
             </div>
         </div>
 
-        <div class="form-group eveOrder">
-
-            <div class="form-group row ">
-                <label asp-for="Order.OrderCode" class="required col-lg-3 col-form-label form-control-label control-label"></label>
-                <div class="col-lg-5">
-                    <select asp-for="Order.OrderCode" asp-items="ViewBag.EveOrderCodes" class="form-control selectpicker"></select>
-                    <span asp-validation-for="Order.OrderCode" class="text-danger"></span>
-                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-                    @* <span>Spáleno/Plánováno: @(Model.Order.Burned / 60) / @Model.Order.TotalHours [hod]</span> *@
-                </div>
-                <div class="col-lg-2">
+        <div class="form-group row justify-content-center">
+            <div class="col-lg-4">
                     <a href="@Url.Action("CreateEveProject")" target="_blank" class="btn btn-outline-success form-control"
                        data-toggle="tooltip" data-placement="top" title="Nová EVE zakázka">
-                        <i class="fa fa-plus-square"></i>
+                    <i class="fa fa-plus-square"></i> Vytvořit eve zakázku
                     </a>
                 </div>
-                <div class="col-lg-2">
+            <div class="col-lg-4">
                     <a href="@Url.Action("CreateEveProject")" target="_blank" class="btn btn-outline-success form-control"
                     data-toggle="tooltip" data-placement="top" title="Nová EVE modulová zakázka">
-                        <i class="fa fa-plus-square"></i> [M]
+                    <i class="fa fa-plus-square"> </i> Vytvořit eve [M] zakázku
                     </a>
                 </div>
             </div>
@@ -668,7 +668,7 @@
             $('.add-row-invoices').click(function () {
                 var html =''+
                     @* '<div class="dynamic-rows-invoices" id="template-invoices" data-order="' + idInvoice + '">'+ *@
-                        '<div class="row form-group justify-content-end" id="dynamic-row-invoice-' + idInvoice + '">'+
+                        '<div class="row form-group border-top pt-4 justify-content-end" id="dynamic-row-invoice-' + idInvoice + '">'+
 
                             '<input type="number" hidden="true" data-val="true" data-val-required="The InvoiceId field is required." id="Order_Invoices_' + idInvoice + '__InvoiceId" name="Order.Invoices[' + idInvoice + '].InvoiceId" value="0">'+
 
