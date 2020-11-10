@@ -234,14 +234,35 @@
             <span asp-validation-for="Order.OrderCodes" class="text-danger"></span>
         </div> *@
 
-        <div class="form-group row border-top pt-3">
-            <label asp-for="Order.OrderCode" class="required col-lg-3 col-form-label form-control-label control-label"></label>
-            <div class="col-lg-7">
-                <select asp-for="Order.OrderCode" asp-items="ViewBag.EveOrderCodes" class="form-control selectpicker"></select>
-                <span asp-validation-for="Order.OrderCode" class="text-danger"></span>
-                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-                @* <span>Spáleno/Plánováno: @(Model.Order.Burned / 60) / @Model.Order.TotalHours [hod]</span> *@
+        <div class="form-group row border-top pt-2">
+            <div class="col-lg-2 col-form-label d-flex justify-content-left">
+                <label class="form-control-label control-label">Kód vykazování</label>
             </div>
+            <div class="col-lg-10">
+                <a href="javascript:void(0)" class="btn btn-success col-lg-3 add-row-hour-wages mt-1" data-toggle="tooltip" title="Přidat hodinové sazby">
+                    <i class="fa fa-plus"></i> Kód, mzda
+                </a>
+            </div>
+        </div>
+
+        @* <div class="form-group row"> *@
+            @* <label asp-for="Order.OrderCode" class="required col-lg-3 col-form-label form-control-label control-label"></label> *@
+            @* <div class="col-lg-7"> *@
+                @* <select asp-for="Order.OrderCode" asp-items="ViewBag.EveOrderCodes" class="form-control selectpicker"></select> *@
+                @* <span asp-validation-for="Order.OrderCode" class="text-danger"></span> *@
+                @* @Html.ValidationSummary(true, "", new { @class = "text-danger" }) *@
+                @* <span>Spáleno/Plánováno: @(Model.Order.Burned / 60) / @Model.Order.TotalHours [hod]</span> *@
+            @* </div> *@
+        @* </div> *@
+
+        @* @Html.ValidationMessage("HourWagesValidationMessage", "", new { @class = "text-danger" }) *@
+        <div class="dynamic-rows-hour-wages" id="template-hour-wages" data-order="@Model.Order.HourWages.Count()">
+
+            @for (int i = 0; i < Model.Order.HourWages.Count(); i++)
+            {
+                @await Html.PartialAsync("_PartialOrderHourWages", Model, new ViewDataDictionary(ViewData) {{ "i", i }})
+            }
+            <span asp-validation-for="Order.HourWages" class="text-danger"></span>
         </div>
 
         <div class="form-group row border-top pt-2">
@@ -249,7 +270,9 @@
                 <label class="form-control-label control-label">Faktury</label>
             </div>
             <div class="col-lg-10">
-                <a href="javascript:void(0)" class="btn btn-success col-lg-3 add-row-invoices mt-1" data-toggle="tooltip" title="Přidat fakturaci"><i class="fa fa-plus"></i> Přidat fakturaci</a>
+                <a href="javascript:void(0)" class="btn btn-success col-lg-3 add-row-invoices mt-1" data-toggle="tooltip" title="Přidat fakturaci">
+                    <i class="fa fa-plus"></i> Přidat fakturaci
+                </a>
             </div>
         </div>
 
@@ -346,25 +369,6 @@
                 </div>
             }
             <span asp-validation-for="Order.OtherCosts" class="text-danger"></span>
-        </div>
-
-        <div class="form-group row border-top pt-2">
-            <div class="col-lg-2 col-form-label d-flex justify-content-left">
-                <label class="form-control-label control-label">Hodinové sazby</label>
-            </div>
-            <div class="col-lg-10">
-                <a href="javascript:void(0)" class="btn btn-success col-lg-3 add-row-hour-wages mt-1" data-toggle="tooltip" title="Přidat hodinové sazby"><i class="fa fa-plus"></i> Hodinové sazby</a>
-            </div>
-        </div>
-
-        @Html.ValidationMessage("HourWagesValidationMessage", "", new { @class = "text-danger" })
-        <div class="dynamic-rows-hour-wages" id="template-hour-wages" data-order="@Model.Order.HourWages.Count()">
-
-            @for (int i = 0; i < Model.Order.HourWages.Count(); i++)
-            {
-                @await Html.PartialAsync("_PartialOrderHourWages", Model, new ViewDataDictionary(ViewData) {{ "i", i }})
-            }
-            <span asp-validation-for="Order.HourWages" class="text-danger"></span>
         </div>
 
         <div class="form-group row">
