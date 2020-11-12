@@ -413,28 +413,19 @@
                             '</div>'+
 
                             '<div class="col-lg-3">'+
-                                @* '<div class="input-group">'+ *@
-                                    @* '<div class="input-group-prepend">'+
-                                        '<div class="input-group-text newlyAddedTooltip" data-toggle="tooltip" title="Přičíst dny" style="cursor: pointer;" onclick="AddInvoiceDueDays(' + idInvoice + ');">'+
-                                            '@Model.InvoiceDueDays &nbsp;<i class="fa fa-caret-right"></i>'+
-                                        '</div>'+
-                                    '</div>'+ *@
-                                    '<span class="has-float-label">'+
-                                        '<input class="form-control" type="text" autocomplete="off" placeholder="rrrr-mm-dd" data-val="true" data-id="' + idInvoice + '" data-val-required="The Splatnost faktury field is required." id="Order_Invoices_' + idInvoice + '__InvoiceDueDate" name="Order.Invoices[' + idInvoice + '].InvoiceDueDate" value="">'+
-                                        '<label for="Order_Invoices_' + idInvoice + '__InvoiceDueDate">Splatnost faktury</label>'+
-                                    '</span>'+
-                                    '<span class="text-danger field-validation-valid" data-valmsg-for="Order.Invoices[' + idInvoice + '].InvoiceDueDate" data-valmsg-replace="true"></span>'+
-                                @* '</div>'+ *@
+                                '<span class="has-float-label">'+
+                                    '<input class="form-control" type="text" autocomplete="off" placeholder="rrrr-mm-dd" data-val="true" data-id="' + idInvoice + '" data-val-required="The Splatnost faktury field is required." id="Order_Invoices_' + idInvoice + '__InvoiceDueDate" name="Order.Invoices[' + idInvoice + '].InvoiceDueDate" value="">'+
+                                    '<label for="Order_Invoices_' + idInvoice + '__InvoiceDueDate">Splatnost faktury</label>'+
+                                '</span>'+
+                                '<span class="text-danger field-validation-valid" data-valmsg-for="Order.Invoices[' + idInvoice + '].InvoiceDueDate" data-valmsg-replace="true"></span>'+
                             '</div>'+
 
                             '<div class="col-lg-3">'+
-                                '<div class="input-group mb-2 mr-sm-2">'+
-                                    '<div class="input-group-prepend">'+
-                                        '<div class="input-group-text">@Model.CurrencyName</div>'+
-                                    '</div>'+
-                                    '<input class="form-control" type="text" placeholder="Částka" data-val="true" data-val-number="The field Částka must be a number." data-val-required="The Částka field is required." id="Order_Invoices_' + idInvoice + '__Cost" name="Order.Invoices[' + idInvoice + '].Cost" value="">'+
-                                    '<span class="text-danger field-validation-valid" data-valmsg-for="Order.Invoices[' + idInvoice + '].Cost" data-valmsg-replace="true"></span>'+
-                                '</div>'+
+                                '<span class="has-float-label">'+
+                                    '<input class="form-control" type="text" placeholder="Částka" data-val="true" data-val-number="The field Částka must be a number." data-val-required="The Částka field is required." id="Order_Invoices_' + idInvoice + '__Cost" name="Order.Invoices[' + idInvoice + '].Cost" value="" />'+
+                                    '<label for="Order_Invoices_' + idInvoice + '__Cost">Částka [@Model.CurrencyName]</label>'+
+                                '</span>'+
+                                '<span class="text-danger field-validation-valid" data-valmsg-for="Order.Invoices[' + idInvoice + '].Cost" data-valmsg-replace="true"></span>'+
                             '</div>'+
 
                             '<div class="col-lg-1">'+
@@ -504,7 +495,7 @@
                         '<div class="col-lg-3">'+
                             '<span class="has-float-label">'+
                                 '<input class="form-control" type="text" placeholder="Částka" data-val="true" data-val-number="The field Částka must be a number." data-val-required="The Částka field is required." id="Order_OtherCosts_' + idOtherCosts + '__Cost" name="Order.OtherCosts[' + idOtherCosts + '].Cost" value="" />'+
-                                '<label for="Částka [@Model.CurrencyName]">Částka [@Model.CurrencyName]</label>'+
+                                '<label for="Order_OtherCosts_' + idOtherCosts + '__Cost"">Částka [@Model.CurrencyName]</label>'+
                             '</span>'+
                             '<span class="text-danger field-validation-valid" data-valmsg-for="Order.Invoices[' + idOtherCosts + '].Cost" data-valmsg-replace="true"></span>'+
                         '</div>'+
@@ -543,7 +534,7 @@
                         '<div class="col-lg-3">'+
                             '<span class="has-float-label">'+
                                 '<input class="form-control" type="text" placeholder="Částka" data-val="true" data-val-number="The field Částka must be a number." data-val-required="The Částka field is required." id="Order_HourWages_' + idHourWages + '__Cost" name="Order.HourWages[' + idHourWages + '].Cost" value="" />'+
-                                '<label for="Částka [@Model.CurrencyName]">Částka [@Model.CurrencyName]</label>'+
+                                '<label for="Order_HourWages_' + idHourWages + '__Cost">Částka [@Model.CurrencyName]</label>'+
                             '</span>'+
                             '<span class="text-danger field-validation-valid" data-valmsg-for="Order.HourWages[' + idHourWages + '].Cost" data-valmsg-replace="true"></span>'+
                         '</div>'+
