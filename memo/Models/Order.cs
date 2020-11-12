@@ -40,10 +40,10 @@ namespace memo.Models
         [Display(Name = "Sleva z nabídky")]
         public int? PriceDiscount { get; set; }
 
-        [Required]
-        [Display(Name = "Kód vykazování EVE"), StringLength(50)]
-        [RegularExpression(@"\d{3}[.]\d{4}", ErrorMessage = "Kód ve formátu xxx.xxxx")]
-        public string OrderCode { get; set; }
+        // [Required]
+        // [Display(Name = "Kód vykazování EVE"), StringLength(50)]
+        // [RegularExpression(@"\d{3}[.]\d{4}", ErrorMessage = "Kód ve formátu xxx.xxxx")]
+        // public string OrderCode { get; set; }
 
         [Required]
         [Display(Name = "Vedoucí projektu v EVEKTORu")]

@@ -9,30 +9,24 @@
 
 <div class="row form-group justify-content-end">
 
-    @* <div class="col-lg-1 pr-0">
-        <a href="javascript:void(0)" class="btn btn-info btn-sm mt-1" data-toggle="tooltip" title="Zvolit kód" onclick="DeleteHourWages(@Model.Order.HourWages[i].HourWagesId)">
-            <i class="fa fa-search">&nbsp;<i class="fa fa-caret-right"></i></i>
-        </a>
-    </div> *@
-
     <div class="col-lg-3">
         <span class="has-float-label">
             <div class="input-group">
-                <input asp-for="@Model.Order.OrderCode" class="form-control" type="text" autocomplete="off" placeholder=" "/>
+                <input asp-for="@Model.Order.OrderCodes[i].OrderCode" class="form-control" type="text" autocomplete="off" placeholder=" "/>
                 <div class="input-group-append">
-                    @* <button class="btn btn-success" type="button" data-toggle="tooltip" title="Vyhledat kód" onclick="changeExchangeRate('@Model.CurrencyName');" style="cursor: pointer;"> *@
-                    @* <button class="btn btn-info" type="button" data-toggle="tooltip" title="Vyhledat kód" onclick="changeExchangeRate('@Model.CurrencyName');" style="cursor: pointer;"> *@
-                    @* <button class="btn btn-dark" type="button" data-toggle="tooltip" title="Vyhledat kód" onclick="changeExchangeRate('@Model.CurrencyName');" style="cursor: pointer;"> *@
-                    @* <button class="btn btn-secondary" type="button" data-toggle="tooltip" title="Vyhledat kód" onclick="changeExchangeRate('@Model.CurrencyName');" style="cursor: pointer;"> *@
-                    <button class="btn btn-light border" type="button" data-toggle="tooltip" title="Vyhledat kód" onclick="changeExchangeRate('@Model.CurrencyName');" style="cursor: pointer;">
-                        @* <i class="fa fa-caret-left"></i>&nbsp;<i class="fa fa-search"></i> *@
-                        <i class="fa fa-search"></i>
-                    </button>
+                    <!-- Modal placeholder -->
+                    <div id="modal-placeholder"></div>
+                    <!-- Button trigger modal -->
+                    <span data-toggle="tooltip" title="Vyhledat kód" >
+                        <button class="btn btn-light border" type="button" data-toggle="ajax-modal" data-target="#SearchForOrderCodeModal" data-url="@Url.Action("GetOrderCodes", "Orders", new { id = @i })">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </span>
                 </div>
             </div>
-            <label asp-for="@Model.Order.OrderCode">Kód vykazování</label>
+            <label asp-for="@Model.Order.OrderCodes[i].OrderCode">Kód vykazování</label>
         </span>
-        <span asp-validation-for="@Model.Order.OrderCode" class="text-danger"></span>
+        <span asp-validation-for="@Model.Order.OrderCodes[i].OrderCode" class="text-danger"></span>
     </div>
 
     <div class="col-lg-3">

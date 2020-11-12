@@ -1,0 +1,32 @@
+@* @model List<memo.Models.cOrders> *@
+@* @model List<cOrders> *@
+@model memo.ViewModels.OrderEditViewModel
+
+<div class="modal fade" id="SearchForOrderCodeModal" tabindex="-1" role="dialog" aria-labelledby="SearchForOrderCodeModalLabel">
+    <div class="modal-dialog modal-md" role="document">
+        <div class="modal-content">
+            <!-- header -->
+            <div class="modal-header">
+                <h5 class="modal-title" id="SearchForOrderCodeModalLabel">Hledej šmudlo!!!</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <!-- body -->
+            <div class="modal-body">
+                <select id="SelectedOrderCode_@Model.OrderCodeId" asp-items="Model.EveOrderCodes" class="form-control selectpicker"></select>
+                @* <ul>
+                    @foreach (cOrders item in Model)
+                    {
+                        <li>@item.OrderCode - @item.OrderName</li>
+                    }
+                </ul> *@
+            </div>
+            <!-- footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="OrderCodeToInput(@Model.OrderCodeId)" data-dismiss="modal">Vložit</button>
+                <button type="button" class="btn btn-info" data-dismiss="modal">Zpět</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+

@@ -140,13 +140,13 @@
 
         <div class="form-group eveOrder">
             <div class="form-group row">
-                <label asp-for="Order.OrderCode" class="required col-lg-3 col-form-label form-control-label control-label"></label>
+                @* <label asp-for="Order.OrderCode" class="required col-lg-3 col-form-label form-control-label control-label"></label>
                 <div class="col-lg-5">
                     <select asp-for="Order.OrderCode" asp-items="ViewBag.EveOrderCodes" class="form-control selectpicker">
                         <option value="">-- Vyber kód --</option>
                     </select>
                     <span asp-validation-for="Order.OrderCode" class="text-danger"></span>
-                </div>
+                </div> *@
                 <div class="col-lg-2">
                     <a href="@Url.Action("CreateEveProject")" target="_blank" class="btn btn-outline-success form-control"
                        data-toggle="tooltip" data-placement="top" title="Nová EVE zakázka">

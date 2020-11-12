@@ -240,29 +240,20 @@
             </div>
             <div class="col-lg-10">
                 <a href="javascript:void(0)" class="btn btn-success col-lg-3 add-row-hour-wages mt-1" data-toggle="tooltip" title="Přidat hodinové sazby">
-                    <i class="fa fa-plus"></i> Kód, mzda
+                    <i class="fa fa-plus"></i> Vykaz. úkol
                 </a>
             </div>
         </div>
 
-        @* <div class="form-group row"> *@
-            @* <label asp-for="Order.OrderCode" class="required col-lg-3 col-form-label form-control-label control-label"></label> *@
-            @* <div class="col-lg-7"> *@
-                @* <select asp-for="Order.OrderCode" asp-items="ViewBag.EveOrderCodes" class="form-control selectpicker"></select> *@
-                @* <span asp-validation-for="Order.OrderCode" class="text-danger"></span> *@
-                @* @Html.ValidationSummary(true, "", new { @class = "text-danger" }) *@
-                @* <span>Spáleno/Plánováno: @(Model.Order.Burned / 60) / @Model.Order.TotalHours [hod]</span> *@
-            @* </div> *@
-        @* </div> *@
-
+        @* TODO: Tady musim zkombinovat hourWages s orderCodes do jedne tabulky, jinak to nepujde... *@
         @* @Html.ValidationMessage("HourWagesValidationMessage", "", new { @class = "text-danger" }) *@
-        <div class="dynamic-rows-hour-wages" id="template-hour-wages" data-order="@Model.Order.HourWages.Count()">
+        <div class="dynamic-rows-hour-wages" id="template-hour-wages" data-order="@Model.Order.OrderCodes.Count()">
 
-            @for (int i = 0; i < Model.Order.HourWages.Count(); i++)
+            @for (int i = 0; i < Model.Order.OrderCodes.Count(); i++)
             {
                 @await Html.PartialAsync("_PartialOrderHourWages", Model, new ViewDataDictionary(ViewData) {{ "i", i }})
             }
-            <span asp-validation-for="Order.HourWages" class="text-danger"></span>
+            <span asp-validation-for="Order.OrderCodes" class="text-danger"></span>
         </div>
 
         <div class="form-group row border-top pt-2">
@@ -448,7 +439,9 @@
 
 <!-----------------------------------------------  M O D A L S  ----------------------------------------------->
 
+<!------------------------->
 <!-- Modal Confirm Delete-->
+<!------------------------->
 <div class="modal fade" id="deleteConfirmModal" tabindex="-1" role="dialog" aria-labelledby="deleteConfirmModalLabel">
     <div class="modal-dialog modal-md" role="document">
         <div class="modal-content">
@@ -471,6 +464,7 @@
         </div>
     </div>
 </div>
+
 
 @section Scripts {
 
@@ -629,6 +623,29 @@
 //            });
 //        }
 
+        //@* var SearchForOrderCode = function(ItemId) {
+        //    @Html.PartialAsync("_PartialModalSearchForOrderCode").modal('show');
+        //} *@
+
+        function SearchForOrderCode(id) {
+            $.get("@Url.Action("SearchForOrderCode", "Orders")/" + id)
+                .done(function (data, textStatus, jqXHR) {
+                    console.log('data: ' + data);
+                    console.log('textStatus: ' + textStatus);
+                    console.log('jqXHR: ' + jqXHR);
+
+                    $('.modal-body').html(data);
+                })
+                .fail(function (jqXHR, textStatus, errorThrown) {
+                    console.log(jqXHR);
+                });
+            $('#SearchForOrderCodeModal').modal('show');
+            }
+
+        $('#SearchForOrderCodeModal').on('hidden.bs.modal', function (e) {
+            $('.modal-body').html("");
+        })
+
         // MODAL dialog for delete confirmation
         //-------------------------------------
         var ConfirmDelete = function (ItemId) {
@@ -690,6 +707,14 @@
             });
         }
 
+        // Modal, user select OrderCode, press Vlozit, it will insert value into a distinc val
+        function OrderCodeToInput(id) {
+            console.log("Data: " + id);
+            let SelectValue = $(`#SelectedOrderCode_${id}`).val();
+            $(`#Order_OrderCodes_${id}__OrderCode`).val(SelectValue).blur();
+        }
+
+        // -----------------------  DOCUMENT READY  --------------------------//
         $(document).ready(function(){
 
             $('.mycalendar input').datepicker(datepickerParameters[0]);

@@ -61,7 +61,8 @@ namespace memo.Controllers
             Dictionary<string, int> dc = await GetOrderSumHoursDictAsync();
             foreach (Order order in vm.Orders)
             {
-                order.Burned = dc.Get(order.OrderCode, 0);
+                // order.Burned = dc.Get(order.OrderCode, 0);  // TODO delat ve ViewModelu
+                order.Burned = 0;
             }
 
             List<Order> allOrders = await _db.Order.ToListAsync();
@@ -219,11 +220,12 @@ namespace memo.Controllers
 
             if (ModelState.IsValid)
             {
-                int? totalMinutes = await _eveDb.cOrders  // Planned
-                    .Where(t => t.OrderCode == vm.Order.OrderCode)
-                    .Select(t => t.Planned)
-                    .FirstOrDefaultAsync();
+                // int? totalMinutes = await _eveDb.cOrders  // Planned
+                //     .Where(t => t.OrderCode == vm.Order.OrderCode)
+                //     .Select(t => t.Planned)
+                //     .FirstOrDefaultAsync();
 
+                int? totalMinutes = null;
                 vm.Order.TotalHours = totalMinutes != null ? totalMinutes / 60 : 0;
 
                 vm.Order.CreatedBy = User.GetLoggedInUserName();
@@ -344,7 +346,6 @@ namespace memo.Controllers
                         oldVm.Order.NegotiatedPrice == vm.Order.NegotiatedPrice &&
                         oldVm.Order.PriceFinal == vm.Order.PriceFinal &&
                         oldVm.Order.PriceDiscount == vm.Order.PriceDiscount &&
-                        oldVm.Order.OrderCode == vm.Order.OrderCode &&
                         oldVm.Order.EveContactName == vm.Order.EveContactName &&
                         oldVm.Order.TotalHours== vm.Order.TotalHours&&
                         oldVm.Order.ExchangeRate == vm.Order.ExchangeRate &&
@@ -355,6 +356,7 @@ namespace memo.Controllers
                         oldVm.Order.Burned == vm.Order.Burned &&
                         oldVm.Order.Invoices.Count() == vm.Order.Invoices.Count() &&
                         oldVm.Order.OtherCosts.Count() == vm.Order.OtherCosts.Count() &&
+                        oldVm.Order.OrderCodes.Count() == vm.Order.OrderCodes.Count() &&
                         oldVm.Order.HourWages.Count() == vm.Order.HourWages.Count())
                     {
                         TempData["Info"] = "Nebyla provedena změna, není co uložit";
@@ -370,10 +372,11 @@ namespace memo.Controllers
                     }
 
                     // TODO tohle delat v ramci zobrazeni a do ViewModelu, NEUKLADAT V DATABAZI....
-                    int? totalMinutes = await _eveDb.cOrders  // Planned
-                        .Where(t => t.OrderCode == vm.Order.OrderCode)
-                        .Select(t => t.Planned)
-                        .FirstOrDefaultAsync();
+                    // int? totalMinutes = await _eveDb.cOrders  // Planned
+                    //     .Where(t => t.OrderCode == vm.Order.OrderCode)
+                    //     .Select(t => t.Planned)
+                    //     .FirstOrDefaultAsync();
+                    int? totalMinutes = null;  // TODO: tohle pak dopocitat ve ViewModelu a KE KAZDEMU ORDER CODE
 
                     vm.Order.TotalHours = totalMinutes != null ? totalMinutes / 60 : 0;
 
@@ -752,5 +755,23 @@ namespace memo.Controllers
 
             return Json(new { success = true });
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetOrderCodes(int id)
+        {
+            OrderEditViewModel vm = new OrderEditViewModel();
+            vm.cOrders = await _eveDb.cOrders.ToListAsync();
+            vm.Orders = await _db.Order.Include(x => x.OrderCodes).ToListAsync();
+            vm.EveOrderCodes = await getOrderCodesAsync(_eveDb);
+            vm.OrderCodeId = id;
+
+            return PartialView("_PartialSearchForOrderCode", vm);
+        }
+
+        // [HttpGet]
+        // public ActionResult SearchForOrderCode(int id)
+        // {
+        //     return PartialView("_PartialModalSearchForOrderCode");
+        // }
     }
 }

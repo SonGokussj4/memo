@@ -127,4 +127,18 @@ $("#error-alert").fadeTo(60000, 500).slideUp(500, function(){
     $("#error-alert").slideUp(500);
 });
 
+// Add 'replaceAll()' function to JavaScript Strings
 String.prototype.replaceAllTxt = function replaceAll(search, replace) { return this.split(search).join(replace); }
+
+// Ajax modal popup the partial view
+$(function () {  // Only after the document loads
+    // all buttons with data-toggle equal to ajax-modal
+    $('button[data-toggle="ajax-modal"]').click(function (event) {
+        var url = $(this).data('url');
+        console.log(url);
+        $.get(url).done(function (data) {
+            $('#modal-placeholder').html(data);
+            $('#modal-placeholder > .modal').modal('show');
+        });
+    });
+});
