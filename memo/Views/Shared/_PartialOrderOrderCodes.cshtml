@@ -4,7 +4,7 @@
 @{
     int i = (int)ViewData["i"];
 }
-<input hidden="true" asp-for="@Model.Order.HourWages[i].HourWagesId" />
+<input hidden="true" asp-for="@Model.Order.OrderCodes[i].OrderCodeId" />
 
 
 <div class="row form-group justify-content-end">
@@ -31,22 +31,22 @@
 
     <div class="col-lg-3">
         <span class="has-float-label">
-            <input asp-for="@Model.Order.HourWages[i].Subject" class="form-control" type="text" autocomplete="off" placeholder=" "/>
-            <label asp-for="@Model.Order.HourWages[i].Subject">Popis hod. mzdy</label>
+            <input asp-for="@Model.Order.OrderCodes[i].HourWageSubject" class="form-control" type="text" autocomplete="off" placeholder=" "/>
+            <label asp-for="@Model.Order.OrderCodes[i].HourWageSubject">Popis hod. mzdy</label>
         </span>
-        <span asp-validation-for="@Model.Order.HourWages[i].Subject" class="text-danger"></span>
+        <span asp-validation-for="@Model.Order.OrderCodes[i].HourWageSubject" class="text-danger"></span>
     </div>
 
     <div class="col-lg-3">
         <span class="has-float-label">
-            <input asp-for="@Model.Order.HourWages[i].Cost" class="form-control" type="text" placeholder=" "/>
-            <label asp-for="@Model.Order.HourWages[i].Cost">Hod. mzda [@Model.CurrencyName]</label>
+            <input asp-for="@Model.Order.OrderCodes[i].HourWageCost" class="form-control" type="text" placeholder=" "/>
+            <label asp-for="@Model.Order.OrderCodes[i].HourWageCost">Hod. mzda [@Model.CurrencyName]</label>
         </span>
-        <span asp-validation-for="@Model.Order.HourWages[i].Cost" class="text-danger"></span>
+        <span asp-validation-for="@Model.Order.OrderCodes[i].HourWageCost" class="text-danger"></span>
     </div>
 
     <div class="col-lg-1">
-        <a href="javascript:void(0)" class="btn btn-danger btn-sm mt-1" data-toggle="tooltip" title="Odstranit záznam" onclick="DeleteHourWages(@Model.Order.HourWages[i].HourWagesId)">
+        <a href="javascript:void(0)" class="btn btn-danger btn-sm mt-1" data-toggle="tooltip" title="Odstranit záznam" onclick="DeleteOrderCode(@Model.Order.OrderCodes[i].OrderCodeId)">
             <i class="fa fa-trash"></i>
         </a>
     </div>

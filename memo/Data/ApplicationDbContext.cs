@@ -27,7 +27,6 @@ namespace memo.Data
         public virtual DbSet<Order> Order { get; set; }
         public virtual DbSet<Invoice> Invoice { get; set; }
         public virtual DbSet<OtherCost> OtherCost { get; set; }
-        public virtual DbSet<HourWages> HourWages { get; set; }
         public virtual DbSet<OrderCodes> OrderCodes { get; set; }
         public virtual DbSet<BugReport> BugReport { get; set; }
         public virtual DbSet<Audit> Audit { get; set; }

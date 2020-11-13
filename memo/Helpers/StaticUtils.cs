@@ -28,7 +28,6 @@ namespace memo.Helpers
             {"Company", typeof(Company)},
             {"Contact", typeof(Contact)},
             {"OtherCost", typeof(OtherCost)},
-            {"HourWages", typeof(HourWages)},
             {"OrderCodes", typeof(OrderCodes)},
         };
 
@@ -41,7 +40,6 @@ namespace memo.Helpers
             {"Company", "Firma"},
             {"Contact", "Kontakt"},
             {"OtherCost", "Ostatní náklady"},
-            {"HourWages", "Hodinová mzda"},
             {"OrderCodes", "Kód vykazování"},
         };
 
@@ -54,7 +52,6 @@ namespace memo.Helpers
             {"Company", "Companies"},
             {"Contact", "Contacts"},
             {"OtherCost", "Orders"},
-            {"HourWages", "Orders"},
             {"OrderCodes", "Orders"},
         };
 
@@ -70,12 +67,6 @@ namespace memo.Helpers
             {
                 OtherCost otherCost = db.OtherCost.Where(x => x.OtherCostId.ToString() == item.KeyValue).FirstOrDefault();
                 var orderId = otherCost != null ? otherCost.OrderId.ToString() : "0";
-                return orderId;
-            }
-            else if (item.TableName == "HourWages")
-            {
-                HourWages hourWages = db.HourWages.Where(x => x.HourWagesId.ToString() == item.KeyValue).FirstOrDefault();
-                var orderId = hourWages != null ? hourWages.OrderId.ToString() : "0";
                 return orderId;
             }
 
