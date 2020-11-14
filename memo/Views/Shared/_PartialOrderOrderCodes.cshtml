@@ -9,13 +9,16 @@
 
 <div class="row form-group justify-content-end">
 
+    @* <input hidden="true" type="number" data-val="true" data-val-required="The OrderCodeId field is required." id="Order_OrderCodes_' + idOrderCode + '__OrderCodeId" name="Order.OrderCodes[' + idOrderCode + '].OrderCodeId" value="0"> *@
+    <input asp-for="@Model.Order.OrderCodes[i].OrderCodeId" hidden="true">
+
     <div class="col-lg-3">
         <span class="has-float-label">
             <div class="input-group">
                 <input asp-for="@Model.Order.OrderCodes[i].OrderCode" class="form-control" type="text" autocomplete="off" placeholder=" "/>
                 <div class="input-group-append">
-                    <!-- Modal placeholder -->
-                    <div id="modal-placeholder"></div>
+                    @* <!-- Modal placeholder -->
+                    <div id="modal-placeholder"></div> *@
                     <!-- Button trigger modal -->
                     <span data-toggle="tooltip" title="Vyhledat kód" >
                         <button class="btn btn-light border" type="button" data-toggle="ajax-modal" data-target="#SearchForOrderCodeModal" data-url="@Url.Action("GetOrderCodes", "Orders", new { id = @i })">

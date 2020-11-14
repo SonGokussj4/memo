@@ -210,14 +210,14 @@
             </div>
             <div class="col-lg-10">
                 <a href="javascript:void(0)" class="btn btn-success col-lg-3 add-row-order-codes mt-1" data-toggle="tooltip" title="Přidat hodinové sazby">
-                    <i class="fa fa-plus"></i> Vykaz. úkol
+                    <i class="fa fa-plus"></i> Přidat kód
                 </a>
             </div>
         </div>
 
         @* @Html.ValidationMessage("OrderCodesValidationMessage", "", new { @class = "text-danger" }) *@
         <div class="dynamic-rows-order-codes" id="template-order-codes" data-order="@Model.Order.OrderCodes.Count()">
-
+            <div id="modal-placeholder"></div>
             @for (int i = 0; i < Model.Order.OrderCodes.Count(); i++)
             {
                 @await Html.PartialAsync("_PartialOrderOrderCodes", Model, new ViewDataDictionary(ViewData) {{ "i", i }})
@@ -515,7 +515,9 @@
         }
 
         function DeleteOrderCode(orderCodeId) {
-            var row = document.getElementById(`dynamic-row-other-costs-${orderCodeId}`);
+            var row = document.getElementById(`dynamic-row-order-codes-${orderCodeId}`);
+            console.log("orderCodeId: " + orderCodeId);
+            console.log("row: " + row);
             if (row != null) {
                 row.remove();
             }
@@ -637,13 +639,6 @@
                     $('#Order_ExchangeRate').val(res).keyup();
                 }
             });
-        }
-
-        // Modal, user select OrderCode, press Vlozit, it will insert value into a distinc val
-        function OrderCodeToInput(id) {
-            console.log("Data: " + id);
-            let SelectValue = $(`#SelectedOrderCode_${id}`).val();
-            $(`#Order_OrderCodes_${id}__OrderCode`).val(SelectValue).blur();
         }
 
         // -----------------------  DOCUMENT READY  --------------------------//
@@ -812,17 +807,15 @@
             var idOrderCode = @Model.Order.OrderCodes.Count();
             $('.add-row-order-codes').click(function () {
                 var html =
-                    '<div class="row form-group justify-content-end">'+
+                    '<div class="row form-group justify-content-end" id="dynamic-row-order-codes-' + idOrderCode + '>'+
 
-                        '<input hidden="true" type="number" data-val="true" data-val-required="The OrderCodeId field is required." id="Order_OrderCodes_' + idOrderCode + '__OrderCodeId" name="Order.OrderCodes[' + idOrderCode + '].OrderCodeId" value="0">'
+                        '<input hidden="true" type="number" data-val="true" data-val-required="The OrderCodeId field is required." id="Order_OrderCodes_' + idOrderCode + '__OrderCodeId" name="Order.OrderCodes[' + idOrderCode + '].OrderCodeId" value="0">'+
 
                         '<div class="col-lg-3">'+
                             '<span class="has-float-label">'+
                                 '<div class="input-group">'+
-                                    '<input class="form-control" type="text" autocomplete="off" placeholder=" " data-val="true" data-val-length="The field Kód vykazování EVE must be a string with a maximum length of 50." data-val-length-max="50" data-val-regex="Kód ve formátu xxx.xxxx" data-val-regex-pattern="(\d{3}[.]\d{4})?" id="Order_OrderCodes_' + idOtherCosts + '__OrderCode" maxlength="50" name="Order.OrderCodes[' + idOtherCosts + '].OrderCode" value="">'+
+                                    '<input class="form-control" type="text" autocomplete="off" placeholder=" " data-val="true" data-val-length="The field Kód vykazování EVE must be a string with a maximum length of 50." data-val-length-max="50" data-val-regex="Kód ve formátu xxx.xxxx" data-val-regex-pattern="(\\d{3}[.]\\d{4})?" id="Order_OrderCodes_' + idOrderCode + '__OrderCode" maxlength="50" name="Order.OrderCodes[' + idOrderCode + '].OrderCode" value="">'+
                                     '<div class="input-group-append">'+
-                                        '<!-- Modal placeholder -->'+
-                                        '<div id="modal-placeholder"></div>'+
                                         '<!-- Button trigger modal -->'+
                                         '<span data-toggle="tooltip" title="" data-original-title="Vyhledat kód">'+
                                             '<button class="btn btn-light border" type="button" data-toggle="ajax-modal" data-target="#SearchForOrderCodeModal" data-url="/Orders/GetOrderCodes/' + idOrderCode + '">'+
@@ -853,9 +846,7 @@
                         '</div>'+
 
                         '<div class="col-lg-1">'+
-                            '<a href="javascript:void(0)" class="btn btn-danger btn-sm mt-1" data-toggle="tooltip" title="" onclick="DeleteOrderCode(' + idOrderCode + ')" data-original-title="Odstranit záznam">'+
-                                '<i class="fa fa-trash"></i>'+
-                            '</a>'+
+                            '<a href="javascript:void(0)" class="btn btn-danger btn-sm mt-1" data-toggle="tooltip" title="" onclick="DeleteOrderCode(' + idOrderCode + ')" data-original-title="Odstranit záznam"><i class="fa fa-trash"></i></a>'+
                         '</div>'+
 
                     '</div>';
@@ -864,6 +855,10 @@
                 var _formTemp = $("#template-order-codes").clone(true)
                 var _targetForm = $(".dynamic-rows-order-codes")
                 _targetForm.append(html)
+
+                floatingLabelsInit();
+                initializeTooltips();
+                initializeOrderAjaxModalClickEvent();
 
                 $('form').data('validator', null);
                 $.validator.unobtrusive.parse($('form'));

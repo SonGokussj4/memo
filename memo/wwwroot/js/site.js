@@ -37,11 +37,17 @@ $(document).ready(function () {
     });
 });
 
+// ==========================================================================
+// INITIALIZE UPON PAGE LOAD
+// ==========================================================================
 // Initialize bootstrap-tooltips
 $(function () {
-    $('[data-toggle="tooltip"]').tooltip()
+    initializeTooltips();
 })
 
+function initializeTooltips() {
+    $('[data-toggle="tooltip"]').tooltip()
+}
 
 // Filter button on top of the bootstrap datatable to switch filter textboxes
 //---------------------------------------------------------------------------
@@ -113,9 +119,9 @@ function floatingLabelsInit () {
     }).focusout(); //trigger the focusout event manually
 };
 
-$(function () {
-    floatingLabelsInit();
-})
+//$(function () {
+//    floatingLabelsInit();
+//})
 
 $("#success-alert").fadeTo(4000, 500).slideUp(500, function(){
     $("#success-alert").slideUp(500);
@@ -131,14 +137,41 @@ $("#error-alert").fadeTo(60000, 500).slideUp(500, function(){
 String.prototype.replaceAllTxt = function replaceAll(search, replace) { return this.split(search).join(replace); }
 
 // Ajax modal popup the partial view
-$(function () {  // Only after the document loads
+function initializeOrderAjaxModalClickEvent() {
     // all buttons with data-toggle equal to ajax-modal
     $('button[data-toggle="ajax-modal"]').click(function (event) {
         var url = $(this).data('url');
-        console.log(url);
+        console.log("initializeOrderAjaxModalClickEvent: " + url);
         $.get(url).done(function (data) {
             $('#modal-placeholder').html(data);
             $('#modal-placeholder > .modal').modal('show');
         });
     });
+}
+
+// Only after the document loads
+$(function () {
+    initializeOrderAjaxModalClickEvent();
 });
+
+$('body').on('load', 'div[data-toggle=checkboxes]', function () {
+    $(this).checkboxes(); // checkboxes on matched element
+});
+
+
+// Modal, user select OrderCode, press Vlozit, it will insert value into a distinc val
+function OrderCodeToInput(id) {
+    console.log("OrderCodeToInput id: " + id);
+    let SelectValue = $(`#SelectedOrderCode_${id}`).val();
+    $(`#Order_OrderCodes_${id}__OrderCode`).val(SelectValue).blur();
+}
+
+
+// $('button[data-toggle="ajax-modal"]').click(function (event) {
+//     var url = $(this).data('url');
+//     console.log(url);
+//     $.get(url).done(function (data) {
+//         $('#modal-placeholder').html(data);
+//         $('#modal-placeholder > .modal').modal('show');
+//     });
+// });

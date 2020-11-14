@@ -33,9 +33,9 @@ GO
 
 
 -----------------------------------------------------------------------------------------
--- VYCISTIT HOUR WAGE Z AUDIT TABULKY
+-- VYCISTIT HOUR WAGES Z AUDIT TABULKY
 DELETE FROM [memo].[Audit]
-WHERE FieldName = 'HourWage'
+WHERE FieldName = 'HourWages'
 
 
 -----------------------------------------------------------------------------------------

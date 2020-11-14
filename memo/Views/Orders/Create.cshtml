@@ -138,37 +138,44 @@
             }
         </div>
 
-        <div class="form-group eveOrder">
-            <div class="form-group row">
-                @* <label asp-for="Order.OrderCode" class="required col-lg-3 col-form-label form-control-label control-label"></label>
-                <div class="col-lg-5">
-                    <select asp-for="Order.OrderCode" asp-items="ViewBag.EveOrderCodes" class="form-control selectpicker">
-                        <option value="">-- Vyber kód --</option>
-                    </select>
-                    <span asp-validation-for="Order.OrderCode" class="text-danger"></span>
-                </div> *@
-                <div class="col-lg-2">
-                    <a href="@Url.Action("CreateEveProject")" target="_blank" class="btn btn-outline-success form-control"
-                       data-toggle="tooltip" data-placement="top" title="Nová EVE zakázka">
-                        <i class="fa fa-plus-square"></i>
-                    </a>
-                </div>
-                <div class="col-lg-2">
-                    <a href="@Url.Action("CreateEveProjectM")" target="_blank" class="btn btn-outline-success form-control"
-                       data-toggle="tooltip" data-placement="top" title="Nová EVE modulová zakázka">
-                        <i class="fa fa-plus-square"></i> [M]
-                    </a>
-                </div>
+        <div class="form-group row">
+            <label asp-for="Order.EveContactName" class="required col-lg-3 col-form-label form-control-label control-label"></label>
+            <div class="col-lg-9">
+                <select asp-for="Order.EveContactName" asp-items="ViewBag.EveContactList" class="form-control selectpicker">
+                    <option value="">-- Vyber kontakt --</option>
+                </select>
+                <span asp-validation-for="Order.EveContactName" class="text-danger"></span>
             </div>
-            <div class="form-group row">
-                <label asp-for="Order.EveContactName" class="required col-lg-3 col-form-label form-control-label control-label"></label>
-                <div class="col-lg-9">
-                    <select asp-for="Order.EveContactName" asp-items="ViewBag.EveContactList" class="form-control selectpicker">
-                        <option value="">-- Vyber kontakt --</option>
-                    </select>
-                    <span asp-validation-for="Order.EveContactName" class="text-danger"></span>
-                </div>
+        </div>
+
+        <div class="form-group row justify-content-center">
+            <div class="col-lg-4">
+                <a href="@Url.Action("CreateEveProject")" target="_blank" class="btn btn-outline-success form-control"
+                    data-toggle="tooltip" data-placement="top" title="Nová EVE zakázka">
+                    <i class="fa fa-plus-square"></i> Vytvořit eve zakázku
+                </a>
             </div>
+            <div class="col-lg-4">
+                <a href="@Url.Action("CreateEveProject")" target="_blank" class="btn btn-outline-success form-control"
+                data-toggle="tooltip" data-placement="top" title="Nová EVE modulová zakázka">
+                    <i class="fa fa-plus-square"> </i> Vytvořit eve [M] zakázku
+                </a>
+            </div>
+        </div>
+
+        <div class="form-group row border-top pt-2">
+            <div class="col-lg-2 col-form-label d-flex justify-content-left">
+                <label class="form-control-label control-label">Kód(y) vykazování</label>
+            </div>
+            <div class="col-lg-10">
+                <a href="javascript:void(0)" class="btn btn-success col-lg-3 add-row-order-codes mt-1" data-toggle="tooltip" title="Přidat hodinové sazby">
+                    <i class="fa fa-plus"></i> Přidat kód
+                </a>
+            </div>
+        </div>
+
+        <div class="dynamic-rows-order-codes" id="template-order-codes" data-order="@Model.Order.OrderCodes.Count()">
+            <div id="modal-placeholder"></div>
         </div>
 
         <div class="form-group row border-top pt-2">
@@ -496,6 +503,70 @@
                 $.validator.unobtrusive.parse($('form'));
 
                 idOtherCosts = idOtherCosts + 1;
+                return false;
+            });
+
+            // Add new ORDER CODES row
+            var idOrderCode = @Model.Order.OrderCodes.Count();
+            $('.add-row-order-codes').click(function () {
+                var html =
+                    '<div class="row form-group justify-content-end" id="dynamic-row-order-codes-' + idOrderCode + '>'+
+
+                        '<input hidden="true" type="number" data-val="true" data-val-required="The OrderCodeId field is required." id="Order_OrderCodes_' + idOrderCode + '__OrderCodeId" name="Order.OrderCodes[' + idOrderCode + '].OrderCodeId" value="0">'+
+
+                        '<div class="col-lg-3">'+
+                            '<span class="has-float-label">'+
+                                '<div class="input-group">'+
+                                    '<input class="form-control" type="text" autocomplete="off" placeholder=" " data-val="true" data-val-length="The field Kód vykazování EVE must be a string with a maximum length of 50." data-val-length-max="50" data-val-regex="Kód ve formátu xxx.xxxx" data-val-regex-pattern="(\\d{3}[.]\\d{4})?" id="Order_OrderCodes_' + idOrderCode + '__OrderCode" maxlength="50" name="Order.OrderCodes[' + idOrderCode + '].OrderCode" value="">'+
+                                    '<div class="input-group-append">'+
+                                        '<!-- Button trigger modal -->'+
+                                        '<span data-toggle="tooltip" title="" data-original-title="Vyhledat kód">'+
+                                            '<button class="btn btn-light border" type="button" data-toggle="ajax-modal" data-target="#SearchForOrderCodeModal" data-url="/Orders/GetOrderCodes/' + idOrderCode + '">'+
+                                                '<i class="fa fa-search"></i>'+
+                                            '</button>'+
+                                        '</span>'+
+                                    '</div>'+
+                                '</div>'+
+                                '<label for="Order_OrderCodes_' + idOrderCode + '__OrderCode">Kód vykazování</label>'+
+                            '</span>'+
+                            '<span class="text-danger field-validation-valid" data-valmsg-for="Order.OrderCodes[' + idOrderCode + '].OrderCode" data-valmsg-replace="true"></span>'+
+                        '</div>'+
+
+                        '<div class="col-lg-3">'+
+                            '<span class="has-float-label">'+
+                                '<input class="form-control" type="text" autocomplete="off" placeholder=" " data-val="true" data-val-length="The field Hodinová mzda CZK must be a string with a maximum length of 50." data-val-length-max="50" id="Order_OrderCodes_' + idOrderCode + '__HourWageSubject" maxlength="50" name="Order.OrderCodes[' + idOrderCode + '].HourWageSubject" value="">'+
+                                '<label for="Order_OrderCodes_' + idOrderCode + '__HourWageSubject">Popis hod. mzdy</label>'+
+                            '</span>'+
+                            '<span class="text-danger field-validation-valid" data-valmsg-for="Order.OrderCodes[' + idOrderCode + '].HourWageSubject" data-valmsg-replace="true"></span>'+
+                        '</div>'+
+
+                        '<div class="col-lg-3">'+
+                            '<span class="has-float-label">'+
+                                '<input class="form-control" type="text" placeholder=" " data-val="true" data-val-number="The field Hodinová mzda must be a number." id="Order_OrderCodes_' + idOrderCode + '__HourWageCost" name="Order.OrderCodes[' + idOrderCode + '].HourWageCost" value="">'+
+                                '<label for="Order_OrderCodes_' + idOrderCode + '__HourWageCost">Hod. mzda [CZK]</label>'+
+                            '</span>'+
+                            '<span class="text-danger field-validation-valid" data-valmsg-for="Order.OrderCodes[' + idOrderCode + '].HourWageCost" data-valmsg-replace="true"></span>'+
+                        '</div>'+
+
+                        '<div class="col-lg-1">'+
+                            '<a href="javascript:void(0)" class="btn btn-danger btn-sm mt-1" data-toggle="tooltip" title="" onclick="DeleteOrderCode(' + idOrderCode + ')" data-original-title="Odstranit záznam"><i class="fa fa-trash"></i></a>'+
+                        '</div>'+
+
+                    '</div>';
+
+                //$("tbody").append($(html).clone(true))
+                var _formTemp = $("#template-order-codes").clone(true)
+                var _targetForm = $(".dynamic-rows-order-codes")
+                _targetForm.append(html)
+
+                floatingLabelsInit();
+                initializeTooltips();
+                initializeOrderAjaxModalClickEvent();
+
+                $('form').data('validator', null);
+                $.validator.unobtrusive.parse($('form'));
+
+                idOrderCode = idOrderCode + 1;
                 return false;
             });
         })
