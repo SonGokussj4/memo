@@ -334,14 +334,17 @@ namespace memo.Controllers
                 try
                 {
                     OfferOrderVM oldVm = new OfferOrderVM();
-                    oldVm.Order = await _db.Order.AsNoTracking().FirstOrDefaultAsync(x => x.OrderId == vm.Order.OrderId);
+                    oldVm.Order = await _db.Order.AsNoTracking()
+                        .Include(x => x.Invoices)
+                        .Include(x => x.OtherCosts)
+                        .Include(x => x.OrderCodes)
+                        .FirstOrDefaultAsync(x => x.OrderId == vm.Order.OrderId);
 
                     if (oldVm.Order.OrderName == vm.Order.OrderName &&
                         oldVm.Order.NegotiatedPrice == vm.Order.NegotiatedPrice &&
                         oldVm.Order.PriceFinal == vm.Order.PriceFinal &&
                         oldVm.Order.PriceDiscount == vm.Order.PriceDiscount &&
                         oldVm.Order.EveContactName == vm.Order.EveContactName &&
-                        oldVm.Order.TotalHours== vm.Order.TotalHours&&
                         oldVm.Order.ExchangeRate == vm.Order.ExchangeRate &&
                         oldVm.Order.PriceFinalCzk == vm.Order.PriceFinalCzk &&
                         oldVm.Order.Notes == vm.Order.Notes &&
@@ -359,6 +362,7 @@ namespace memo.Controllers
                         vm.Audits = getAuditViewModel(_db).Audits
                             .Where(x => x.TableName == "Order" && x.KeyValue == id.ToString())
                             .ToList(); ;
+                        vm.Offer = await _db.Offer.Where(x => x.OfferId == vm.Order.OfferId).FirstOrDefaultAsync();
 
                         await populateModel(vm.Order, id);
 
