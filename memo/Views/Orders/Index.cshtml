@@ -66,6 +66,9 @@
     style="width:100%"
     data-cookie="true"
     data-cookie-id-table="ordersTableCookie"
+    data-export-data-type="basic"  @* 'basic', 'all', 'selected' *@
+    data-export-footer=false  @* false, true *@
+    data-export-types="['txt', 'csv', 'excel']"  @* ['json', 'xml', 'csv', 'txt', 'sql', 'excel', 'png', 'doc', 'xlsx', 'pdf'] *@
     data-filter-control="false"
     data-footer-style="footerStyle"
     data-height="800"
@@ -79,6 +82,7 @@
     data-sort-order="desc"
     data-search="true"
     data-silent-sort="true"
+    data-show-export="true"
     data-show-footer="true"
     data-toolbar="#toolbar"
     data-toggle="table"
@@ -98,16 +102,18 @@
             <th scope="col" class="text-center" data-field="3" data-sortable="true" data-filter-control="input">Nabídka</th>
             <th scope="col" class="text-center" data-field="4" data-sortable="true" data-filter-control="input">Č. obj. zákazníka</th>
             <th scope="col" class="text-center" data-field="5" data-sortable="true" data-filter-control="input">Zákazník</th>
-            <th scope="col" class="text-center" data-field="6" data-sortable="true" data-filter-control="input">Vedoucí<br />projektu</th>
-            <th scope="col" class="text-center" data-field="7" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatterCz"><div data-toggle="tooltip" title="Po odečtení poskytnuté slevy">Vyjednaná<br />cena</div></th>
-            <th scope="col" class="text-center" data-field="8" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatterProgress"><div data-toggle="tooltip" title="Součet fakturací + dalších nákladů">Aktuálně</div></th>
-            <th scope="col" class="text-center" data-field="9" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatterCz"><div data-toggle="tooltip" title="Částka, která zbývá do vyjednané ceny">Zbývá</div></th>
-            <th scope="col" class="text-center" data-field="10" data-sortable="true" data-filter-control="input">Poznámky</th>
-            <th scope="col" class="text-center" data-field="11" data-sortable="true" data-filter-control="input" data-footer-formatter="sumHoursFormatter">Vyčerpáno</th>
-            <th scope="col" class="text-center" data-field="12" data-sortable="true" data-filter-control="input" data-footer-formatter="sumHoursFormatter">Plánované<br />hod</th>
-            <th scope="col" class="text-center" data-field="13" data-sortable="true" data-filter-control="input">Využito</th>
-            <th scope="col" class="text-center" data-field="14" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatterCz">Skutečné<br />náklady [CZK]</th>
-            <th scope="col" class="text-center" data-field="15" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatterCz"><div data-toggle="tooltip" title="Skutečné náklady včetně dalších nákladů">Celkové skut.<br />náklady [CZK]</div></th>
+            @* <th scope="col" class="text-center" data-field="6" data-sortable="true" data-filter-control="input">Key acc.<br />manager</th> *@
+            <th scope="col" class="text-center" data-field="7" data-sortable="true" data-filter-control="input">Vedoucí <br />projektu</th>
+            <th scope="col" class="text-center" data-field="8" data-sortable="true" data-filter-control="input">Oddělení</th>
+            <th scope="col" class="text-center" data-field="9" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatterCz"><div data-toggle="tooltip" title="Po odečtení poskytnuté slevy">Vyjednaná <br />cena</div></th>
+            <th scope="col" class="text-center" data-field="10" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatterProgress"><div data-toggle="tooltip" title="Součet fakturací + dalších nákladů">Aktuálně</div></th>
+            <th scope="col" class="text-center" data-field="11" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatterCz"><div data-toggle="tooltip" title="Částka, která zbývá do vyjednané ceny">Zbývá</div></th>
+            <th scope="col" class="text-center" data-field="12" data-sortable="true" data-filter-control="input">Poznámky</th>
+            <th scope="col" class="text-center" data-field="13" data-sortable="true" data-filter-control="input" data-footer-formatter="sumHoursFormatter">Vyčerpáno</th>
+            <th scope="col" class="text-center" data-field="14" data-sortable="true" data-filter-control="input" data-footer-formatter="sumHoursFormatter">Plánované <br />hod</th>
+            <th scope="col" class="text-center" data-field="15" data-sortable="true" data-filter-control="input">Využito</th>
+            <th scope="col" class="text-center" data-field="16" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatterCz">Skutečné <br />náklady [CZK]</th>
+            <th scope="col" class="text-center" data-field="17" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatterCz"><div data-toggle="tooltip" title="Skutečné náklady včetně dalších nákladů">Celkové skut. <br />náklady [CZK]</div></th>
         </tr>
     </thead>
     <tbody>
@@ -155,6 +161,8 @@
                 @* <th scope="row" class="text-center" data-toggle="tooltip" data-html="true" title="@OrderCodeTooltip">@item.OrderCode</th> *@
                 @* Vedoucí projektu *@
                 <th scope="row" class="text-left">@item.EveContactName</th>
+                @* Oddělení *@
+                <th scope="row" class="text-left">@item.Offer.EveDepartment</th>
                 @* Vyjednaná cena *@
                 <th scope="row" class="text-right">@string.Format(CultureInfo.CreateSpecificCulture(@item.Offer?.Currency.CultureCode), "{0:C0}", @item.NegotiatedPrice)</th>
                 @* Aktuálně *@
