@@ -40,10 +40,10 @@ namespace memo.Models
         [Display(Name = "Sleva z nabídky")]
         public int? PriceDiscount { get; set; }
 
-        [Required]
-        [Display(Name = "Kód vykazování EVE"), StringLength(50)]
-        [RegularExpression(@"\d{3}[.]\d{4}", ErrorMessage = "Kód ve formátu xxx.xxxx")]
-        public string OrderCode { get; set; }
+        // [Required]
+        // [Display(Name = "Kód vykazování EVE"), StringLength(50)]
+        // [RegularExpression(@"\d{3}[.]\d{4}", ErrorMessage = "Kód ve formátu xxx.xxxx")]
+        // public string OrderCode { get; set; }
 
         [Required]
         [Display(Name = "Vedoucí projektu v EVEKTORu")]
@@ -86,6 +86,6 @@ namespace memo.Models
         // [InverseProperty("Invoice")]
         public virtual List<Invoice> Invoices { get; set; } = new List<Invoice>();
         public virtual List<OtherCost> OtherCosts { get; set; } = new List<OtherCost>();
-        public virtual List<HourWages> HourWages { get; set; } = new List<HourWages>();
+        public virtual List<OrderCodes> OrderCodes { get; set; } = new List<OrderCodes>();
     }
 }

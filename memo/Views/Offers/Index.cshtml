@@ -146,12 +146,12 @@
         @foreach (var item in Model)
         {
             <tr id="row_@item.OfferId" class="@(item.Active ? Html.Raw("itemActive") : Html.Raw("itemInactive"))">
-            @* <tr id="row_@item.OfferId"> *@
+                @* Edit *@
                 <th scope="row" data-field="0">
                     <a asp-action="Edit" asp-route-id=@item.OfferId><i class="fa fa-pencil fa-fw" aria-hidden="true"></i></a>
                     <a href="#" onclick="ConfirmDelete(@item.OfferId)"><i class="fa fa-times fa-fw" style="color: red;", aria-hidden="true"></i></a>
                 </th>
-
+                @* Aktivní *@
                 @if (item.Active is true)
                 {
                     <th scope="row" class="text-center" data-toggle="tooltip" title="Aktivní">
@@ -165,7 +165,7 @@
                     </th>
                 }
 
-                @* OfferStatus - VyhraProhra *@
+                @* Status *@
                 @if (item.OfferStatusId == 1)
                 {
                     <th scope="row" class="text-center" data-toggle="tooltip" title="V řešení">
@@ -184,9 +184,14 @@
                         <span class="badge badge-danger"><i class="fa fa-fw fa-times"></i></span>
                     </th>
                 }
-
-                <th scope="row" class="text-left">@item.CreatedDate.ToString("dd.MM.yyyy HH:mm")</th>
+                @* Vytvořeno *@
+                <th scope="row" class="text-left">
+                    <span style="display:none">@String.Format("{0:yyyy-MM-dd HH:mm}", @item.CreatedDate)</span>  <!-- Hidden span for sorting date correctly-->
+                    @item.CreatedDate.ToString("dd.MM.yyyy HH:mm")
+                </th>
+                @* Číslo nabídky *@
                 <th scope="row" class="text-left">@item.OfferName</th>
+                @* Přijato *@
                 <th scope="row" class="text-left">@item.ReceiveDate.Value.ToString("yyyy-MM-dd")</th>
                 @{
                     int OrdersCount = ((IEnumerable<dynamic>)ViewBag.AllOrders).Where(x => x.OfferId == item.OfferId).Count();
@@ -194,19 +199,28 @@
 
                     string OrdersListTooltip = string.Join("<br>", OrdersList);
                 }
-                @* <th scope="row" class="text-right"><i class="fa fa-plus-circle" style="color: grey;"></i> @OrdersCount</th> *@
+                @* Zakázek *@
                 <th scope="row" class="text-right" data-toggle="tooltip" data-html="true" title="@OrdersListTooltip">@OrdersCount</th>
+                @* Oddělení *@
                 <th scope="row" class="text-left">@item.EveDepartment</th>
+                @* Eve vytvořil *@
                 <th scope="row" class="text-left">@item.EveCreatedUser</th>
+                @* Zákazník *@
                 <th scope="row" class="text-left">@item.Company?.Name</th>
+                @* Kontakt *@
                 <th scope="row" class="text-left">@item.Contact?.PersonTitle @item.Contact?.PersonName @item.Contact?.PersonLastName </th>
+                @* Předmět *@
                 <th scope="row" class="notesWrap" data-toggle="tooltip" data-html="true" title="@item.Subject">
                     @item.Subject
                 </th>
                 @* <th scope="row" class="text-left" >@item.Price</th> *@
+                @* Cena *@
                 <th scope="row" class="text-right">@String.Format(CultureInfo.CreateSpecificCulture(@item.Currency.CultureCode), "{0:C0}", @item.Price)</th>
+                @* Měna *@
                 <th scope="row" class="text-center" >@item.Currency?.Name</th>
+                @* Cena [CZK] *@
                 <th scope="row" class="text-right">@String.Format(CultureInfo.CreateSpecificCulture("cs-CZ"), "{0:C0}", @item.PriceCzk)</th>
+                @* Poznámky *@
                 <th scope="row" class="notesWrap" data-toggle="tooltip" data-html="true" title="@item.Notes">
                     @item.Notes
                 </th>

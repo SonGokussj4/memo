@@ -13,6 +13,7 @@ using memo.Data;
 using memo.Models;
 using memo.ViewModels;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
 
 namespace memo.Controllers
 {
@@ -21,12 +22,17 @@ namespace memo.Controllers
         public ApplicationDbContext _db { get; }
         public EvektorDbContext _eveDb { get; }
         public EvektorDochnaDbContext _eveDbDochna { get; }
+        protected readonly IWebHostEnvironment _env;
 
-        public OrdersController(ApplicationDbContext db, EvektorDbContext eveDb, EvektorDochnaDbContext eveDbDochna, IWebHostEnvironment hostEnvironment) : base(hostEnvironment)
+        public OrdersController(ApplicationDbContext db,
+                                EvektorDbContext eveDb,
+                                EvektorDochnaDbContext eveDbDochna,
+                                IWebHostEnvironment hostEnvironment) : base(hostEnvironment)
         {
             _db = db;
             _eveDb = eveDb;
             _eveDbDochna = eveDbDochna;
+            _env = hostEnvironment;
         }
 
         public async Task<IActionResult> Index(bool showInactive = false)
@@ -40,6 +46,7 @@ namespace memo.Controllers
                 cOrdersAll = await _eveDb.cOrders.ToListAsync(),
                 Orders = await _db.Order
                     .Include(x => x.Offer).ThenInclude(z => z.Currency)
+                    .Include(x => x.Offer.Company)
                     .Include(x => x.OtherCosts)
                     .Include(x => x.Invoices)
                     .ToListAsync()
@@ -54,7 +61,8 @@ namespace memo.Controllers
             Dictionary<string, int> dc = await GetOrderSumHoursDictAsync();
             foreach (Order order in vm.Orders)
             {
-                order.Burned = dc.Get(order.OrderCode, 0);
+                // order.Burned = dc.Get(order.OrderCode, 0);  // TODO delat ve ViewModelu
+                order.Burned = 0;
             }
 
             List<Order> allOrders = await _db.Order.ToListAsync();
@@ -62,7 +70,10 @@ namespace memo.Controllers
 
             TimeSpan ts = stopwatch.Elapsed;
             string message = string.Format("Stránka načtena za: {0:D1}.{1:D3}s", ts.Seconds, ts.Milliseconds);
-            TempData["Info"] = message;
+            if (_env.IsDevelopment())
+            {
+                TempData["Info"] = message;
+            }
 
             return View(vm);
         }
@@ -202,18 +213,16 @@ namespace memo.Controllers
                 vm.Order.PriceFinalCzk += Convert.ToInt32(otherCost.CostCzk);
                 vm.Order.PriceFinal += Convert.ToInt32(otherCost.Cost);
             }
-            foreach (HourWages hourWages in vm.Order.HourWages)
-            {
-                hourWages.CostCzk = Convert.ToInt32(hourWages.Cost * vm.Order.ExchangeRate);
-            }
 
             if (ModelState.IsValid)
             {
-                int? totalMinutes = await _eveDb.cOrders  // Planned
-                    .Where(t => t.OrderCode == vm.Order.OrderCode)
-                    .Select(t => t.Planned)
-                    .FirstOrDefaultAsync();
+                // TODO: Pozor na toto nezapomenout
+                // int? totalMinutes = await _eveDb.cOrders  // Planned
+                //     .Where(t => t.OrderCode == vm.Order.OrderCode)
+                //     .Select(t => t.Planned)
+                //     .FirstOrDefaultAsync();
 
+                int? totalMinutes = null;
                 vm.Order.TotalHours = totalMinutes != null ? totalMinutes / 60 : 0;
 
                 vm.Order.CreatedBy = User.GetLoggedInUserName();
@@ -259,7 +268,7 @@ namespace memo.Controllers
 
             order.Invoices = await _db.Invoice.Where(x => x.OrderId == id).ToListAsync();
             order.OtherCosts = await _db.OtherCost.Where(x => x.OrderId == id).ToListAsync();
-            order.HourWages = await _db.HourWages.Where(x => x.OrderId == id).ToListAsync();
+            order.OrderCodes = await _db.OrderCodes.Where(x => x.OrderId == id).ToListAsync();
 
             if (offerId != null)
             {
@@ -277,14 +286,14 @@ namespace memo.Controllers
             // AUDITS
             List<int> orderIdInvoices = order.Invoices.Where(x => x.OrderId == id).Select(x => x.InvoiceId).ToList();
             List<int> orderIdOtherCosts = order.OtherCosts.Where(x => x.OrderId == id).Select(x => x.OtherCostId).ToList();
-            List<int> orderIdHourWages = order.HourWages.Where(x => x.OrderId == id).Select(x => x.HourWagesId).ToList();
+            List<int> orderIdOrderCodes = order.OrderCodes.Where(x => x.OrderId == id).Select(x => x.OrderCodeId).ToList();
 
             List<AuditViewModel> audits = getAuditViewModel(_db).Audits
                 .Where(x =>
                     (x.TableName == "Order" && x.KeyValue == id.ToString()) ||
                     (x.TableName == "Invoice" && orderIdInvoices.Contains(Convert.ToInt32(x.KeyValue))) ||
                     (x.TableName == "OtherCost" && orderIdOtherCosts.Contains(Convert.ToInt32(x.KeyValue))) ||
-                    (x.TableName == "HourWages" && orderIdHourWages.Contains(Convert.ToInt32(x.KeyValue)))
+                    (x.TableName == "OrderCodes" && orderIdOrderCodes.Contains(Convert.ToInt32(x.KeyValue)))
                 )
                 .ToList();
 
@@ -325,15 +334,17 @@ namespace memo.Controllers
                 try
                 {
                     OfferOrderVM oldVm = new OfferOrderVM();
-                    oldVm.Order = await _db.Order.AsNoTracking().FirstOrDefaultAsync(x => x.OrderId == vm.Order.OrderId);
+                    oldVm.Order = await _db.Order.AsNoTracking()
+                        .Include(x => x.Invoices)
+                        .Include(x => x.OtherCosts)
+                        .Include(x => x.OrderCodes)
+                        .FirstOrDefaultAsync(x => x.OrderId == vm.Order.OrderId);
 
                     if (oldVm.Order.OrderName == vm.Order.OrderName &&
                         oldVm.Order.NegotiatedPrice == vm.Order.NegotiatedPrice &&
                         oldVm.Order.PriceFinal == vm.Order.PriceFinal &&
                         oldVm.Order.PriceDiscount == vm.Order.PriceDiscount &&
-                        oldVm.Order.OrderCode == vm.Order.OrderCode &&
                         oldVm.Order.EveContactName == vm.Order.EveContactName &&
-                        oldVm.Order.TotalHours== vm.Order.TotalHours&&
                         oldVm.Order.ExchangeRate == vm.Order.ExchangeRate &&
                         oldVm.Order.PriceFinalCzk == vm.Order.PriceFinalCzk &&
                         oldVm.Order.Notes == vm.Order.Notes &&
@@ -342,7 +353,8 @@ namespace memo.Controllers
                         oldVm.Order.Burned == vm.Order.Burned &&
                         oldVm.Order.Invoices.Count() == vm.Order.Invoices.Count() &&
                         oldVm.Order.OtherCosts.Count() == vm.Order.OtherCosts.Count() &&
-                        oldVm.Order.HourWages.Count() == vm.Order.HourWages.Count())
+                        oldVm.Order.OrderCodes.Count() == vm.Order.OrderCodes.Count()
+                    )
                     {
                         TempData["Info"] = "Nebyla provedena změna, není co uložit";
 
@@ -350,6 +362,7 @@ namespace memo.Controllers
                         vm.Audits = getAuditViewModel(_db).Audits
                             .Where(x => x.TableName == "Order" && x.KeyValue == id.ToString())
                             .ToList(); ;
+                        vm.Offer = await _db.Offer.Where(x => x.OfferId == vm.Order.OfferId).FirstOrDefaultAsync();
 
                         await populateModel(vm.Order, id);
 
@@ -357,10 +370,11 @@ namespace memo.Controllers
                     }
 
                     // TODO tohle delat v ramci zobrazeni a do ViewModelu, NEUKLADAT V DATABAZI....
-                    int? totalMinutes = await _eveDb.cOrders  // Planned
-                        .Where(t => t.OrderCode == vm.Order.OrderCode)
-                        .Select(t => t.Planned)
-                        .FirstOrDefaultAsync();
+                    // int? totalMinutes = await _eveDb.cOrders  // Planned
+                    //     .Where(t => t.OrderCode == vm.Order.OrderCode)
+                    //     .Select(t => t.Planned)
+                    //     .FirstOrDefaultAsync();
+                    int? totalMinutes = null;  // TODO: tohle pak dopocitat ve ViewModelu a KE KAZDEMU ORDER CODE
 
                     vm.Order.TotalHours = totalMinutes != null ? totalMinutes / 60 : 0;
 
@@ -383,10 +397,6 @@ namespace memo.Controllers
                         vm.Order.PriceFinal += Convert.ToInt32(otherCost.Cost);
                         vm.Order.PriceFinalCzk += Convert.ToInt32(otherCost.Cost * vm.Order.ExchangeRate);
                         vm.UnspentMoney -= Convert.ToInt32(otherCost.Cost);
-                    }
-                    foreach (HourWages hourWages in vm.Order.HourWages)
-                    {
-                        hourWages.CostCzk = Convert.ToInt32(hourWages.Cost * vm.Order.ExchangeRate);
                     }
 
                     vm.Order.ModifiedDate = DateTime.Now;
@@ -425,19 +435,16 @@ namespace memo.Controllers
             Company company = await _db.Company.FindAsync(offer.CompanyId);
             Currency currency = await _db.Currency.FindAsync(offer.CurrencyId);
             vm.Order.Invoices = await _db.Invoice.Where(x => x.OrderId == id).ToListAsync();
-            vm.Order.HourWages = await _db.HourWages.Where(x => x.OrderId == id).ToListAsync();
 
             // AUDIT
             List<int> orderIdInvoices = vm.Order.Invoices.Where(x => x.OrderId == id).Select(x => x.InvoiceId).ToList();
             List<int> orderIdOtherCosts = vm.Order.OtherCosts.Where(x => x.OrderId == id).Select(x => x.OtherCostId).ToList();
-            List<int> orderIdHourWages = vm.Order.HourWages.Where(x => x.OrderId == id).Select(x => x.HourWagesId).ToList();
 
             List<AuditViewModel> audits = getAuditViewModel(_db).Audits
                 .Where(x =>
                     (x.TableName == "Order" && x.KeyValue == id.ToString()) ||
                     (x.TableName == "Invoice" && orderIdInvoices.Contains(Convert.ToInt32(x.KeyValue))) ||
-                    (x.TableName == "OtherCost" && orderIdOtherCosts.Contains(Convert.ToInt32(x.KeyValue))) ||
-                    (x.TableName == "HourWages" && orderIdHourWages.Contains(Convert.ToInt32(x.KeyValue)))
+                    (x.TableName == "OtherCost" && orderIdOtherCosts.Contains(Convert.ToInt32(x.KeyValue)))
                 )
                 .ToList();
 
@@ -719,14 +726,32 @@ namespace memo.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> DeleteHourWages(int id)
+        public async Task<ActionResult> DeleteOrderCode(int id)
         {
-            HourWages hourWages = await _db.HourWages.FindAsync(id);
+            OrderCodes orderCode = await _db.OrderCodes.FindAsync(id);
 
-            _db.HourWages.Remove(hourWages);
+            _db.OrderCodes.Remove(orderCode);
             await _db.SaveChangesAsync(User.GetLoggedInUserName());
 
             return Json(new { success = true });
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetOrderCodes(int id)
+        {
+            OrderEditViewModel vm = new OrderEditViewModel();
+            vm.cOrders = await _eveDb.cOrders.ToListAsync();
+            vm.Orders = await _db.Order.Include(x => x.OrderCodes).ToListAsync();
+            vm.EveOrderCodes = await getOrderCodesAsync(_eveDb);
+            vm.OrderCodeId = id;
+
+            return PartialView("_PartialSearchForOrderCode", vm);
+        }
+
+        // [HttpGet]
+        // public ActionResult SearchForOrderCode(int id)
+        // {
+        //     return PartialView("_PartialModalSearchForOrderCode");
+        // }
     }
 }

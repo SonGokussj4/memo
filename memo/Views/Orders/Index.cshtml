@@ -97,7 +97,7 @@
             <th scope="col" class="text-center" data-field="2" data-sortable="true" data-filter-control="input">Vytvořeno</th>
             <th scope="col" class="text-center" data-field="3" data-sortable="true" data-filter-control="input">Nabídka</th>
             <th scope="col" class="text-center" data-field="4" data-sortable="true" data-filter-control="input">Č. obj. zákazníka</th>
-            <th scope="col" class="text-center" data-field="5" data-sortable="true" data-filter-control="input">Kód EVE<br />vykazování</th>
+            <th scope="col" class="text-center" data-field="5" data-sortable="true" data-filter-control="input">Zákazník</th>
             <th scope="col" class="text-center" data-field="6" data-sortable="true" data-filter-control="input">Vedoucí<br />projektu</th>
             <th scope="col" class="text-center" data-field="7" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatterCz"><div data-toggle="tooltip" title="Po odečtení poskytnuté slevy">Vyjednaná<br />cena</div></th>
             <th scope="col" class="text-center" data-field="8" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatterProgress"><div data-toggle="tooltip" title="Součet fakturací + dalších nákladů">Aktuálně</div></th>
@@ -133,20 +133,24 @@
                     </th>
                 }
                 @* Vytvořeno *@
-                <th scope="row" class="text-left">@String.Format("{0:dd.MM.yyyy HH:mm}", @item.CreatedDate)</th>
+                <th scope="row" class="text-left">
+                    <span style="display:none">@String.Format("{0:yyyy-MM-dd HH:mm}", @item.CreatedDate)</span>  <!-- Hidden span for sorting date correctly-->
+                    @String.Format("{0:dd.MM.yyyy HH:mm}", @item.CreatedDate)
+                </th>
                 @* Nabídka *@
                 <th scope="row" class="text-left">@item.Offer?.OfferName</th>
                 @* Č. obj. zákazníka *@
                 <th scope="row" class="text-left">@item.OrderName</th>
-                @{
-                    @* string OrderCodeTooltip = ((IEnumerable<dynamic>)Model.cOrdersAll) *@
+                @* Zákazník *@
+                <th scope="row" class="text-left">@item.Offer.Company.Name</th>
+                @* @{
                     string OrderCodeTooltip = Model.cOrdersAll
                         .Where(x => x.OrderCode == item.OrderCode)
                         .Select(x => x.OrderName)
                         .FirstOrDefault();
-                }
+                } *@
                 @* Kód EVE vykazování *@
-                <th scope="row" class="text-center" data-toggle="tooltip" data-html="true" title="@OrderCodeTooltip">@item.OrderCode</th>
+                @* <th scope="row" class="text-center" data-toggle="tooltip" data-html="true" title="@OrderCodeTooltip">@item.OrderCode</th> *@
                 @* Vedoucí projektu *@
                 <th scope="row" class="text-left">@item.EveContactName</th>
                 @* Vyjednaná cena *@
@@ -203,7 +207,7 @@
                 @* Skutečné náklady [CZK] *@
                 @* TODO: CO TADY??? HourWage je pryc, ted je z toho LIST *@
                 @* <th scope="row" class="text-right">@string.Format(CultureInfo.CreateSpecificCulture("cs-CZ"), "{0:C0}", @item.Burned * (@item.HourWage * (double)@item.ExchangeRate) / 60 )</th> *@
-                <th scope="row" class="text-right">@string.Format(CultureInfo.CreateSpecificCulture("cs-CZ"), "{0:C0}", 66)</th>
+                <th scope="row" class="text-right">@string.Format(CultureInfo.CreateSpecificCulture("cs-CZ"), "{0:C0}", 0)</th>
                 @* TODO: CO TADY??? HourWage je pryc, ted je z toho LIST *@
                 @* Celkové skut. náklady [CZK] *@
                 @* @{
@@ -212,7 +216,7 @@
                     var totalkaCzk = (decimal)(item.Burned * (item.HourWage * (double)item.ExchangeRate) / 60) + dalsi;
                 } *@
                 @* <th scope="row" class="text-right">@string.Format(CultureInfo.CreateSpecificCulture("cs-CZ"), "{0:C0}", totalkaCzk)</th> *@
-                <th scope="row" class="text-right">@string.Format(CultureInfo.CreateSpecificCulture("cs-CZ"), "{0:C0}", 69)</th>
+                <th scope="row" class="text-right">@string.Format(CultureInfo.CreateSpecificCulture("cs-CZ"), "{0:C0}", 0)</th>
 
             </tr>
         }

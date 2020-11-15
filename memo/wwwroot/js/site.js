@@ -37,11 +37,22 @@ $(document).ready(function () {
     });
 });
 
+// ==========================================================================
+// INITIALIZE UPON PAGE LOAD
+// ==========================================================================
 // Initialize bootstrap-tooltips
 $(function () {
-    $('[data-toggle="tooltip"]').tooltip()
-})
+    initializeTooltips();
+});
 
+/**
+ * Initializes Tooltips
+ */
+function initializeTooltips() {
+    $('[data-toggle="tooltip"]').tooltip({
+        trigger: 'hover'
+    });
+}
 
 // Filter button on top of the bootstrap datatable to switch filter textboxes
 //---------------------------------------------------------------------------
@@ -55,7 +66,7 @@ $(function() {
         $table.data("filter-control", !$table.data("filter-control"));
         $table.bootstrapTable();
     });
-})
+});
 
 /**
  * @summary Return date (can do days additon) in format RRRR-MM-DD
@@ -74,7 +85,7 @@ function getPrettyDate(date, daysToAdd = 0) {
         + ('0' + (date.getMonth() + 1)).slice(-2)
         + '-'
         + ('0' + (date.getDate())).slice(-2);
-    return futureDate  // RRRR-MM-DD
+    return futureDate;  // RRRR-MM-DD
 }
 
 //--------------------
@@ -106,16 +117,16 @@ function floatingLabelsInit () {
         // else {
         //     $(this).closest(".field-wrapper").addClass('hasValue');
         // }
-        console.log(`focusout: '${$(this).val()}'`)
+        console.log(`focusout: '${$(this).val()}'`);
         if (text_val !== "") {
             $(this).closest(".field-wrapper").addClass("hasValue");
         }
     }).focusout(); //trigger the focusout event manually
-};
+}
 
-$(function () {
-    floatingLabelsInit();
-})
+//$(function () {
+//    floatingLabelsInit();
+//})
 
 $("#success-alert").fadeTo(4000, 500).slideUp(500, function(){
     $("#success-alert").slideUp(500);
@@ -127,4 +138,45 @@ $("#error-alert").fadeTo(60000, 500).slideUp(500, function(){
     $("#error-alert").slideUp(500);
 });
 
-String.prototype.replaceAllTxt = function replaceAll(search, replace) { return this.split(search).join(replace); }
+// Add 'replaceAll()' function to JavaScript Strings
+String.prototype.replaceAllTxt = function replaceAll(search, replace) { return this.split(search).join(replace); };
+
+// Ajax modal popup the partial view
+function initializeOrderAjaxModalClickEvent() {
+    // all buttons with data-toggle equal to ajax-modal
+    $('button[data-toggle="ajax-modal"]').click(function (event) {
+        var url = $(this).data('url');
+        console.log("initializeOrderAjaxModalClickEvent: " + url);
+        $.get(url).done(function (data) {
+            $('#modal-placeholder').html(data);
+            $('#modal-placeholder > .modal').modal('show');
+        });
+    });
+}
+
+// Only after the document loads
+$(function () {
+    initializeOrderAjaxModalClickEvent();
+});
+
+$('body').on('load', 'div[data-toggle=checkboxes]', function () {
+    $(this).checkboxes(); // checkboxes on matched element
+});
+
+
+// Modal, user select OrderCode, press Vlozit, it will insert value into a distinc val
+function OrderCodeToInput(id) {
+    console.log("OrderCodeToInput id: " + id);
+    let SelectValue = $(`#SelectedOrderCode_${id}`).val();
+    $(`#Order_OrderCodes_${id}__OrderCode`).val(SelectValue).blur();
+}
+
+
+// $('button[data-toggle="ajax-modal"]').click(function (event) {
+//     var url = $(this).data('url');
+//     console.log(url);
+//     $.get(url).done(function (data) {
+//         $('#modal-placeholder').html(data);
+//         $('#modal-placeholder > .modal').modal('show');
+//     });
+// });

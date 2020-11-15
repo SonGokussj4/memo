@@ -39,7 +39,7 @@
         string showStatus = i < 3 ? "show" : "";
 
         int numberOfChanges = item.Json.Count() - 1;  // Because there is "ModifiedTime" change every time
-        if (item.TableName ==  "OtherCost" || item.TableName == "Invoice" || item.TableName == "HourWages")
+        if (item.TableName ==  "OtherCost" || item.TableName == "Invoice")
         {
             numberOfChanges += 1;  // No "ModifiedTime" field in these tables
         }
@@ -77,7 +77,7 @@
                         }
                         @* @{
                             int numberOfChanges = item.Json.Count() - 1;  // Because there is "ModifiedTime" change every time
-                            if (item.TableName ==  "OtherCost" || item.TableName == "Invoice" || item.TableName == "HourWages")
+                            if (item.TableName ==  "OtherCost" || item.TableName == "Invoice")
                             {
                                 numberOfChanges += 1;  // No "ModifiedTime" field in these tables
                             }
@@ -126,8 +126,16 @@
                                             Type myType = StaticUtils.modelTypeFromString[item.TableName];
                                             string jsonString = items.FieldName;
                                             MemberInfo property = myType.GetProperty(jsonString);
-                                            var dd = property.GetCustomAttribute(typeof(DisplayAttribute)) as DisplayAttribute;
-                                            string fieldName = dd != null ? dd.Name : items.FieldName;
+                                            string fieldName = "";
+                                            if (property != null)
+                                            {
+                                                var dd = property.GetCustomAttribute(typeof(DisplayAttribute)) as DisplayAttribute;
+                                                fieldName = dd != null ? dd.Name : items.FieldName;
+                                            }
+                                            else
+                                            {
+                                                fieldName = items.fieldName;
+                                            }
                                         }
                                         @fieldName
                                     </td>

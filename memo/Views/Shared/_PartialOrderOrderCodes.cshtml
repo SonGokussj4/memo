@@ -1,0 +1,57 @@
+
+@model memo.ViewModels.OfferOrderVM
+
+@{
+    int i = (int)ViewData["i"];
+}
+<input hidden="true" asp-for="@Model.Order.OrderCodes[i].OrderCodeId" />
+
+
+<div class="row form-group justify-content-end">
+
+    @* <input hidden="true" type="number" data-val="true" data-val-required="The OrderCodeId field is required." id="Order_OrderCodes_' + idOrderCode + '__OrderCodeId" name="Order.OrderCodes[' + idOrderCode + '].OrderCodeId" value="0"> *@
+    <input asp-for="@Model.Order.OrderCodes[i].OrderCodeId" hidden="true">
+
+    <div class="col-lg-3">
+        <span class="has-float-label">
+            <div class="input-group">
+                <input asp-for="@Model.Order.OrderCodes[i].OrderCode" class="form-control" type="text" autocomplete="off" placeholder=" "/>
+                <div class="input-group-append">
+                    @* <!-- Modal placeholder -->
+                    <div id="modal-placeholder"></div> *@
+                    <!-- Button trigger modal -->
+                    <span data-toggle="tooltip" title="Vyhledat kód" >
+                        <button class="btn btn-light border" type="button" data-toggle="ajax-modal" data-target="#SearchForOrderCodeModal" data-url="@Url.Action("GetOrderCodes", "Orders", new { id = @i })">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </span>
+                </div>
+            </div>
+            <label asp-for="@Model.Order.OrderCodes[i].OrderCode">Kód vykazování</label>
+        </span>
+        <span asp-validation-for="@Model.Order.OrderCodes[i].OrderCode" class="text-danger"></span>
+    </div>
+
+    <div class="col-lg-3">
+        <span class="has-float-label">
+            <input asp-for="@Model.Order.OrderCodes[i].HourWageSubject" class="form-control" type="text" autocomplete="off" placeholder=" "/>
+            <label asp-for="@Model.Order.OrderCodes[i].HourWageSubject">Popis hod. mzdy</label>
+        </span>
+        <span asp-validation-for="@Model.Order.OrderCodes[i].HourWageSubject" class="text-danger"></span>
+    </div>
+
+    <div class="col-lg-3">
+        <span class="has-float-label">
+            <input asp-for="@Model.Order.OrderCodes[i].HourWageCost" class="form-control" type="text" placeholder=" "/>
+            <label asp-for="@Model.Order.OrderCodes[i].HourWageCost">Hod. mzda [@Model.CurrencyName]</label>
+        </span>
+        <span asp-validation-for="@Model.Order.OrderCodes[i].HourWageCost" class="text-danger"></span>
+    </div>
+
+    <div class="col-lg-1">
+        <a href="javascript:void(0)" class="btn btn-danger btn-sm mt-1" data-toggle="tooltip" title="Odstranit záznam" onclick="DeleteOrderCode(@Model.Order.OrderCodes[i].OrderCodeId)">
+            <i class="fa fa-trash"></i>
+        </a>
+    </div>
+
+</div>
