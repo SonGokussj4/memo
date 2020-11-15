@@ -128,7 +128,7 @@
             <th scope="col" class="text-center" data-field="1" data-sortable="true"><span data-toggle="tooltip" title="Aktivní / Neaktivní"><i class="fa fa-eye text-secondary"></i></span></th>
             <th scope="col" class="text-center" data-field="2" data-sortable="true" data-filter-control="input">Status</th>
             <th scope="col" class="text-center" data-field="3" data-sortable="true" data-filter-control="input">Vytvořeno</th>
-            <th scope="col" class="text-center" data-field="4" data-sortable="true" data-filter-control="input">Číslo nabídky</th>
+            <th scope="col" class="text-center" data-field="4" data-sortable="true" data-filter-control="input">Ev. číslo</th>
             <th scope="col" class="text-center" data-field="5" data-sortable="true" data-filter-control="input">Přijato</th>
             <th scope="col" class="text-right" data-field="6" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatter">Zakázek</th>
             <th scope="col" class="text-center" data-field="7" data-sortable="true" data-filter-control="input">Oddělení</th>
@@ -187,10 +187,12 @@
                 @* Vytvořeno *@
                 <th scope="row" class="text-left">
                     <span style="display:none">@String.Format("{0:yyyy-MM-dd HH:mm}", @item.CreatedDate)</span>  <!-- Hidden span for sorting date correctly-->
-                    @item.CreatedDate.ToString("dd.MM.yyyy HH:mm")
+                    @item.CreatedDate.ToString("dd.MM.yyyy")
                 </th>
-                @* Číslo nabídky *@
-                <th scope="row" class="text-left">@item.OfferName</th>
+                @* Ev. číslo *@
+                <th scope="row" class="text-left" data-toggle="tooltip" title="@item.OfferName">
+                    @item.OfferName.Replace("EV-quo/", "")
+                </th>
                 @* Přijato *@
                 <th scope="row" class="text-left">@item.ReceiveDate.Value.ToString("yyyy-MM-dd")</th>
                 @{
