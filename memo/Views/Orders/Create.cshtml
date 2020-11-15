@@ -349,6 +349,15 @@
             }
         };
 
+        // Just delete the <div> element
+        function DeleteOrderCode(orderCodeId) {
+            const row = $(`#dynamic-row-order-codes-${orderCodeId}`);
+            if (row.length != 0) {
+                const btnTrash = row.find("a.btn.btn-danger").tooltip("hide");
+                row.remove();
+            }
+        };
+
         $(document).ready(function(){
 
             // Upon page load, check if OfferId != 0 (offer is selected) then set orderForm as visible
@@ -510,7 +519,7 @@
             var idOrderCode = @Model.Order.OrderCodes.Count();
             $('.add-row-order-codes').click(function () {
                 var html =
-                    '<div class="row form-group justify-content-end" id="dynamic-row-order-codes-' + idOrderCode + '>'+
+                    '<div class="row form-group justify-content-end" id="dynamic-row-order-codes-' + idOrderCode + '">'+
 
                         '<input hidden="true" type="number" data-val="true" data-val-required="The OrderCodeId field is required." id="Order_OrderCodes_' + idOrderCode + '__OrderCodeId" name="Order.OrderCodes[' + idOrderCode + '].OrderCodeId" value="0">'+
 

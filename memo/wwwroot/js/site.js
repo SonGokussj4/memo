@@ -43,10 +43,15 @@ $(document).ready(function () {
 // Initialize bootstrap-tooltips
 $(function () {
     initializeTooltips();
-})
+});
 
+/**
+ * Initializes Tooltips
+ */
 function initializeTooltips() {
-    $('[data-toggle="tooltip"]').tooltip()
+    $('[data-toggle="tooltip"]').tooltip({
+        trigger: 'hover'
+    });
 }
 
 // Filter button on top of the bootstrap datatable to switch filter textboxes
@@ -61,7 +66,7 @@ $(function() {
         $table.data("filter-control", !$table.data("filter-control"));
         $table.bootstrapTable();
     });
-})
+});
 
 /**
  * @summary Return date (can do days additon) in format RRRR-MM-DD
@@ -80,7 +85,7 @@ function getPrettyDate(date, daysToAdd = 0) {
         + ('0' + (date.getMonth() + 1)).slice(-2)
         + '-'
         + ('0' + (date.getDate())).slice(-2);
-    return futureDate  // RRRR-MM-DD
+    return futureDate;  // RRRR-MM-DD
 }
 
 //--------------------
@@ -112,12 +117,12 @@ function floatingLabelsInit () {
         // else {
         //     $(this).closest(".field-wrapper").addClass('hasValue');
         // }
-        console.log(`focusout: '${$(this).val()}'`)
+        console.log(`focusout: '${$(this).val()}'`);
         if (text_val !== "") {
             $(this).closest(".field-wrapper").addClass("hasValue");
         }
     }).focusout(); //trigger the focusout event manually
-};
+}
 
 //$(function () {
 //    floatingLabelsInit();
@@ -134,7 +139,7 @@ $("#error-alert").fadeTo(60000, 500).slideUp(500, function(){
 });
 
 // Add 'replaceAll()' function to JavaScript Strings
-String.prototype.replaceAllTxt = function replaceAll(search, replace) { return this.split(search).join(replace); }
+String.prototype.replaceAllTxt = function replaceAll(search, replace) { return this.split(search).join(replace); };
 
 // Ajax modal popup the partial view
 function initializeOrderAjaxModalClickEvent() {

@@ -475,10 +475,10 @@
                     success: function(data) {
                         window.location = "@Model.Order.OrderId";  // return Orders/Edit/{OrderId}
                     },
-                    error: function(data) {
+                    @* error: function(data) {
                         //alert(JSON.stringify(data.responseJSON.errorMessage));
                         alert(data.responseJSON.errorMessage);
-                    }
+                    } *@
                 });
             }
         }
@@ -506,19 +506,19 @@
                     success: function(data) {
                         window.location = "@Model.Order.OrderId";  // return Orders/Edit/{OrderId}
                     },
-                    error: function(data) {
+                    @* error: function(data) {
                         //alert(JSON.stringify(data.responseJSON.errorMessage));
                         alert(data.responseJSON.errorMessage);
-                    }
+                    } *@
                 });
             }
         }
 
         function DeleteOrderCode(orderCodeId) {
-            var row = document.getElementById(`dynamic-row-order-codes-${orderCodeId}`);
-            console.log("orderCodeId: " + orderCodeId);
-            console.log("row: " + row);
-            if (row != null) {
+            //var row = document.getElementById(`dynamic-row-order-codes-${orderCodeId}`);
+            const row = $(`#dynamic-row-order-codes-${orderCodeId}`);
+            if (row.length != 0) {
+                const btnTrash = row.find("a.btn.btn-danger").tooltip("hide");
                 row.remove();
             }
             else {
@@ -538,9 +538,9 @@
                     success: function(data) {
                         window.location = "@Model.Order.OrderId";  // return Orders/Edit/{OrderId}
                     },
-                    error: function(data) {
+                    @* error: function(data) {
                         alert(data.responseJSON.errorMessage);
-                    }
+                    } *@
                 });
             }
         }
@@ -807,7 +807,7 @@
             var idOrderCode = @Model.Order.OrderCodes.Count();
             $('.add-row-order-codes').click(function () {
                 var html =
-                    '<div class="row form-group justify-content-end" id="dynamic-row-order-codes-' + idOrderCode + '>'+
+                    '<div class="row form-group justify-content-end" id="dynamic-row-order-codes-' + idOrderCode + '">'+
 
                         '<input hidden="true" type="number" data-val="true" data-val-required="The OrderCodeId field is required." id="Order_OrderCodes_' + idOrderCode + '__OrderCodeId" name="Order.OrderCodes[' + idOrderCode + '].OrderCodeId" value="0">'+
 
