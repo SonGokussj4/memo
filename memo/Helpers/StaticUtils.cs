@@ -14,7 +14,6 @@ namespace memo.Helpers
         public ApplicationDbContext _db { get; }
 
         public StaticUtils(ApplicationDbContext db)
-        // public StaticUtils()
         {
             _db = db;
         }
@@ -23,7 +22,8 @@ namespace memo.Helpers
         {
             {"BugReport", typeof(BugReport)},
             {"Offer", typeof(Offer)},
-            {"Order", typeof(Order)},
+            {"Offer", typeof(Offer)},
+            {"Contract", typeof(Contract)},
             {"Invoice", typeof(Invoice)},
             {"Company", typeof(Company)},
             {"Contact", typeof(Contact)},
@@ -36,6 +36,7 @@ namespace memo.Helpers
             {"BugReport", "Hlášení chyb"},
             {"Offer", "Nabídka"},
             {"Order", "Zakázka"},
+            {"Contract", "Rámcová smlouva"},
             {"Invoice", "Faktura"},
             {"Company", "Firma"},
             {"Contact", "Kontakt"},
@@ -48,6 +49,7 @@ namespace memo.Helpers
             {"BugReport", "BugReport"},
             {"Offer", "Offers"},
             {"Order", "Orders"},
+            {"Contract", "Contracts"},
             {"Invoice", "Orders"},
             {"Company", "Companies"},
             {"Contact", "Contacts"},
