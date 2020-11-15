@@ -1,5 +1,3 @@
-@* @model List<memo.Models.cOrders> *@
-@* @model List<cOrders> *@
 @model memo.ViewModels.OrderEditViewModel
 
 <div class="modal fade" id="SearchForOrderCodeModal" tabindex="-1" role="dialog" aria-labelledby="SearchForOrderCodeModalLabel">
@@ -12,13 +10,9 @@
             </div>
             <!-- body -->
             <div class="modal-body">
+                <input id="xxx1" value="Filter1" />
+                <input id="xxx2" value="Filter2" />
                 <select id="SelectedOrderCode_@Model.OrderCodeId" asp-items="Model.EveOrderCodes" class="form-control selectpicker"></select>
-                @* <ul>
-                    @foreach (cOrders item in Model)
-                    {
-                        <li>@item.OrderCode - @item.OrderName</li>
-                    }
-                </ul> *@
             </div>
             <!-- footer -->
             <div class="modal-footer">
@@ -29,4 +23,7 @@
     </div>
 </div>
 
-
+@*
+<script>
+    $('.selectpicker').select2();
+</script> *@

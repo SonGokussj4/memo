@@ -4,8 +4,11 @@
 @{
     int i = (int)ViewData["i"];
 }
-<input hidden="true" asp-for="@Model.Order.OrderCodes[i].OrderCodeId" />
 
+<!-- Modal placeholder -->
+<div id="modal-placeholder-@i"></div>
+
+<input hidden="true" asp-for="@Model.Order.OrderCodes[i].OrderCodeId" />
 
 <div class="row form-group justify-content-end">
 
@@ -17,11 +20,9 @@
             <div class="input-group">
                 <input asp-for="@Model.Order.OrderCodes[i].OrderCode" class="form-control" type="text" autocomplete="off" placeholder=" "/>
                 <div class="input-group-append">
-                    @* <!-- Modal placeholder -->
-                    <div id="modal-placeholder"></div> *@
                     <!-- Button trigger modal -->
                     <span data-toggle="tooltip" title="Vyhledat kód" >
-                        <button class="btn btn-light border" type="button" data-toggle="ajax-modal" data-target="#SearchForOrderCodeModal" data-url="@Url.Action("GetOrderCodes", "Orders", new { id = @i })">
+                        <button class="btn btn-light border" type="button" data-toggle="ajax-modal" data-target="#SearchForOrderCodeModal" data-id="@i" data-url="@Url.Action("GetOrderCodes", "Orders", new { id = @i })">
                             <i class="fa fa-search"></i>
                         </button>
                     </span>
