@@ -24,6 +24,7 @@ a {
   border-color: #1861ac;
 }
 
+
 /* Sticky footer styles
 -------------------------------------------------- */
 html {
@@ -68,4 +69,377 @@ body {
   width: 100%;
   white-space: nowrap;
   line-height: 60px; /* Vertically center the text there */
+}
+
+/* Body and Card
+-------------------------------------------------- */
+body {
+  background-color: #fdfdfd;
+}
+.card {
+  background-color: white;
+  padding: 30px;
+  box-shadow: 0 0.46875rem 2.1875rem rgba(4,9,20,0.03),
+              0 0.9375rem 1.40625rem rgba(4,9,20,0.03),
+              0 0.25rem 0.53125rem rgba(4,9,20,0.05),
+              0 0.125rem 0.1875rem rgba(4,9,20,0.03);
+}
+
+/* Offer modifications
+-------------------------------------------------- */
+.eveOffer {
+  border: 1px solid #ced4da;
+  margin: 0px -15px;
+  padding: 8px 0px;
+  margin-bottom: 10px;
+  background-color: #3a94ff0a;
+  border-radius: .25rem;
+}
+
+.customerOffer {
+  border: 1px solid #ced4da;
+  margin: 0px -15px;
+  padding: 8px 0px;
+  margin-bottom: 10px;
+  background-color: #fcf4dc;
+  border-radius: .25rem;
+}
+
+.lostOffer {
+  border: 1px solid #ced4da;
+  margin: 0px -15px;
+  padding: 8px 0px;
+  margin-bottom: 10px;
+  background-color: #ff000021;
+  border-radius: .25rem;
+}
+
+/* .wonOffer {
+  border: 1px solid #ced4da;
+  margin: 0px -15px;
+  padding: 8px 0px;
+  margin-bottom: 10px;
+  background-color: #00ff0d21;
+  border-radius: .25rem;
+} */
+
+.eveOrder {
+  border: 1px solid #ced4da;
+  margin: 0px -15px;
+  padding: 8px 15px;
+  margin-bottom: 10px;
+  background-color: #3a94ff0a;
+  border-radius: .25rem;
+}
+
+.eveOrder .btn {
+  background-color: white;
+}
+
+.eveOrder .btn:hover {
+  background-color: #28a745;
+}
+
+/* User modifications
+-------------------------------------------------- */
+
+/* Disable blue glow on input focus */
+.form-control:focus {
+  box-shadow: 0 0 black;
+}
+
+/* Form width */
+/* @media (min-width: 992px) */
+.col-lg-8 {
+    -ms-flex: 0 0 85%;
+    flex: 0 0 85%;
+    max-width: 85%;
+}
+
+.hide {
+  display: none;
+}
+
+.hiddenBefore {
+  color: #00000081;
+  background-color: #e7e7e7;
+}
+
+.table-sm tbody th {
+  font-weight: 400;
+}
+
+form.myform {
+  background-color: rgba(255, 218, 0, 0.07);
+  margin: -10px;
+  padding: 10px;
+  border: 1px solid lightgray;
+  border-radius: 10px;
+}
+
+/* Red * after label that has 'required' class */
+.required:after {
+  content:" *";
+  color: #f10808;
+  font-size: 1.2em;
+}
+
+/* Small divider after X (remove) in first column in DataTable */
+.editDivider {
+  padding-right: 25px;
+  border-right: 1px solid #dee2e6;
+  margin-right: 10px;
+}
+
+/* Smaller filter field above DataTable */
+.filter-control>input.form-control,
+.filter-control>select.form-control {
+    margin: 0px;
+    padding: 0px 20px;
+    height: 30px;
+    border-radius: 5px;
+    border-left: 0px;
+    border-right: 0px;
+    border-bottom: 0px;
+}
+
+/* Bootstrap-Select fixes
+-------------------------------------------------- */
+.bootstrap-select .no-results {
+  background: #ffb2b2;
+  border-radius: 5px;
+}
+
+.bootstrap-select>.dropdown-toggle.bs-placeholder {
+  color: #495057;
+}
+
+.bootstrap-select>.btn-light,
+.bootstrap-select>.btn-light:hover,
+.bootstrap-select>.btn-light:active,
+.show>.btn-light.dropdown-toggle {
+  background-color: #ffffff;
+  border-color: #ced4da;
+  color: #495057;
+}
+
+.bootstrap-select .dropdown-toggle:focus,
+.bootstrap-select>select.mobile-device:focus+.dropdown-toggle {
+  outline: 0px auto -webkit-focus-ring-color!important;
+  background-color: #ffffff;
+  border-color: #ced4da;
+  color: #495057;
+}
+
+/* Bootstrap-Select2 fixes
+-------------------------------------------------- */
+.select2-container--default .select2-selection--single {
+  border: 1px solid #ced4da;
+  height: 40px;
+  border-radius: 0.25rem;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+  line-height: 40px;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+  height: 35px;
+}
+
+.select2-container--default .select2-results>.select2-results__options {
+  max-height: 500px;
+  white-space: nowrap;
+}
+
+/* .select2-container--open .select2-dropdown--below {
+  min-width: 300px !important;
+  white-space: nowrap;
+} */
+
+.select2 {
+  width:100%!important;
+}
+/* .select2 select2-container select2-container--default {
+  max-width: -webkit-fill-available;
+} */
+
+/* Bootstrap Z-Index fix */
+.input-group>.form-control:focus {
+  z-index: 0;
+}
+
+
+/* PURE CSS COLLAPSE */
+[data-toggle="collapse"].collapsed .if-not-collapsed {
+  display: none;
+}
+
+[data-toggle="collapse"]:not(.collapsed) .if-collapsed {
+  display: none;
+}
+
+
+/* BOOTSTRAP - CUSTOM Column OFFSET from RIGHT */
+.col-xs-offset-right-12 {
+  margin-right: 100%;
+}
+.col-xs-offset-right-11 {
+  margin-right: 91.66666667%;
+}
+.col-xs-offset-right-10 {
+  margin-right: 83.33333333%;
+}
+.col-xs-offset-right-9 {
+  margin-right: 75%;
+}
+.col-xs-offset-right-8 {
+  margin-right: 66.66666667%;
+}
+.col-xs-offset-right-7 {
+  margin-right: 58.33333333%;
+}
+.col-xs-offset-right-6 {
+  margin-right: 50%;
+}
+.col-xs-offset-right-5 {
+  margin-right: 41.66666667%;
+}
+.col-xs-offset-right-4 {
+  margin-right: 33.33333333%;
+}
+.col-xs-offset-right-3 {
+  margin-right: 25%;
+}
+.col-xs-offset-right-2 {
+  margin-right: 16.66666667%;
+}
+.col-xs-offset-right-1 {
+  margin-right: 8.33333333%;
+}
+.col-xs-offset-right-0 {
+  margin-right: 0;
+}
+@media (min-width: 768px) {
+  .col-sm-offset-right-12 {
+    margin-right: 100%;
+  }
+  .col-sm-offset-right-11 {
+    margin-right: 91.66666667%;
+  }
+  .col-sm-offset-right-10 {
+    margin-right: 83.33333333%;
+  }
+  .col-sm-offset-right-9 {
+    margin-right: 75%;
+  }
+  .col-sm-offset-right-8 {
+    margin-right: 66.66666667%;
+  }
+  .col-sm-offset-right-7 {
+    margin-right: 58.33333333%;
+  }
+  .col-sm-offset-right-6 {
+    margin-right: 50%;
+  }
+  .col-sm-offset-right-5 {
+    margin-right: 41.66666667%;
+  }
+  .col-sm-offset-right-4 {
+    margin-right: 33.33333333%;
+  }
+  .col-sm-offset-right-3 {
+    margin-right: 25%;
+  }
+  .col-sm-offset-right-2 {
+    margin-right: 16.66666667%;
+  }
+  .col-sm-offset-right-1 {
+    margin-right: 8.33333333%;
+  }
+  .col-sm-offset-right-0 {
+    margin-right: 0;
+  }
+}
+@media (min-width: 992px) {
+  .col-md-offset-right-12 {
+    margin-right: 100%;
+  }
+  .col-md-offset-right-11 {
+    margin-right: 91.66666667%;
+  }
+  .col-md-offset-right-10 {
+    margin-right: 83.33333333%;
+  }
+  .col-md-offset-right-9 {
+    margin-right: 75%;
+  }
+  .col-md-offset-right-8 {
+    margin-right: 66.66666667%;
+  }
+  .col-md-offset-right-7 {
+    margin-right: 58.33333333%;
+  }
+  .col-md-offset-right-6 {
+    margin-right: 50%;
+  }
+  .col-md-offset-right-5 {
+    margin-right: 41.66666667%;
+  }
+  .col-md-offset-right-4 {
+    margin-right: 33.33333333%;
+  }
+  .col-md-offset-right-3 {
+    margin-right: 25%;
+  }
+  .col-md-offset-right-2 {
+    margin-right: 16.66666667%;
+  }
+  .col-md-offset-right-1 {
+    margin-right: 8.33333333%;
+  }
+  .col-md-offset-right-0 {
+    margin-right: 0;
+  }
+}
+@media (min-width: 1200px) {
+  .col-lg-offset-right-12 {
+    margin-right: 100%;
+  }
+  .col-lg-offset-right-11 {
+    margin-right: 91.66666667%;
+  }
+  .col-lg-offset-right-10 {
+    margin-right: 83.33333333%;
+  }
+  .col-lg-offset-right-9 {
+    margin-right: 75%;
+  }
+  .col-lg-offset-right-8 {
+    margin-right: 66.66666667%;
+  }
+  .col-lg-offset-right-7 {
+    margin-right: 58.33333333%;
+  }
+  .col-lg-offset-right-6 {
+    margin-right: 50%;
+  }
+  .col-lg-offset-right-5 {
+    margin-right: 41.66666667%;
+  }
+  .col-lg-offset-right-4 {
+    margin-right: 33.33333333%;
+  }
+  .col-lg-offset-right-3 {
+    margin-right: 25%;
+  }
+  .col-lg-offset-right-2 {
+    margin-right: 16.66666667%;
+  }
+  .col-lg-offset-right-1 {
+    margin-right: 8.33333333%;
+  }
+  .col-lg-offset-right-0 {
+    margin-right: 0;
+  }
 }

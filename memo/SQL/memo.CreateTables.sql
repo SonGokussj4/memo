@@ -1,5 +1,17 @@
 -- This sql query should create all tables and it's relations
 
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+-----------------------------------------------------------------------------------------
+IF OBJECT_ID('memo.Company', 'U') IS NOT NULL
+  DROP TABLE [memo].[Company]
+GO
+-----------------------------------------------------------------------------------------
 CREATE TABLE [memo].[Company] (
   [CompanyId] int PRIMARY KEY IDENTITY(1, 1),
   [Name] nvarchar(50),
@@ -7,131 +19,231 @@ CREATE TABLE [memo].[Company] (
   [Address] nvarchar(50),
   [Phone] nvarchar(50),
   [Web] nvarchar(50),
-  [CreateDate] date
+  [InvoiceDueDays] int,
+  [Notes] nvarchar(max),
+  [Active] bit DEFAULT 1,
+  [CreatedBy] nvarchar(50),
+  [ModifiedBy] nvarchar(50),
+  [CreatedDate] datetime,
+  [ModifiedDate] datetime
 )
 GO
 
+
+-----------------------------------------------------------------------------------------
+IF OBJECT_ID('memo.Contact', 'U') IS NOT NULL
+  DROP TABLE [memo].[Contact]
+GO
+-----------------------------------------------------------------------------------------
 CREATE TABLE [memo].[Contact] (
   [ContactId] int PRIMARY KEY IDENTITY(1, 1),
   [PersonName] nvarchar(50),
+  [PersonLastName] nvarchar(50),
+  [PersonTitle] nvarchar(20),
+  [CompanyId] int DEFAULT 1,
   [Department] nvarchar(50),
   [Phone] nvarchar(50),
   [Email] nvarchar(255),
-  [CreateDate] date
+  [Notes] nvarchar(max),
+  [Active] bit DEFAULT 1,
+  [CreatedBy] nvarchar(50),
+  [ModifiedBy] nvarchar(50),
+  [CreatedDate] datetime,
+  [ModifiedDate] datetime
 )
 GO
 
+
+-----------------------------------------------------------------------------------------
+IF OBJECT_ID('memo.OfferStatus', 'U') IS NOT NULL
+  DROP TABLE [memo].[OfferStatus]
+GO
+-----------------------------------------------------------------------------------------
+CREATE TABLE [memo].[OfferStatus] (
+  [OfferStatusId] int PRIMARY KEY IDENTITY(1, 1),
+  [Name] nvarchar(20)
+)
+GO
+
+
+-----------------------------------------------------------------------------------------
+IF OBJECT_ID('memo.Currency', 'U') IS NOT NULL
+  DROP TABLE [memo].[Currency]
+GO
+-----------------------------------------------------------------------------------------
+CREATE TABLE [memo].[Currency] (
+  [CurrencyId] int PRIMARY KEY IDENTITY(1, 1),
+  [Name] nvarchar(10),
+  [CultureCode] nvarchar(10)
+)
+GO
+
+
+-----------------------------------------------------------------------------------------
+IF OBJECT_ID('memo.Offer', 'U') IS NOT NULL
+  DROP TABLE [memo].[Offer]
+GO
+-----------------------------------------------------------------------------------------
 CREATE TABLE [memo].[Offer] (
   [OfferId] int PRIMARY KEY IDENTITY(1, 1),
-  [OfferName] nvarchar(50),
+  [OfferName] nvarchar(50) UNIQUE,
   [ReceiveDate] date,
   [SentDate] date,
-  [Subject] text,
+  [Subject] nvarchar(max),
   [ContactId] int,
   [CompanyId] int,
-  [EveDivision] nvarchar(50) NOT NULL CHECK ([EveDivision] IN ('AD', 'ED')),
+  [EveDivision] nvarchar(50),
   [EveDepartment] nvarchar(50),
   [EveCreatedUser] nvarchar(50),
   [Price] int,
   [CurrencyId] int,
-  [ExchangeRate] float,
+  [ExchangeRate] decimal(18,3),
   [PriceCzk] int,
-  [Status] int,
-  [LostReason] text,
-  [CreateDate] date
+  [OfferStatusId] int,
+  [LostReason] nvarchar(max),
+  [EstimatedFinishDate] date,
+  [Notes] nvarchar(max),
+  [Active] bit DEFAULT 1,
+  [CreatedBy] nvarchar(50),
+  [ModifiedBy] nvarchar(50),
+  [CreatedDate] datetime,
+  [ModifiedDate] datetime,
+  CONSTRAINT [FK_memo.Offer_memo_Contact_ContactId] FOREIGN KEY ([ContactId])
+    REFERENCES [memo].[Contact] ([ContactId]),
+  CONSTRAINT [FK_memo.Offer_memo_Company_CompanyId] FOREIGN KEY ([CompanyId])
+    REFERENCES [memo].[Company] ([CompanyId]),
+  CONSTRAINT [FK_memo.Offer_memo_OfferStatus_OfferStatusId] FOREIGN KEY ([OfferStatusId])
+    REFERENCES [memo].[OfferStatus] ([OfferStatusId]),
+  CONSTRAINT [FK_memo.Offer_memo_Currency_CurrencyId] FOREIGN KEY ([CurrencyId])
+    REFERENCES [memo].[Currency] ([CurrencyId])  -- ON DELETE CASCADE
 )
 GO
 
-CREATE TABLE [memo].[OfferStatus] (
-  [OfferStatusId] int PRIMARY KEY IDENTITY(1, 1),
-  [Status] nvarchar(20)
-)
-GO
 
+-----------------------------------------------------------------------------------------
+IF OBJECT_ID('memo.Order', 'U') IS NOT NULL
+  DROP TABLE [memo].[Order]
+GO
+-----------------------------------------------------------------------------------------
 CREATE TABLE [memo].[Order] (
   [OrderId] int PRIMARY KEY IDENTITY(1, 1),
   [OfferId] int,
-  [OrderName] nvarchar(50),
+  [OrderName] nvarchar(50) UNIQUE,
+  [NegotiatedPrice] int,
   [PriceFinal] int,
   [PriceDiscount] int,
   [OrderCode] nvarchar(50),
-  [ContactId] int,
-  [HourWage] float,
+  [EveContactName] nvarchar(50),
   [TotalHours] int,
-  [InvoiceIssueDate] date,
-  [InvoiceDueDate] date,
-  [ExchangeRate] float,
+  [ExchangeRate] decimal(18,3),
   [PriceFinalCzk] int,
-  [Notes] text,
-  [CreateDate] date
+  [Notes] nvarchar(max),
+  [Active] bit DEFAULT 1,
+  [CreatedBy] nvarchar(50),
+  [ModifiedBy] nvarchar(50),
+  [CreatedDate] datetime,
+  [ModifiedDate] datetime
+  CONSTRAINT [FK_memo.Order_memo_Offer_OfferId] FOREIGN KEY ([OfferId])
+    REFERENCES [memo].[Offer] ([OfferId])
 )
 GO
 
-CREATE TABLE [memo].[Currency] (
-  [CurrencyId] int PRIMARY KEY IDENTITY(1, 1),
-  [Name] nvarchar(10)
+
+-----------------------------------------------------------------------------------------
+IF OBJECT_ID('memo.Invoice', 'U') IS NOT NULL
+  DROP TABLE [memo].[Invoice]
+GO
+-----------------------------------------------------------------------------------------
+CREATE TABLE [memo].[Invoice] (
+  [InvoiceId] int PRIMARY KEY IDENTITY(1, 1),
+  [OrderId] int,
+  [InvoiceDueDate] date,
+  [InvoiceIssueDate] date,
+  [Cost] decimal(18,3),
+  [CostCzk] decimal(18,3),
+  [DeliveryNote] nvarchar(255),
+  CONSTRAINT [FK__memo.Invoice__memo.Order__OrderId] FOREIGN KEY ([OrderId])
+    REFERENCES [memo].[Order] ([OrderId]) ON DELETE CASCADE
 )
 GO
 
-ALTER TABLE [memo].[Offer] ADD FOREIGN KEY ([ContactId]) REFERENCES [memo].[Contact] ([ContactId])
+
+-----------------------------------------------------------------------------------------
+IF OBJECT_ID('memo.OtherCost', 'U') IS NOT NULL
+  DROP TABLE [memo].[OtherCost]
+GO
+-----------------------------------------------------------------------------------------
+CREATE TABLE [memo].[OtherCost]
+(
+  [OtherCostId] int IDENTITY(1, 1),
+  [OrderId] int,
+  [Subject] nvarchar(max) NOT NULL,
+  [Cost] decimal(18,3) NOT NULL,
+  [CostCzk] decimal(18,3) NOT NULL,
+  CONSTRAINT [PK__OtherCostId] PRIMARY KEY ([OtherCostId]),
+  CONSTRAINT [FK__memo.OtherCost__memo.Order__OrderId] FOREIGN KEY ([OrderId])
+    REFERENCES [memo].[Order] ([OrderId])
+)
 GO
 
-ALTER TABLE [memo].[Offer] ADD FOREIGN KEY ([CompanyId]) REFERENCES [memo].[Company] ([CompanyId])
+
+-----------------------------------------------------------------------------------------
+IF OBJECT_ID('memo.HourWages', 'U') IS NOT NULL
+  DROP TABLE [memo].[HourWages]
+GO
+-----------------------------------------------------------------------------------------
+CREATE TABLE [memo].[HourWages]
+(
+  [HourWagesId] int IDENTITY(1, 1),
+  [OrderId] int,
+  [Subject] nvarchar(max),
+  [Cost] decimal(18,3) NOT NULL,
+  [CostCzk] decimal(18,3) NOT NULL,
+  CONSTRAINT [PK__HourWagesId] PRIMARY KEY ([HourWagesId]),
+  CONSTRAINT [FK__memo.HourWages__memo.Order__OrderId] FOREIGN KEY ([OrderId])
+    REFERENCES [memo].[Order] ([OrderId])
+)
 GO
 
-ALTER TABLE [memo].[Offer] ADD FOREIGN KEY ([Status]) REFERENCES [memo].[OfferStatus] ([OfferStatusId])
+
+-----------------------------------------------------------------------------------------
+IF OBJECT_ID('memo.BugReport', 'U') IS NOT NULL
+  DROP TABLE [memo].[BugReport]
+GO
+-----------------------------------------------------------------------------------------
+CREATE TABLE [memo].[BugReport] (
+  [BugReportId] int PRIMARY KEY IDENTITY(1, 1),
+  [Subject] nvarchar(255),
+  [Details] nvarchar(max),
+  [Priority] nvarchar(25),
+  [Category] nvarchar(25),
+  [Resolved] bit DEFAULT 0,
+  [CreatedBy] nvarchar(50),
+  [ModifiedBy] nvarchar(50),
+  [CreatedDate] datetime,
+  [ModifiedDate] datetime
+)
 GO
 
-ALTER TABLE [memo].[Order] ADD FOREIGN KEY ([OfferId]) REFERENCES [memo].[Offer] ([OfferId])
-GO
 
-ALTER TABLE [memo].[Order] ADD FOREIGN KEY ([ContactId]) REFERENCES [memo].[Contact] ([ContactId])
-GO
 
-ALTER TABLE [memo].[Offer] ADD FOREIGN KEY ([CurrencyId]) REFERENCES [memo].[Currency] ([CurrencyId])
+-- AUDITING INSERT, MODIFY, DELETE
+-----------------------------------------------------------------------------------------
+IF OBJECT_ID('memo.Audit', 'U') IS NOT NULL
+  DROP TABLE [memo].[Audit]
 GO
-
-EXEC sp_addextendedproperty
-@name = N'Column_Description',
-@value = 'EVE_qui_2020_003_SKODA_EKX_',
-@level0type = N'Schema', @level0name = 'memo',
-@level1type = N'Table',  @level1name = 'Offer',
-@level2type = N'Column', @level2name = 'OfferName';
+-----------------------------------------------------------------------------------------
+CREATE TABLE [memo].[Audits]
+  (
+    AuditId INT IDENTITY PRIMARY KEY,
+    Type CHAR(1),
+    TableName NVARCHAR(128),
+    PK NVARCHAR(1000),
+    FieldName NVARCHAR(128),
+    OldValue NVARCHAR(1000),
+    NewValue NVARCHAR(1000),
+    UpdateDate DATETIME,
+    UserName NVARCHAR(128),
+    UpdateBy NVARCHAR(128)
+  )
 GO
-
-EXEC sp_addextendedproperty
-@name = N'Column_Description',
-@value = 'Ongoing, Won, Lost',
-@level0type = N'Schema', @level0name = 'memo',
-@level1type = N'Table',  @level1name = 'OfferStatus',
-@level2type = N'Column', @level2name = 'Status';
-GO
-
-EXEC sp_addextendedproperty
-@name = N'Column_Description',
-@value = 'EVE-Quo/2020-003',
-@level0type = N'Schema', @level0name = 'memo',
-@level1type = N'Table',  @level1name = 'Order',
-@level2type = N'Column', @level2name = 'OrderName';
-GO
-
-EXEC sp_addextendedproperty
-@name = N'Column_Description',
-@value = 'CZK, EUR, USD',
-@level0type = N'Schema', @level0name = 'memo',
-@level1type = N'Table',  @level1name = 'Currency',
-@level2type = N'Column', @level2name = 'Name';
-GO
-
-ALTER TABLE [memo].[Company] ADD CONSTRAINT DF_Company DEFAULT GETDATE() FOR CreateDate
-GO
-
-ALTER TABLE [memo].[Contact] ADD CONSTRAINT DF_Contact DEFAULT GETDATE() FOR CreateDate
-GO
-
-ALTER TABLE [memo].[Offer] ADD CONSTRAINT DF_Offer DEFAULT GETDATE() FOR CreateDate
-GO
-
-ALTER TABLE [memo].[Order] ADD CONSTRAINT DF_Order DEFAULT GETDATE() FOR CreateDate
-GO
-

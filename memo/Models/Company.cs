@@ -10,25 +10,53 @@ namespace memo.Models
     {
         public Company()
         {
-            Offer = new HashSet<Offer>();
+            Offers = new HashSet<Offer>();
+            Active = true;
+            // ModifiedDate = DateTime.Now;
         }
 
         [Key]
         public int CompanyId { get; set; }
-        [Display(Name = "Jméno"), StringLength(50)]
+
+        [Required(ErrorMessage = "Prosím vyplňte název firmy.")]
+        [Display(Name = "Název"), StringLength(50)]
         public string Name { get; set; }
+
         [Display(Name = "Město"), StringLength(50)]
         public string City { get; set; }
+
         [Display(Name = "Adresa"), StringLength(50)]
         public string Address { get; set; }
+
         [Display(Name = "Telefon"), StringLength(50)]
         public string Phone { get; set; }
+
         [Display(Name = "Web"), StringLength(50)]
         public string Web { get; set; }
-        [DataType(DataType.Date), Column(TypeName = "date")]
-        public DateTime? CreateDate { get; set; }
+
+        [Required(ErrorMessage = "Prosím uveďte splatnost faktury (v celých dnech).")]
+        [Display(Name = "Splatnost")]
+        public int? InvoiceDueDays { get; set; }
+
+        [Display(Name = "Poznámky"), Column(TypeName = "nvarchar(max)")]
+        public string Notes { get; set; }
+
+        [Display(Name = "Aktivní")]
+        public bool Active { get; set; }
+
+        [Display(Name = "Vytvořil"), StringLength(50)]
+        public string CreatedBy { get; set; }
+
+        [Display(Name = "Upravil"), StringLength(50)]
+        public string ModifiedBy { get; set; }
+
+        [Display(Name = "Datum vytvoření"), Column(TypeName = "datetime")]
+        public DateTime CreatedDate { get; set; }
+
+        [Display(Name = "Poslední úprava"), Column(TypeName = "datetime")]
+        public DateTime ModifiedDate { get; set; }
 
         [InverseProperty("Company")]
-        public virtual ICollection<Offer> Offer { get; set; }
+        public virtual ICollection<Offer> Offers { get; set; }
     }
 }

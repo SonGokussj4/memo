@@ -4,30 +4,283 @@
 
 @model IEnumerable<memo.Models.Contact>
 
+<style>
+    .notesWrap {
+        max-width: 200px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .centerHeader {
+        text-align: center;
+    }
+    @* .container {
+        max-width: 1680px;
+    } *@
+
+    @* th {
+        font-weight: 400;
+    } *@
+
+    .bootstrap-table .fixed-table-container .table thead th .sortable {
+        padding-right: 20px!important;
+    }
+
+    .itemInactive {
+        color: #9ba8b1;
+    }
+</style>
+
+@await Html.PartialAsync("_PartialToastNotification")
+
 <div class="text-center">
     <h1 class="display-4">Kontakty</h1>
 </div>
 
-<table class="table table-sm">
+
+<div id="toolbar" style="padding-bottom: 10px;">
+    <a asp-action="Create" class="btn btn-outline-success"><i class="fa fa-plus-square-o"></i> Nový kontakt</a>
+
+    <button style="margin-right: 5px;" class="btn btn-outline-info" name="BtnMujFilter" id="BtnMujFilter" type="button">
+        <i class="fa fa-filter"></i> Filter
+    </button>
+
+    @if (ViewBag.ShowInactive == true)
+    {
+        <a asp-action="index" class="btn btn-outline-secondary" data-toggle="tooltip" title="Zobrazit pouze aktivní"><i class="fa fa-eye"></i> Vše (@Model.Count())</a>
+    }
+    else
+    {
+        <a asp-action="index" class="btn btn-outline-secondary" asp-route-ShowInactive="true" data-toggle="tooltip" title="Zobrazit vše"><i class="fa fa-eye-slash"></i> Aktivní (@Model.Count()/@ViewBag.AllContactsCount)</a>
+    }
+</div>
+
+<table
+    id="table"
+    data-cookie="true"
+    data-cookie-id-table="contactsTableCookie"
+    data-filter-control="false"
+    data-search="true"
+    data-show-columns="true"
+    data-show-columns-toggle-all="true"
+    data-show-export="true"
+    data-show-filter-control-switch="true"
+    data-show-search-clear-button="true"
+    data-show-toggle="true"
+    data-silent-sort="true"
+    data-toolbar="#toolbar"
+    data-toggle="table"
+    data-visible-search="true"
+    class="table table-sm text-nowrap text-xsmall"
+    style="font-size: 0.9em;"
+    @* data-show-pagination-switch="true" *@
+    @* data-pagination="true" *@
+    @* data-height="800" *@
+    @* data-page-size="50" *@
+    @* data-page-list="[10, 25, 50, 100, 200, All]" *@
+    >
     <thead>
         <tr>
-            <th scope="col"></th>
-            <th scope="col">Jméno</th>
-            <th scope="col">Oddělení</th>
-            <th scope="col">Telefon</th>
-            <th scope="col">E-mail</th>
+            <th class="text-center" scope="col" data-field="0" data-sortable="true" data-filter-control="input" data-footer-formatter="idFormatter">Edit</th>
+            <th class="text-center" scope="col" data-field="1" data-sortable="true"><span data-toggle="tooltip" title="Aktivní / Neaktivní"><i class="fa fa-eye text-secondary"></i></span></th>
+            <th class="text-center" scope="col" data-field="2" data-sortable="true" data-filter-control="input">Jméno</th>
+            <th class="text-center" scope="col" data-field="3" data-sortable="true" data-filter-control="input">Firma</th>
+            <th class="text-center" scope="col" data-field="4" data-sortable="true" data-filter-control="select">Oddělení</th>
+            <th class="text-center" scope="col" data-field="5" data-sortable="true" data-filter-control="input">Telefon</th>
+            <th class="text-center" scope="col" data-field="6" data-sortable="true" data-filter-control="input">E-mail</th>
+            <th class="text-center" scope="col" data-field="7" data-sortable="true" data-filter-control="input">Poznámky</th>
+            <th class="text-center" scope="col" data-field="8" data-sortable="true" data-filter-control="input">Vytvořeno</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var contact in Model)
+        @foreach (var item in Model)
         {
-            <tr>
-                <th scope="row"><a href="#"><i class="fa fa-pencil fa-fw" aria-hidden="true"></i></a></th>
-                <th scope="row">@contact.PersonName</th>
-                <th scope="row">@contact.Department</th>
-                <th scope="row">@contact.Phone</th>
-                <th scope="row">@contact.Email</th>
+            <tr id="row_@item.ContactId" class="@(item.Active ? Html.Raw("itemActive") : Html.Raw("itemInactive"))">
+                <th scope="row" style="width: 10px;">
+                    <a href="#" data-toggle="modal" data-target="#infoModal"
+                        data-contactid="@item.ContactId"
+                        data-lastname="@item.PersonLastName"
+                        data-firstname="@item.PersonName"
+                        data-item="@item"
+                    ><i class="fa fa-info-circle fa-fw" aria-hidden="true" style="color: grey;"></i></a>
+                    <a asp-action="Edit" asp-route-id=@item.ContactId><i class="fa fa-pencil fa-fw" aria-hidden="true"></i></a>
+                    <a href="#" onclick="ConfirmDelete(@item.ContactId)"><i class="fa fa-times fa-fw" style="color: red;", aria-hidden="true"></i></a>
+                </th>
+
+                @* Status *@
+                @if (item.Active is true)
+                {
+                    <th scope="row" class="text-center" data-toggle="tooltip" title="Aktivní">
+                        @* <i class="fa fa-check-circle" style="color: #5abe58;" aria-hidden="true"></i> *@
+                        <a asp-action="Deactivate" asp-route-id="@item.ContactId" asp-route-showInactive="@ViewBag.showInactive"><i class="fa fa-eye text-success" aria-hidden="true"></i></a>
+                    </th>
+                }
+                else if (item.Active is false)
+                {
+                    <th scope="row" class="text-center b" data-toggle="tooltip" title="Neaktivní">
+                        <a asp-action="Activate" asp-route-id="@item.ContactId" asp-route-showInactive="@ViewBag.showInactive"><i class="fa fa-eye-slash" style="color: #8a97a2;" aria-hidden="true"></i></a>
+                    </th>
+                }
+
+                <th class="text-left" scope="row">@item.PersonLastName @item.PersonName @item.PersonTitle</th>
+                <th class="text-left" scope="row">@item.Company?.Name</th>
+                <th class="text-left" scope="row">@item.Department</th>
+                <th class="text-left" scope="row">@item.Phone</th>
+                <th class="text-left" scope="row"><a href="mailto:@item.Email">@item.Email</a></th>
+                <th class="text-left notesWrap" scope="row" data-toggle="tooltip" title="@item.Notes">@item.Notes</th>
+                <th class="text-left" scope="row">@String.Format("{0:dd.MM.yyyy}", @item.CreatedDate)</th>
             </tr>
         }
     </tbody>
 </table>
+
+
+<!---------------------------
+    Modal: Confirm Delete
+---------------------------->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <!-- header -->
+            <div class="modal-header">
+                <h5 class="modal-title" id="myModalLabel">Smazání kontaktu</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <!-- body -->
+            <div class="modal-body">
+                Opravdu smazat?
+                <span id="modalItemId"></span>
+            </div>
+            <!-- footer -->
+            <div class="modal-footer">
+                <a href="#" class="btn btn-default" data-dismiss="modal">Zpět</a>
+                <a href="#" class="btn btn-danger" onclick="DeleteItem()">Smazat</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*hidden field for storing current Id*@
+<input type="hidden" id="hiddenId" />
+
+
+<!---------------------------
+    Modal: Info Window
+---------------------------->
+<div class="modal fade" id="infoModal" tabindex="-1" role="dialog" aria-labelledby="infoModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="infoModalLabel">Info about: </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-ContactId"></p>
+        <p class="modal-FirstName"></p>
+        <p class="modal-LastName"></p>
+        <p class="modal-Item"></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+@section scripts{
+<script>
+
+    // Reinitialize tooltips upon table change
+    $('#table').on('post-body.bs.table', function () {  // on('all.bs.table'
+        $('[data-toggle="tooltip"]').tooltip()
+    });
+
+    // POST delete command to controller
+    //----------------------------------
+    function DeleteItem() {
+        var itemId = $("#hiddenId").val();
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("Delete", "Contacts")',
+            data: { Id: itemId },
+            beforeSend: function (request) {
+                request.setRequestHeader("RequestVerificationToken", $("[name='__RequestVerificationToken']").val());
+            },
+            success: function () {
+                $("#myModal").modal("hide")
+                //$("#row_" + itemId).remove();
+                window.location = "Contacts/Index"
+            },
+            error: function() {
+                alert("Tento uživatel je přidělen nabídce/zakázce. Nelze ho odstranit.");
+                $("#myModal").modal("hide");
+            }
+        })
+    }
+
+    $('#infoModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget) // Button that triggered the modal
+        var contactId = button.data('contactid') // Extract info from data-* attributes
+        var firstName = button.data('firstname') // Extract info from data-* attributes
+        var lastName = button.data('lastname') // Extract info from data-* attributes
+        var item = button.data('item') // Extract info from data-* attributes
+        var modal = $(this)
+        modal.find('.modal-title').text('New message to ' + contactId)
+        console.log(firstName);
+        modal.find('.modal-ContactId').text(`ContactId: ${contactId}`);
+        modal.find('.modal-FirstName').text(`FirstName: ${firstName}`);
+        modal.find('.modal-LastName').text(`LastName: ${lastName}`);
+        modal.find('.modal-Item').text(`Item: ${item}`);
+    });
+
+    //function goContacts() {
+    //    $.ajax({
+    //        type: "get",
+    //        url: '@Url.Action("Edit", "Contacts", new { id = 2 })',
+    //        success: function (result) {
+    //            window.location = "Contacts/Index";
+    //        }
+    //    });
+    //}
+
+    // MODAL dialog for delete confirmation
+    //-------------------------------------
+    //function ConfirmDelete(ItemId) {
+    var ConfirmDelete = function (ItemId) {
+        $("#hiddenId").val(ItemId);
+        $("#myModal").modal('show');
+        $("#modalItemId").val( 'Hmm' + ItemId );
+    };
+
+
+    // Function to toggle Active/Disabled Contacts/Companies in table
+    //---------------------------------------------------------------
+//    function ShowInactive() {
+//        var btn = document.getElementById("btnToggleActive");
+//
+//        if (btn.children[0].className == "fa fa-eye-slash") {
+//            // Change icon and text
+//            btn.children[0].className = "fa fa-eye"
+//            btn.lastChild.nodeValue = " Všichni (@Model.Count())"
+//            var hiddenRows = document.querySelectorAll(".hide");
+//            //console.log(hiddenRows);
+//            for(var i = 0; i < hiddenRows.length; i++){
+//                hiddenRows[i].className = "show hiddenBefore";
+//            }
+//
+//
+//        }
+//        else {
+//            // Change icon and text
+//            btn.children[0].className = "fa fa-eye-slash"
+//            btn.lastChild.nodeValue = " Aktivní (@Model.Count(m => m.Active) / @Model.Count())"
+//            var hiddenRows = document.querySelectorAll(".show.hiddenBefore");
+//            for(var i = 0; i < hiddenRows.length; i++){
+//                hiddenRows[i].className = "hide";
+//            }
+//        }
+//    };
+
+
+
+</script>
+}

@@ -4,35 +4,214 @@
 
 @model IEnumerable<memo.Models.Company>
 
+<style>
+    .notesWrap {
+        max-width: 200px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .centerHeader {
+        text-align: center;
+    }
+
+    .bootstrap-table .fixed-table-container .table thead th .sortable {
+        padding-right: 20px!important;
+    }
+
+    .itemInactive {
+        color: #7c878f;
+    }
+</style>
+
+@await Html.PartialAsync("_PartialToastNotification")
+
 <div class="text-center">
     <h1 class="display-4">Firmy</h1>
-
 </div>
 
-<table class="table table-sm">
+<div id="toolbar" style="padding-bottom: 10px;">
+    <a asp-action="Create" class="btn btn-outline-success"><i class="fa fa-plus-square-o"></i> Nová firma</a>
+    <button style="margin-right: 5px;" class="btn btn-outline-info" name="BtnMujFilter" id="BtnMujFilter" type="button">
+        <i class="fa fa-filter"></i> Filter
+    </button>
+    @if (ViewBag.ShowInactive == true)
+    {
+        <a asp-action="index" class="btn btn-outline-secondary" data-toggle="tooltip" title="Zobrazit pouze aktivní"><i class="fa fa-eye"></i> Vše (@Model.Count())</a>
+    }
+    else
+    {
+        <a asp-action="index" class="btn btn-outline-secondary" asp-route-ShowInactive="true" data-toggle="tooltip" title="Zobrazit vše"><i class="fa fa-eye-slash"></i> Aktivní (@Model.Count()/@ViewBag.AllCompaniesCount)</a>
+    }
+</div>
+
+<table
+    id="table"
+    data-cookie="true"
+    data-cookie-id-table="companiesTableCookie"
+    data-filter-control="false"
+    data-search="true"
+    data-show-columns="true"
+    data-show-columns-toggle-all="true"
+    data-show-export="true"
+    data-show-search-clear-button="true"
+    data-show-toggle="true"
+    data-sort-name="Name"
+    data-sort-order="asc"
+    data-toggle="table"
+    data-toolbar="#toolbar"
+    data-visible-search="true"
+    class="table table-sm text-nowrap text-xsmall"
+    style="font-size: 0.9em;"
+    >
     <thead>
         <tr>
-            <th scope="col"></th>
-            <th scope="col">Id</th>
-            <th scope="col">Jméno</th>
-            <th scope="col">Město</th>
-            <th scope="col">Adresa</th>
-            <th scope="col">Telefon</th>
-            <th scope="col">Vytvořeno</th>
+            <th scope="col" class="text-center" data-field="0" data-sortable="true" data-filter-control="input" data-footer-formatter="idFormatter">Edit</th>
+            <th scope="col" class="text-center" data-field="1" data-sortable="true"><span data-toggle="tooltip" title="Aktivní / Neaktivní"><i class="fa fa-eye text-secondary"></i></span></th>
+            <th scope="col" class="text-center" data-field="2" data-sortable="true" data-filter-control="input">Název</th>
+            <th scope="col" class="text-center" data-field="3" data-sortable="true" data-filter-control="input">Město</th>
+            <th scope="col" class="text-center" data-field="4" data-sortable="true" data-filter-control="input">Adresa</th>
+            <th scope="col" class="text-center" data-field="5" data-sortable="true" data-filter-control="input">Telefon</th>
+            <th scope="col" class="text-center" data-field="6" data-sortable="true" data-filter-control="input">Web</th>
+            <th scope="col" class="text-center" data-field="7" data-sortable="true" data-filter-control="input">Splatnost [dny]</th>
+            <th scope="col" class="text-center" data-field="8" data-sortable="true" data-filter-control="input">Poznámky</th>
+            <th scope="col" class="text-center" data-field="9" data-sortable="true" data-filter-control="input">Vytvořeno</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var company in Model)
+        @foreach (var item in Model)
         {
-            <tr>
-                <th scope="row"><a href="#"><i class="fa fa-pencil fa-fw" aria-hidden="true"></i></a></th>
-                <th scope="row">@company.CompanyId</th>
-                <th scope="row">@company.Name</th>
-                <th scope="row">@company.City</th>
-                <th scope="row">@company.Address</th>
-                <th scope="row">@company.Phone</th>
-                <th scope="row">@String.Format("{0:dd.MM.yyyy}", @company.CreateDate)</th>
+            <tr id="row_@item.CompanyId" class="@(item.Active ? Html.Raw("itemActive") : Html.Raw("itemInactive"))">
+                <th scope="row">
+                    <a asp-action="Edit" asp-route-id=@item.CompanyId><i class="fa fa-pencil fa-fw" aria-hidden="true"></i></a>
+                    <a href="#" onclick="ConfirmDelete(@item.CompanyId)"><i class="fa fa-times fa-fw" style="color: red;", aria-hidden="true"></i></a>
+                </th>
+
+                @if (item.Active is true)
+                {
+                    <th scope="row" class="text-center" data-toggle="tooltip" title="Aktivní">
+                        <a asp-action="Deactivate" asp-route-id="@item.CompanyId" asp-route-showInactive="@ViewBag.showInactive"><i class="fa fa-eye text-success" aria-hidden="true"></i></a>
+                    </th>
+                }
+                else if (item.Active is false)
+                {
+                    <th scope="row" class="text-center" data-toggle="tooltip" title="Neaktivní">
+                        <a asp-action="Activate" asp-route-id="@item.CompanyId" asp-route-showInactive="@ViewBag.showInactive"><i class="fa fa-eye-slash" style="color: #8a97a2;" aria-hidden="true"></i></a>
+                    </th>
+                }
+
+                <th scope="row" class="text-left">@item.Name</th>
+                <th scope="row" class="text-left">@item.City</th>
+                <th scope="row" class="text-left">@item.Address</th>
+                <th scope="row" class="text-left">@item.Phone</th>
+                <th scope="row" class="text-left"><a href="http://@item.Web" target="_blank">@item.Web</a></th>
+                <th scope="row" class="text-right">@item.InvoiceDueDays</th>
+                <th scope="row" class="text-left notesWrap" data-toggle="tooltip" title="@item.Notes">@item.Notes</th>
+                <th scope="row" class="text-left">@String.Format("{0:yyyy-MM-dd}", @item.CreatedDate)</th>
             </tr>
         }
     </tbody>
 </table>
+
+
+<!-- Modal Confirm Delete-->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <!-- header -->
+            <div class="modal-header">
+                <h5 class="modal-title" id="myModalLabel">Smazání firmy</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <!-- body -->
+            <div class="modal-body">
+                Opravdu smazat?
+                <span id="modalItemId"></span>
+            </div>
+            <!-- footer -->
+            <div class="modal-footer">
+                <a href="#" class="btn btn-default" data-dismiss="modal">Zpět</a>
+                <a href="#" class="btn btn-danger" onclick="DeleteItem()">Smazat</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*hidden field for storing current employeeId*@
+<input type="hidden" id="hiddenId" />
+
+@section scripts{
+<script>
+
+    // Reinitialize tooltips upon table change
+    $('#table').on('post-body.bs.table', function () {  // on('all.bs.table'
+        $('[data-toggle="tooltip"]').tooltip()
+    });
+
+    // POST delete command to controller
+    //----------------------------------
+    function DeleteItem() {
+        var itemId = $("#hiddenId").val();
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("Delete", "Companies")',
+            data: { Id: itemId },
+            beforeSend: function (request) {
+                request.setRequestHeader("RequestVerificationToken", $("[name='__RequestVerificationToken']").val());
+            },
+            success: function () {
+                $("#myModal").modal("hide")
+                //$("#row_" + itemId).remove();
+                window.location = "Companies/Index"
+            },
+            error: function() {
+                alert("Tato firma je přidělena nabídce/zakázce. Nelze ji odstranit.");
+                $("#myModal").modal("hide");
+            }
+        })
+    }
+
+    //function goContacts() {
+    //    $.ajax({
+    //        type: "get",
+    //        url: '@Url.Action("Edit", "Contacts", new { id = 2 })',
+    //        success: function (result) {
+    //            window.location = "Contacts/Index";
+    //        }
+    //    });
+    //}
+
+    // MODAL dialog for delete confirmation
+    //-------------------------------------
+    var ConfirmDelete = function (ItemId) {
+        $("#hiddenId").val(ItemId);
+        $("#myModal").modal('show');
+        $("#modalItemId").val( 'Hmm' + ItemId );
+    };
+
+
+    // Function to toggle Active/Disabled Contacts/Companies in table
+    //---------------------------------------------------------------
+    function ToggleActive() {
+        console.log("Hihi");
+        var btn = document.getElementById("btnToggleActive");
+
+        if (btn.children[0].className == "fa fa-eye-slash") {
+            btn.children[0].className = "fa fa-eye"
+            btn.lastChild.nodeValue = " Všichni (@Model.Count())"
+            var hiddenRows = document.getElementsByClassName("hide");
+            for(var i=0; i<hiddenRows.length; i++){
+                hiddenRows[i].className = "show hiddenBefore";
+            };
+        }
+        else {
+            btn.children[0].className = "fa fa-eye-slash"
+            btn.lastChild.nodeValue = " Aktivní (@Model.Count(m => m.Active) / @Model.Count())"
+            var hiddenRows = document.getElementsByClassName("show hiddenBefore");
+            for(var i=0; i<hiddenRows.length; i++){
+                hiddenRows[i].className = "hide";
+            }
+        }
+    }
+</script>
+}

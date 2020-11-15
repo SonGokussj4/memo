@@ -1,8 +1,415 @@
+@using System.Globalization;
+
 @{
     ViewData["Title"] = "Zakázky";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Zakázky</h1>
+@* @model IList<memo.Models.Order> *@
+@model memo.ViewModels.OrdersViewModel
 
+
+<style>
+    .notesWrap {
+        max-width: 200px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .centerHeader {
+        text-align: center;
+    }
+
+    .bootstrap-table .fixed-table-container .table thead th .sortable {
+        padding-right: 20px!important;
+    }
+
+    .itemInactive {
+        color: #9ba8b1;
+    }
+
+    .table-responsive {
+        position: absolute;
+        left: 2rem;
+        width: calc(100% - 4rem);
+        overflow-x: inherit;
+    }
+</style>
+
+@await Html.PartialAsync("_PartialToastNotification")
+
+<div class="text-center">
+    <h1 class="display-4">@ViewData["Title"]</h1>
+    <h3 style="color: green">@ViewBag.message</h3>
 </div>
+
+<div id="toolbar" style="padding-bottom: 10px;">
+    <a asp-action="Create" class="btn btn-outline-success">
+        <i class="fa fa-plus-square-o"></i> Nová zakázka
+    </a>
+    <button style="margin-right: 5px;" class="btn btn-outline-info" name="BtnMujFilter" id="BtnMujFilter" type="button">
+        <i class="fa fa-filter"></i> Filter
+    </button>
+    @if (ViewBag.ShowInactive == true)
+    {
+        <a asp-action="index" class="btn btn-outline-secondary" data-toggle="tooltip" title="Zobrazit pouze aktivní"><i class="fa fa-eye"></i> Vše (@Model.Orders.Count())</a>
+    }
+    else
+    {
+        <a asp-action="index" class="btn btn-outline-secondary" asp-route-ShowInactive="true" data-toggle="tooltip" title="Zobrazit vše"><i class="fa fa-eye-slash"></i> Aktivní (@Model.Orders.Count()/@ViewBag.AllOrdersCount)</a>
+    }
+</div>
+
+<div class="table-responsive">
+<table
+    id="table"
+    class="table table-sm text-xsmall text-nowrap"
+    style="width:100%"
+    data-cookie="true"
+    data-cookie-id-table="ordersTableCookie"
+    data-filter-control="false"
+    data-footer-style="footerStyle"
+    data-height="800"
+    @* data-pagination="true" *@
+    data-show-search-clear-button="true"
+    data-show-toggle="true"
+    data-show-columns-toggle-all="true"
+    data-show-columns="true"
+    data-show-fullscreen="true"
+    data-sort-name="DateCreated"
+    data-sort-order="desc"
+    data-search="true"
+    data-silent-sort="true"
+    data-show-footer="true"
+    data-toolbar="#toolbar"
+    data-toggle="table"
+    data-virtual-scroll="true"
+    data-visible-search="true"
+    @* data-reorderable-columns="true" *@
+    @* data-show-pagination-switch="true" *@
+    @* data-page-size="50" *@
+    @* data-page-list="[10, 25, 50, 100, 200, All]" *@
+    style="font-size: 0.9em;"
+    >
+    <thead>
+        <tr>
+            <th scope="col" class="text-center" data-field="0" data-sortable="true" data-filter-control="input" data-footer-formatter="idFormatter"></i>Edit</th>
+            <th scope="col" class="text-center" data-field="1" data-sortable="true"><span data-toggle="tooltip" title="Aktivní / Neaktivní"><i class="fa fa-eye text-secondary"></i></span></th>
+            <th scope="col" class="text-center" data-field="2" data-sortable="true" data-filter-control="input">Vytvořeno</th>
+            <th scope="col" class="text-center" data-field="3" data-sortable="true" data-filter-control="input">Nabídka</th>
+            <th scope="col" class="text-center" data-field="4" data-sortable="true" data-filter-control="input">Č. obj. zákazníka</th>
+            <th scope="col" class="text-center" data-field="5" data-sortable="true" data-filter-control="input">Zákazník</th>
+            <th scope="col" class="text-center" data-field="6" data-sortable="true" data-filter-control="input">Vedoucí<br />projektu</th>
+            <th scope="col" class="text-center" data-field="7" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatterCz"><div data-toggle="tooltip" title="Po odečtení poskytnuté slevy">Vyjednaná<br />cena</div></th>
+            <th scope="col" class="text-center" data-field="8" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatterProgress"><div data-toggle="tooltip" title="Součet fakturací + dalších nákladů">Aktuálně</div></th>
+            <th scope="col" class="text-center" data-field="9" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatterCz"><div data-toggle="tooltip" title="Částka, která zbývá do vyjednané ceny">Zbývá</div></th>
+            <th scope="col" class="text-center" data-field="10" data-sortable="true" data-filter-control="input">Poznámky</th>
+            <th scope="col" class="text-center" data-field="11" data-sortable="true" data-filter-control="input" data-footer-formatter="sumHoursFormatter">Vyčerpáno</th>
+            <th scope="col" class="text-center" data-field="12" data-sortable="true" data-filter-control="input" data-footer-formatter="sumHoursFormatter">Plánované<br />hod</th>
+            <th scope="col" class="text-center" data-field="13" data-sortable="true" data-filter-control="input">Využito</th>
+            <th scope="col" class="text-center" data-field="14" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatterCz">Skutečné<br />náklady [CZK]</th>
+            <th scope="col" class="text-center" data-field="15" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatterCz"><div data-toggle="tooltip" title="Skutečné náklady včetně dalších nákladů">Celkové skut.<br />náklady [CZK]</div></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Order item in Model.Orders)
+        {
+            <tr id="row_@item.OrderId" class="@(item.Active ? Html.Raw("itemActive") : Html.Raw("itemInactive"))">
+                @* Edit *@
+                <th scope="row" data-field="0">
+                    <a asp-action="Edit" asp-route-id=@item.OrderId><i class="fa fa-pencil fa-fw" aria-hidden="true"></i></a>
+                    <a href="#" onclick="ConfirmDelete(@item.OrderId)"><i class="fa fa-times fa-fw" style="color: red;", aria-hidden="true"></i></a>
+                </th>
+                @* Status *@
+                @if (item.Active is true)
+                {
+                    <th scope="row" class="text-center" data-toggle="tooltip" title="Aktivní">
+                        <a asp-action="Deactivate" asp-route-id="@item.OrderId" asp-route-showInactive="@ViewBag.showInactive"><i class="fa fa-eye text-success" aria-hidden="true"></i></a>
+                    </th>
+                }
+                else if (item.Active is false)
+                {
+                    <th scope="row" class="text-center" data-toggle="tooltip" title="Neaktivní">
+                        <a asp-action="Activate" asp-route-id="@item.OrderId" asp-route-showInactive="@ViewBag.showInactive"><i class="fa fa-eye-slash" style="color: #8a97a2;" aria-hidden="true"></i></a>
+                    </th>
+                }
+                @* Vytvořeno *@
+                <th scope="row" class="text-left">
+                    <span style="display:none">@String.Format("{0:yyyy-MM-dd HH:mm}", @item.CreatedDate)</span>  <!-- Hidden span for sorting date correctly-->
+                    @String.Format("{0:dd.MM.yyyy HH:mm}", @item.CreatedDate)
+                </th>
+                @* Nabídka *@
+                <th scope="row" class="text-left">@item.Offer?.OfferName</th>
+                @* Č. obj. zákazníka *@
+                <th scope="row" class="text-left">@item.OrderName</th>
+                @* Zákazník *@
+                <th scope="row" class="text-left">@item.Offer.Company.Name</th>
+                @* @{
+                    string OrderCodeTooltip = Model.cOrdersAll
+                        .Where(x => x.OrderCode == item.OrderCode)
+                        .Select(x => x.OrderName)
+                        .FirstOrDefault();
+                } *@
+                @* Kód EVE vykazování *@
+                @* <th scope="row" class="text-center" data-toggle="tooltip" data-html="true" title="@OrderCodeTooltip">@item.OrderCode</th> *@
+                @* Vedoucí projektu *@
+                <th scope="row" class="text-left">@item.EveContactName</th>
+                @* Vyjednaná cena *@
+                <th scope="row" class="text-right">@string.Format(CultureInfo.CreateSpecificCulture(@item.Offer?.Currency.CultureCode), "{0:C0}", @item.NegotiatedPrice)</th>
+                @* Aktuálně *@
+                <th scope="row" class="text-right">
+                    <span style="font-size: 0.9rem;">@string.Format(CultureInfo.CreateSpecificCulture(@item.Offer?.Currency.CultureCode), "{0:C0}", @item.PriceFinal)</span>
+                    <div class="progress" style="height: 5px;">
+                    @{
+                        int percentValue = (int)Math.Ceiling((double)item.PriceFinal / item.NegotiatedPrice * 100);
+                        string progressBarWidth = percentValue <= 100 ? (percentValue).ToString() : "100";
+                        string progressbarClassColor = percentValue <= 100 ? "" : "bg-danger";
+                    }
+                        <div class="progress-bar @progressbarClassColor progress-bar-striped" role="progressbar" style="width: @progressBarWidth%;"></div>
+                    </div>
+                </th>
+                @* Zbývá *@
+                <th scope="row" class="text-right">@string.Format(CultureInfo.CreateSpecificCulture(@item.Offer?.Currency.CultureCode), "{0:C0}", @item.NegotiatedPrice - @item.PriceFinal)</th>
+                @* Poznámky *@
+                <th scope="row" class="notesWrap" data-toggle="tooltip" data-html="true" title="@item.Notes">
+                    @item.Notes
+                </th>
+                @* Vyčerpáno *@
+                @{
+                    string burnedText = @item.Burned != 0 ?  String.Format("{0:# ### ###} hod", item.Burned / 60) : "";
+                }
+                <th scope="row" class="text-right">@burnedText</th>
+                @* Plánované hod *@
+                @{
+                    string totalHoursText = (@item.TotalHours != 0 && @item.TotalHours != null) ? totalHoursText = String.Format("{0:# ### ###} hod", item.TotalHours) : "";
+                }
+                <th scope="row" class="text-right">@totalHoursText</th>
+                @* Využito *@
+                @{
+                    decimal currentVal = 0;
+                    string tooltipText = "Nejsou zadány celkové hodiny";
+                    string currentValStr = "0.00";
+                    if (item.TotalHours.HasValue && item.TotalHours != 0)
+                    {
+                        currentVal = Convert.ToDecimal((decimal)item.Burned / 60 / item.TotalHours * 100);
+                        currentValStr = String.Format("{0:0.00}", currentVal);
+                        currentVal = (int)Math.Ceiling(currentVal);
+                        tooltipText = $"Využito: {currentValStr} % </br> Hodin: {item.Burned / 60} / {item.TotalHours}";
+                    }
+                    string backgroundClass = currentVal < 85 ? "bg-success" : (currentVal < 95 ? "bg-warning" : "bg-danger");
+
+                    <th scope="row" data-toggle="tooltip" data-html="true" title="@tooltipText">
+                        <span style="font-size: 0.8rem;">@currentValStr %</span>
+                        <div class="progress" style="height: 5px;">
+                            <div class="progress-bar @backgroundClass" role="progressbar" style="width: @currentVal%;"></div>
+                        </div>
+                    </th>
+                }
+                @* Skutečné náklady [CZK] *@
+                @* TODO: CO TADY??? HourWage je pryc, ted je z toho LIST *@
+                @* <th scope="row" class="text-right">@string.Format(CultureInfo.CreateSpecificCulture("cs-CZ"), "{0:C0}", @item.Burned * (@item.HourWage * (double)@item.ExchangeRate) / 60 )</th> *@
+                <th scope="row" class="text-right">@string.Format(CultureInfo.CreateSpecificCulture("cs-CZ"), "{0:C0}", 0)</th>
+                @* TODO: CO TADY??? HourWage je pryc, ted je z toho LIST *@
+                @* Celkové skut. náklady [CZK] *@
+                @* @{
+                    var mujlist = item.OtherCosts;
+                    var dalsi = item.OtherCosts.Where(x => x.OrderId == item.OrderId).Select(x => x.Cost).Sum() * item.ExchangeRate;
+                    var totalkaCzk = (decimal)(item.Burned * (item.HourWage * (double)item.ExchangeRate) / 60) + dalsi;
+                } *@
+                @* <th scope="row" class="text-right">@string.Format(CultureInfo.CreateSpecificCulture("cs-CZ"), "{0:C0}", totalkaCzk)</th> *@
+                <th scope="row" class="text-right">@string.Format(CultureInfo.CreateSpecificCulture("cs-CZ"), "{0:C0}", 0)</th>
+
+            </tr>
+        }
+    </tbody>
+</table>
+</div>
+
+
+<!-- Modal Confirm Delete-->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <!-- header -->
+            <div class="modal-header">
+                <h5 class="modal-title" id="myModalLabel">Smazání zakázky</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <!-- body -->
+            <div class="modal-body">
+                Opravdu smazat?
+                <span id="modalItemId"></span>
+            </div>
+            <!-- footer -->
+            <div class="modal-footer">
+                <a href="#" class="btn btn-default" data-dismiss="modal">Zpět</a>
+                <a href="#" class="btn btn-danger" onclick="DeleteItem()">Smazat</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*hidden field for storing current employeeId*@
+<input type="hidden" id="hiddenId" />
+
+
+@section scripts{
+<script>
+
+    // Reinitialize tooltips upon table change
+    $('#table').on('post-body.bs.table', function () {  // on('all.bs.table'
+        $('[data-toggle="tooltip"]').tooltip()
+    });
+
+
+    // POST delete command to controller
+    //----------------------------------
+    function DeleteItem() {
+        var itemId = $("#hiddenId").val();
+        $.ajax({
+            url: '@Url.Action("Delete", "Orders")',
+            type: "POST",
+            data: { Id: itemId },
+            //contentType: 'application/json; charset=utf-8',
+            //dataType: 'json',
+            //async: false,
+            beforeSend: function (request) {
+                request.setRequestHeader("RequestVerificationToken", $("[name='__RequestVerificationToken']").val());
+            },
+            success: function (msg) {
+                $("#myModal").modal("hide")
+                //$("#row_" + itemId).remove();
+                alert(msg);
+                window.location = "Orders/Index"
+            },
+            error: function(jqxhr, status, exception) {
+                alert("Nelze odstranit.");
+                $("#myModal").modal("hide");
+            }
+        })
+    }
+
+    // MODAL dialog for delete confirmation
+    //-------------------------------------
+    var ConfirmDelete = function (ItemId) {
+        $("#hiddenId").val(ItemId);
+        $("#myModal").modal('show');
+        $("#modalItemId").val( 'Hmm' + ItemId );
+    };
+
+    // Function to toggle Active/Disabled Contacts/Companies in table
+    //---------------------------------------------------------------
+    function ToggleActive() {
+        var btn = document.getElementById("btnToggleActive");
+
+        if (btn.children[0].className == "fa fa-eye-slash") {
+            // Change icon and text
+            btn.children[0].className = "fa fa-eye"
+            btn.lastChild.nodeValue = " Všichni (@Model.Orders.Count())"
+            var hiddenRows = document.querySelectorAll(".hide");
+            console.log(hiddenRows);
+            for(var i = 0; i < hiddenRows.length; i++){
+                hiddenRows[i].className = "show hiddenBefore";
+            }
+        }
+        else {
+            // Change icon and text
+            btn.children[0].className = "fa fa-eye-slash"
+            btn.lastChild.nodeValue = " Aktivní (@Model.Orders.Count(m => m.Active) / @Model.Orders.Count())"
+            var hiddenRows = document.querySelectorAll(".show.hiddenBefore");
+            for(var i = 0; i < hiddenRows.length; i++){
+                hiddenRows[i].className = "hide";
+            }
+        }
+    }
+
+    function idFormatter() {
+        return 'Total'
+    }
+
+    //function nameFormatter(data) {
+    //    return data.length
+    //}
+
+    function sumHoursFormatter(data) {
+        var field = parseInt(this.field);
+        var result = data.map(function (row) {
+            var hours = parseInt(row[field]
+                .replace("hod", '')
+                .replace(" ", '')
+            ) || 0;
+            return + hours
+        }).reduce(function (sum, i) {
+            return sum + i
+        }, 0)
+        return result.toLocaleString('cs-CZ') + ' hod'
+    }
+
+    function priceFormatterCz(data) {
+        var field = parseInt(this.field);
+        //var field = parseInt(this.field.replace(",", "").replace("&nbsp;", "").replace(" ", "").replace("Kč", ""));
+        //var field = parseInt(this.field).val().replace(/[^0-9]/g, '')
+        var vysledek = data.map(function (row) {
+            var cost = parseInt(row[field]
+                //.replace(/, (Kč)(&nbsp);/g, ''));
+                .replaceAllTxt(",", "")
+                .replaceAllTxt("&nbsp;", "")
+                .replaceAllTxt(" ", "")
+                .replaceAllTxt("Kč", "")
+                ) || 0;
+            //console.log(`CostCz: ${cost}`);
+            return + cost
+        }).reduce(function (sum, i) {
+            return sum + i
+        }, 0)
+        return vysledek.toLocaleString('cs-CZ') + ' Kč'
+    }
+
+    function priceFormatterProgress(data) {
+        var field = parseInt(this.field);
+        //var field = parseInt(this.field.replace(",", "").replace("&nbsp;", "").replace(" ", "").replace("Kč", ""));
+        //var field = parseInt(this.field).val().replace(/[^0-9]/g, '')
+        var vysledek = data.map(function (row) {
+            var cost = parseInt(row[field].substring(row[field].indexOf('">') + 2,row[field].indexOf('</span>'))
+                //.replace(/, (Kč)(&nbsp);/g, ''));
+                .replaceAllTxt(",", "")
+                .replaceAllTxt("&nbsp;", "")
+                .replaceAllTxt(" ", "")
+                .replaceAllTxt("Kč", "")
+                ) || 0;
+            //console.log(`CostProgress: ${cost}`);
+            return + cost
+        }).reduce(function (sum, i) {
+            return sum + i
+        }, 0)
+        return vysledek.toLocaleString("cs-CZ")
+    }
+
+    function priceFormatter(data) {
+        var field = parseInt(this.field.replace(",", "").replace("&nbsp;", "").replace(" ", "").replace("Kč", ""));
+        console.log(field);
+        //var field = parseInt(this.field).val().replace(/[^0-9]/g, '')
+        var vysledek = data.map(function (row) {
+            var cost = parseInt(row[field]
+                //.replace(/, (Kč)(&nbsp);/g, ''));
+                .replace(",", "")
+                .replace("&nbsp;", "")
+                .replace(" ", "")
+                .replace("Kč", "")
+            ) || 0;
+            return + cost
+        }).reduce(function (sum, i) {
+            return sum + i
+        }, 0)
+        return vysledek
+    }
+
+    function footerStyle(row, index) {
+        return {
+            css: {
+            "font-weight": "bold"
+            }
+        };
+    };
+
+</script>
+}

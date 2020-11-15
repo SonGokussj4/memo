@@ -16,9 +16,9 @@ namespace memo.Models
         [Key]
         public int OfferStatusId { get; set; }
         [StringLength(20)]
-        public string Status { get; set; }
+        public string Name { get; set; }
 
-        [InverseProperty("StatusNavigation")]
+        [InverseProperty("OfferStatus")]
         public virtual ICollection<Offer> Offer { get; set; }
     }
 }

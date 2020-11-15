@@ -1,0 +1,269 @@
+@using System.Globalization;
+
+@{
+    ViewData["Title"] = "Vyhodnocení";
+}
+
+@model memo.ViewModels.DashboardVM
+
+@await Html.PartialAsync("_PartialToastNotification")
+
+<div class="text-center">
+    <h1 class="display-6">@ViewData["Title"]</h1>
+    <hr />
+</div>
+
+@* @foreach (var item in @Model)
+{
+    <p>Item: @item.Month, Penizky: @string.Format(CultureInfo.CreateSpecificCulture("cs-CZ"), "{0:C}", item.Cash)</p>
+    <p>Item: @item.Month, Penizky: @item.Cash.ToString("C", CultureInfo.CreateSpecificCulture("ja-JP"))</p>
+} *@
+@*string.Format("{0:#.00}", Convert.ToDecimal(g.Sum(gi => gi.PriceFinalCzk))),
+@for (int i = 0; i < @Model.Months.Count; i++)
+{
+    <p>Mesic: @Model.Months[i], Penizky: @Model.PlannedCashPerMonth[i]</p>
+}
+*@
+
+<form class="form-inline" asp-action="Index" method="get">
+    <div class="container d-flex justify-content-around">
+        <div class="d-flex" style="flex-direction: column;">
+            <label class="mb-2 font-weight-bold">Období</label>
+            <select asp-for="TimePeriod" asp-items="@Model.TimePeriodList" class="form-control shadow-sm auto-post" data-toggle="tooltip" title="Vyberte časové rozmezí"></select>
+        </div>
+        <div class="d-flex" style="flex-direction: column;">
+            <label class="mb-2 font-weight-bold">Rok</label>
+            <select asp-for="Year" asp-items="@Model.YearList" class="form-control shadow-sm auto-post" data-toggle="tooltip" title="Zvolte rok"></select>
+        </div>
+        <div class="d-flex" style="flex-direction: column;">
+            <label class="mb-2 font-weight-bold">Oddělení</label>
+            <select asp-for="Department" asp-items="@Model.DepartmentList" class="form-control shadow-sm auto-post" data-toggle="tooltip" title="Zvolte oddělení"></select>
+        </div>
+        <div class="d-flex" style="flex-direction: column;">
+            <label class="mb-2 font-weight-bold">Zákazník</label>
+            <select asp-for="Customer" asp-items="@Model.CustomerList" class="form-control shadow-sm auto-post" data-toggle="tooltip" title="Zvolte zákazníka"></select>
+        </div>
+        @* <button id="btnFilter" type="submit" class="btn btn-primary" style="visibility: hidden;"><i class="fa fa-filter fa-fw"></i>Filtrovat</button> *@
+    </div>
+</form>
+
+<hr />
+
+<div class="container d-flex justify-content-center">
+
+    <div class="container d-flex justify-content-center">
+        <div class="card">
+            <div class="card-title text-center">
+                <h5>Očekávaný příjem</h5>
+                <h6>(Dle data a částky splatnosti faktur)</h6>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: center;">
+                <div id="chart_container" style="width: 400px;">
+                    <canvas id="bar_chart" width="400" height="400"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container d-flex justify-content-center">
+        <div class="card">
+            <div class="card-title text-center">
+                <h5>Status nabídek</h5>
+                <h6>(Dle data přijetí poptávky)</h6>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: center;">
+                <div id="chart_container" style="width: 400px;">
+                    <canvas id="chart_wonOffers" width="400" height="400"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<hr />
+
+<div class="container d-flex justify-content-center">
+
+<table
+    id="table"
+    class="table table-sm text-xsmall text-nowrap">
+    <thead>
+        <tr>
+            <th class="text-center">Oddělení</th>
+            @* <th><span data-toggle="tooltip" title="Vyhrané / (Vyhrané + Prohrané)">Úspěšnost</span></th> *@
+            <th scope="col" data-toggle="tooltip" title="Vyhrané / (Vyhrané + Prohrané)">Úspěšnost</th>
+            <th>(Vyhrané)</th>
+            <th>(Prohrané)</th>
+            <th>(Čekající)</th>
+            @* <th>Hodiny</th> *@
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in @Model.DashboardTableVM)
+        {
+        <tr>
+            <td class="text-left">@item.Department</td>
+            <td class="text-right">@item.SuccessRate.ToString("P")</td>
+            <td class="text-right">@item.WonSum</td>
+            <td class="text-right">@item.LostSum</td>
+            <td class="text-right">@item.WaitingSum</td>
+            @* <td class="text-right">---</td> *@
+        </tr>
+        }
+    </tbody>
+</table>
+
+
+</div>
+
+
+@section scripts{
+<script>
+
+
+    // Add .auto-post class to ComboBox, when changed, it will autosubmit form
+    $(document).ready(function () {
+        $('form').find('select.auto-post').change(function () {
+            if ($('form').find('select.auto-post').val() != "range") {
+                $(this).parents('form').submit();
+            }
+            else{
+                $(".TimePeriod").show();
+                //document.getElementsByClassName("TimePeriod").style.visibility = "hidden";
+                console.log("Zobrazuji");
+            }
+        });
+
+        //$('form').find('#TimePeriod').change(function() {
+        //    console.log("Hmm");
+        //    var hmm = $(this).find('InputRanges')
+        //    console.log(`hmm: ${hmm}`);
+        //});
+    });
+
+    // ----------------------------------------------------------------------------------------------
+    // Graf - Očekávaný příjem v průběhu měsíců
+    // ----------------------------------------------------------------------------------------------
+
+    var filter = @Html.Raw(Json.Serialize(Model.TimePeriod))
+    var items = @Html.Raw(Json.Serialize(Model.DashboardCashVM));
+    if (filter == "months")
+    {
+        var monthArray = items.map(a => new Date(a.month).toLocaleString('cs-CZ', { month: 'long' }));
+    }
+    else if(filter == "weeks")
+    {
+        var monthArray = items.map(a => a.week);
+    }
+    var cashArray = items.map(a => a.cash);
+
+    var ctx = document.getElementById('bar_chart');
+
+    var barChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: monthArray,
+            datasets: [{
+                label: 'Příjem v Kč',
+                data: cashArray,
+                fillColor: "#79D1CF",
+                backgroundColor: '#4d8fdb',
+                borderColor: '#4179ba',
+                borderWidth: 1,
+                barPercentage: 0.8,
+            }]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true,
+                        callback: function(value, index, values) {
+                            return value.toLocaleString('cs-CZ') + ' Kč';
+                        }
+                    }
+                }],
+            },
+            tooltips: {
+                callbacks: {
+                    label: function(tooltipItem, data) {
+                        return tooltipItem.yLabel.toLocaleString('cs-CZ') + ' Kč';
+                    }
+                }
+            }
+        }
+    });
+
+    // ----------------------------------------------------------------------------------------------
+    // Graf - Vyhrané/celkem zadané nabídky v průběhu měsíců
+    // ----------------------------------------------------------------------------------------------
+    var ctx = document.getElementById('chart_wonOffers');
+
+    var items = @Html.Raw(Json.Serialize(Model.DashboardWonOffersVM));
+    var monthArray = items.map(a => new Date(a.month).toLocaleString('cs-CZ', { month: 'long' }));
+    var allArray = items.map(a => a.all);
+    var waitArray = items.map(a => a.wait);
+    var wonArray = items.map(a => a.won);
+    var lostArray = items.map(a => a.lost);
+
+    var barChart = new Chart(ctx, {
+        type: 'horizontalBar',
+        data: {
+            labels: monthArray,
+            datasets: [
+                {
+                    label: 'Čekají',
+                    data: waitArray,
+                    fillColor: "#949494",
+                    backgroundColor: '#949494',
+                    borderColor: '#6e6e6e',
+                    borderWidth: 1,
+                    barPercentage: 0.8,
+                },
+                {
+                    label: 'Vyhrané',
+                    data: wonArray,
+                    fillColor: "#79D1CF",
+                    backgroundColor: '#2db53a',
+                    borderColor: '#208029',
+                    borderWidth: 1,
+                    barPercentage: 0.8,
+                },
+                {
+                    label: 'Prohrané',
+                    data: lostArray,
+                    fillColor: "#79D1CF",
+                    backgroundColor: 'rgba(255, 0, 0, 0.6)',
+                    borderColor: 'rgba(230, 20, 20, 0.8)',
+                    borderWidth: 1,
+                    barPercentage: 0.8,
+                },
+            ]
+        },
+        options: {
+            scales: {
+                xAxes: [{
+                    ticks: {
+                        beginAtZero: true,
+                        steps: 1,
+                        stepValue: 1,
+                        min: 0,
+                        callback: function(value, index, values) {
+                            return value.toLocaleString('cs-CZ');
+                        }
+                    }
+                }],
+            },
+            tooltips: {
+                callbacks: {
+                    label: function(tooltipItem, data) {
+                        return ' ' + tooltipItem.xLabel.toLocaleString('cs-CZ') + ' / ' + allArray[tooltipItem.index] + ' - ' + data.datasets[tooltipItem.datasetIndex].label;
+                    }
+                }
+            }
+        }
+    });
+
+</script>
+}
