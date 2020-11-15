@@ -60,7 +60,7 @@ function initializeSelectpicker() {
     console.log("Initializing Selectpicker");
     $('.selectpicker').select2({
         // dropdownCssClass: 'form-control',
-        minimumInputLength: 1,  // minimum number of characters required to start a search
+        minimumInputLength: 0,  // minimum number of characters required to start a search
         dropdownAutoWidth: true,  // make width of the dropdown to MAX of the longest item
     });
 }
@@ -187,3 +187,30 @@ function OrderCodeToInput(id) {
 // Fix Select2 not able to write text when in popup Modal
 // Source: https://stackoverflow.com/questions/18487056/select2-doesnt-work-when-embedded-in-a-bootstrap-modal/19574076#19574076
 $.fn.modal.Constructor.prototype._enforceFocus = function () { };
+
+
+// ==========================================================================
+// OTHER
+// ==========================================================================
+$("#opt1").click(function () {
+    $(".new-order-from-offer").show();
+    $(".new-order-from-contract").hide();
+    $(this).parent().addClass("selected");
+    $("#opt2").parent().removeClass("selected");
+    $("#opt3").parent().removeClass("selected");
+});
+$("#opt2").click(function () {
+    $(".new-order-from-offer").hide();
+    $(".new-order-from-contract").show();
+    $(this).parent().addClass("selected");
+    $("#opt1").parent().removeClass("selected");
+    $("#opt3").parent().removeClass("selected");
+});
+$("#opt3").click(function () {
+    $(".new-order-from-offer").hide();
+    $(".new-order-from-contract").hide();
+    $(this).parent().addClass("selected");
+    $("#opt1").parent().removeClass("selected");
+    $("#opt2").parent().removeClass("selected");
+});
+
