@@ -246,7 +246,7 @@ namespace memo.Controllers
             vm.DashboardWonOffersVM = viewModelWonOffers;
 
             // ===========================================================================================================
-            // TABLE
+            // TABLE - Successes
             // ===========================================================================================================
             List<DashboardTableVM> dashboardTableVMs = new List<DashboardTableVM>();
             var departments = await _db.Offer.Select(x => x.EveDepartment).Distinct().ToListAsync();
@@ -273,6 +273,29 @@ namespace memo.Controllers
                 dashboardTableVMs.Add(dashboardTableVM);
             }
             vm.DashboardTableVM = dashboardTableVMs;
+
+
+            // ===========================================================================================================
+            // TABLE - Invoices
+            // ===========================================================================================================
+            List<DashboardInvoiceTableViewModel> dashboardInvoiceTableViewModels = new List<DashboardInvoiceTableViewModel>();
+            var invoicesList = await _db.Invoice.Include(x => x.Order).ToListAsync();
+            foreach (var invoice in invoicesList)
+            {
+                // Need to load related data (3rd jump of related entities is null?)
+                _db.Entry(invoice.Order.Offer).Reference(p => p.Currency).Load();
+
+                DashboardInvoiceTableViewModel dashboardInvoiceTableViewModel = new DashboardInvoiceTableViewModel()
+                {
+                    Invoice = invoice,
+                    Order = invoice.Order,
+                    Company = invoice.Order.Offer.Company,
+                    Currency = invoice.Order.Offer.Currency,
+                };
+
+                dashboardInvoiceTableViewModels.Add(dashboardInvoiceTableViewModel);
+            }
+            vm.DashboardInvoiceTableViewModel = dashboardInvoiceTableViewModels;
 
             return View(vm);
         }
