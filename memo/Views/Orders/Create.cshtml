@@ -31,6 +31,9 @@
         padding-bottom: 4px;
         border-radius: 4%;
     }
+    .new-order-radios label:hover {
+        cursor: pointer;
+    }
     .new-order-radios label.selected {
         border-bottom: 4px solid #5ca9ef;
     }
@@ -70,6 +73,7 @@
         </div>
 
         <div class="form-group row justify-content-center mt-3">
+
             <div class="col-lg-7 new-order-from-offer">
                 <input type="hidden" asp-for="Order.OrderId" />
                 <select asp-for="OfferId" asp-items="ViewBag.WonOffersList" class="form-control selectpicker" onchange="this.form.submit();">
@@ -77,6 +81,7 @@
                 </select>
                 <span asp-validation-for="Order.OfferId" class="text-danger"></span>
             </div>
+
             <div class="col-lg-7 new-order-from-contract" style="display: none;">
                 <input type="hidden" asp-for="Order.OrderId" />
                 @* <select asp-for="OfferId" asp-items="ViewBag.WonOffersList" class="form-control selectpicker" onchange="this.form.submit();"> *@
@@ -84,7 +89,17 @@
                     <option select="">-- Vyber rámcovou smlouvu --</option>
                 </select>
                 @* <span asp-validation-for="Order.OfferId" class="text-danger"></span> *@
+                <div>
+                    <h3>Prozatím nefunguje</h3>
+                </div>
             </div>
+
+            <div class="col-lg-7 new-order-from-other" style="display: none;">
+                <div>
+                    <h3>Prozatím nefunguje - má to tu být?</h3>
+                </div>
+            </div>
+
         </div>
 
 

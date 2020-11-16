@@ -135,6 +135,9 @@ function floatingLabelsInit () {
     }).focusout(); //trigger the focusout event manually
 }
 
+// ==========================================================================
+// NOTIFICATIONS - ALERTS
+// ==========================================================================
 $("#success-alert").fadeTo(4000, 500).slideUp(500, function(){
     $("#success-alert").slideUp(500);
 });
@@ -145,8 +148,6 @@ $("#error-alert").fadeTo(60000, 500).slideUp(500, function(){
     $("#error-alert").slideUp(500);
 });
 
-// Add 'replaceAll()' function to JavaScript Strings
-String.prototype.replaceAllTxt = function replaceAll(search, replace) { return this.split(search).join(replace); };
 
 // Ajax modal popup the partial view
 function initializeOrderAjaxModalClickEvent() {
@@ -188,6 +189,9 @@ function OrderCodeToInput(id) {
 // Source: https://stackoverflow.com/questions/18487056/select2-doesnt-work-when-embedded-in-a-bootstrap-modal/19574076#19574076
 $.fn.modal.Constructor.prototype._enforceFocus = function () { };
 
+// Add 'replaceAll()' function to JavaScript Strings
+String.prototype.replaceAllTxt = function replaceAll(search, replace) { return this.split(search).join(replace); };
+
 
 // ==========================================================================
 // OTHER
@@ -195,6 +199,7 @@ $.fn.modal.Constructor.prototype._enforceFocus = function () { };
 $("#opt1").click(function () {
     $(".new-order-from-offer").show();
     $(".new-order-from-contract").hide();
+    $(".new-order-from-other").hide();
     $(this).parent().addClass("selected");
     $("#opt2").parent().removeClass("selected");
     $("#opt3").parent().removeClass("selected");
@@ -202,6 +207,7 @@ $("#opt1").click(function () {
 $("#opt2").click(function () {
     $(".new-order-from-offer").hide();
     $(".new-order-from-contract").show();
+    $(".new-order-from-other").hide();
     $(this).parent().addClass("selected");
     $("#opt1").parent().removeClass("selected");
     $("#opt3").parent().removeClass("selected");
@@ -209,6 +215,7 @@ $("#opt2").click(function () {
 $("#opt3").click(function () {
     $(".new-order-from-offer").hide();
     $(".new-order-from-contract").hide();
+    $(".new-order-from-other").show();
     $(this).parent().addClass("selected");
     $("#opt1").parent().removeClass("selected");
     $("#opt2").parent().removeClass("selected");
