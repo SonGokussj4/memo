@@ -18,17 +18,17 @@ namespace memo.Controllers
     {
         public ApplicationDbContext _db { get; }
         // public EvektorDbContext _eveDb { get; }
-        // public EvektorDochnaDbContext _eveDbDochna { get; }
+        public EvektorDochnaDbContext _eveDbDochna { get; }
         protected readonly IWebHostEnvironment _env;
 
         public ContractsController(ApplicationDbContext db,
                                 // EvektorDbContext eveDb,
-                                // EvektorDochnaDbContext eveDbDochna,
+                                EvektorDochnaDbContext eveDbDochna,
                                 IWebHostEnvironment hostEnvironment) : base(hostEnvironment)
         {
             _db = db;
             // _eveDb = eveDb;
-            // _eveDbDochna = eveDbDochna;
+            _eveDbDochna = eveDbDochna;
             _env = hostEnvironment;
         }
 
@@ -40,14 +40,24 @@ namespace memo.Controllers
         [HttpGet]
         public async Task<IActionResult> Create()
         {
-            return View();
+            CreateContractViewModel vm = new CreateContractViewModel()
+            {
+                Contract = new Contract()
+            };
+            vm.Contract.ReceiveDate = DateTime.Now;
+
+            await populateModelAsync(vm);
+
+            return View(vm);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Contract contract)
+        public async Task<IActionResult> Create(CreateContractViewModel vm)
         {
-            return View();
+            TempData["error"] = "Nepovedlo se vytvořit...";
+            await populateModelAsync(vm);
+            return View(vm);
         }
 
         // GET: Offer/Edit/5
@@ -144,31 +154,42 @@ namespace memo.Controllers
         //     return RedirectToAction("Index", new { showInactive });
         // }
 
-        // private void populateModel(Offer model, int id)
-        // {
-        //     // Populate
-        //     ViewBag.DepartmentList = getDepartmentList(_eveDbDochna);
-        //     // ViewBag.CompanyList = new SelectList(_db.Company.ToList(), "CompanyId", "Name");
-        //     ViewBag.ContactList = new SelectList((
-        //         from s in _db.Contact.ToList()
-        //         select new {
-        //             ContactId = s.ContactId,
-        //             FullName = s.PersonName + " " + s.PersonLastName
-        //         }
-        //     ), "ContactId", "FullName");
-        //     ViewBag.EveContactList = getEveContacts(_eveDbDochna);
-        //     ViewBag.CurrencyList = new SelectList(_db.Currency.ToList(), "CurrencyId", "Name");
-        //     // ViewBag.OfferStatusList = new SelectList(_db.OfferStatus.ToList(), "OfferStatusId", "Status");
+        private async Task populateModelAsync(CreateContractViewModel vm)
+        {
+            List<Company> companies = await _db.Company.OrderBy(x => x.Name).ToListAsync();
+            vm.CompanyList = companies
+                .Select(x => new SelectListItem {
+                    Value = x.CompanyId.ToString(),
+                    Text = x.Name
+                });
 
-        //     if (model != null)
-        //     {
-        //         ViewBag.OfferStatusName = _db.OfferStatus.Find(model.OfferStatusId).Name;
-        //     }
+            List<Contact> contacts = await _db.Contact.OrderBy(x => x.PersonLastName).ToListAsync();
+            vm.ContactList = contacts
+                .Select(x => new SelectListItem {
+                    Value = x.ContactId.ToString(),
+                    Text = $"{x.PersonLastName} {x.PersonName}"
+                });
 
-        //     if (id != 0)
-        //     {
-        //         ViewBag.CreatedOrders = _db.Order.Include(x => x.Offer).Where(x => x.OfferId == id).ToList();
-        //     }
-        // }
+            List<Currency> currencies = await _db.Currency.ToListAsync();
+            vm.CurrencyList = currencies
+                .Select(x => new SelectListItem {
+                    Value = x.CurrencyId.ToString(),
+                    Text = $"{x.Name} - {getCurrencyStr(x.Name)}"
+                });
+
+            // vm.DepartmentList = await getDepartmentListAsync2(_eveDbDochna);  // TODO zjistit, co je rychlejsi (tohle nějak failuje)
+            vm.DepartmentList = await getDepartmentListAsync(_eveDbDochna);
+            vm.EveContactList = await getEveContactsAsync(_eveDbDochna);
+
+            // Fill default Division/Department/Username values of logged in user
+            string domainAndUsername = User.GetLoggedInUserName();
+            string username = domainAndUsername.Split('\\').LastOrDefault();
+            int userId = await _eveDbDochna.tUsers.Where(x => x.TxAccount == username).Select(x => x.Id).FirstOrDefaultAsync();
+
+            vEmployees employee = await _eveDbDochna.vEmployees.Where(x => x.Id == userId).FirstOrDefaultAsync();
+            vm.Contract.EveCreatedUser = employee.FormatedName;
+            vm.Contract.EveDepartment = employee.DepartName;
+            vm.Contract.EveDivision = employee.EVE == 1 ? "EVE" : "EVAT";
+        }
     }
 }

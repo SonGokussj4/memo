@@ -9,6 +9,9 @@ CREATE TABLE [memo].[Contracts]
     [ContractsId] int PRIMARY KEY IDENTITY(1, 1),
     [ReceiveDate] date NOT NULL,
     [Subject] nvarchar(max),
+    [EveDivision] nvarchar(50) NOT NULL,
+    [EveDepartment] nvarchar(50) NOT NULL,
+    [EveCreatedUser] nvarchar(50) NOT NULL,
     [ContactId] int NOT NULL,
     [CompanyId] int NOT NULL,
     [Price] int,
@@ -21,11 +24,14 @@ CREATE TABLE [memo].[Contracts]
     [ModifiedBy] nvarchar(50),
     [CreatedDate] datetime,
     [ModifiedDate] datetime,
-    CONSTRAINT [FK__memo.Contracts__memo.Contact__ContactId] FOREIGN KEY ([ContactId])
+    CONSTRAINT [FK__memo.Contracts__memo.Contact__ContactId]
+        FOREIGN KEY ([ContactId])
         REFERENCES [memo].[Contact] ([ContactId]),
-    CONSTRAINT [FK__memo.Contracts__memo.Company__CompanyId] FOREIGN KEY ([CompanyId])
+    CONSTRAINT [FK__memo.Contracts__memo.Company__CompanyId]
+        FOREIGN KEY ([CompanyId])
         REFERENCES [memo].[Company] ([CompanyId]),
-    CONSTRAINT [FK__memo.Contracts__memo.Currency__CurrencyId] FOREIGN KEY ([CurrencyId])
+    CONSTRAINT [FK__memo.Contracts__memo.Currency__CurrencyId]
+        FOREIGN KEY ([CurrencyId])
         REFERENCES [memo].[Currency] ([CurrencyId])
     -- ON DELETE CASCADE
 )

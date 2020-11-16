@@ -19,8 +19,8 @@
 
 // Parameters for DatePicker calendar
 var datepickerParameters = new Array({
-    format: "yyyy-mm-dd",
-    // format: "dd.mm.yyyy",
+    // format: "yyyy-mm-dd",
+    format: "dd.mm.yyyy",
     todayBtn: "linked",
     startDate: "1980-01-01",
     language: "cs",

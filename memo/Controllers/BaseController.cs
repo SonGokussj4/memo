@@ -211,6 +211,37 @@ namespace memo.Controllers
             return new SelectList(eveDepartmentList, "Value", "Text");
         }
 
+        public async Task<SelectList> getDepartmentListAsync(EvektorDochnaDbContext _eveDbDochna)
+        {
+            List<vEmployees> employees = await _eveDbDochna.vEmployees
+                .Where(x => x.EVE == 1)
+                .OrderBy(x => x.DepartName)
+                .ToListAsync();
+
+            IEnumerable<SelectListItem> eveDepartmentList = employees
+                .Select(x => new SelectListItem {
+                    Value = x.DepartName,
+                    Text = x.DepartName,
+                })
+                .Distinct(new SelectListItemComparer());
+
+            return new SelectList(eveDepartmentList, "Value", "Text");
+        }
+
+        public async Task<List<SelectListItem>> getDepartmentListAsync2(EvektorDochnaDbContext _eveDbDochna)
+        {
+            IQueryable<SelectListItem> eveDepartmentList = _eveDbDochna.vEmployees
+                .Where(x => x.EVE == 1)
+                .Select(x => new SelectListItem {
+                    Value = x.DepartName,
+                    Text = x.DepartName,
+                })
+                .OrderBy(x => x.Text)
+                .Distinct(new SelectListItemComparer());
+
+            return await eveDepartmentList.ToListAsync();
+        }
+
         public SelectList getOrderCodes(EvektorDbContext _eveDb)
         {
             IOrderedEnumerable<SelectListItem> eveOrderCodes = _eveDb.cOrders

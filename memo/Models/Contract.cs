@@ -18,12 +18,24 @@ namespace memo.Models
         public int ContractsId { get; set; }
 
         [Required]
-        [Display(Name = "Datum přijetí rámcové smlouvy"), Column(TypeName = "date"), DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+        [Display(Name = "Datum přijetí rámcové smlouvy"), Column(TypeName = "date"), DisplayFormat(DataFormatString = "{0:dd.MM.yyyy}", ApplyFormatInEditMode = true)]
         public DateTime ReceiveDate { get; set; }
 
         [Required]
         [Display(Name = "Předmět rámcové smlouvy"), Column(TypeName = "nvarchar(max)")]
         public string Subject { get; set; }
+
+        [Required]
+        [Display(Name = "EVE divize"), StringLength(50)]
+        public string EveDivision { get; set; }
+
+        [Required]
+        [Display(Name = "EVE oddělení"), StringLength(50)]
+        public string EveDepartment { get; set; }
+
+        [Required]
+        [Display(Name = "EVE zadal"), StringLength(50)]
+        public string EveCreatedUser { get; set; }
 
         [Required]
         [Display(Name = "Kontakt")]
@@ -35,16 +47,14 @@ namespace memo.Models
         public int CompanyId { get; set; }
         public Company Company { get; set; }
 
-        [Required]
         [Display(Name = "Cena bez DPH")]
-        public int Price { get; set; }
+        public int? Price { get; set; }
 
         [Display(Name = "Cena v CZK")]
-        public int PriceCzk { get; set; }
+        public int? PriceCzk { get; set; }
 
-        [Required]
         [Display(Name = "Měna")]
-        public int CurrencyId { get; set; }
+        public int? CurrencyId { get; set; }
         public Currency Currency { get; set; }
 
         [Display(Name = "Směnný kurz")]
