@@ -22,7 +22,7 @@ namespace memo.Helpers
         {
             {"BugReport", typeof(BugReport)},
             {"Offer", typeof(Offer)},
-            {"Offer", typeof(Offer)},
+            {"Order", typeof(Order)},
             {"Contract", typeof(Contract)},
             {"Invoice", typeof(Invoice)},
             {"Company", typeof(Company)},
