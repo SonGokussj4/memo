@@ -81,6 +81,7 @@ namespace memo.Controllers
                 await _db.SaveChangesAsync(User.GetLoggedInUserName());
 
                 TempData["success"] = "Rámcová smlouva vytvořena";
+                return RedirectToAction("Index");
             }
 
             TempData["error"] = "Nepovedlo se vytvořit...";

@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace memo.Models
 {
-    [NotMapped]
     [Table("Contracts", Schema = "memo")]
     public partial class Contract
     {
