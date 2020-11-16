@@ -11,6 +11,8 @@ using memo.Models;
 using memo.ViewModels;
 using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Hosting;
+using System.Globalization;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace memo.Controllers
 {
@@ -44,6 +46,8 @@ namespace memo.Controllers
             {
                 Contract = new Contract()
             };
+
+            // Default values
             vm.Contract.ReceiveDate = DateTime.Now;
 
             await populateModelAsync(vm);
@@ -55,6 +59,30 @@ namespace memo.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreateContractViewModel vm)
         {
+            await CheckIfAlreadyExistsAsync(ModelState, vm);
+
+            if (ModelState.IsValid)
+            {
+                // If user inputs Price, write ExchangeRate and compute PriceCzk
+                if (vm.Contract.Price != null)
+                {
+                    string currencyName = await _db.Currency
+                        .Where(x => x.CurrencyId == vm.Contract.CurrencyId).Select(x => x.Name).FirstOrDefaultAsync();
+                    string exchangeRateStr = getCurrencyStr(currencyName.Replace(",", "."));
+                    vm.Contract.ExchangeRate = Decimal.Parse(exchangeRateStr, CultureInfo.InvariantCulture);
+                    vm.Contract.PriceCzk = (int?)(vm.Contract.Price * vm.Contract.ExchangeRate);
+                }
+                vm.Contract.CreatedBy = User.GetLoggedInUserName();
+                vm.Contract.ModifiedBy = vm.Contract.CreatedBy;
+                vm.Contract.CreatedDate = DateTime.Now;
+                vm.Contract.ModifiedDate = vm.Contract.CreatedDate;
+
+                await _db.AddAsync(vm.Contract);
+                await _db.SaveChangesAsync(User.GetLoggedInUserName());
+
+                TempData["success"] = "Rámcová smlouva vytvořena";
+            }
+
             TempData["error"] = "Nepovedlo se vytvořit...";
             await populateModelAsync(vm);
             return View(vm);
@@ -174,7 +202,7 @@ namespace memo.Controllers
             vm.CurrencyList = currencies
                 .Select(x => new SelectListItem {
                     Value = x.CurrencyId.ToString(),
-                    Text = $"{x.Name} - {getCurrencyStr(x.Name)}"
+                    Text = $"{x.Name} (kurz {getCurrencyStr(x.Name)})"
                 });
 
             // vm.DepartmentList = await getDepartmentListAsync2(_eveDbDochna);  // TODO zjistit, co je rychlejsi (tohle nějak failuje)
@@ -190,6 +218,19 @@ namespace memo.Controllers
             vm.Contract.EveCreatedUser = employee.FormatedName;
             vm.Contract.EveDepartment = employee.DepartName;
             vm.Contract.EveDivision = employee.EVE == 1 ? "EVE" : "EVAT";
+        }
+
+        private async Task CheckIfAlreadyExistsAsync(ModelStateDictionary modelState, CreateContractViewModel vm)
+        {
+            // Check if ContractName exists, if yes, add model error...
+            Contract existingContract = await _db.Contracts
+                .Where(x => x.ContractName == vm.Contract.ContractName)
+                .FirstOrDefaultAsync();
+
+            if (existingContract != null)
+            {
+                ModelState.AddModelError("ContractName", "Číslo rámcové smlouvy již existuje. Zvolte jiné, nebo upravte stávající.");
+            }
         }
     }
 }

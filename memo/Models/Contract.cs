@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace memo.Models
 {
+    [NotMapped]
     [Table("Contracts", Schema = "memo")]
     public partial class Contract
     {
@@ -16,6 +17,10 @@ namespace memo.Models
         [Key]
         [Display(Name = "ID")]
         public int ContractsId { get; set; }
+
+        [Required]
+        [Display(Name = "Číslo rámcové smlouvy"), StringLength(50)]
+        public string ContractName { get; set; }
 
         [Required]
         [Display(Name = "Datum přijetí rámcové smlouvy"), Column(TypeName = "date"), DisplayFormat(DataFormatString = "{0:dd.MM.yyyy}", ApplyFormatInEditMode = true)]
@@ -60,7 +65,7 @@ namespace memo.Models
         [Display(Name = "Směnný kurz")]
         [Column(TypeName = "decimal(18,3)")]
         [RegularExpression(@"\d+([,.]\d+)?", ErrorMessage = "Pouze čísla s čárkou. Např: 26,49")]
-        public decimal ExchangeRate { get; set; }
+        public decimal? ExchangeRate { get; set; }
 
         [Display(Name = "Poznámky"), Column(TypeName = "nvarchar(max)")]
         public string Notes { get; set; }

@@ -7,6 +7,7 @@ GO
 CREATE TABLE [memo].[Contracts]
 (
     [ContractsId] int PRIMARY KEY IDENTITY(1, 1),
+    [ContractName] nvarchar(50) NOT NULL,
     [ReceiveDate] date NOT NULL,
     [Subject] nvarchar(max),
     [EveDivision] nvarchar(50) NOT NULL,
