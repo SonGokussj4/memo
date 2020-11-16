@@ -36,7 +36,13 @@ namespace memo.Controllers
 
         public async Task<IActionResult> Index()
         {
-            return View();
+            IEnumerable<Contract> contracts = await _db.Contracts.ToListAsync();
+            IndexContractViewModel vm = new IndexContractViewModel()
+            {
+                Contracts = contracts
+            };
+
+            return View(vm);
         }
 
         [HttpGet]

@@ -4,7 +4,7 @@
     ViewData["Title"] = "Rámcové smlouvy";
 }
 
-@* @model IList<memo.Models.Offer> *@
+@model memo.ViewModels.IndexContractViewModel
 
 <style>
     .notesWrap {
@@ -110,7 +110,12 @@
         </tr>
     </thead>
     <tbody>
-
+        @foreach (Contract item in Model.Contracts)
+        {
+            <tr id="row_@item.ContractsId" class="@(item.Active ? Html.Raw("itemActive") : Html.Raw("itemInactive"))">
+                <th scope="row" class="text-left">@item.EveDepartment</th>
+            </tr>
+        }
     </tbody>
 </table>
 </div>
