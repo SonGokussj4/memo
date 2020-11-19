@@ -5,19 +5,16 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace memo.ViewModels
 {
-    public class CreateContractViewModel
+    public class EditContractViewModel
     {
-        public CreateContractViewModel()
+        public EditContractViewModel()
         {
         }
 
         // public IEnumerable<Contract> Contracts { get; set; }
         public Contract Contract { get; set; }
 
-        // public int CompanyId { get; set; }
-        // public int ContactId { get; set; }
-
-        // SelectLists
+        // // SelectLists
         public IEnumerable<SelectListItem> CompanyList { get; set; }
         public IEnumerable<SelectListItem> ContactList { get; set; }
         public IEnumerable<SelectListItem> CurrencyList { get; set; }
@@ -29,5 +26,7 @@ namespace memo.ViewModels
         };
         public IEnumerable<SelectListItem> DepartmentList { get; set; }
         public IEnumerable<SelectListItem> EveContactList { get; set; }
+
+        public IEnumerable<AuditViewModel> Audits { get; set; }
     }
 }

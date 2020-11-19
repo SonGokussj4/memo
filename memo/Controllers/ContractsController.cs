@@ -36,7 +36,11 @@ namespace memo.Controllers
 
         public async Task<IActionResult> Index()
         {
-            IEnumerable<Contract> contracts = await _db.Contracts.ToListAsync();
+            IEnumerable<Contract> contracts = await _db.Contracts
+                .Include(x => x.Contact)
+                .Include(x => x.Currency)
+                .Include(x => x.Company)
+                .ToListAsync();
             IndexContractViewModel vm = new IndexContractViewModel()
             {
                 Contracts = contracts
@@ -65,34 +69,37 @@ namespace memo.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreateContractViewModel vm)
         {
+            // Check for duplicate, raise Invalid ModelState if the same ContractName is found
             await CheckIfAlreadyExistsAsync(ModelState, vm);
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                // If user inputs Price, write ExchangeRate and compute PriceCzk
-                if (vm.Contract.Price != null)
-                {
-                    string currencyName = await _db.Currency
-                        .Where(x => x.CurrencyId == vm.Contract.CurrencyId).Select(x => x.Name).FirstOrDefaultAsync();
-                    string exchangeRateStr = getCurrencyStr(currencyName.Replace(",", "."));
-                    vm.Contract.ExchangeRate = Decimal.Parse(exchangeRateStr, CultureInfo.InvariantCulture);
-                    vm.Contract.PriceCzk = (int?)(vm.Contract.Price * vm.Contract.ExchangeRate);
-                }
-                vm.Contract.CreatedBy = User.GetLoggedInUserName();
-                vm.Contract.ModifiedBy = vm.Contract.CreatedBy;
-                vm.Contract.CreatedDate = DateTime.Now;
-                vm.Contract.ModifiedDate = vm.Contract.CreatedDate;
-
-                await _db.AddAsync(vm.Contract);
-                await _db.SaveChangesAsync(User.GetLoggedInUserName());
-
-                TempData["success"] = "Rámcová smlouva vytvořena";
-                return RedirectToAction("Index");
+                TempData["error"] = "Nepovedlo se vytvořit...";
+                await populateModelAsync(vm);
+                return View(vm);
             }
 
-            TempData["error"] = "Nepovedlo se vytvořit...";
-            await populateModelAsync(vm);
-            return View(vm);
+            // If user inputs Price, write ExchangeRate and compute PriceCzk
+            if (vm.Contract.Price != null)
+            {
+                string currencyName = await _db.Currency
+                    .Where(x => x.CurrencyId == vm.Contract.CurrencyId).Select(x => x.Name).FirstOrDefaultAsync();
+                string exchangeRateStr = getCurrencyStr(currencyName.Replace(",", "."));
+                vm.Contract.ExchangeRate = Decimal.Parse(exchangeRateStr, CultureInfo.InvariantCulture);
+                vm.Contract.PriceCzk = (int?)(vm.Contract.Price * vm.Contract.ExchangeRate);
+            }
+
+            vm.Contract.CreatedBy = User.GetLoggedInUserName();
+            vm.Contract.ModifiedBy = vm.Contract.CreatedBy;
+            vm.Contract.CreatedDate = DateTime.Now;
+            vm.Contract.ModifiedDate = vm.Contract.CreatedDate;
+
+            await _db.AddAsync(vm.Contract);
+            await _db.SaveChangesAsync(User.GetLoggedInUserName());
+
+            TempData["success"] = "Rámcová smlouva vytvořena";
+            return RedirectToAction("Index");
+
         }
 
         // GET: Offer/Edit/5
@@ -101,7 +108,7 @@ namespace memo.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return NotFound("Hmm");
             }
 
             Contract contract = await _db.Contracts
@@ -112,14 +119,73 @@ namespace memo.Controllers
                 return NotFound();
             }
 
-            return View();
+            EditContractViewModel vm = new EditContractViewModel();
+            vm.Contract = contract;
+
+            // vm.Audits = getAuditViewModel(_db).Audits
+            //     .Where(x => x.TableName == "Contracts" && x.KeyValue == id.ToString())
+            //     .ToList();
+            vm.Audits = await getAuditViewModelAsync(_db, "Contracts", (int)id);
+
+            await populateModelAsync(vm);
+
+            return View(vm);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id)
+        public async Task<IActionResult> Edit(string actionType, int id, EditContractViewModel vm)
         {
-            return View();
+            if (id != vm.Contract.ContractsId)
+            {
+                return NotFound();
+            }
+
+            if (!ModelState.IsValid)
+            {
+                TempData["Error"] = "Něco se porouchalo...";
+                vm.Audits = await getAuditViewModelAsync(_db, "Contracts", (int)id);
+                await populateModelAsync(vm);
+                return View(vm);
+            }
+
+            // Check if there was a change in old/current model
+            EditContractViewModel oldVm = new EditContractViewModel();
+            oldVm.Contract = await _db.Contracts.AsNoTracking().FirstOrDefaultAsync(x => x.ContractsId == vm.Contract.ContractsId);
+
+            if (oldVm.Contract.ContractName == vm.Contract.ContractName &&
+                oldVm.Contract.ReceiveDate == vm.Contract.ReceiveDate &&
+                oldVm.Contract.Subject == vm.Contract.Subject &&
+                oldVm.Contract.EveDivision == vm.Contract.EveDivision &&
+                oldVm.Contract.EveDepartment == vm.Contract.EveDepartment &&
+                oldVm.Contract.EveCreatedUser == vm.Contract.EveCreatedUser &&
+                oldVm.Contract.ContactId == vm.Contract.ContactId &&
+                oldVm.Contract.CompanyId == vm.Contract.CompanyId &&
+                oldVm.Contract.Price == vm.Contract.Price &&
+                oldVm.Contract.CurrencyId == vm.Contract.CurrencyId &&
+                oldVm.Contract.ExchangeRate == vm.Contract.ExchangeRate &&
+                oldVm.Contract.Notes == vm.Contract.Notes &&
+                oldVm.Contract.Active == vm.Contract.Active)
+            {
+                TempData["Info"] = "Nebyla provedena změna, není co uložit";
+                vm.Audits = await getAuditViewModelAsync(_db, "Contracts", (int)id);
+                await populateModelAsync(vm);
+
+                return View(vm);
+            }
+
+            vm.Contract.PriceCzk = Convert.ToInt32(vm.Contract.Price * vm.Contract.ExchangeRate);  // 1000 * 26,243
+            vm.Contract.ModifiedBy = User.GetLoggedInUserName();
+            vm.Contract.ModifiedDate = DateTime.Now;
+
+             _db.Update(vm.Contract);
+            await _db.SaveChangesAsync(User.GetLoggedInUserName());
+
+            TempData["Success"] = "Editace uložena";
+
+            vm.Audits = await getAuditViewModelAsync(_db, "Contracts", (int)id);
+            await populateModelAsync(vm);
+            return View(vm);
         }
 
         [HttpPost]
@@ -189,7 +255,7 @@ namespace memo.Controllers
         //     return RedirectToAction("Index", new { showInactive });
         // }
 
-        private async Task populateModelAsync(CreateContractViewModel vm)
+        private async Task populateModelAsync(dynamic vm)
         {
             List<Company> companies = await _db.Company.OrderBy(x => x.Name).ToListAsync();
             vm.CompanyList = companies
@@ -209,7 +275,12 @@ namespace memo.Controllers
             vm.CurrencyList = currencies
                 .Select(x => new SelectListItem {
                     Value = x.CurrencyId.ToString(),
-                    Text = $"{x.Name} (kurz {getCurrencyStr(x.Name)})"
+                    Text = x.Name != "CZK" ? $"{x.Name} (kurz {getCurrencyStr(x.Name)})" : x.Name
+                });
+            vm.CurrencyListNoRate = currencies
+                .Select(x => new SelectListItem {
+                    Value = x.CurrencyId.ToString(),
+                    Text = x.Name
                 });
 
             // vm.DepartmentList = await getDepartmentListAsync2(_eveDbDochna);  // TODO zjistit, co je rychlejsi (tohle nějak failuje)

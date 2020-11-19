@@ -18,12 +18,16 @@ namespace memo.Helpers
             _db = db;
         }
 
+        /// <summary>
+        /// {DbTriggerName}-Models/{ModelName}.cs
+        /// </summary>
+        /// <value></value>
         public static Dictionary<string, Type> modelTypeFromString = new Dictionary<string, Type>
         {
             {"BugReport", typeof(BugReport)},
             {"Offer", typeof(Offer)},
             {"Order", typeof(Order)},
-            {"Contract", typeof(Contract)},
+            {"Contracts", typeof(Contract)},
             {"Invoice", typeof(Invoice)},
             {"Company", typeof(Company)},
             {"Contact", typeof(Contact)},
@@ -31,12 +35,16 @@ namespace memo.Helpers
             {"OrderCodes", typeof(OrderCodes)},
         };
 
+        /// <summary>
+        /// {DbTriggerName}-{Translation for Audit table view field}
+        /// </summary>
+        /// <value></value>
         public static Dictionary<string, string> modelNameFromString = new Dictionary<string, string>
         {
             {"BugReport", "Hlášení chyb"},
             {"Offer", "Nabídka"},
             {"Order", "Zakázka"},
-            {"Contract", "Rámcová smlouva"},
+            {"Contracts", "Rámcová smlouva"},
             {"Invoice", "Faktura"},
             {"Company", "Firma"},
             {"Contact", "Kontakt"},
@@ -44,12 +52,16 @@ namespace memo.Helpers
             {"OrderCodes", "Kód vykazování"},
         };
 
+        /// <summary>
+        /// {DbTriggerName}-Controllers/{ControllerName}Controller.cs
+        /// </summary>
+        /// <value></value>
         public static Dictionary<string, string> controllerLink = new Dictionary<string, string>
         {
             {"BugReport", "BugReport"},
             {"Offer", "Offers"},
             {"Order", "Orders"},
-            {"Contract", "Contracts"},
+            {"Contracts", "Contracts"},
             {"Invoice", "Orders"},
             {"Company", "Companies"},
             {"Contact", "Contacts"},
