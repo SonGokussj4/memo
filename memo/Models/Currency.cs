@@ -10,7 +10,7 @@ namespace memo.Models
     {
         public Currency()
         {
-            Offer = new HashSet<Offer>();
+            Offers = new HashSet<Offer>();
         }
 
         [Key]
@@ -21,6 +21,6 @@ namespace memo.Models
         public string CultureCode { get; set; }
 
         [InverseProperty("Currency")]
-        public virtual ICollection<Offer> Offer { get; set; }
+        public virtual ICollection<Offer> Offers { get; set; }
     }
 }

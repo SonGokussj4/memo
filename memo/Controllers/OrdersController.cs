@@ -297,6 +297,14 @@ namespace memo.Controllers
                 )
                 .ToList();
 
+            List<string> orderCodesTooltips = new List<string>();
+            foreach (OrderCodes orderCode in order.OrderCodes)
+            {
+                string tooltip = await _eveDb.cOrders.Where(x => x.OrderCode == orderCode.OrderCode)
+                    .Select(x => x.OrderName).FirstOrDefaultAsync();
+                orderCodesTooltips.Add(tooltip);
+            }
+
             // VIEW MODEL
             OfferOrderVM vm = new OfferOrderVM()
             {
@@ -308,6 +316,7 @@ namespace memo.Controllers
                 CurrencyName = currency.Name,
                 UnspentMoney = (int)(order.NegotiatedPrice - order.PriceFinal),
                 Audits = audits,
+                OrderCodesTooltips = orderCodesTooltips,
             };
 
             if (offerId == 0 && vm.Edit != "true")
@@ -353,7 +362,10 @@ namespace memo.Controllers
                         oldVm.Order.Burned == vm.Order.Burned &&
                         oldVm.Order.Invoices.Count() == vm.Order.Invoices.Count() &&
                         oldVm.Order.OtherCosts.Count() == vm.Order.OtherCosts.Count() &&
-                        oldVm.Order.OrderCodes.Count() == vm.Order.OrderCodes.Count()
+                        oldVm.Order.OrderCodes.Count() == vm.Order.OrderCodes.Count() &&
+                        unchangedOrderCodes(oldVm.Order.OrderCodes, vm.Order.OrderCodes) == true &&
+                        unchangedOtherCosts(oldVm.Order.OtherCosts, vm.Order.OtherCosts) == true &&
+                        unchangedInvoices(oldVm.Order.Invoices, vm.Order.Invoices) == true
                     )
                     {
                         TempData["Info"] = "Nebyla provedena změna, není co uložit";
@@ -363,6 +375,7 @@ namespace memo.Controllers
                             .Where(x => x.TableName == "Order" && x.KeyValue == id.ToString())
                             .ToList(); ;
                         vm.Offer = await _db.Offer.Where(x => x.OfferId == vm.Order.OfferId).FirstOrDefaultAsync();
+                        vm.CurrencyName = vm.Offer.Currency.Name;
 
                         await populateModel(vm.Order, id);
 
@@ -462,6 +475,66 @@ namespace memo.Controllers
             TempData["Error"] = "Něco se porouchalo";
 
             return View(viewModel);
+        }
+
+        /// <summary>
+        /// Iterate over pre-selected elements in the list and checkt if they are different. If true, return false.
+        /// </summary>
+        /// <param name="orderCodes1">Old ViewModel</param>
+        /// <param name="orderCodes2">Checking ViewModel</param>
+        /// <returns></returns>
+        private bool unchangedOrderCodes(List<OrderCodes> orderCodes1, List<OrderCodes> orderCodes2)
+        {
+            for (int i = 0; i < orderCodes1.Count(); i++)
+            {
+                if (orderCodes1[i].OrderCode != orderCodes2[i].OrderCode ||
+                    orderCodes1[i].HourWageSubject != orderCodes2[i].HourWageSubject ||
+                    orderCodes1[i].HourWageCost != orderCodes2[i].HourWageCost)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// Iterate over pre-selected elements in the list and checkt if they are different. If true, return false.
+        /// </summary>
+        /// <param name="otherCosts1">Old ViewModel</param>
+        /// <param name="otherCosts2">Checking ViewModel</param>
+        /// <returns></returns>
+        private bool unchangedOtherCosts(List<OtherCost> otherCosts1, List<OtherCost> otherCosts2)
+        {
+            for (int i = 0; i < otherCosts1.Count(); i++)
+            {
+                if (otherCosts1[i].Subject != otherCosts2[i].Subject ||
+                    otherCosts1[i].Cost != otherCosts2[i].Cost)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// Iterate over pre-selected elements in the list and checkt if they are different. If true, return false.
+        /// </summary>
+        /// <param name="invoices1">Old ViewModel</param>
+        /// <param name="invoices2">Checking ViewModel</param>
+        /// <returns></returns>
+        private bool unchangedInvoices(List<Invoice> invoices1, List<Invoice> invoices2)
+        {
+            for (int i = 0; i < invoices1.Count(); i++)
+            {
+                if (invoices1[i].InvoiceIssueDate != invoices2[i].InvoiceIssueDate ||
+                    invoices1[i].InvoiceDueDate != invoices2[i].InvoiceDueDate ||
+                    invoices1[i].Cost != invoices2[i].Cost ||
+                    invoices1[i].DeliveryNote != invoices2[i].DeliveryNote)
+                {
+                    return false;
+                }
+            }
+            return true;
         }
 
         [HttpPost]
@@ -736,6 +809,11 @@ namespace memo.Controllers
             return Json(new { success = true });
         }
 
+        /// <summary>
+        /// Used from within Modal to find and select from SelectItem
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> GetOrderCodes(int id)
         {
@@ -744,6 +822,7 @@ namespace memo.Controllers
             vm.Orders = await _db.Order.Include(x => x.OrderCodes).ToListAsync();
             vm.EveOrderCodes = await getOrderCodesAsync(_eveDb);
             vm.OrderCodeId = id;
+            // vm.SelectedModalOrderCode = id;
 
             return PartialView("_PartialSearchForOrderCode", vm);
         }

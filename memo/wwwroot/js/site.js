@@ -13,8 +13,9 @@
 // });
 
 
+// ==========================================================================
 // PARAMETERS
-//---------------------------------------------------------------------------
+// ==========================================================================
 
 // Parameters for DatePicker calendar
 var datepickerParameters = new Array({
@@ -29,28 +30,38 @@ var datepickerParameters = new Array({
     todayHighlight: true
 });
 
-// OTHER
-//---------------------------------------------------------------------------
-$(document).ready(function () {
-    $('.selectpicker').select2({
-        // dropdownCssClass: 'form-control',
-    });
-});
 
 // ==========================================================================
 // INITIALIZE UPON PAGE LOAD
 // ==========================================================================
-// Initialize bootstrap-tooltips
-$(function () {
+$(document).ready(function () {
     initializeTooltips();
+    initializeSelectpicker();
+    initializeOrderAjaxModalClickEvent();
 });
 
+
+// ==========================================================================
+// INITIALIZING FUNCTIONS
+// ==========================================================================
 /**
- * Initializes Tooltips
+ * Initialize bootstrap-tooltips
  */
 function initializeTooltips() {
     $('[data-toggle="tooltip"]').tooltip({
         trigger: 'hover'
+    });
+}
+
+/**
+ * Selectpicker: select2 [https://select2.org/]
+ */
+function initializeSelectpicker() {
+    console.log("Initializing Selectpicker");
+    $('.selectpicker').select2({
+        // dropdownCssClass: 'form-control',
+        minimumInputLength: 0,  // minimum number of characters required to start a search
+        dropdownAutoWidth: true,  // make width of the dropdown to MAX of the longest item
     });
 }
 
@@ -124,10 +135,6 @@ function floatingLabelsInit () {
     }).focusout(); //trigger the focusout event manually
 }
 
-//$(function () {
-//    floatingLabelsInit();
-//})
-
 $("#success-alert").fadeTo(4000, 500).slideUp(500, function(){
     $("#success-alert").slideUp(500);
 });
@@ -144,20 +151,21 @@ String.prototype.replaceAllTxt = function replaceAll(search, replace) { return t
 // Ajax modal popup the partial view
 function initializeOrderAjaxModalClickEvent() {
     // all buttons with data-toggle equal to ajax-modal
+    $('button[data-toggle="ajax-modal"]').unbind('click');  // first unbind click or it will duplicate the event to existing DOM objects
     $('button[data-toggle="ajax-modal"]').click(function (event) {
-        var url = $(this).data('url');
+        let url = $(this).data('url');
+        // let id = $(this).data('id');
         console.log("initializeOrderAjaxModalClickEvent: " + url);
         $.get(url).done(function (data) {
             $('#modal-placeholder').html(data);
+            // $('#modal-placeholder-' + id).html(data);
             $('#modal-placeholder > .modal').modal('show');
+            // $('#modal-placeholder-' + id + ' > .modal').modal('show');
+            initializeSelectpicker();
         });
     });
 }
 
-// Only after the document loads
-$(function () {
-    initializeOrderAjaxModalClickEvent();
-});
 
 $('body').on('load', 'div[data-toggle=checkboxes]', function () {
     $(this).checkboxes(); // checkboxes on matched element
@@ -172,11 +180,10 @@ function OrderCodeToInput(id) {
 }
 
 
-// $('button[data-toggle="ajax-modal"]').click(function (event) {
-//     var url = $(this).data('url');
-//     console.log(url);
-//     $.get(url).done(function (data) {
-//         $('#modal-placeholder').html(data);
-//         $('#modal-placeholder > .modal').modal('show');
-//     });
-// });
+// ==========================================================================
+// FIXES
+// ==========================================================================
+
+// Fix Select2 not able to write text when in popup Modal
+// Source: https://stackoverflow.com/questions/18487056/select2-doesnt-work-when-embedded-in-a-bootstrap-modal/19574076#19574076
+$.fn.modal.Constructor.prototype._enforceFocus = function () { };
