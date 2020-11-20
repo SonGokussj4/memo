@@ -60,7 +60,7 @@ function initializeSelectpicker() {
     console.log("Initializing Selectpicker");
     $('.selectpicker').select2({
         // dropdownCssClass: 'form-control',
-        minimumInputLength: 1,  // minimum number of characters required to start a search
+        minimumInputLength: 0,  // minimum number of characters required to start a search
         dropdownAutoWidth: true,  // make width of the dropdown to MAX of the longest item
     });
 }
