@@ -27,6 +27,9 @@ namespace memo.Models
         public int? OfferId { get; set; }
         public Offer Offer { get; set; }
 
+        [Display(Name = "Typ")]
+        public string FromType { get; set; }
+
         [Display(Name = "Číslo objednávky zákazníka"), StringLength(50)]
         public string OrderName { get; set; }
 

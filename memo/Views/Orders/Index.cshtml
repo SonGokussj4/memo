@@ -99,9 +99,10 @@
             <th scope="col" class="text-center" data-field="0" data-sortable="true" data-filter-control="input" data-footer-formatter="idFormatter"></i>Edit</th>
             <th scope="col" class="text-center" data-field="1" data-sortable="true"><span data-toggle="tooltip" title="Aktivní / Neaktivní"><i class="fa fa-eye text-secondary"></i></span></th>
             <th scope="col" class="text-center" data-field="2" data-sortable="true" data-filter-control="input">Vytvořeno</th>
-            <th scope="col" class="text-center" data-field="3" data-sortable="true" data-filter-control="input">Nabídka</th>
-            <th scope="col" class="text-center" data-field="4" data-sortable="true" data-filter-control="input">Č. obj. zákazníka</th>
-            <th scope="col" class="text-center" data-field="5" data-sortable="true" data-filter-control="input">Zákazník</th>
+            <th scope="col" class="text-center" data-field="3" data-sortable="true" data-filter-control="input"><span data-toggle="tooltip" title="Z čeho zakázka vychází... N: Nabídka, R: Rámcová smlouva, -: Bez nabídky">Typ</span></th>
+            <th scope="col" class="text-center" data-field="4" data-sortable="true" data-filter-control="input">Nabídka/<br />Rámcovka</th>
+            <th scope="col" class="text-center" data-field="5" data-sortable="true" data-filter-control="input">Č. obj. zákazníka</th>
+            <th scope="col" class="text-center" data-field="6" data-sortable="true" data-filter-control="input">Zákazník</th>
             @* <th scope="col" class="text-center" data-field="6" data-sortable="true" data-filter-control="input">Key acc.<br />manager</th> *@
             <th scope="col" class="text-center" data-field="7" data-sortable="true" data-filter-control="input">Vedoucí <br />projektu</th>
             <th scope="col" class="text-center" data-field="8" data-sortable="true" data-filter-control="input">Oddělení</th>
@@ -142,6 +143,10 @@
                 <th scope="row" class="text-left">
                     <span style="display:none">@String.Format("{0:yyyy-MM-dd HH:mm}", @item.CreatedDate)</span>  <!-- Hidden span for sorting date correctly-->
                     @String.Format("{0:dd.MM.yyyy}", @item.CreatedDate)
+                </th>
+                @* Typ *@
+                <th scope="row" class="text-left">
+                    @item.FromType
                 </th>
                 @* Nabídka *@
                 <th scope="row" class="text-left" data-toggle="tooltip" title="@item.Offer?.OfferName">

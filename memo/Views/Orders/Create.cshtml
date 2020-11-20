@@ -67,8 +67,8 @@
             <label class="radio-inline">
                 <input type="radio" name="optradio" value="opt2" id="opt2" /> Rámcová smlouva
             </label>
-            <label class="radio-inline">
-                <input type="radio" name="optradio" value="opt3" id="opt3" /> Objednávka
+            <label class="radio-inline" data-toggle="tooltip" title="Nemám nabídku">
+                <input type="radio" name="optradio" value="opt3" id="opt3" /> Zakázka bez nabídky
             </label>
         </div>
 
@@ -84,8 +84,7 @@
 
             <div class="col-lg-7 new-order-from-contract" style="display: none;">
                 <input type="hidden" asp-for="Order.OrderId" />
-                @* <select asp-for="OfferId" asp-items="ViewBag.WonOffersList" class="form-control selectpicker" onchange="this.form.submit();"> *@
-                <select id="ContractId" asp-items="ViewBag.WonOffersList" class="form-control selectpicker" onchange="this.form.submit();">
+                <select id="ContractId" asp-items="Model.ContractsList" class="form-control selectpicker" onchange="this.form.submit();">
                     <option select="">-- Vyber rámcovou smlouvu --</option>
                 </select>
                 @* <span asp-validation-for="Order.OfferId" class="text-danger"></span> *@

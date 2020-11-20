@@ -170,3 +170,24 @@ BEGIN
   END
 END
 GO
+
+
+-----------------------------------------------------------------------------------------
+-- PRIDAT DO Order SLOUPEC FromType jako CHAR(1), bude tam buď N, R nebo -
+ALTER TABLE [memo].[Order]
+ADD FromType CHAR(1) NULL;
+GO
+
+
+-----------------------------------------------------------------------------------------
+-- NAPLNIT Order SLOUPEC FromType == 'N'
+UPDATE [memo].[Order]
+SET FromType = 'N';
+GO
+
+
+-----------------------------------------------------------------------------------------
+-- ZMENIT Order SLOUPEC FromType Z Null NA Not Null
+ALTER TABLE [memo].[Order]
+ALTER COLUMN FromType CHAR(1) NOT NULL;
+GO

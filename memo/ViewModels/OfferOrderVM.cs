@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using memo.Models;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace memo.ViewModels
 {
@@ -31,6 +32,8 @@ namespace memo.ViewModels
 
         [Display(Name = "Zbývá k vyčerpání")]
         public int UnspentMoney { get; set; }
+
+        public IEnumerable<SelectListItem> ContractsList { get; set; }
 
         public IEnumerable<AuditViewModel> Audits { get; set; }
 

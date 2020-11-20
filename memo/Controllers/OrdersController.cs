@@ -90,14 +90,21 @@ namespace memo.Controllers
         {
             Offer offer = await _db.Offer.FirstOrDefaultAsync(x => x.OfferId == id);
 
-            await populateModel(null, 0);
 
             if (offer == null)
             {
+                await populateModel(null, 0);
+                List<SelectListItem> contracts = await _db.Contracts
+                .Select(x => new SelectListItem {
+                    Value = x.ContractsId.ToString(),
+                    Text = $"{x.ContractName} - {x.Subject}",
+                })
+                .ToListAsync();
                 OfferOrderVM vmm = new OfferOrderVM()
                 {
                     Offer = new Offer(),
                     Order = new Order(),
+                    ContractsList = contracts,
                 };
 
                 return View(vmm);
@@ -123,7 +130,7 @@ namespace memo.Controllers
                 offerCompanyName = company.Name;
                 invoiceDueDays = (int)company.InvoiceDueDays;
             }
-            // }
+
             Order order = new Order();
             order.OfferId = offer.OfferId;
             order.ExchangeRate = Decimal.Parse(getCurrencyStr(curSymbol).Replace(",", "."), CultureInfo.InvariantCulture);
@@ -133,6 +140,12 @@ namespace memo.Controllers
             order.NegotiatedPrice = negotiatedPrice;
 
             await populateModel(order, (int)id);
+            List<SelectListItem> contractsList = await _db.Contracts
+                .Select(x => new SelectListItem {
+                    Value = x.ContractsId.ToString(),
+                    Text = $"{x.ContractName} - {x.Subject}",
+                })
+                .ToListAsync();
 
             OfferOrderVM vm = new OfferOrderVM()
             {
@@ -142,6 +155,7 @@ namespace memo.Controllers
                 OfferCompanyName = offerCompanyName,
                 InvoiceDueDays = invoiceDueDays,
                 CurrencyName = curSymbol,
+                ContractsList = contractsList,
             };
 
             return View(vm);
