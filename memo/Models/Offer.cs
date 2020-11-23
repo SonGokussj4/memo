@@ -11,6 +11,7 @@ namespace memo.Models
     {
         public Offer()
         {
+            OfferStatusId = 1;  // Default: Ceka
         }
 
         [Key]
@@ -68,8 +69,6 @@ namespace memo.Models
         [Display(Name = "Měna")]
         public int? CurrencyId { get; set; }
         public Currency Currency { get; set; }
-        // [InverseProperty("Offer")]
-        // public virtual Currency Currency { get; set; }
 
         [Display(Name = "Směnný kurz")]
         [Column(TypeName = "decimal(18,3)")]
@@ -81,7 +80,7 @@ namespace memo.Models
         public int? PriceCzk { get; set; }
 
         [Display(Name = "Status nabídky")]
-        public int OfferStatusId { get; set; } = 1;  // Default: Ceka
+        public int OfferStatusId { get; set; }
         public OfferStatus OfferStatus { get; set; }
         // [InverseProperty(nameof(OfferStatus.OfferStatusId))]
         // public virtual OfferStatus StatusNavigation { get; set; }

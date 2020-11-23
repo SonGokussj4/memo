@@ -83,8 +83,11 @@
 
 <hr />
 
-<div class="container d-flex justify-content-center">
+<div class="container d-flex justify-content-center py-4">
+<h2>Úspěšnost jednotlivých oddělení</h2>
+</div>
 
+<div class="container d-flex justify-content-center">
 <table
     id="table"
     class="table table-sm text-xsmall text-nowrap">
@@ -113,14 +116,89 @@
         }
     </tbody>
 </table>
+</div>
+
+<hr />
+
+<div class="container d-flex justify-content-center py-4">
+<h2>Faktury zakázek se zákazníky</h2>
+</div>
 
 
+<div class="container d-flex justify-content-center">
+<div id="toolbar" style="padding-bottom: 10px;">
+    <button style="margin-right: 5px;" class="btn btn-outline-info" name="BtnMujFilter" id="BtnMujFilter" type="button">
+        <i class="fa fa-filter"></i> Filter
+    </button>
+</div>
+<table
+    id="table"
+    class="table table-sm text-xsmall text-nowrap"
+    data-cookie="true"
+    data-cookie-id-table="invoicesTableCookie"
+    data-export-data-type="basic"  @* 'basic', 'all', 'selected' *@
+    data-export-footer=false  @* false, true *@
+    data-export-types="['txt', 'csv', 'excel']"  @* ['json', 'xml', 'csv', 'txt', 'sql', 'excel', 'png', 'doc', 'xlsx', 'pdf'] *@
+    data-filter-control="false"
+    data-footer-style="footerStyle"
+    data-height="800"
+    data-show-search-clear-button="true"
+    data-show-toggle="true"
+    data-show-columns-toggle-all="true"
+    data-show-columns="true"
+    data-show-fullscreen="true"
+    data-sort-name="DateCreated"
+    data-sort-order="desc"
+    data-search="true"
+    data-silent-sort="true"
+    data-show-export="true"
+    data-show-footer="true"
+    data-toolbar="#toolbar"
+    data-toggle="table"
+    data-virtual-scroll="true"
+    data-visible-search="true"
+    style="font-size: 0.9em;"
+    >
+    <thead>
+        <tr>
+            <th scope="col" class="text-center" data-field="0" data-sortable="true" data-filter-control="input"></i>Zakázka</th>
+            <th scope="col" class="text-center" data-field="1" data-sortable="true" data-filter-control="input"></i>Zákazník</th>
+            <th scope="col" class="text-center" data-field="2" data-sortable="true" data-filter-control="input"></i>Termín vystavení <br />faktury</th>
+            <th scope="col" class="text-center" data-field="3" data-sortable="true" data-filter-control="input"></i>Splatnost <br />faktury</th>
+            <th scope="col" class="text-center" data-field="4" data-sortable="true" data-filter-control="input"></i>Částka</th>
+            <th scope="col" class="text-center" data-field="5" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatterCz" data-sorter="priceSorter"></i>ČástkaCzk</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in @Model.DashboardInvoiceTableViewModel)
+        {
+        <tr>
+            <td class="text-left"><a asp-controller="Orders" asp-action="Edit" asp-route-id="@item.Order.OrderId">@item.Order.OrderName</a></td>
+            <td class="text-left"><a asp-controller="Companies" asp-action="Edit" asp-route-id="@item.Company.CompanyId">@item.Company.Name</a></td>
+            <td class="text-center">
+                <span style="display:none">@String.Format("{0:yyyy-MM-dd HH:mm}",  @item.Invoice.InvoiceIssueDate)</span>  <!-- Hidden span for sorting date correctly-->
+                @String.Format("{0:dd.MM.yyyy}", @item.Invoice.InvoiceIssueDate)
+            </td>
+            <td class="text-center">
+                <span style="display:none">@String.Format("{0:yyyy-MM-dd HH:mm}",  @item.Invoice.InvoiceDueDate)</span>  <!-- Hidden span for sorting date correctly-->
+                @String.Format("{0:dd.MM.yyyy}", @item.Invoice.InvoiceDueDate)
+            </td>
+            <td class="text-right">@string.Format(CultureInfo.CreateSpecificCulture(@item.Currency.CultureCode), "{0:C0}",@item.Invoice.Cost)</td>
+            <td class="text-right">@string.Format(CultureInfo.CreateSpecificCulture("cs-CZ"), "{0:C0}", item.Invoice.CostCzk)</td>
+        </tr>
+        }
+    </tbody>
+</table>
 </div>
 
 
 @section scripts{
 <script>
 
+    // Reinitialize tooltips upon table change
+    $('#table').on('post-body.bs.table', function () {  // on('all.bs.table'
+        $('[data-toggle="tooltip"]').tooltip()
+    });
 
     // Add .auto-post class to ComboBox, when changed, it will autosubmit form
     $(document).ready(function () {
@@ -265,5 +343,48 @@
         }
     });
 
+
+    // ==================
+    // INVOICE TABLE
+    // ==================
+    function footerStyle(row, index) {
+        return {
+            css: {
+            "font-weight": "bold"
+            }
+        };
+    };
+
+    function priceFormatterCz(data) {
+        var field = parseInt(this.field);
+        //var field = parseInt(this.field.replace(",", "").replace("&nbsp;", "").replace(" ", "").replace("Kč", ""));
+        //var field = parseInt(this.field).val().replace(/[^0-9]/g, '')
+        var vysledek = data.map(function (row) {
+            var cost = parseInt(row[field]
+                //.replace(/, (Kč)(&nbsp);/g, ''));
+                .replaceAllTxt(",", "")
+                .replaceAllTxt("&nbsp;", "")
+                .replaceAllTxt(" ", "")
+                .replaceAllTxt("Kč", "")
+                ) || 0;
+            //console.log(`CostCz: ${cost}`);
+            return + cost
+        }).reduce(function (sum, i) {
+            return sum + i
+        }, 0)
+        return vysledek.toLocaleString('cs-CZ') + ' Kč'
+    }
+
+    function priceSorter(a, b) {
+        let aa = a.replaceAllTxt(' Kč', '').replaceAllTxt('&nbsp;', '').replaceAllTxt('€', '').replaceAllTxt('$;', '')
+        let bb = b.replaceAllTxt(' Kč', '').replaceAllTxt('&nbsp;', '').replaceAllTxt('€', '').replaceAllTxt('$;', '')
+        return aa - bb
+    }
+
+    //function dateSorter(a, b) {
+    //    var aa = a.replaceAllTxt(' Kč', '').replaceAllTxt('&nbsp;', '').replaceAllTxt('€', '').replaceAllTxt('$;', '')
+    //    var bb = b.replaceAllTxt(' Kč', '').replaceAllTxt('&nbsp;', '').replaceAllTxt('€', '').replaceAllTxt('$;', '')
+    //    return aa - bb
+    //}
 </script>
 }

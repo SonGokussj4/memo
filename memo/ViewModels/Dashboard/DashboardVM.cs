@@ -18,6 +18,7 @@ namespace memo.ViewModels
         public List<DashboardCashVM> DashboardCashVM { get; set; }
         public List<DashboardWonOffersVM> DashboardWonOffersVM { get; set; }
         public List<DashboardTableVM> DashboardTableVM { get; set; }
+        public List<DashboardInvoiceTableViewModel> DashboardInvoiceTableViewModel { get; set; }
 
         // SelectLists
         public List<SelectListItem> DepartmentList { get; set; } = new List<SelectListItem>();
