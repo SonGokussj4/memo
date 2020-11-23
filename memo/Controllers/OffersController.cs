@@ -116,7 +116,7 @@ namespace memo.Controllers
 
             if (existingOffer != null)
             {
-                ModelState.AddModelError("OfferName", "Ev. Číslo nabídky již existuje. Zvolte jinou, nebo upravte stávající.");
+                ModelState.AddModelError("Offer.OfferName", "Ev. Číslo nabídky již existuje. Zvolte jinou, nebo upravte stávající.");
             }
 
             // Save new offer to the DB
@@ -146,6 +146,8 @@ namespace memo.Controllers
             };
 
             populateModel(offer, 0);
+
+            TempData["Error"] = "Nepovedlo se uložit.";
 
             return View(vm);
         }

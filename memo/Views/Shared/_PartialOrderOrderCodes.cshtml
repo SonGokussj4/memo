@@ -18,10 +18,10 @@
     <div class="col-lg-3">
         <span class="has-float-label">
             <div class="input-group">
-                <input asp-for="@Model.Order.OrderCodes[i].OrderCode" class="form-control" type="text" autocomplete="off" placeholder=" "/>
+                <input asp-for="@Model.Order.OrderCodes[i].OrderCode" class="form-control" type="text" autocomplete="off" placeholder=" " data-toggle="tooltip" title="@Model.OrderCodesTooltips[i]" />
                 <div class="input-group-append">
                     <!-- Button trigger modal -->
-                    <span data-toggle="tooltip" title="Vyhledat kód" >
+                    <span data-toggle="tooltip" title="Vyhledat kód">
                         <button class="btn btn-light border" type="button" data-toggle="ajax-modal" data-target="#SearchForOrderCodeModal" data-id="@i" data-url="@Url.Action("GetOrderCodes", "Orders", new { id = @i })">
                             <i class="fa fa-search"></i>
                         </button>

@@ -5,13 +5,13 @@
         <div class="modal-content">
             <!-- header -->
             <div class="modal-header">
-                <h5 class="modal-title" id="SearchForOrderCodeModalLabel">Hledej šmudlo!!!</h5>
+                <h5 class="modal-title" id="SearchForOrderCodeModalLabel">Zvolte kód vykazování</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             </div>
             <!-- body -->
             <div class="modal-body">
-                <input id="xxx1" value="Filter1" />
-                <input id="xxx2" value="Filter2" />
+                @* <input id="xxx1" value="Filter1" /> *@
+                @* <input id="xxx2" value="Filter2" /> *@
                 <select id="SelectedOrderCode_@Model.OrderCodeId" asp-items="Model.EveOrderCodes" class="form-control selectpicker"></select>
             </div>
             <!-- footer -->
@@ -23,7 +23,11 @@
     </div>
 </div>
 
-@*
+
 <script>
-    $('.selectpicker').select2();
-</script> *@
+    // Preselect
+    var orderCodeText = $(`#Order_OrderCodes_${@Model.OrderCodeId}__OrderCode`).val();
+    if (!orderCodeText == "") {
+        $(`#SelectedOrderCode_${@Model.OrderCodeId} option:contains(${orderCodeText})`).attr('selected', true);
+    }
+</script>
