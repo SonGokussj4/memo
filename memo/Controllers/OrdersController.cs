@@ -45,7 +45,8 @@ namespace memo.Controllers
             OrdersViewModel vm = new OrdersViewModel {
                 cOrdersAll = await _eveDb.cOrders.ToListAsync(),
                 Orders = await _db.Order
-                    .Include(x => x.Offer).ThenInclude(z => z.Currency)
+                    .Include(x => x.Offer)
+                        .ThenInclude(z => z.Currency)
                     .Include(x => x.Offer.Company)
                     .Include(x => x.OtherCosts)
                     .Include(x => x.Invoices)
@@ -80,15 +81,15 @@ namespace memo.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Refresh(int offerId)
+        public IActionResult Refresh(int offerId, int contractId)
         {
-            return RedirectToAction("Create", new { id = offerId });
+            return RedirectToAction("Create", new { offerId = offerId, contractId = contractId });
         }
 
         [HttpGet]
-        public async Task<IActionResult> Create(int? id)
+        public async Task<IActionResult> Create(int? offerId, int? contractId)
         {
-            Offer offer = await _db.Offer.FirstOrDefaultAsync(x => x.OfferId == id);
+            Offer offer = await _db.Offer.FirstOrDefaultAsync(x => x.OfferId == offerId);
 
 
             if (offer == null)
@@ -110,7 +111,7 @@ namespace memo.Controllers
                 return View(vmm);
             }
 
-            string offerCompanyName = string.Empty;
+            string offerCompanyName = "";
             int invoiceDueDays = 0;
             string curSymbol = "CZK";
             int offerFinalPrice = 0;
@@ -139,7 +140,7 @@ namespace memo.Controllers
             order.PriceFinalCzk = finalPriceCzk;
             order.NegotiatedPrice = negotiatedPrice;
 
-            await populateModel(order, (int)id);
+            await populateModel(order, (int)offerId);
             List<SelectListItem> contractsList = await _db.Contracts
                 .Select(x => new SelectListItem {
                     Value = x.ContractsId.ToString(),
@@ -150,7 +151,7 @@ namespace memo.Controllers
             OfferOrderVM vm = new OfferOrderVM()
             {
                 Offer = offer,
-                OfferId = (int)id,
+                OfferId = (int)offerId,
                 Order = order,
                 OfferCompanyName = offerCompanyName,
                 InvoiceDueDays = invoiceDueDays,

@@ -22,13 +22,16 @@ namespace memo.Models
         [Display(Name = "ID")]
         public int OrderId { get; set; }
 
-        // [Required]
         [Display(Name = "Evektor nabídka")]
         public int? OfferId { get; set; }
         public Offer Offer { get; set; }
 
+        [Display(Name = "Rámcová smlouva")]
+        public int? ContractId { get; set; }
+        public Contract Contract { get; set; }
+
         [Display(Name = "Typ")]
-        public string FromType { get; set; }
+        public string FromType { get; set; }  // N, R, -
 
         [Display(Name = "Číslo objednávky zákazníka"), StringLength(50)]
         public string OrderName { get; set; }

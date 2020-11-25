@@ -18,8 +18,9 @@ namespace memo.ViewModels
         public int IDOrder { get; set; }
         public int Minutes { get; set; }
 
-        [Required]
+        // [Required]
         public int OfferId { get; set; }
+        public int ContractId { get; set; }
         public string Edit { get; set; }
 
         [Display(Name = "Firma")]
@@ -34,6 +35,8 @@ namespace memo.ViewModels
         public int UnspentMoney { get; set; }
 
         public List<string> OrderCodesTooltips { get; set; }
+
+        public IEnumerable<SelectListItem> ContractsList { get; set; }
 
         public IEnumerable<AuditViewModel> Audits { get; set; }
 

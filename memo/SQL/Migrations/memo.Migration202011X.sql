@@ -191,3 +191,10 @@ GO
 ALTER TABLE [memo].[Order]
 ALTER COLUMN FromType CHAR(1) NOT NULL;
 GO
+
+
+-----------------------------------------------------------------------------------------
+-- PRIDAT Order SLOUPEC ContractId
+ALTER TABLE [memo].[Order]
+ADD ContractId INT NULL;
+GO
