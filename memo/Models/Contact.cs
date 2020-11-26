@@ -32,7 +32,7 @@ namespace memo.Models
         [Display(Name = "Firma")]
         [Required(ErrorMessage="Prosím, vyberte firmu (Pokud není, zvolte: 'Neznámá')")]
         public int? CompanyId { get; set; }
-        public Company Company { get; set; }
+        public virtual Company Company { get; set; }
 
         [Display(Name = "Oddělení"), StringLength(50)]
         public string Department { get; set; }
@@ -63,5 +63,7 @@ namespace memo.Models
 
         [InverseProperty("Contact")]
         public virtual ICollection<Offer> Offers { get; set; }
+
+        public virtual List<SharedInfo> SharedInfo { get; set; }
     }
 }

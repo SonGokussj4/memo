@@ -328,6 +328,7 @@ namespace memo.Controllers
                 .Where(
                     x => x.TableName == targetTableName
                     && Regex.Match(x.PK, @"<\[(.+?)\]=(.+?)>").Groups[2].Value == id.ToString()
+                    && x.FieldName != "ModifiedDate"
                     // && x.PK.Split("=").Last().Split(">").First() == id.ToString()
                 )
                 // .AsEnumerable()

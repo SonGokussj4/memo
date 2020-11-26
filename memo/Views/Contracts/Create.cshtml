@@ -30,29 +30,30 @@
                     <input asp-for="Contract.ContractName" class="form-control" placeholder=" " type="text" />
                     <label asp-for="Contract.ContractName"></label>
                 </span>
+                <p id="NumberAlreadyExistsWarning" class="hide text-danger text-right pt-1 pb-0 mb-0" >Číslo je již použito!</p>
                 <span asp-validation-for="Contract.ContractName" class="text-danger"></span>
             </div>
         </div>
 
         <div class="form-group row">
-            <label asp-for="Contract.ReceiveDate" class="required col-lg-3 col-form-label form-control-label control-label">Datum přijetí</label>
+            <label asp-for="Contract.SharedInfo.ReceiveDate" class="required col-lg-3 col-form-label form-control-label control-label">Datum přijetí</label>
             <div class="col-lg-9 mycalendar">
                 <span class="has-float-label">
-                    <input asp-for="Contract.ReceiveDate" class="form-control" type="text" placeholder=" " required="" autocomplete="off"/>
-                    <label asp-for="Contract.ReceiveDate"></label>
+                    <input asp-for="Contract.SharedInfo.ReceiveDate" class="form-control" type="text" placeholder=" " required="" autocomplete="off"/>
+                    <label asp-for="Contract.SharedInfo.ReceiveDate"></label>
                 </span>
-                <span asp-validation-for="Contract.ReceiveDate" class="text-danger"></span>
+                <span asp-validation-for="Contract.SharedInfo.ReceiveDate" class="text-danger"></span>
             </div>
         </div>
 
         <div class="form-group row">
-            <label asp-for="Contract.Subject" class="required col-lg-3 col-form-label form-control-label control-label">Předmět</label>
+            <label asp-for="Contract.SharedInfo.Subject" class="required col-lg-3 col-form-label form-control-label control-label">Předmět</label>
             <div class="col-lg-9">
                 <span class="has-float-label">
-                    <input asp-for="Contract.Subject" class="form-control" placeholder="Krátký popis nabídky" type="text" />
-                    <label asp-for="Contract.Subject"></label>
+                    <input asp-for="Contract.SharedInfo.Subject" class="form-control" placeholder="Krátký popis nabídky" type="text" />
+                    <label asp-for="Contract.SharedInfo.Subject"></label>
                 </span>
-                <span asp-validation-for="Contract.Subject" class="text-danger"></span>
+                <span asp-validation-for="Contract.SharedInfo.Subject" class="text-danger"></span>
             </div>
         </div>
 
@@ -60,33 +61,33 @@
             <label class="col-lg-3 col-form-label form-control-label control-label">Evektor</label>
             <div class="col-lg-2">
                 <span class="has-float-label">
-                    <select class="form-control" asp-for="Contract.EveDivision" asp-items="Model.EveDivisionList"></select>
-                    <label asp-for="Contract.EveDivision">Divize</label>
+                    <select class="form-control" asp-for="Contract.SharedInfo.EveDivision" asp-items="Model.EveDivisionList"></select>
+                    <label asp-for="Contract.SharedInfo.EveDivision">Divize</label>
                 </span>
-                <span asp-validation-for="Contract.EveDivision" class="text-danger"></span>
+                <span asp-validation-for="Contract.SharedInfo.EveDivision" class="text-danger"></span>
             </div>
             <div class="col-lg-3">
                 <span class="has-float-label">
-                    <select asp-for="Contract.EveDepartment" asp-items="Model.DepartmentList" class="form-control"></select>
-                    <label asp-for="Contract.EveDepartment">Oddělení</label>
+                    <select asp-for="Contract.SharedInfo.EveDepartment" asp-items="Model.DepartmentList" class="form-control"></select>
+                    <label asp-for="Contract.SharedInfo.EveDepartment">Oddělení</label>
                 </span>
-                <span asp-validation-for="Contract.EveDepartment" class="text-danger"></span>
+                <span asp-validation-for="Contract.SharedInfo.EveDepartment" class="text-danger"></span>
             </div>
             <div class="col-lg-4">
-                <select class="form-control selectpicker" asp-for="Contract.EveCreatedUser" asp-items="Model.EveContactList" required>
+                <select class="form-control selectpicker" asp-for="Contract.SharedInfo.EveCreatedUser" asp-items="Model.EveContactList" required>
                     @* <option value="">-- Vyber uživatele --</option> *@
                 </select>
-                <span asp-validation-for="Contract.EveCreatedUser" class="text-danger"></span>
+                <span asp-validation-for="Contract.SharedInfo.EveCreatedUser" class="text-danger"></span>
             </div>
         </div>
 
         <div class="form-group row customerOffer">
             <label class="required col-lg-3 col-form-label form-control-label control-label">Zákazník</label>
             <div class="col-lg-4">
-                <select class="form-control selectpicker" asp-for="Contract.CompanyId" asp-items="@Model.CompanyList">
+                <select class="form-control selectpicker" asp-for="Contract.SharedInfo.CompanyId" asp-items="@Model.CompanyList">
                     <option value="">-- Vyber firmu --</option>
                 </select>
-                <span asp-validation-for="Contract.CompanyId" class="text-danger"></span>
+                <span asp-validation-for="Contract.SharedInfo.CompanyId" class="text-danger"></span>
             </div>
             <div class="col-lg-1" data-toggle="tooltip" title="Nová firma">
                 <a asp-action="create" asp-controller="Companies" target="_blank">
@@ -94,10 +95,10 @@
                 </a>
             </div>
             <div class="col-lg-3">
-                <select class="form-control selectpicker" asp-for="Contract.ContactId" asp-items="@Model.ContactList">
+                <select class="form-control selectpicker" asp-for="Contract.SharedInfo.ContactId" asp-items="@Model.ContactList">
                     <option value="">-- Vyber kontakt --</option>
                 </select>
-                <span asp-validation-for="Contract.ContactId" class="text-danger"></span>
+                <span asp-validation-for="Contract.SharedInfo.ContactId" class="text-danger"></span>
             </div>
             <div class="col-lg-1" data-toggle="tooltip" title="Nový kontakt">
                 <a asp-action="create" asp-controller="Contacts" target="_blank">
@@ -107,20 +108,20 @@
         </div>
 
         <div class="form-group row">
-            <label asp-for="Contract.Price" class="col-lg-3 col-form-label form-control-label control-label"></label>
+            <label asp-for="Contract.SharedInfo.Price" class="col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-5">
                 <span class="has-float-label">
-                    <input asp-for="Contract.Price" class="form-control" type="text" placeholder=" "/>
-                    <label asp-for="Contract.Price">Cena bez DPH</label>
+                    <input asp-for="Contract.SharedInfo.Price" class="form-control" type="text" placeholder=" "/>
+                    <label asp-for="Contract.SharedInfo.Price">Cena bez DPH</label>
                 </span>
-                <span asp-validation-for="Contract.Price" class="text-danger"></span>
+                <span asp-validation-for="Contract.SharedInfo.Price" class="text-danger"></span>
             </div>
             <div class="col-lg-4">
                 <span class="has-float-label" data-toggle="tooltip" title="Aktuální kurz ČNB">
-                    <select asp-for="Contract.CurrencyId" asp-items="Model.CurrencyList" class="form-control"></select>
-                    <label asp-for="Contract.CurrencyId">Měna</label>
+                    <select asp-for="Contract.SharedInfo.CurrencyId" asp-items="Model.CurrencyList" class="form-control"></select>
+                    <label asp-for="Contract.SharedInfo.CurrencyId">Měna</label>
                 </span>
-                <span asp-validation-for="Contract.Currency" class="text-danger"></span>
+                <span asp-validation-for="Contract.SharedInfo.CurrencyId" class="text-danger"></span>
             </div>
         </div>
 
@@ -160,7 +161,7 @@
 
             function changeExchangeRate(curSymbol) {
                 $.ajax({
-                    url: '@Url.Action("getCurrencyStr", "Offers")',
+                    url: '@Url.Action("getCurrencyStr", "Contracts")',
                     type: 'GET',
                     //dataType: 'json',
                     // we set cache: false because GET requests are often cached by browsers
@@ -181,6 +182,32 @@
                 changeExchangeRate(curSymbol);
             });
 
+//            // After each keypress, POST to method that checks for availability of entered item
+//            // If False is returned, show warning text and color border to red, hiden and green otherwise.
+//            $("#Contract_ContractName").keyup(function() {
+//                var enteredItemName = $(this).val();
+//                var $t = $(this);
+//                $.ajax({
+//                    url: '@Url.Action("contractExistsJson", "Contracts")',
+//                    type: 'POST',
+//                    dataType: "json",
+//                    data: { contractName: enteredItemName },
+//                    @* async: true, *@
+//                    @* contentType: 'application/json', *@
+//                    success: function (response) {
+//                        if(response.exists == true) {
+//                            $t.css("border-bottom", "4px solid red");
+//                            $('#NumberAlreadyExistsWarning').show();
+//                        } else {
+//                            $t.css("border-bottom", "4px solid limegreen");
+//                            $('#NumberAlreadyExistsWarning').hide();
+//                        }
+//                    },
+//                    error: function(response) {
+//                        console.log("Error...", response.response);
+//                    }
+//                });
+//            });
         })
 
     </script>

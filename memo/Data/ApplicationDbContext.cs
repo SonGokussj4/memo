@@ -14,7 +14,7 @@ namespace memo.Data
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
-            this.ChangeTracker.LazyLoadingEnabled = false;
+            // this.ChangeTracker.LazyLoadingEnabled = true;
         }
 
         // TABLES
@@ -31,6 +31,7 @@ namespace memo.Data
         public virtual DbSet<OrderCodes> OrderCodes { get; set; }
         public virtual DbSet<BugReport> BugReport { get; set; }
         public virtual DbSet<Audit> Audit { get; set; }
+        public virtual DbSet<SharedInfo> SharedInfo { get; set; }
 
 
         /// <summary>

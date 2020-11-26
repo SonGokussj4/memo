@@ -37,10 +37,12 @@ namespace memo.Controllers
         public async Task<IActionResult> Index()
         {
             IEnumerable<Contract> contracts = await _db.Contracts
-                .Include(x => x.Contact)
-                .Include(x => x.Currency)
-                .Include(x => x.Company)
+                // .Include(x => x.SharedInfo)
+                // .Include(x => x.SharedInfo.Contact)
+                // .Include(x => x.SharedInfo.Currency)
+                // .Include(x => x.SharedInfo.Company)
                 .ToListAsync();
+
             IndexContractViewModel vm = new IndexContractViewModel()
             {
                 Contracts = contracts
@@ -52,13 +54,15 @@ namespace memo.Controllers
         [HttpGet]
         public async Task<IActionResult> Create()
         {
-            CreateContractViewModel vm = new CreateContractViewModel()
-            {
-                Contract = new Contract()
-            };
+            Contract contract = new Contract();
 
             // Default values
-            vm.Contract.ReceiveDate = DateTime.Now;
+            contract.SharedInfo.ReceiveDate = DateTime.Now;
+
+            CreateContractViewModel vm = new CreateContractViewModel()
+            {
+                Contract = contract
+            };
 
             await populateModelAsync(vm);
 
@@ -70,7 +74,7 @@ namespace memo.Controllers
         public async Task<IActionResult> Create(CreateContractViewModel vm)
         {
             // Check for duplicate, raise Invalid ModelState if the same ContractName is found
-            await CheckIfAlreadyExistsAsync(ModelState, vm);
+            CheckIfAlreadyExists(ModelState, vm);
 
             if (!ModelState.IsValid)
             {
@@ -80,13 +84,13 @@ namespace memo.Controllers
             }
 
             // If user inputs Price, write ExchangeRate and compute PriceCzk
-            if (vm.Contract.Price != null)
+            if (vm.Contract.SharedInfo.Price != null)
             {
                 string currencyName = await _db.Currency
-                    .Where(x => x.CurrencyId == vm.Contract.CurrencyId).Select(x => x.Name).FirstOrDefaultAsync();
+                    .Where(x => x.CurrencyId == vm.Contract.SharedInfo.CurrencyId).Select(x => x.Name).FirstOrDefaultAsync();
                 string exchangeRateStr = getCurrencyStr(currencyName.Replace(",", "."));
-                vm.Contract.ExchangeRate = Decimal.Parse(exchangeRateStr, CultureInfo.InvariantCulture);
-                vm.Contract.PriceCzk = (int?)(vm.Contract.Price * vm.Contract.ExchangeRate);
+                vm.Contract.SharedInfo.ExchangeRate = Decimal.Parse(exchangeRateStr, CultureInfo.InvariantCulture);
+                vm.Contract.SharedInfo.PriceCzk = (int?)(vm.Contract.SharedInfo.Price * vm.Contract.SharedInfo.ExchangeRate);
             }
 
             vm.Contract.CreatedBy = User.GetLoggedInUserName();
@@ -112,6 +116,7 @@ namespace memo.Controllers
             }
 
             Contract contract = await _db.Contracts
+                .Include(x => x.SharedInfo)
                 .FirstOrDefaultAsync(x => x.ContractsId == id);
 
             if (contract == null)
@@ -151,19 +156,22 @@ namespace memo.Controllers
 
             // Check if there was a change in old/current model
             EditContractViewModel oldVm = new EditContractViewModel();
-            oldVm.Contract = await _db.Contracts.AsNoTracking().FirstOrDefaultAsync(x => x.ContractsId == vm.Contract.ContractsId);
+            oldVm.Contract = await _db.Contracts
+                .Include(x => x.SharedInfo)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.ContractsId == vm.Contract.ContractsId);
 
             if (oldVm.Contract.ContractName == vm.Contract.ContractName &&
-                oldVm.Contract.ReceiveDate == vm.Contract.ReceiveDate &&
-                oldVm.Contract.Subject == vm.Contract.Subject &&
-                oldVm.Contract.EveDivision == vm.Contract.EveDivision &&
-                oldVm.Contract.EveDepartment == vm.Contract.EveDepartment &&
-                oldVm.Contract.EveCreatedUser == vm.Contract.EveCreatedUser &&
-                oldVm.Contract.ContactId == vm.Contract.ContactId &&
-                oldVm.Contract.CompanyId == vm.Contract.CompanyId &&
-                oldVm.Contract.Price == vm.Contract.Price &&
-                oldVm.Contract.CurrencyId == vm.Contract.CurrencyId &&
-                oldVm.Contract.ExchangeRate == vm.Contract.ExchangeRate &&
+                oldVm.Contract.SharedInfo.ReceiveDate == vm.Contract.SharedInfo.ReceiveDate &&
+                oldVm.Contract.SharedInfo.Subject == vm.Contract.SharedInfo.Subject &&
+                oldVm.Contract.SharedInfo.EveDivision == vm.Contract.SharedInfo.EveDivision &&
+                oldVm.Contract.SharedInfo.EveDepartment == vm.Contract.SharedInfo.EveDepartment &&
+                oldVm.Contract.SharedInfo.EveCreatedUser == vm.Contract.SharedInfo.EveCreatedUser &&
+                oldVm.Contract.SharedInfo.ContactId == vm.Contract.SharedInfo.ContactId &&
+                oldVm.Contract.SharedInfo.CompanyId == vm.Contract.SharedInfo.CompanyId &&
+                oldVm.Contract.SharedInfo.Price == vm.Contract.SharedInfo.Price &&
+                oldVm.Contract.SharedInfo.CurrencyId == vm.Contract.SharedInfo.CurrencyId &&
+                oldVm.Contract.SharedInfo.ExchangeRate == vm.Contract.SharedInfo.ExchangeRate &&
                 oldVm.Contract.Notes == vm.Contract.Notes &&
                 oldVm.Contract.Active == vm.Contract.Active)
             {
@@ -174,18 +182,35 @@ namespace memo.Controllers
                 return View(vm);
             }
 
-            vm.Contract.PriceCzk = Convert.ToInt32(vm.Contract.Price * vm.Contract.ExchangeRate);  // 1000 * 26,243
+            if (vm.Contract.SharedInfo.Price != null)
+            {
+                vm.Contract.SharedInfo.PriceCzk = Convert.ToInt32(vm.Contract.SharedInfo.Price * vm.Contract.SharedInfo.ExchangeRate);  // 1000 * 26,243
+            }
+            else
+            {
+                vm.Contract.SharedInfo.PriceCzk = null;
+                vm.Contract.SharedInfo.ExchangeRate = null;
+            }
             vm.Contract.ModifiedBy = User.GetLoggedInUserName();
             vm.Contract.ModifiedDate = DateTime.Now;
 
-             _db.Update(vm.Contract);
-            await _db.SaveChangesAsync(User.GetLoggedInUserName());
+            _db.Update(vm.Contract);
+            await _db.SaveChangesAsync(vm.Contract.ModifiedBy);
 
             TempData["Success"] = "Editace uložena";
 
-            vm.Audits = await getAuditViewModelAsync(_db, "Contracts", (int)id);
-            await populateModelAsync(vm);
-            return View(vm);
+            // Save
+            if (actionType == "Uložit")
+            {
+                vm.Audits = await getAuditViewModelAsync(_db, "Contracts", (int)id);
+                await populateModelAsync(vm);
+                return View(vm);
+            }
+            // Save & Exit
+            else
+            {
+                return RedirectToAction(nameof(Index));
+            }
         }
 
         [HttpPost]
@@ -198,17 +223,21 @@ namespace memo.Controllers
             }
 
             Contract contract = await _db.Contracts.FirstOrDefaultAsync(m => m.ContractsId == id);
+
             if (contract == null)
             {
                 return NotFound();
             }
+            SharedInfo sharedInfo = await _db.SharedInfo.Where(x => x.SharedInfoId == contract.SharedInfoId).FirstOrDefaultAsync();
 
+            _db.SharedInfo.Remove(contract.SharedInfo);
             _db.Contracts.Remove(contract);
+
             await _db.SaveChangesAsync(User.GetLoggedInUserName());
 
             TempData["Success"] = "Rámcová smlouva odstraněna";
 
-            return RedirectToAction("Index");
+            return RedirectToAction(nameof(Index));
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
@@ -293,22 +322,39 @@ namespace memo.Controllers
             int userId = await _eveDbDochna.tUsers.Where(x => x.TxAccount == username).Select(x => x.Id).FirstOrDefaultAsync();
 
             vEmployees employee = await _eveDbDochna.vEmployees.Where(x => x.Id == userId).FirstOrDefaultAsync();
-            vm.Contract.EveCreatedUser = employee.FormatedName;
-            vm.Contract.EveDepartment = employee.DepartName;
-            vm.Contract.EveDivision = employee.EVE == 1 ? "EVE" : "EVAT";
+            vm.Contract.SharedInfo.EveCreatedUser = employee.FormatedName;
+            vm.Contract.SharedInfo.EveDepartment = employee.DepartName;
+            vm.Contract.SharedInfo.EveDivision = employee.EVE == 1 ? "EVE" : "EVAT";
         }
 
-        private async Task CheckIfAlreadyExistsAsync(ModelStateDictionary modelState, CreateContractViewModel vm)
+        private void CheckIfAlreadyExists(ModelStateDictionary modelState, CreateContractViewModel vm)
         {
-            // Check if ContractName exists, if yes, add model error...
-            Contract existingContract = await _db.Contracts
-                .Where(x => x.ContractName == vm.Contract.ContractName)
-                .FirstOrDefaultAsync();
+            bool existingContract = contractExists(vm.Contract.ContractName);
 
-            if (existingContract != null)
+            // Check if ContractName exists, if yes, add model error...
+            if (existingContract)
             {
-                ModelState.AddModelError("ContractName", "Číslo rámcové smlouvy již existuje. Zvolte jiné, nebo upravte stávající.");
+                ModelState.AddModelError("Contract.ContractName", "Číslo rámcové smlouvy již existuje. Zvolte jiné, nebo upravte stávající.");
             }
+        }
+
+        [HttpPost]
+        public JsonResult contractExistsJson(string contractName)
+        {
+            // return Json(contractExistsAsync(contractName), JsonRequestBehavior.AllowGet);
+            bool result = contractExists(contractName);
+            return Json(new { exists = result });
+        }
+
+        /// <summary>
+        /// Return True if ContractName already exists
+        /// </summary>
+        /// <param name="contractName"></param>
+        /// <returns></returns>
+        private bool contractExists(string contractName)
+        {
+            bool found = _db.Contracts.Any(x => x.ContractName == contractName);
+            return found;
         }
     }
 }

@@ -38,8 +38,41 @@ $(document).ready(function () {
     initializeTooltips();
     initializeSelectpicker();
     initializeOrderAjaxModalClickEvent();
-});
 
+    // After each keypress, POST to method that checks for availability of entered item
+    // If False is returned, show warning text and color border to red, hiden and green otherwise.
+    $("#Contract_ContractName").keyup(function() {
+        $warningElement = $('#NumberAlreadyExistsWarning');
+        if (!$($warningElement).length) {
+            console.log("nikde nic");
+            $html = '<p id="NumberAlreadyExistsWarning" class="hide text-danger text-right pt-1 pb-0 mb-0" >Číslo je již použito!</p>';
+            $spanElement = $('span[data-valmsg-for="Contract.ContractName"]');
+            $spanElement.prepend($html);
+        }
+        var enteredItemName = $(this).val();
+        var $t = $(this);
+        $.ajax({
+            //url: '@Url.Action("contractExistsJson", "Contracts")',
+            url: '/Contracts/contractExistsJson',
+            type: 'POST',
+            dataType: "json",
+            data: { contractName: enteredItemName },
+            success: function (response) {
+                if(response.exists == true) {
+                    $t.css("border-bottom", "4px solid red");
+                    $('#NumberAlreadyExistsWarning').show();
+                } else {
+                    $t.css("border-bottom", "4px solid limegreen");
+                    $('#NumberAlreadyExistsWarning').hide();
+                }
+            },
+            error: function(response) {
+                console.log("Error...", response);
+            }
+        });
+    });
+
+});
 
 // ==========================================================================
 // INITIALIZING FUNCTIONS
@@ -57,7 +90,6 @@ function initializeTooltips() {
  * Selectpicker: select2 [https://select2.org/]
  */
 function initializeSelectpicker() {
-    console.log("Initializing Selectpicker");
     $('.selectpicker').select2({
         // dropdownCssClass: 'form-control',
         minimumInputLength: 0,  // minimum number of characters required to start a search

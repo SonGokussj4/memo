@@ -122,7 +122,8 @@
                 @* Edit *@
                 <th scope="row" data-field="0">
                     <a asp-action="Edit" asp-route-id=@item.ContractsId><i class="fa fa-pencil fa-fw" aria-hidden="true"></i></a>
-                    <a href="#" onclick="ConfirmDelete(@item.ContractsId)"><i class="fa fa-times fa-fw" style="color: red;", aria-hidden="true"></i></a>
+                    @* <a href="#" onclick="ConfirmDelete(@item.ContractsId)"><i class="fa fa-times fa-fw" style="color: red;", aria-hidden="true"></i></a> *@
+                    <a href="#myModal" class="open-myModal" data-toggle="modal" data-id="@item.ContractsId"><i class="fa fa-times fa-fw" style="color: red;", aria-hidden="true"></i></a>
                 </th>
                 @* Aktivní *@
                 @if (item.Active is true)
@@ -145,26 +146,27 @@
                     @item.CreatedDate.ToString("dd.MM.yyyy")
                 </th>
                 @* Předmět *@
-                <th scope="row" class="text-left">@item.Subject</th>
+                <th scope="row" class="text-left">@item.SharedInfo.Subject</th>
                 @* Datum přijetí *@
-                <th scope="row" class="text-left"><span style="display:none">@String.Format("{0:yyyy-MM-dd HH:mm}", @item.ReceiveDate)</span>  <!-- Hidden span for sorting date correctly-->
-                    @item.ReceiveDate.ToString("dd.MM.yyyy")</th>
+                <th scope="row" class="text-left">
+                    <span style="display:none">@String.Format("{0:yyyy-MM-dd HH:mm}", @item.SharedInfo.ReceiveDate)</span>  <!-- Hidden span for sorting date correctly-->
+                    @item.SharedInfo.ReceiveDate.ToString("dd.MM.yyyy")</th>
                 @* Divize *@
-                <th scope="row" class="text-left">@item.EveDivision</th>
+                <th scope="row" class="text-left">@item.SharedInfo.EveDivision</th>
                 @* Oddělení *@
-                <th scope="row" class="text-left">@item.EveDepartment</th>
+                <th scope="row" class="text-left">@item.SharedInfo.EveDepartment</th>
                 @* Vytvořil *@
-                <th scope="row" class="text-left">@item.EveCreatedUser</th>
+                <th scope="row" class="text-left">@item.SharedInfo.EveCreatedUser</th>
                 @* Zákazník *@
-                <th scope="row" class="text-left">@item.Company?.Name</th>
+                <th scope="row" class="text-left">@item.SharedInfo.Company?.Name</th>
                 @* Kontakt *@
-                <th scope="row" class="text-left">@item.Contact?.PersonLastName @item.Contact?.PersonName</th>
+                <th scope="row" class="text-left">@item.SharedInfo.Contact?.PersonLastName @item.SharedInfo.Contact?.PersonName</th>
                 @* Cena *@
-                <th scope="row" class="text-right">@String.Format(CultureInfo.CreateSpecificCulture(@item.Currency.CultureCode), "{0:C0}", @item.Price)</th>
+                <th scope="row" class="text-right">@String.Format(CultureInfo.CreateSpecificCulture(@item.SharedInfo.Currency.CultureCode), "{0:C0}", @item.SharedInfo.Price)</th>
                 @* Cena [CZK] *@
-                <th scope="row" class="text-right">@String.Format(CultureInfo.CreateSpecificCulture("cs-CZ"), "{0:C0}", @item.PriceCzk)</th>
+                <th scope="row" class="text-right">@String.Format(CultureInfo.CreateSpecificCulture("cs-CZ"), "{0:C0}", @item.SharedInfo.PriceCzk)</th>
                 @* Měna *@
-                <th scope="row" class="text-left">@item.Currency?.Name</th>
+                <th scope="row" class="text-left">@item.SharedInfo.Currency?.Name</th>
                 @* Poznámky *@
                 <th scope="row" class="notesWrap" data-toggle="tooltip" data-html="true" title="@item.Notes">@item.Notes</th>
             </tr>
@@ -172,20 +174,20 @@
     </tbody>
 </table>
 </div>
-@*
+
 <!-- Modal Confirm Delete-->
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+<div class="modal hide" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog modal-sm" role="document">
         <div class="modal-content">
             <!-- header -->
             <div class="modal-header">
-                <h5 class="modal-title" id="myModalLabel">Smazání nabídky</h5>
+                <h5 class="modal-title" id="myModalLabel">Smazání rámcové smlouvy</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             </div>
             <!-- body -->
             <div class="modal-body">
-                Opravdu smazat?
-                <span id="modalItemId"></span>
+                <p>Opravdu smazat?</p>
+                <input type="text" name="deleteItemId" id="deleteItemId" value="" hidden />
             </div>
             <!-- footer -->
             <div class="modal-footer">
@@ -194,50 +196,55 @@
             </div>
         </div>
     </div>
-</div> *@
+</div>
 
-@*hidden field for storing current Id*@
-@* <input type="hidden" id="hiddenId" /> *@
+@* hidden field for storing current Id*@
+<input type="hidden" id="hiddenId" />
 
 @section scripts{
 <script>
-//
-//    // Reinitialize tooltips upon table change
-//    $('#table').on('post-body.bs.table', function () {  // on('all.bs.table'
-//        $('[data-toggle="tooltip"]').tooltip()
-//    });
-//
-//    // POST delete command to controller
-//    //----------------------------------
-//    function DeleteItem() {
-//        var itemId = $("#hiddenId").val();
-//        $.ajax({
-//            type: "POST",
-//            url: '@Url.Action("Delete", "Offers")',
-//            data: { Id: itemId },
-//            beforeSend: function (request) {
-//                request.setRequestHeader("RequestVerificationToken", $("[name='__RequestVerificationToken']").val());
-//            },
-//            success: function () {
-//                $("#myModal").modal("hide")
-//                //$("#row_" + itemId).remove();
-//                window.location = "Offers/Index"
-//            },
-//            error: function() {
-//                alert("Tento nabídka nelze z nějakého důvodu odstranit...");
-//                $("#myModal").modal("hide");
-//            }
-//        })
-//    }
+
+    // Reinitialize tooltips upon table change
+    $('#table').on('post-body.bs.table', function () {  // on('all.bs.table'
+        $('[data-toggle="tooltip"]').tooltip()
+    });
+
+    $(document).on("click", ".open-myModal", function () {
+        var myItemId = $(this).data('id');
+        $(".modal-body #deleteItemId").val( myItemId );
+    });
+
+    // POST delete command to controller
+    //----------------------------------
+    function DeleteItem() {
+        var itemId = $(".modal-body #deleteItemId").val();
+        var token = $('@Html.AntiForgeryToken()').val();
+        $.ajax({
+            type: "POST",
+            data: { Id: itemId, __RequestVerificationToken: token },
+            url: '@Url.Action("Delete", "Contracts")',
+            success: function () {
+                $("#myModal").modal("hide")
+                window.location = "Contracts"
+            },
+            error: function(response) {
+                alert("Tuto rámcovou smlouvu nelze z nějakého důvodu odstranit... " + response.response);
+                $("#myModal").modal("hide");
+            }
+        });
+            //beforeSend: function (request) {
+            //    request.setRequestHeader("RequestVerificationToken", $("[name='__RequestVerificationToken']").val());
+            //},
+    }
 
 
-//    // MODAL dialog for delete confirmation
-//    //-------------------------------------
-//    var ConfirmDelete = function (ItemId) {
-//        $("#hiddenId").val(ItemId);
-//        $("#myModal").modal('show');
-//        $("#modalItemId").val( 'Hmm' + ItemId );
-//    };
+    // MODAL dialog for delete confirmation
+    //-------------------------------------
+    var ConfirmDelete = function (ItemId) {
+        $("#hiddenId").val(ItemId);
+        $("#myModal").modal('show');
+        $("#modalItemId").val( 'Hmm' + ItemId );
+    };
 
 
 //    // Function to toggle Active/Disabled Contacts/Companies in table

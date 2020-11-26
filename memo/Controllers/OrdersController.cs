@@ -96,10 +96,10 @@ namespace memo.Controllers
             {
                 await populateModel(null, 0);
                 List<SelectListItem> contracts = await _db.Contracts
-                .Select(x => new SelectListItem {
-                    Value = x.ContractsId.ToString(),
-                    Text = $"{x.ContractName} - {x.Subject}",
-                })
+                    .Select(x => new SelectListItem {
+                        Value = x.ContractsId.ToString(),
+                        Text = $"{x.ContractName} - {x.SharedInfo.Subject}",
+                    })
                 .ToListAsync();
                 OfferOrderVM vmm = new OfferOrderVM()
                 {
@@ -144,7 +144,7 @@ namespace memo.Controllers
             List<SelectListItem> contractsList = await _db.Contracts
                 .Select(x => new SelectListItem {
                     Value = x.ContractsId.ToString(),
-                    Text = $"{x.ContractName} - {x.Subject}",
+                    Text = $"{x.ContractName} - {x.SharedInfo.Subject}",
                 })
                 .ToListAsync();
 

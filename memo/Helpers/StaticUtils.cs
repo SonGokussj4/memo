@@ -33,6 +33,7 @@ namespace memo.Helpers
             {"Contact", typeof(Contact)},
             {"OtherCost", typeof(OtherCost)},
             {"OrderCodes", typeof(OrderCodes)},
+            {"SharedInfo", typeof(SharedInfo)},
         };
 
         /// <summary>
@@ -50,6 +51,7 @@ namespace memo.Helpers
             {"Contact", "Kontakt"},
             {"OtherCost", "Ostatní náklady"},
             {"OrderCodes", "Kód vykazování"},
+            {"SharedInfo", "Sdílené"},
         };
 
         /// <summary>
@@ -67,6 +69,7 @@ namespace memo.Helpers
             {"Contact", "Contacts"},
             {"OtherCost", "Orders"},
             {"OrderCodes", "Orders"},
+            {"SharedInfo", "Contracts"},
         };
 
         public static string getOrderIdFromInvoice(AuditViewModel item, ApplicationDbContext db)

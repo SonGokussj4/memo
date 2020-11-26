@@ -36,12 +36,12 @@ namespace memo.Models
         [Required]
         [Display(Name = "Kontakt")]
         public int? ContactId { get; set; }
-        public Contact Contact { get; set; }
+        public virtual Contact Contact { get; set; }
 
         [Required]
         [Display(Name = "Firma")]
         public int? CompanyId { get; set; }
-        public Company Company { get; set; }
+        public virtual Company Company { get; set; }
 
         [Required]
         [Display(Name = "EVE divize"), StringLength(50)]
@@ -68,7 +68,7 @@ namespace memo.Models
 
         [Display(Name = "Měna")]
         public int? CurrencyId { get; set; }
-        public Currency Currency { get; set; }
+        public virtual Currency Currency { get; set; }
 
         [Display(Name = "Směnný kurz")]
         [Column(TypeName = "decimal(18,3)")]
@@ -81,7 +81,7 @@ namespace memo.Models
 
         [Display(Name = "Status nabídky")]
         public int OfferStatusId { get; set; }
-        public OfferStatus OfferStatus { get; set; }
+        public virtual OfferStatus OfferStatus { get; set; }
         // [InverseProperty(nameof(OfferStatus.OfferStatusId))]
         // public virtual OfferStatus StatusNavigation { get; set; }
 

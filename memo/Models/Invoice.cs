@@ -16,7 +16,7 @@ namespace memo.Models
         [ForeignKey("Order")]
         [Display(Name = "Zakázka")]
         public int OrderId { get; set; }
-        public Order Order { get; set; }
+        public virtual Order Order { get; set; }
 
         [Required]
         [Display(Name = "Předp. termín vystavení faktury"), Column(TypeName = "date")]

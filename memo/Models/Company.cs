@@ -58,5 +58,7 @@ namespace memo.Models
 
         [InverseProperty("Company")]
         public virtual ICollection<Offer> Offers { get; set; }
+
+        public virtual List<SharedInfo> SharedInfo { get; set; }
     }
 }

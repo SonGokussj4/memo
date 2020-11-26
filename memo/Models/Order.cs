@@ -24,11 +24,11 @@ namespace memo.Models
 
         [Display(Name = "Evektor nabídka")]
         public int? OfferId { get; set; }
-        public Offer Offer { get; set; }
+        public virtual Offer Offer { get; set; }
 
         [Display(Name = "Rámcová smlouva")]
         public int? ContractId { get; set; }
-        public Contract Contract { get; set; }
+        public virtual Contract Contract { get; set; }
 
         [Display(Name = "Typ")]
         public string FromType { get; set; }  // N, R, -
