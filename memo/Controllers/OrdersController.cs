@@ -833,9 +833,9 @@ namespace memo.Controllers
         /// <param name="itemName"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<JsonResult> itemNameExistsAsync(string itemName)
+        public async Task<JsonResult> itemNameExists(string itemName)
         {
-            return Json(new { exists = await orderExistsAsync(itemName) });
+            return Json(new { exists = await orderExists(itemName) });
         }
 
         /// <summary>
@@ -843,7 +843,7 @@ namespace memo.Controllers
         /// </summary>
         /// <param name="itemName"></param>
         /// <returns></returns>
-        private async Task<bool> orderExistsAsync(string itemName)
+        private async Task<bool> orderExists(string itemName)
         {
             return await _db.Order.AnyAsync(x => x.OrderName == itemName);
         }

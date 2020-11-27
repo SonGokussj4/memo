@@ -40,6 +40,13 @@ $(document).ready(function () {
     initializeOrderAjaxModalClickEvent();
 });
 
+function getBaseUrl() {
+    if (window.location.host == "ar-sc") {
+        return window.location.origin + "/" + window.location.pathname.split('/')[1];
+    }
+    return window.location.origin;
+}
+
 /**
  * After each keypress, POST to method that checks for availability of entered item
  * If False is returned, show warning text and color border to red, hiden and green otherwise.
@@ -47,6 +54,7 @@ $(document).ready(function () {
  * @param {string} controllerName Controller Name
  */
 function checkItemNameExists(parent, controllerName) {
+    var baseUrl = getBaseUrl();
     $warningElement = $('#NumberAlreadyExistsWarning');
     if (!$($warningElement).length) {
         $html = '<p id="NumberAlreadyExistsWarning" class="hide text-danger text-right pt-1 pb-0 mb-0" >Číslo je již použito!</p>';
@@ -58,7 +66,7 @@ function checkItemNameExists(parent, controllerName) {
     var $this = parent;
     $.ajax({
         //url: '@Url.Action("itemNameExists", "Offers")',
-        url: `/${controllerName}/itemNameExists`,
+        url: `${baseUrl}/${controllerName}/itemNameExists`,
         type: 'POST',
         dataType: "json",
         data: { itemName: enteredText },
