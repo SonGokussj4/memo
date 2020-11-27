@@ -64,20 +64,6 @@ namespace memo
             services.AddDefaultIdentity<IdentityUser>()
                 .AddEntityFrameworkStores<LoginDbContext>();
 
-            //services.AddAuthorization(options =>
-            //{
-            //    options.FallbackPolicy = new AuthorizationPolicyBuilder()
-            //        .RequireAuthenticatedUser()
-            //        .Build();
-            //    // Register other policies here
-            //});
-
-            // services.ConfigureApplicationCookie(o =>
-            // {
-            //     o.ExpireTimeSpan = TimeSpan.FromHours(12);
-            //     o.SlidingExpiration = true;
-            // });
-
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
                 services.AddSingleton<ValidateAuthentication>();
@@ -85,17 +71,11 @@ namespace memo
 
             services.AddAuthentication(NegotiateDefaults.AuthenticationScheme)
                 .AddNegotiate();
-                // .AddNegotiate(options =>
-                // {
-                //     if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-                //     {
-                //         options.EnableLdap("KONSTRU");
-                //         // options.MachineAccountName = "machineName";
-                //         // options.MachineAccountPassword = "PassW0rd";
-                //     }
-                // });
 
             services.AddControllersWithViews();
+            // services.AddControllersWithViews(options => {
+            //     options.SuppressAsyncSuffixInActionNames = false;
+            // });
 
         }
 
