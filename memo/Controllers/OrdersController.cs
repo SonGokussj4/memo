@@ -842,10 +842,25 @@ namespace memo.Controllers
             return PartialView("_PartialSearchForOrderCode", vm);
         }
 
-        // [HttpGet]
-        // public ActionResult SearchForOrderCode(int id)
-        // {
-        //     return PartialView("_PartialModalSearchForOrderCode");
-        // }
+        /// <summary>
+        /// Return Json{ exists = true/false } if itemName exists
+        /// </summary>
+        /// <param name="itemName"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<JsonResult> itemNameExists(string itemName)
+        {
+            return Json(new { exists = await orderExists(itemName) });
+        }
+
+        /// <summary>
+        /// Return True if itemName already exists
+        /// </summary>
+        /// <param name="itemName"></param>
+        /// <returns></returns>
+        private async Task<bool> orderExists(string itemName)
+        {
+            return await _db.Order.AnyAsync(x => x.OrderName == itemName);
+        }
     }
 }

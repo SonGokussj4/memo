@@ -404,6 +404,10 @@
 
         $(document).ready(function(){
 
+            $("#Order_OrderName").keyup(function() {
+                checkItemNameExists($(this), 'Orders');
+            });
+
             // Upon page load, check if OfferId != 0 (offer is selected) then set orderForm as visible
             //if (@Model.Order.OfferId != 0) {
             if (@Model.Order?.OfferId != 0) {

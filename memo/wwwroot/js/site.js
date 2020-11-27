@@ -38,41 +38,52 @@ $(document).ready(function () {
     initializeTooltips();
     initializeSelectpicker();
     initializeOrderAjaxModalClickEvent();
-
-    // After each keypress, POST to method that checks for availability of entered item
-    // If False is returned, show warning text and color border to red, hiden and green otherwise.
-    $("#Contract_ContractName").keyup(function() {
-        $warningElement = $('#NumberAlreadyExistsWarning');
-        if (!$($warningElement).length) {
-            console.log("nikde nic");
-            $html = '<p id="NumberAlreadyExistsWarning" class="hide text-danger text-right pt-1 pb-0 mb-0" >Číslo je již použito!</p>';
-            $spanElement = $('span[data-valmsg-for="Contract.ContractName"]');
-            $spanElement.prepend($html);
-        }
-        var enteredItemName = $(this).val();
-        var $t = $(this);
-        $.ajax({
-            //url: '@Url.Action("contractExistsJson", "Contracts")',
-            url: '/Contracts/contractExistsJson',
-            type: 'POST',
-            dataType: "json",
-            data: { contractName: enteredItemName },
-            success: function (response) {
-                if(response.exists == true) {
-                    $t.css("border-bottom", "4px solid red");
-                    $('#NumberAlreadyExistsWarning').show();
-                } else {
-                    $t.css("border-bottom", "4px solid limegreen");
-                    $('#NumberAlreadyExistsWarning').hide();
-                }
-            },
-            error: function(response) {
-                console.log("Error...", response);
-            }
-        });
-    });
-
 });
+
+function getBaseUrl() {
+    if (window.location.host == "ar-sc") {
+        return window.location.origin + "/" + window.location.pathname.split('/')[1];
+    }
+    return window.location.origin;
+}
+
+/**
+ * After each keypress, POST to method that checks for availability of entered item
+ * If False is returned, show warning text and color border to red, hiden and green otherwise.
+ * @param {element} parent $(this) element every time
+ * @param {string} controllerName Controller Name
+ */
+function checkItemNameExists(parent, controllerName) {
+    var baseUrl = getBaseUrl();
+    $warningElement = $('#NumberAlreadyExistsWarning');
+    if (!$($warningElement).length) {
+        $html = '<p id="NumberAlreadyExistsWarning" class="hide text-danger text-right pt-1 pb-0 mb-0" >Číslo je již použito!</p>';
+        $spanId = parent.attr('id').replaceAllTxt("_", ".");
+        $span = $(`span[data-valmsg-for="${$spanId}"]`);
+        $($html).insertBefore($span);
+    }
+    var enteredText = parent.val();
+    var $this = parent;
+    $.ajax({
+        //url: '@Url.Action("itemNameExists", "Offers")',
+        url: `${baseUrl}/${controllerName}/itemNameExists`,
+        type: 'POST',
+        dataType: "json",
+        data: { itemName: enteredText },
+        success: function (response) {
+            if(response.exists == true) {
+                $this.css("border-bottom", "4px solid red");
+                $('#NumberAlreadyExistsWarning').show();
+            } else {
+                $this.css("border-bottom", "4px solid limegreen");
+                $('#NumberAlreadyExistsWarning').hide();
+            }
+        },
+        error: function(response) {
+            console.log("Error...", response);
+        }
+    });
+}
 
 // ==========================================================================
 // INITIALIZING FUNCTIONS

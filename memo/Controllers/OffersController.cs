@@ -496,5 +496,26 @@ namespace memo.Controllers
                 ViewBag.CreatedOrders = _db.Order.Include(x => x.Offer).Where(x => x.OfferId == id).ToList();
             }
         }
+
+        /// <summary>
+        /// Return Json{ exists = true/false } if itemName exists
+        /// </summary>
+        /// <param name="itemName"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<JsonResult> itemNameExistsAsync(string itemName)
+        {
+            return Json(new { exists = await offerExistsAsync(itemName) });
+        }
+
+        /// <summary>
+        /// Return True if itemName already exists
+        /// </summary>
+        /// <param name="itemName"></param>
+        /// <returns></returns>
+        private async Task<bool> offerExistsAsync(string itemName)
+        {
+            return await _db.Offer.AnyAsync(x => x.OfferName == itemName);
+        }
     }
 }
