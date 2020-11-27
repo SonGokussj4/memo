@@ -180,6 +180,10 @@
 
             $('.mycalendar input').datepicker(datepickerParameters[0]);
 
+            $("#Offer_OfferName").keyup(function() {
+                checkItemNameExists($(this), 'Offers');
+            });
+
             function changeExchangeRate(curSymbol) {
                 $.ajax({
                     url: '@Url.Action("getCurrencyStr", "Offers")',

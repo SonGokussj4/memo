@@ -40,6 +40,42 @@ $(document).ready(function () {
     initializeOrderAjaxModalClickEvent();
 });
 
+/**
+ * After each keypress, POST to method that checks for availability of entered item
+ * If False is returned, show warning text and color border to red, hiden and green otherwise.
+ * @param {element} parent $(this) element every time
+ * @param {string} controllerName Controller Name
+ */
+function checkItemNameExists(parent, controllerName) {
+    $warningElement = $('#NumberAlreadyExistsWarning');
+    if (!$($warningElement).length) {
+        $html = '<p id="NumberAlreadyExistsWarning" class="hide text-danger text-right pt-1 pb-0 mb-0" >Číslo je již použito!</p>';
+        $spanId = parent.attr('id').replaceAllTxt("_", ".");
+        $span = $(`span[data-valmsg-for="${$spanId}"]`);
+        $($html).insertBefore($span);
+    }
+    var enteredText = parent.val();
+    var $this = parent;
+    $.ajax({
+        //url: '@Url.Action("itemNameExists", "Offers")',
+        url: `/${controllerName}/itemNameExists`,
+        type: 'POST',
+        dataType: "json",
+        data: { itemName: enteredText },
+        success: function (response) {
+            if(response.exists == true) {
+                $this.css("border-bottom", "4px solid red");
+                $('#NumberAlreadyExistsWarning').show();
+            } else {
+                $this.css("border-bottom", "4px solid limegreen");
+                $('#NumberAlreadyExistsWarning').hide();
+            }
+        },
+        error: function(response) {
+            console.log("Error...", response);
+        }
+    });
+}
 
 // ==========================================================================
 // INITIALIZING FUNCTIONS
