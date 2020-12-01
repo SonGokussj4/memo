@@ -280,7 +280,7 @@ DECLARE @bit            INT,
 
 -- You will need to change @TableName to match the table to be audited.
 -- Here we made GUESTS for your example.
-SELECT @TableName = 'Contracts'
+SELECT @TableName = 'SharedInfo'
 
 SELECT @UserName = SUSER_SNAME(),
   @UpdateDate = CONVERT(NVARCHAR(30), GETDATE(), 126)
@@ -426,7 +426,7 @@ WHERE
     x.EveDivision = y.EveDivision AND
     x.EveDepartment = y.EveDepartment AND
     x.EveCreatedUser = y.EveCreatedUser AND
-    x.PriceCzk = y.PriceCzk AND
+    (x.PriceCzk = y.PriceCzk OR (ISNULL(x.PriceCzk, y.PriceCzk) IS NULL)) AND
     (x.Price = y.Price OR (ISNULL(x.Price, y.Price) IS NULL))
 
 
