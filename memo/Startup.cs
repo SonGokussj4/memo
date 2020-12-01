@@ -49,15 +49,15 @@ namespace memo
                 options.UseSqlServer(Configuration.GetConnectionString("EvektorDbConnectionTest")));
 
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("EvektorDbConnectionEvektor")));
+                options.UseSqlServer(Configuration.GetConnectionString("EvektorDBdev")));
             // options.UseSqlServer(Configuration.GetConnectionString("EvektorDbConnectionTest")));
 
             services.AddDbContext<EvektorDbContext>(options =>
-                  options.UseSqlServer(Configuration.GetConnectionString("EvektorDbConnectionEvektor")));
+                  options.UseSqlServer(Configuration.GetConnectionString("EvektorDBdev")));
             // options.UseSqlServer(Configuration.GetConnectionString("EvektorDbConnectionMock")));
 
             services.AddDbContext<EvektorDochnaDbContext>(options =>
-                  options.UseSqlServer(Configuration.GetConnectionString("EvektorDbConnectionDochna")));
+                  options.UseSqlServer(Configuration.GetConnectionString("DochadzkaDBdev")));
             // options.UseSqlServer(Configuration.GetConnectionString("EvektorDbConnectionMock")));
 
             //services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
