@@ -189,7 +189,7 @@ GO
 -----------------------------------------------------------------------------------------
 -- ZMENIT Order SLOUPEC FromType Z Null NA Not Null
 ALTER TABLE [memo].[Order]
-ALTER COLUMN FromType CHAR(1) NOT NULL;
+ALTER COLUMN FromType CHAR(1) NULL;
 GO
 
 

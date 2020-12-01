@@ -52,16 +52,19 @@ namespace memo
             services.AddDbContext<ApplicationDbContext>(options =>
                 // options.UseSqlServer(Configuration.GetConnectionString("EvektorDbConnectionEvektor")));
                 options.UseSqlServer(Configuration.GetConnectionString("EvektorDbConnectionTest"))
+                // options.UseSqlServer(Configuration.GetConnectionString("EvektorDBdev"))
                     .UseLazyLoadingProxies());
 
             services.AddDbContext<EvektorDbContext>(options =>
                 //   options.UseSqlServer(Configuration.GetConnectionString("EvektorDbConnectionEvektor")));
                 options.UseSqlServer(Configuration.GetConnectionString("EvektorDbConnectionMock"))
+                // options.UseSqlServer(Configuration.GetConnectionString("EvektorDBdev"))
                     .UseLazyLoadingProxies());
 
             services.AddDbContext<EvektorDochnaDbContext>(options =>
                 //   options.UseSqlServer(Configuration.GetConnectionString("EvektorDbConnectionDochna")));
                 options.UseSqlServer(Configuration.GetConnectionString("EvektorDbConnectionMock"))
+                // options.UseSqlServer(Configuration.GetConnectionString("DochadzkaDBdev"))
                     .UseLazyLoadingProxies());
 
             //services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
