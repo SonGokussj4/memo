@@ -36,8 +36,8 @@
     <style>
         /* Active menu element */
         .active {
-            border-bottom: 4px solid #5ca9ef;
-            margin-bottom: -4px;
+            border-bottom: 3px solid #5ca9ef;
+            margin-bottom: -3px;
         }
     </style>
 </head>
@@ -55,26 +55,47 @@
 
                             <span class="nav-item border-left"></span>
 
-                            <li class="nav-item mx-2">
-                                <a class="nav-link text-dark" asp-controller="Offers" asp-action="Index"><i class="fa fa-list-alt" style="color:#5182ee"></i> Nabídky</a>
+                            <li class="nav-item dropdown mx-2">
+                                <a class="nav-link text-dark dropdown-toggle" asp-controller="Offers" asp-action="Index"><i class="fa fa-list-alt" style="color:#5182ee"></i> Nabídky</a>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" asp-controller="Offers" asp-action="Create"><i class="fa fa-fw fa-plus-circle" style="color: green;" aria-hidden="true"></i> Nová</a>
+                                    @* <div class="dropdown-divider"></div> *@
+                                    <a class="dropdown-item" asp-controller="Offers" asp-action="Index"><i class="fa fa-fw fa-list" aria-hidden="true"></i> Seznam</a>
+                                </div>
                             </li>
 
-                            <li class="nav-item mx-2">
-                                <a class="nav-link text-dark" asp-controller="Contracts" asp-action="Index"><i class="fa fa-file-text-o" style="color:#ee7451"></i> Rám. smlouvy</a>
+                            <li class="nav-item dropdown mx-2">
+                                <a class="nav-link text-dark dropdown-toggle" data-toggle="dropdown" asp-controller="Contracts" asp-action="Index"><i class="fa fa-file-text-o" style="color:#ee7451"></i> Rám. smlouvy</a>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" asp-controller="Contracts" asp-action="Create"><i class="fa fa-fw fa-plus-circle" style="color: green;" aria-hidden="true"></i> Nová</a>
+                                    <a class="dropdown-item" asp-controller="Contracts" asp-action="Index"><i class="fa fa-fw fa-list" aria-hidden="true"></i> Seznam</a>
+                                </div>
                             </li>
 
-                            <li class="nav-item mx-2">
-                                <a class="nav-link text-dark" asp-controller="Orders" asp-action="Index"><i class="fa fa-handshake-o" style="color:green"></i> Zakázky</a>
+                            <li class="nav-item dropdown mx-2">
+                                <a class="nav-link text-dark dropdown-toggle" data-toggle="dropdown" asp-controller="Orders" asp-action="Index"><i class="fa fa-handshake-o" style="color:green"></i> Zakázky</a>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" asp-controller="Orders" asp-action="Create"><i class="fa fa-fw fa-plus-circle" style="color: green;" aria-hidden="true"></i> Nová</a>
+                                    <a class="dropdown-item" asp-controller="Orders" asp-action="Index"><i class="fa fa-fw fa-list" aria-hidden="true"></i> Seznam</a>
+                                </div>
                             </li>
 
                             <span class="nav-item border-left"></span>
 
-                            <li class="nav-item mx-2">
-                                <a class="nav-link" asp-controller="Contacts" asp-action="Index"><i class="fa fa-address-book-o"></i> Kontakty</a>
+                            <li class="nav-item dropdown mx-2">
+                                <a class="nav-link dropdown-toggle" data-toggle="dropdown" asp-controller="Contacts" asp-action="Index"><i class="fa fa-address-book-o"></i> Kontakty</a>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" asp-controller="Contacts" asp-action="Create"><i class="fa fa-fw fa-plus-circle" style="color: green;" aria-hidden="true"></i> Nový</a>
+                                    <a class="dropdown-item" asp-controller="Contacts" asp-action="Index"><i class="fa fa-fw fa-list" aria-hidden="true"></i> Seznam</a>
+                                </div>
                             </li>
 
-                            <li class="nav-item mx-2">
-                                <a class="nav-link" asp-controller="Companies" asp-action="Index"><i class="fa fa-building-o"></i> Firmy</a>
+                            <li class="nav-item dropdown mx-2">
+                                <a class="nav-link dropdown-toggle" data-toggle="dropdown" asp-controller="Companies" asp-action="Index"><i class="fa fa-building-o"></i> Firmy</a>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" asp-controller="Companies" asp-action="Create"><i class="fa fa-fw fa-plus-circle" style="color: green;" aria-hidden="true"></i> Nová</a>
+                                    <a class="dropdown-item" asp-controller="Companies" asp-action="Index"><i class="fa fa-fw fa-list" aria-hidden="true"></i> Seznam</a>
+                                </div>
                             </li>
 
                             <span class="nav-item border-left"></span>
