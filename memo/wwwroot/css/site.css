@@ -29,10 +29,11 @@ a {
 }
 
 /* DROPDOWN ON HOVER */
+/* ------------------------------------------------------------------------------------- */
 /* .navbar .nav-item:not(:last-child) {
   margin-right: 35px;
 } */
-
+/*
 .dropdown-toggle::after {
    transition: transform 0.15s linear;
 }
@@ -41,10 +42,29 @@ a {
   transform: translateY(3px);
 }
 
+.subdropdown-toggle:hover {
+  transform: translateY(3px);
+}
+
 .dropdown-menu {
   margin-top: 0px;
   left: auto;
-}
+} */
+
+/* .navbar-nav li:hover > div.subdropdown-menu {
+  display: none;
+} */
+/*
+.subdropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -1px;
+  position: relative;
+} */
+
+/* .subdropdown-menu.show {
+  display: block;
+} */
 
 
 /* Sticky footer styles

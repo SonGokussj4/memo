@@ -32,34 +32,71 @@ var datepickerParameters = new Array({
 
 
 // ==========================================================================
-// BOOTSTRAP ADDITIONS - LIN-NAV ON HOVER
+// BOOTSTRAP ADDITIONS - NAVBAR DROPDOWN ON HOVER
 // ==========================================================================
-const $dropdown = $(".dropdown");
-const $dropdownToggle = $(".dropdown-toggle");
-const $dropdownMenu = $(".dropdown-menu");
-const showClass = "show";
+// const $dropdown = $(".dropdown");
+// const $dropdownMenu = $(".dropdown-menu");
+// const $dropdownToggle = $(".dropdown-toggle");
+// const $subdropdown = $(".subdropdown");
+// const $subdropdownMenu = $(".subdropdown-menu");
+// const $subdropdownToggle = $(".subdropdown-toggle");
+// const showClass = "show";
 
-$(window).on("load resize", function() {
-  if (this.matchMedia("(min-width: 768px)").matches) {
-    $dropdown.hover(
-      function() {
-        const $this = $(this);
-        $this.addClass(showClass);
-        $this.find($dropdownToggle).attr("aria-expanded", "true");
-        $this.find($dropdownMenu).addClass(showClass);
-      },
-      function() {
-        const $this = $(this);
-        $this.removeClass(showClass);
-        $this.find($dropdownToggle).attr("aria-expanded", "false");
-        $this.find($dropdownMenu).removeClass(showClass);
-      }
-    );
-  } else {
-    $dropdown.off("mouseenter mouseleave");
-  }
-});
+// $(window).on("load resize", function() {
+//     if (this.matchMedia("(min-width: 768px)").matches) {
+//         $dropdown.hover(
+//             function() {
+//                 const $this = $(this);
+//                 $this.addClass(showClass);
+//                 $this.find($dropdownToggle).attr("aria-expanded", "true");
+//                 var mom = $this.find($dropdownMenu).not($subdropdownMenu).addClass(showClass);
+//             },
+//             function() {
+//                 const $this = $(this);
+//                 $this.removeClass(showClass);
+//                 $this.find($dropdownToggle).attr("aria-expanded", "false");
+//                 $this.find($dropdownMenu).not($subdropdownMenu).removeClass(showClass);
+//                 $($subdropdownMenu).removeClass(showClass);
+//             }
+//         );
+//     } else {
+//         $dropdown.off("mouseenter mouseleave");
+//     }
 
+//     if (this.matchMedia("(min-width: 768px)").matches) {
+//         $subdropdown.hover(
+//             function() {
+//                 console.log("Showing");
+//                 const $this = $(this);
+//                 $this.addClass(showClass);
+//                 $this.find($subdropdownToggle).attr("aria-expanded", "true");
+//                 $($subdropdownMenu).addClass(showClass);
+//             },
+//             function() {
+//                 console.log("Hidding");
+//                 const $this = $(this);
+//                 $this.removeClass(showClass);
+//                 $this.find($subdropdownToggle).attr("aria-expanded", "false");
+//                 // $($subdropdownMenu).removeClass(showClass);
+//             }
+//         );
+//     } else {
+//         $subdropdownMenu.off("mouseenter mouseleave");
+//         console.log("ajta");
+//     }
+// });
+
+// $('.dropdown-submenu > a').on("click", function(e) {
+//     var submenu = $(this);
+//     $('.dropdown-submenu .dropdown-menu').removeClass('show');
+//     submenu.next('.dropdown-menu').addClass('show');
+//     e.stopPropagation();
+// });
+
+// $('.dropdown').on("hidden.bs.dropdown", function() {
+//     // hide any open menus when parent closes
+//     $('.dropdown-menu.show').removeClass('show');
+// });
 
 // ==========================================================================
 // INITIALIZE UPON PAGE LOAD
