@@ -45,7 +45,7 @@
 </head>
 <body>
     <header>
-        <nav class="btco-hover-menu navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid justify-content-center">
                 <div class="row">
 
@@ -59,21 +59,25 @@
 
                             <li class="nav-item dropdown mx-2">
                                 <a class="nav-link text-dark dropdown-toggle" asp-controller="Offers" asp-action="Index"><i class="fa fa-list-alt" style="color:#5182ee"></i> Nabídky</a>
-                                <div class="dropdown-menu">
+                                <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                    <li>
                                     <a class="dropdown-item" asp-controller="Offers" asp-action="Create"><i class="fa fa-fw fa-plus-circle" style="color: green;" aria-hidden="true"></i> Nová</a>
                                     @* <div class="dropdown-divider"></div> *@
                                     <a class="dropdown-item" asp-controller="Offers" asp-action="Index"><i class="fa fa-fw fa-list" aria-hidden="true"></i> Seznam</a>
-                                </div>
+                                    </li>
+                                </ul>
                             </li>
 
                             <li class="nav-item dropdown mx-2">
                                 <a class="nav-link text-dark dropdown-toggle" data-toggle="dropdown" asp-controller="Contracts" asp-action="Index"><i class="fa fa-file-text-o" style="color:#ee7451"></i> Rám. smlouvy</a>
-                                <div class="dropdown-menu">
-                                    <a class="dropdown-item" asp-controller="Contracts" asp-action="Create"><i class="fa fa-fw fa-plus-circle" style="color: green;" aria-hidden="true"></i> Nová</a>
-                                    <a class="dropdown-item" asp-controller="Contracts" asp-action="Index"><i class="fa fa-fw fa-list" aria-hidden="true"></i> Seznam</a>
-                                </div>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <a class="dropdown-item" asp-controller="Contracts" asp-action="Create"><i class="fa fa-fw fa-plus-circle" style="color: green;" aria-hidden="true"></i> Nová</a>
+                                        <a class="dropdown-item" asp-controller="Contracts" asp-action="Index"><i class="fa fa-fw fa-list" aria-hidden="true"></i> Seznam</a>
+                                    </li>
+                                </ul>
                             </li>
-                            @* NOTE(jverner) https://bootstrapthemes.co/demo/resource/bootstrap-4-multi-dropdown-hover-navbar/ *@
+
                             <li class="nav-item dropdown mx-2">
                                 <a class="nav-link text-dark dropdown-toggle" data-toggle="dropdown" asp-controller="Orders" asp-action="Index">
                                     <i class="fa fa-handshake-o" style="color:green"></i> Zakázky
@@ -95,18 +99,22 @@
 
                             <li class="nav-item dropdown mx-2">
                                 <a class="nav-link dropdown-toggle" data-toggle="dropdown" asp-controller="Contacts" asp-action="Index"><i class="fa fa-address-book-o"></i> Kontakty</a>
-                                <div class="dropdown-menu">
-                                    <a class="dropdown-item" asp-controller="Contacts" asp-action="Create"><i class="fa fa-fw fa-plus-circle" style="color: green;" aria-hidden="true"></i> Nový</a>
-                                    <a class="dropdown-item" asp-controller="Contacts" asp-action="Index"><i class="fa fa-fw fa-list" aria-hidden="true"></i> Seznam</a>
-                                </div>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <a class="dropdown-item" asp-controller="Contacts" asp-action="Create"><i class="fa fa-fw fa-plus-circle" style="color: green;" aria-hidden="true"></i> Nový</a>
+                                        <a class="dropdown-item" asp-controller="Contacts" asp-action="Index"><i class="fa fa-fw fa-list" aria-hidden="true"></i> Seznam</a>
+                                    </li>
+                                </ul>
                             </li>
 
                             <li class="nav-item dropdown mx-2">
                                 <a class="nav-link dropdown-toggle" data-toggle="dropdown" asp-controller="Companies" asp-action="Index"><i class="fa fa-building-o"></i> Firmy</a>
-                                <div class="dropdown-menu">
-                                    <a class="dropdown-item" asp-controller="Companies" asp-action="Create"><i class="fa fa-fw fa-plus-circle" style="color: green;" aria-hidden="true"></i> Nová</a>
-                                    <a class="dropdown-item" asp-controller="Companies" asp-action="Index"><i class="fa fa-fw fa-list" aria-hidden="true"></i> Seznam</a>
-                                </div>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <a class="dropdown-item" asp-controller="Companies" asp-action="Create"><i class="fa fa-fw fa-plus-circle" style="color: green;" aria-hidden="true"></i> Nová</a>
+                                        <a class="dropdown-item" asp-controller="Companies" asp-action="Index"><i class="fa fa-fw fa-list" aria-hidden="true"></i> Seznam</a>
+                                    </li>
+                                </ul>
                             </li>
 
                             <span class="nav-item border-left"></span>
@@ -191,22 +199,33 @@
     @RenderSection("Scripts", required: false)
 
     <script>
-        $(function () {
-            setNavigation();
-        });
-
-        function setNavigation() {
-            var path = window.location.pathname;
-            path = path.replace(/\/$/, "");
-            path = decodeURIComponent(path);
-
-            $(".navbar-nav a").each(function () {
-                var href = $(this).attr('href');
-                if (path.substring(0, href.length) === href) {
-                    $(this).closest('li').addClass('active');
+        $(function(){
+            var current = location.pathname;
+            $('.navbar-nav li a.nav-link').each(function(){
+                var $this = $(this);
+                // if the current path is like this link, make it active
+                if($this.attr('href').indexOf(current) !== -1){
+                    $this.addClass('active');
                 }
-            });
-        }
+            })
+        })
+
+//        $(function () {
+//            setNavigation();
+//        });
+//
+//        function setNavigation() {
+//            var path = window.location.pathname;
+//            path = path.replace(/\/$/, "");
+//            path = decodeURIComponent(path);
+//
+//            $(".navbar-nav a").each(function () {
+//                var href = $(this).attr('href');
+//                if (path.substring(0, href.length) === href) {
+//                    $(this).closest('li').addClass('active');
+//                }
+//            });
+//        }
     </script>
 
 </body>

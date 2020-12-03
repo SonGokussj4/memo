@@ -37,9 +37,6 @@ var datepickerParameters = new Array({
 // const $dropdown = $(".dropdown");
 // const $dropdownMenu = $(".dropdown-menu");
 // const $dropdownToggle = $(".dropdown-toggle");
-// const $subdropdown = $(".subdropdown");
-// const $subdropdownMenu = $(".subdropdown-menu");
-// const $subdropdownToggle = $(".subdropdown-toggle");
 // const showClass = "show";
 
 // $(window).on("load resize", function() {
@@ -49,40 +46,17 @@ var datepickerParameters = new Array({
 //                 const $this = $(this);
 //                 $this.addClass(showClass);
 //                 $this.find($dropdownToggle).attr("aria-expanded", "true");
-//                 var mom = $this.find($dropdownMenu).not($subdropdownMenu).addClass(showClass);
+//                 $this.find($dropdownMenu).addClass(showClass);
 //             },
 //             function() {
 //                 const $this = $(this);
 //                 $this.removeClass(showClass);
 //                 $this.find($dropdownToggle).attr("aria-expanded", "false");
-//                 $this.find($dropdownMenu).not($subdropdownMenu).removeClass(showClass);
-//                 $($subdropdownMenu).removeClass(showClass);
+//                 $this.find($dropdownMenu).removeClass(showClass);
 //             }
 //         );
 //     } else {
 //         $dropdown.off("mouseenter mouseleave");
-//     }
-
-//     if (this.matchMedia("(min-width: 768px)").matches) {
-//         $subdropdown.hover(
-//             function() {
-//                 console.log("Showing");
-//                 const $this = $(this);
-//                 $this.addClass(showClass);
-//                 $this.find($subdropdownToggle).attr("aria-expanded", "true");
-//                 $($subdropdownMenu).addClass(showClass);
-//             },
-//             function() {
-//                 console.log("Hidding");
-//                 const $this = $(this);
-//                 $this.removeClass(showClass);
-//                 $this.find($subdropdownToggle).attr("aria-expanded", "false");
-//                 // $($subdropdownMenu).removeClass(showClass);
-//             }
-//         );
-//     } else {
-//         $subdropdownMenu.off("mouseenter mouseleave");
-//         console.log("ajta");
 //     }
 // });
 

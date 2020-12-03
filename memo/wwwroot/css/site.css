@@ -28,43 +28,21 @@ a {
   border-color: #1861ac;
 }
 
+
 /* DROPDOWN ON HOVER */
 /* ------------------------------------------------------------------------------------- */
-/* .navbar .nav-item:not(:last-child) {
-  margin-right: 35px;
-} */
-/*
-.dropdown-toggle::after {
-   transition: transform 0.15s linear;
+a.nav-link .dropdown-toggle::after {
+   transition: transform 0.10s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.show.dropdown .dropdown-toggle::after {
+a.nav-link .show.dropdown .dropdown-toggle::after {
   transform: translateY(3px);
 }
 
-.subdropdown-toggle:hover {
+ul > li.nav-item > a:hover::after {
   transform: translateY(3px);
+  transition: transform 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
-
-.dropdown-menu {
-  margin-top: 0px;
-  left: auto;
-} */
-
-/* .navbar-nav li:hover > div.subdropdown-menu {
-  display: none;
-} */
-/*
-.subdropdown-menu {
-  top: 0;
-  left: 100%;
-  margin-top: -1px;
-  position: relative;
-} */
-
-/* .subdropdown-menu.show {
-  display: block;
-} */
 
 
 /* Sticky footer styles
