@@ -197,16 +197,32 @@
     @RenderSection("Scripts", required: false)
 
     <script>
-        $(function(){
-            var current = location.pathname;
-            $('.navbar-nav li a.nav-link').each(function(){
-                var $this = $(this);
-                // if the current path is like this link, make it active
-                if($this.attr('href').indexOf(current) !== -1){
-                    $this.addClass('active');
+        //$(function(){
+        //    var current = location.pathname;
+        //    $('.navbar-nav li a.nav-link').each(function(){
+        //        var $this = $(this);
+        //        // if the current path is like this link, make it active
+        //        if($this.attr('href').indexOf(current) !== -1){
+        //            $this.addClass('active');
+        //        }
+        //    })
+        //})
+        $(function () {
+            setNavigation();
+        });
+
+        function setNavigation() {
+            var path = window.location.pathname;
+            path = path.replace(/\/$/, "");
+            path = decodeURIComponent(path);
+
+            $(".navbar-nav a").each(function () {
+                var href = $(this).attr('href');
+                if (path.substring(0, href.length) === href) {
+                    $(this).closest('li').addClass('active');
                 }
-            })
-        })
+            });
+        }
     </script>
 
 </body>
