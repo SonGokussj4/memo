@@ -287,6 +287,7 @@ $("#opt1").click(function () {
     $(this).parent().addClass("selected");
     $("#opt2").parent().removeClass("selected");
     $("#opt3").parent().removeClass("selected");
+    $("#orderForm").css("visibility", "hidden");
 });
 $("#opt2").click(function () {
     $(".new-order-from-offer").hide();
@@ -295,6 +296,7 @@ $("#opt2").click(function () {
     $(this).parent().addClass("selected");
     $("#opt1").parent().removeClass("selected");
     $("#opt3").parent().removeClass("selected");
+    $("#orderForm").css("visibility", "hidden");
 });
 $("#opt3").click(function () {
     $(".new-order-from-offer").hide();
@@ -303,5 +305,6 @@ $("#opt3").click(function () {
     $(this).parent().addClass("selected");
     $("#opt1").parent().removeClass("selected");
     $("#opt2").parent().removeClass("selected");
+    $("#orderForm").css("visibility", "visible");
 });
 

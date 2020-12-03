@@ -30,6 +30,9 @@ namespace memo.Models
         public int? ContractId { get; set; }
         public virtual Contract Contract { get; set; }
 
+        public int SharedInfoId { get; set; }
+        public virtual SharedInfo SharedInfo { get; set; }
+
         [Display(Name = "Typ")]
         public string FromType { get; set; }  // N, R, -
 

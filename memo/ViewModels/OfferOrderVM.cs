@@ -40,6 +40,18 @@ namespace memo.ViewModels
 
         public IEnumerable<AuditViewModel> Audits { get; set; }
 
+        // SelectLists
+        public IEnumerable<SelectListItem> CompanyList { get; set; }
+        public IEnumerable<SelectListItem> ContactList { get; set; }
+        public IEnumerable<SelectListItem> CurrencyList { get; set; }
+        public IEnumerable<SelectListItem> CurrencyListNoRate { get; set; }
+        public List<SelectListItem> EveDivisionList { get; set; } = new List<SelectListItem>()
+        {
+            new SelectListItem { Value = "EVE", Text = "EVE" },
+            new SelectListItem { Value = "EVAT", Text = "EVAT" },
+        };
+        public IEnumerable<SelectListItem> DepartmentList { get; set; }
+        public IEnumerable<SelectListItem> EveContactList { get; set; }
         // public string ReturnUrl {get;set;}
     }
 }

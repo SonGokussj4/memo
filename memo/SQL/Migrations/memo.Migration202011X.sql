@@ -443,3 +443,23 @@ GO
 ALTER TABLE [memo].[Contracts]
     DROP COLUMN ReceiveDate, Subject, ContactId, CompanyId, CurrencyId, EveDivision, EveDepartment, EveCreatedUser, Price, PriceCzk, ExchangeRate;
 GO
+
+
+-- 03.12.2020 --
+
+
+-----------------------------------------------------------------------------------------
+-- PRIDAT DO TABULKY Order SLOUPEC SharedInfoId
+ALTER TABLE [memo].[Order]
+ADD SharedInfoId INT NULL;
+GO
+
+
+-----------------------------------------------------------------------------------------
+-- NAVÁZAT Order.SharedInfoId JAKO FOREIGN KEY NA SharedInfo.SharedInfoId
+ALTER TABLE [memo].[Order]
+ADD
+    CONSTRAINT [FK__memo.Order__memo.SharedInfo__SharedInfoId]
+    FOREIGN KEY ([SharedInfoId])
+    REFERENCES [memo].[SharedInfo] (SharedInfoId);
+
