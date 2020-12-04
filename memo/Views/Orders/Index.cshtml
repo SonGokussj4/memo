@@ -39,7 +39,6 @@
 
 <div class="text-center">
     <h1 class="display-4">@ViewData["Title"]</h1>
-    <h3 style="color: green">@ViewBag.message</h3>
 </div>
 
 <div id="toolbar" style="padding-bottom: 10px;">
@@ -148,14 +147,14 @@
                 <th scope="row" class="text-left">
                     @item.FromType
                 </th>
-                @* Nabídka *@
+                @* Nabídka/Rámcovka *@
                 <th scope="row" class="text-left" data-toggle="tooltip" title="@item.Offer?.OfferName">
                     @item.Offer?.OfferName.Replace("EV-quo/", "")
                 </th>
                 @* Č. obj. zákazníka *@
                 <th scope="row" class="text-left">@item.OrderName</th>
                 @* Zákazník *@
-                <th scope="row" class="text-left">@item.Offer.Company.Name</th>
+                <th scope="row" class="text-left">@item.SharedInfo.Company.Name</th>
                 @* @{
                     string OrderCodeTooltip = Model.cOrdersAll
                         .Where(x => x.OrderCode == item.OrderCode)
@@ -167,12 +166,12 @@
                 @* Vedoucí projektu *@
                 <th scope="row" class="text-left">@item.EveContactName</th>
                 @* Oddělení *@
-                <th scope="row" class="text-left">@item.Offer.EveDepartment</th>
+                <th scope="row" class="text-left">@item.SharedInfo.EveDepartment</th>
                 @* Vyjednaná cena *@
-                <th scope="row" class="text-right">@string.Format(CultureInfo.CreateSpecificCulture(@item.Offer?.Currency.CultureCode), "{0:C0}", @item.NegotiatedPrice)</th>
+                <th scope="row" class="text-right">@string.Format(CultureInfo.CreateSpecificCulture(@item.SharedInfo.Currency.CultureCode), "{0:C0}", @item.NegotiatedPrice)</th>
                 @* Aktuálně *@
                 <th scope="row" class="text-right">
-                    <span style="font-size: 0.9rem;">@string.Format(CultureInfo.CreateSpecificCulture(@item.Offer?.Currency.CultureCode), "{0:C0}", @item.PriceFinal)</span>
+                    <span style="font-size: 0.9rem;">@string.Format(CultureInfo.CreateSpecificCulture(@item.SharedInfo.Currency.CultureCode), "{0:C0}", @item.PriceFinal)</span>
                     <div class="progress" style="height: 5px;">
                     @{
                         int percentValue = (int)Math.Ceiling((double)item.PriceFinal / item.NegotiatedPrice * 100);
@@ -183,7 +182,7 @@
                     </div>
                 </th>
                 @* Zbývá *@
-                <th scope="row" class="text-right">@string.Format(CultureInfo.CreateSpecificCulture(@item.Offer?.Currency.CultureCode), "{0:C0}", @item.NegotiatedPrice - @item.PriceFinal)</th>
+                <th scope="row" class="text-right">@string.Format(CultureInfo.CreateSpecificCulture(@item.SharedInfo.Currency.CultureCode), "{0:C0}", @item.NegotiatedPrice - @item.PriceFinal)</th>
                 @* Poznámky *@
                 <th scope="row" class="notesWrap" data-toggle="tooltip" data-html="true" title="@item.Notes">
                     @item.Notes
