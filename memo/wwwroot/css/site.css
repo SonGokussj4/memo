@@ -1,6 +1,12 @@
 ﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
 for details on configuring this project to bundle and minify static web assets. */
 
+/* Active menu element */
+.nav-item.active {
+  border-bottom: 3px solid #5ca9ef;
+  margin-bottom: -3px;
+}
+
 /* Navigation bar items in one line, no line warping */
 .nav-item {
   white-space: nowrap;

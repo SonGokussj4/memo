@@ -178,6 +178,8 @@
 
         $(document).ready(function(){
 
+            checkItemNameExists($("#Offer_OfferName"), 'Offers');
+
             $('.mycalendar input').datepicker(datepickerParameters[0]);
 
             $("#Offer_OfferName").keyup(function() {

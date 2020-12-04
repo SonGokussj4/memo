@@ -32,6 +32,18 @@ var datepickerParameters = new Array({
 
 
 // ==========================================================================
+// FIXES
+// ==========================================================================
+
+// Fix Select2 not able to write text when in popup Modal
+// Source: https://stackoverflow.com/questions/18487056/select2-doesnt-work-when-embedded-in-a-bootstrap-modal/19574076#19574076
+$.fn.modal.Constructor.prototype._enforceFocus = function () { };
+
+// Add 'replaceAll()' function to JavaScript Strings
+String.prototype.replaceAllTxt = function replaceAll(search, replace) { return this.split(search).join(replace); };
+
+
+// ==========================================================================
 // BOOTSTRAP ADDITIONS - NAVBAR DROPDOWN ON HOVER
 // ==========================================================================
 // const $dropdown = $(".dropdown");
@@ -265,16 +277,7 @@ function OrderCodeToInput(id) {
 }
 
 
-// ==========================================================================
-// FIXES
-// ==========================================================================
 
-// Fix Select2 not able to write text when in popup Modal
-// Source: https://stackoverflow.com/questions/18487056/select2-doesnt-work-when-embedded-in-a-bootstrap-modal/19574076#19574076
-$.fn.modal.Constructor.prototype._enforceFocus = function () { };
-
-// Add 'replaceAll()' function to JavaScript Strings
-String.prototype.replaceAllTxt = function replaceAll(search, replace) { return this.split(search).join(replace); };
 
 
 // ==========================================================================

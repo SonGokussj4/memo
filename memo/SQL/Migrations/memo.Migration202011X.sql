@@ -463,3 +463,34 @@ ADD
     FOREIGN KEY ([SharedInfoId])
     REFERENCES [memo].[SharedInfo] (SharedInfoId);
 
+
+-----------------------------------------------------------------------------------------
+-- VLOZIT DO TABULKY SharedInfo SLOUPCE Z TABULKY Offer
+INSERT INTO [memo].[SharedInfo](ReceiveDate, Subject, ContactId, CompanyId, CurrencyId, EveDivision, EveDepartment, EveCreatedUser, Price, PriceCzk, ExchangeRate)
+SELECT ReceiveDate, Subject, ContactId, CompanyId, CurrencyId, EveDivision, EveDepartment, EveCreatedUser, Price, PriceCzk, ExchangeRate
+FROM [memo].[Offer]
+
+
+-----------------------------------------------------------------------------------------
+-- SPÁROVAT SharedInfoId Z TABULKY SharedInfo S TABULKOU Offer
+UPDATE [memo].[Order]
+SET
+    SharedInfoId = si.SharedInfoId
+-- SELECT si.SharedInfoId
+FROM
+    [memo].[SharedInfo] si,
+	[memo].[Order] r
+LEFT JOIN [memo].[Offer] o
+	ON r.[OfferId] = o.[OfferId]
+WHERE
+    si.ReceiveDate = o.ReceiveDate AND
+    si.Subject = o.Subject AND
+    si.ContactId = o.ContactId AND
+    si.CompanyId = o.CompanyId AND
+    si.EveDivision = o.EveDivision AND
+    si.EveDepartment = o.EveDepartment AND
+    si.EveCreatedUser = o.EveCreatedUser AND
+    (si.PriceCzk = o.PriceCzk OR (ISNULL(si.PriceCzk, o.PriceCzk) IS NULL)) AND
+    (si.Price = o.Price OR (ISNULL(si.Price, o.Price) IS NULL))
+
+
