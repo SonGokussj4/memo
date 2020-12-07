@@ -175,6 +175,28 @@ $(function() {
     });
 });
 
+
+/**
+ * @summary Return date (can do days additon) in format dd.MM.yyyy
+ * @description
+ * - Example:
+ *  - var futureDate = getPrettyDate(new Date("24.12.2020"), 1)
+ *  - "25.12.2020"
+ * @param  {[Date]} date [date e.g. new Date('xxxx')]
+ * @param  {[integer]} daysToAdd [default: 0; days to add to the <date>]
+ * @return {[string]}     [String in format dd.MM.yyyy]
+ */
+function getPrettyDate(date, daysToAdd = 0) {
+    date.setDate(date.getUTCDate() + daysToAdd);
+    var futureDate =
+    ('0' + (date.getDate())).slice(-2)
+    + '.'
+    + ('0' + (date.getMonth() + 1)).slice(-2)
+    + '.'
+    + date.getFullYear();
+    return futureDate;  // dd.MM.yyyy
+}
+
 /**
  * @summary Return date (can do days additon) in format RRRR-MM-DD
  * @description
@@ -185,7 +207,7 @@ $(function() {
  * @param  {[integer]} daysToAdd [default: 0; days to add to the <date>]
  * @return {[string]}     [String in format RRRR-MM-DD]
  */
-function getPrettyDate(date, daysToAdd = 0) {
+function getPrettyDateUS(date, daysToAdd = 0) {
     date.setDate(date.getUTCDate() + daysToAdd);
     var futureDate = date.getFullYear()
         + '-'

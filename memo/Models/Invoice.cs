@@ -20,12 +20,12 @@ namespace memo.Models
 
         [Required]
         [Display(Name = "Předp. termín vystavení faktury"), Column(TypeName = "date")]
-        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+        [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy}", ApplyFormatInEditMode = true)]
         public DateTime? InvoiceIssueDate { get; set; }
 
         [Required]
         [Display(Name = "Datum splatnosti faktury"), Column(TypeName = "date")]
-        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+        [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy}", ApplyFormatInEditMode = true)]
         public DateTime? InvoiceDueDate { get; set; }
 
         [Required]

@@ -198,7 +198,10 @@
                     @item.OfferName.Replace("EV-quo/", "")
                 </th>
                 @* Přijato *@
-                <th scope="row" class="text-left">@item.ReceiveDate.Value.ToString("yyyy-MM-dd")</th>
+                <th scope="row" class="text-left">
+                    <span style="display:none">@String.Format("{0:yyyy-MM-dd HH:mm}", @item.ReceiveDate)</span>  <!-- Hidden span for sorting date correctly-->
+                    @item.ReceiveDate.Value.ToString("dd.MM.yyyy")
+                </th>
                 @{
                     int OrdersCount = ((IEnumerable<dynamic>)ViewBag.AllOrders).Where(x => x.OfferId == item.OfferId).Count();
                     List<dynamic> OrdersList = ((IEnumerable<dynamic>)ViewBag.AllOrders).Where(x => x.OfferId == item.OfferId).Select(x => x.OrderName).ToList();

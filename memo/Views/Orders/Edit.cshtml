@@ -654,11 +654,10 @@
             let childrenIssueDate = document.querySelectorAll('[id$="InvoiceIssueDate"]');
             childrenIssueDate.forEach( function(item) {
                 let dateInput = $(`#${item.id}`);
-                dateInput.on("changeDate", function(lol) {
-                    console.log(lol);
-                    var date = new Date(dateInput.val());
+                dateInput.on("changeDate", function(data) {
+                    var date = data.date;
                     var futureDate = getPrettyDate(date, @Model.InvoiceDueDays);
-                    var childIssueId = lol.target.id.split("__")[0];  // Order_Invoices_X
+                    var childIssueId = data.target.id.split("__")[0];  // Order_Invoices_X
                     childDue = $(`#${childIssueId}__InvoiceDueDate`).val(futureDate);
                 });
             });
@@ -723,7 +722,9 @@
 
                 var parsed_date = @Html.Raw(Json.Serialize(Model.Offer.EstimatedFinishDate))
                 if ( parsed_date != null) {
-                    _invoiceIssueInput.val(new Date(parsed_date).toISOString().substring(0, 10));
+                    var issueDate = getPrettyDate(new Date(parsed_date), 0)
+                    //_invoiceIssueInput.val(new Date(parsed_date).toISOString().substring(0, 10));
+                    _invoiceIssueInput.val(issueDate);
                     var date = new Date(_invoiceIssueInput.val());
                     var futureDate = getPrettyDate(date, @Model.InvoiceDueDays);
                     _invoiceDueInput.val(futureDate);
@@ -733,8 +734,8 @@
                 _invoiceDueInput.datepicker(datepickerParameters[0]);
                 $('.newlyAddedTooltip').tooltip();
 
-                _invoiceIssueInput.on("changeDate", function() {
-                    var date = new Date(_invoiceIssueInput.val());
+                _invoiceIssueInput.on("changeDate", function(data) {
+                    var date = data.date;
                     var futureDate = getPrettyDate(date, @Model.InvoiceDueDays);
                     $('#Order_Invoices_' + _invoiceIssueInput.data('id') + '__InvoiceDueDate').val(futureDate);
                 });
