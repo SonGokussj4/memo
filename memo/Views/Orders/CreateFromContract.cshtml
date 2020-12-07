@@ -2,14 +2,13 @@
 
 @{
     ViewData["Title"] = "Nová zakázka";
+    string baseUrl = string.Join("/", Context.Request.Path.ToUriComponent().Split('/').Take(3));
 }
 
 @model memo.ViewModels.OfferOrderVM
 
 <style>
-    /*.input-validation-error {
-        border-color: red;
-    }*/
+
 </style>
 
 @await Html.PartialAsync("_PartialToastNotification")
@@ -23,141 +22,38 @@
     <div class="col-lg-8 push-lg-4 personal-info">
 
         <!--------------------------------------------------------------------------------------
-            FORM - NABÍDKA
+            FORM - RÁMCOVÁ SMLOUVA
         --------------------------------------------------------------------------------------->
         <form class="card" role="form" autocomplete="on" asp-action="Refresh" method="post">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
         @* PARTIAL: SELECT  *@
-        @await Html.PartialAsync("_PartialOrder-Create-SelectFrom", new ViewDataDictionary(ViewData) {{ "selectedClean", "selected" }})
+        @await Html.PartialAsync("_PartialOrder-Create-SelectFrom", new ViewDataDictionary(ViewData) {{ "selectedContract", "selected" }})
 
         <div class="form-group row justify-content-center mt-3">
 
-            @* Evektor nabídka *@
-            <div class="col-lg-7 new-order-from-offer" style="display: none;">
-                <input type="hidden" asp-for="Order.OrderId" />
-                <select asp-for="OfferId" asp-items="ViewBag.WonOffersList" class="form-control selectpicker" onchange="this.form.submit();">
-                    <option select="">-- Vyber nabídku --</option>
-                </select>
-                <span asp-validation-for="Order.OfferId" class="text-danger"></span>
-            </div>
-
             @* Rámcová smlouva *@
-            <div class="col-lg-7 new-order-from-contract" style="display: none;">
-                <input type="hidden" asp-for="Order.ContractId" />
-                <select asp-for="ContractId" asp-items="Model.ContractsList" class="form-control selectpicker" onchange="this.form.submit();">
+            <div class="col-lg-7 new-order-from-contract">
+                <input type="hidden" asp-for="Contract.ContractsId" />
+                <select asp-for="Contract.ContractsId" asp-items="Model.ContractsList" class="form-control selectpicker" onchange="document.location.href = '@baseUrl/' + this.options[this.selectedIndex].value;">
                     <option select="">-- Vyber rámcovou smlouvu --</option>
                 </select>
-                <span asp-validation-for="Order.ContractId" class="text-danger"></span>
+                <span asp-validation-for="Contract.ContractsId" class="text-danger"></span>
             </div>
 
-            @* Zakázka bez nabídky *@
-            <div class="col-lg-12 new-order-from-other">
-
-                <div class="form-group row">
-                    <label asp-for="Order.SharedInfo.ReceiveDate" class="col-lg-3 col-form-label form-control-label control-label">Datum přijetí</label>
-                    <div class="col-lg-9 mycalendar">
-                        <span class="has-float-label">
-                            <input asp-for="Order.SharedInfo.ReceiveDate" class="form-control" type="text" placeholder=" " required="" autocomplete="off"/>
-                            <label asp-for="Order.SharedInfo.ReceiveDate"></label>
-                        </span>
-                        <span asp-validation-for="Order.SharedInfo.ReceiveDate" class="text-danger"></span>
-                    </div>
-                </div>
-
-                <div class="form-group row">
-                    <label asp-for="Order.SharedInfo.Subject" class="required col-lg-3 col-form-label form-control-label control-label">Předmět</label>
-                    <div class="col-lg-9">
-                        <span class="has-float-label">
-                            <input asp-for="Order.SharedInfo.Subject" class="form-control" placeholder="Krátký popis nabídky" type="text" />
-                            <label asp-for="Order.SharedInfo.Subject"></label>
-                        </span>
-                        <span asp-validation-for="Order.SharedInfo.Subject" class="text-danger"></span>
-                    </div>
-                </div>
-
-                <div class="form-group row eveOffer">
-                    <label class="required col-lg-3 col-form-label form-control-label control-label">Evektor</label>
-                    <div class="col-lg-2">
-                        <span class="has-float-label">
-                            <select class="form-control" asp-for="Order.SharedInfo.EveDivision" asp-items="Model.EveDivisionList"></select>
-                            <label asp-for="Order.SharedInfo.EveDivision">Divize</label>
-                        </span>
-                        <span asp-validation-for="Order.SharedInfo.EveDivision" class="text-danger"></span>
-                    </div>
-                    <div class="col-lg-3">
-                        <span class="has-float-label">
-                            <select asp-for="Order.SharedInfo.EveDepartment" asp-items="Model.DepartmentList" class="form-control"></select>
-                            <label asp-for="Order.SharedInfo.EveDepartment">Oddělení</label>
-                        </span>
-                        <span asp-validation-for="Order.SharedInfo.EveDepartment" class="text-danger"></span>
-                    </div>
-                    <div class="col-lg-4">
-                        <select class="form-control selectpicker" asp-for="Order.SharedInfo.EveCreatedUser" asp-items="Model.EveContactList" required>
-                            @* <option value="">-- Vyber uživatele --</option> *@
-                        </select>
-                        <span asp-validation-for="Order.SharedInfo.EveCreatedUser" class="text-danger"></span>
-                    </div>
-                </div>
-
-                <div class="form-group row customerOffer">
-                    <label class="required col-lg-3 col-form-label form-control-label control-label">Zákazník</label>
-                    <div class="col-lg-4">
-                        <select class="form-control selectpicker" asp-for="Order.SharedInfo.CompanyId" asp-items="@Model.CompanyList">
-                            <option value="">-- Vyber firmu --</option>
-                        </select>
-                        <span asp-validation-for="Order.SharedInfo.CompanyId" class="text-danger"></span>
-                    </div>
-                    <div class="col-lg-1" data-toggle="tooltip" title="Nová firma">
-                        <a asp-action="create" asp-controller="Companies" target="_blank">
-                            <i class="form-control fa fa-plus-circle" style="color: green; cursor: pointer;"></i>
-                        </a>
-                    </div>
-                    <div class="col-lg-3">
-                        <select class="form-control selectpicker" asp-for="Order.SharedInfo.ContactId" asp-items="@Model.ContactList">
-                            <option value="">-- Vyber kontakt --</option>
-                        </select>
-                        <span asp-validation-for="Order.SharedInfo.ContactId" class="text-danger"></span>
-                    </div>
-                    <div class="col-lg-1" data-toggle="tooltip" title="Nový kontakt">
-                        <a asp-action="create" asp-controller="Contacts" target="_blank">
-                            <i class="form-control fa fa-plus-circle" style="color: green; cursor: pointer;"></i>
-                        </a>
-                    </div>
-                </div>
-
-                <div class="form-group row">
-                    <label asp-for="Order.SharedInfo.Price" class="col-lg-3 col-form-label form-control-label control-label"></label>
-                    <div class="col-lg-5">
-                        <span class="has-float-label">
-                            <input asp-for="Order.SharedInfo.Price" class="form-control" type="text" placeholder=" "/>
-                            <label asp-for="Order.SharedInfo.Price">Cena bez DPH</label>
-                        </span>
-                        <span asp-validation-for="Order.SharedInfo.Price" class="text-danger"></span>
-                    </div>
-                    <div class="col-lg-4">
-                        <span class="has-float-label" data-toggle="tooltip" title="Aktuální kurz ČNB">
-                            <select asp-for="Order.SharedInfo.CurrencyId" asp-items="Model.CurrencyList" class="form-control"></select>
-                            <label asp-for="Order.SharedInfo.CurrencyId">Měna</label>
-                        </span>
-                        <span asp-validation-for="Order.SharedInfo.CurrencyId" class="text-danger"></span>
-                    </div>
-                </div>
-
-            </div>
         </div>
 
 
-        @if (@Model.Offer?.OfferId != 0 && @Model.Offer?.OfferId != null)
+        @if (@Model.Contract?.ContractsId != 0 && @Model.Contract?.ContractsId != null)
         {
             <ul>
-                <li><b>Předmět:</b> @Model.Offer?.Subject - <b>@String.Format(CultureInfo.CreateSpecificCulture(Model.Offer?.Currency.CultureCode), "{0:C0}", @Model.Offer?.Price)</b> (@String.Format(CultureInfo.CreateSpecificCulture("cs-CZ"), "{0:C0}", Model.Offer?.PriceCzk))</li>
-                <li><b>Zákazník:</b> @Model.OfferCompanyName (<b>Splatnost faktury:</b> @Model.InvoiceDueDays dní)</li>
+                <li><b>Předmět:</b> @Model.Contract.SharedInfo.Subject - <b>@String.Format(CultureInfo.CreateSpecificCulture(Model.Contract.SharedInfo.Currency.CultureCode), "{0:C0}", @Model.Contract.SharedInfo.Price)</b> (@String.Format(CultureInfo.CreateSpecificCulture("cs-CZ"), "{0:C0}", Model.Contract.SharedInfo.PriceCzk))</li>
+                @* <li><b>Zákazník:</b> @Model.OfferCompanyName (<b>Splatnost faktury:</b> @Model.InvoiceDueDays dní)</li>
                 <li>
                     <b>Přijetí poptávky:</b> @String.Format("{0:dd.MM.yyyy}", @Model.Offer.ReceiveDate) /
                     <b>Odeslání nabídky:</b> @String.Format("{0:dd.MM.yyyy}", @Model.Offer.SentDate) /
                     <b><label asp-for="Offer.EstimatedFinishDate"></label>:</b> @String.Format("{0:dd.MM.yyyy}", @Model.Offer.EstimatedFinishDate)
-                </li>
+                </li> *@
             </ul>
         }
 
@@ -181,7 +77,7 @@
         <!--------------------------------------------------------------------------------------
             FORM - ZAKAZKA
         --------------------------------------------------------------------------------------->
-        <form id="orderForm" class="card" role="form" autocomplete="on" asp-action="Create" method="post" >
+        <form id="orderForm" class="card" role="form" autocomplete="on" asp-action="Create" method="post" style="display: none;">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <input type="hidden" asp-for="OfferId" />
         <input type="hidden" asp-for="Order.OfferId" />
@@ -456,17 +352,17 @@
 
         $(document).ready(function(){
 
+            // Upon page load, check if OfferId != 0 (offer is selected) then set orderForm as visible
+            //if (@Model.Order.OfferId != 0) {
+            if (@Model.Contract.ContractsId != 0) {
+                console.log("ContractsId: " + @Model.Contract.ContractsId);
+                $('#orderForm').show();
+            }
+
             @* $("#Order_OrderName").keyup(function() { *@
             $("#Order_OrderName").on("keyup", function() {
                 checkItemNameExists($(this), 'Orders');
             });
-
-            // Upon page load, check if OfferId != 0 (offer is selected) then set orderForm as visible
-            //if (@Model.Order.OfferId != 0) {
-            if (@Model.Order?.OfferId != 0) {
-                console.log("OfferId: " + @Model.Order.OfferId);
-                document.getElementById("orderForm").style.visibility = "visible";
-            }
 
             // All .mycalendar input classes will have 'datepicker()' functionality
             $('.mycalendar input').datepicker(datepickerParameters[0]);
@@ -475,13 +371,11 @@
 
             $('#Order_NegotiatedPrice').on('keydown input change textInput', function(){
                 var negotiatedPrice = parseInt($('#Order_NegotiatedPrice').val());
-                //var offerPrice = parseInt('@Model.Offer.Price');
                 $('#Order_PriceDiscount').val(offerPrice - negotiatedPrice);
             });
 
             $('#Order_PriceDiscount').on('keydown input change textInput', function(){
                 var priceDiscount = parseInt($('#Order_PriceDiscount').val());
-                //var offerPrice = parseInt('@Model.Offer.Price');
                 $('#Order_NegotiatedPrice').val(offerPrice - priceDiscount);
             });
 

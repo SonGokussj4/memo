@@ -185,6 +185,137 @@ namespace memo.Controllers
             return View(vm);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> CreateFromOffer(int? id)
+        {
+            Offer offer = await _db.Offer.Include(x => x.Currency).FirstOrDefaultAsync(x => x.OfferId == id);
+
+            if (offer == null)
+            {
+                OfferOrderVM vmm = new OfferOrderVM();
+                await populateModelAsync(vmm);
+
+                return View(vmm);
+            }
+
+            // string offerCompanyName = "";
+            // int invoiceDueDays = 0;
+            // string curSymbol = "CZK";
+            // int offerFinalPrice = 0;
+            // int offerPriceDiscount = 0;
+            // int finalPriceCzk = 0;
+            // int negotiatedPrice = 0;
+
+            // Currency cur = await _db.Currency.FirstOrDefaultAsync(x => x.CurrencyId == offer.CurrencyId);
+            // curSymbol = cur != null ? cur.Name : "";
+            // offerFinalPrice = (int)offer.Price;
+            // finalPriceCzk = Convert.ToInt32(offerFinalPrice * offer.ExchangeRate);
+            // negotiatedPrice = (int)offer.Price;
+
+            // Company company = await _db.Company.FirstOrDefaultAsync(x => x.CompanyId == offer.CompanyId);
+            // if (company != null)
+            // {
+            //     offerCompanyName = company.Name;
+            //     invoiceDueDays = (int)company.InvoiceDueDays;
+            // }
+
+            // Order order = new Order();
+            // order.OfferId = offer.OfferId;
+            // order.ExchangeRate = Decimal.Parse(getCurrencyStr(curSymbol).Replace(",", "."), CultureInfo.InvariantCulture);
+            // order.PriceFinal = offerFinalPrice;
+            // order.PriceDiscount = offerPriceDiscount;
+            // order.PriceFinalCzk = finalPriceCzk;
+            // order.NegotiatedPrice = negotiatedPrice;
+
+            // await populateModel(order, (int)offerId);
+            // List<SelectListItem> contractsList = await _db.Contracts
+            //     .Select(x => new SelectListItem {
+            //         Value = x.ContractsId.ToString(),
+            //         Text = $"{x.ContractName} - {x.SharedInfo.Subject}",
+            //     })
+            //     .ToListAsync();
+
+            OfferOrderVM vm = new OfferOrderVM()
+            {
+                Offer = offer,
+            };
+            await populateModelAsync(vm);
+
+            // {
+            //     Offer = offer,
+            //     OfferId = (int)offerId,
+            //     Order = order,
+            //     OfferCompanyName = offerCompanyName,
+            //     InvoiceDueDays = invoiceDueDays,
+            //     CurrencyName = curSymbol,
+            //     ContractsList = contractsList,
+            // };
+
+            return View(vm);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> CreateFromContract(int? id)
+        {
+            Contract contract = await _db.Contracts
+                .Include(x => x.SharedInfo)
+                    .ThenInclude(x => x.Currency)
+                .FirstOrDefaultAsync(x => x.ContractsId == id);
+
+            if (contract == null)
+            {
+                OfferOrderVM vmm = new OfferOrderVM();
+                await populateModelAsync(vmm);
+
+                return View(vmm);
+            }
+
+            // string offerCompanyName = "";
+            // int invoiceDueDays = 0;
+            // string curSymbol = "CZK";
+            // int offerFinalPrice = 0;
+            // int offerPriceDiscount = 0;
+            // int finalPriceCzk = 0;
+            // int negotiatedPrice = 0;
+
+            // Currency cur = await _db.Currency.FirstOrDefaultAsync(x => x.CurrencyId == offer.CurrencyId);
+            // curSymbol = cur != null ? cur.Name : "";
+            // offerFinalPrice = (int)offer.Price;
+            // finalPriceCzk = Convert.ToInt32(offerFinalPrice * offer.ExchangeRate);
+            // negotiatedPrice = (int)offer.Price;
+
+            // Company company = await _db.Company.FirstOrDefaultAsync(x => x.CompanyId == offer.CompanyId);
+            // if (company != null)
+            // {
+            //     offerCompanyName = company.Name;
+            //     invoiceDueDays = (int)company.InvoiceDueDays;
+            // }
+
+            // Order order = new Order();
+            // order.OfferId = offer.OfferId;
+            // order.ExchangeRate = Decimal.Parse(getCurrencyStr(curSymbol).Replace(",", "."), CultureInfo.InvariantCulture);
+            // order.PriceFinal = offerFinalPrice;
+            // order.PriceDiscount = offerPriceDiscount;
+            // order.PriceFinalCzk = finalPriceCzk;
+            // order.NegotiatedPrice = negotiatedPrice;
+
+            // await populateModel(order, (int)offerId);
+            // List<SelectListItem> contractsList = await _db.Contracts
+            //     .Select(x => new SelectListItem {
+            //         Value = x.ContractsId.ToString(),
+            //         Text = $"{x.ContractName} - {x.SharedInfo.Subject}",
+            //     })
+            //     .ToListAsync();
+
+            OfferOrderVM vm = new OfferOrderVM()
+            {
+                Contract = contract,
+            };
+            await populateModelAsync(vm);
+
+            return View(vm);
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(OfferOrderVM vm)
@@ -662,6 +793,28 @@ namespace memo.Controllers
                     Value = x.CurrencyId.ToString(),
                     Text = x.Name
                 });
+
+            List<SelectListItem> wonOffers = await _db.Offer
+                .Where(t => t.OfferStatusId == 2)
+                .OrderBy(t => t.OfferName)
+                .Select(x => new SelectListItem
+                {
+                    Text = x.OfferName + " - " + x.Subject,
+                    Value = x.OfferId.ToString(),
+                }
+                ).ToListAsync();
+            vm.WonOffersList = wonOffers;
+
+            List<SelectListItem> contracts = await _db.Contracts
+                .OrderBy(t => t.ContractName)
+                .Select(x => new SelectListItem
+                {
+                    Text = x.ContractName + " - " + x.SharedInfo.Subject,
+                    Value = x.ContractsId.ToString(),
+                }
+                ).ToListAsync();
+            vm.ContractsList = contracts;
+
 
             // vm.DepartmentList = await getDepartmentListAsync2(_eveDbDochna);  // TODO zjistit, co je rychlejsi (tohle nějak failuje)
             vm.DepartmentList = await getDepartmentListAsync(_eveDbDochna);

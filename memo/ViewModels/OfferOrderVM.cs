@@ -11,13 +11,16 @@ namespace memo.ViewModels
         {
             Order = new Order();
             Offer = new Offer();
+            Contract = new Contract();
         }
 
         public Offer Offer { get; set; }
         public Order Order { get; set; }
+        public Contract Contract { get; set; }
 
         public IEnumerable<Offer> Offers { get; set; }
         public IEnumerable<Order> Orders { get; set; }
+        public IEnumerable<Contract> Constracts { get; set; }
 
         public int IDOrder { get; set; }
         public int Minutes { get; set; }
@@ -40,7 +43,6 @@ namespace memo.ViewModels
 
         public List<string> OrderCodesTooltips { get; set; }
 
-        public IEnumerable<SelectListItem> ContractsList { get; set; }
 
         public IEnumerable<AuditViewModel> Audits { get; set; }
 
@@ -56,6 +58,8 @@ namespace memo.ViewModels
         };
         public IEnumerable<SelectListItem> DepartmentList { get; set; }
         public IEnumerable<SelectListItem> EveContactList { get; set; }
-        // public string ReturnUrl {get;set;}
+
+        public IEnumerable<SelectListItem> WonOffersList { get; set; }
+        public IEnumerable<SelectListItem> ContractsList { get; set; }
     }
 }

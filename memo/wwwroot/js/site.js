@@ -305,31 +305,33 @@ function OrderCodeToInput(id) {
 // ==========================================================================
 // OTHER
 // ==========================================================================
-$("#opt1").click(function () {
-    $(".new-order-from-offer").show();
-    $(".new-order-from-contract").hide();
-    $(".new-order-from-other").hide();
-    $(this).parent().addClass("selected");
-    $("#opt2").parent().removeClass("selected");
-    $("#opt3").parent().removeClass("selected");
-    $("#orderForm").css("visibility", "hidden");
-});
-$("#opt2").click(function () {
-    $(".new-order-from-offer").hide();
-    $(".new-order-from-contract").show();
-    $(".new-order-from-other").hide();
-    $(this).parent().addClass("selected");
-    $("#opt1").parent().removeClass("selected");
-    $("#opt3").parent().removeClass("selected");
-    $("#orderForm").css("visibility", "hidden");
-});
-$("#opt3").click(function () {
-    $(".new-order-from-offer").hide();
-    $(".new-order-from-contract").hide();
-    $(".new-order-from-other").show();
-    $(this).parent().addClass("selected");
-    $("#opt1").parent().removeClass("selected");
-    $("#opt2").parent().removeClass("selected");
-    $("#orderForm").css("visibility", "visible");
-});
+// NOTE: Stara vec, predtim jsem klikal na Order/Create z nabidky, ramcovky nebo bez nabidky
+// a menil jsem dynamicky zbytek contentu, nyni je to delane pres individualni cshtml stranky
+//$("#opt1").click(function () {
+//    $(".new-order-from-offer").show();
+//    $(".new-order-from-contract").hide();
+//    $(".new-order-from-other").hide();
+//    $(this).parent().addClass("selected");
+//    $("#opt2").parent().removeClass("selected");
+//    $("#opt3").parent().removeClass("selected");
+//    $("#orderForm").css("visibility", "hidden");
+//});
+//$("#opt2").click(function () {
+//    $(".new-order-from-offer").hide();
+//    $(".new-order-from-contract").show();
+//    $(".new-order-from-other").hide();
+//    $(this).parent().addClass("selected");
+//    $("#opt1").parent().removeClass("selected");
+//    $("#opt3").parent().removeClass("selected");
+//    $("#orderForm").css("visibility", "hidden");
+//});
+//$("#opt3").click(function () {
+//    $(".new-order-from-offer").hide();
+//    $(".new-order-from-contract").hide();
+//    $(".new-order-from-other").show();
+//    $(this).parent().addClass("selected");
+//    $("#opt1").parent().removeClass("selected");
+//    $("#opt2").parent().removeClass("selected");
+//    $("#orderForm").css("visibility", "visible");
+//});
 
