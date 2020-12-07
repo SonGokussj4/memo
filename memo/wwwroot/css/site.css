@@ -234,6 +234,53 @@ form.myform {
     border-bottom: 0px;
 }
 
+/* Smaller text in input groups */
+.input-group-text {
+    font-size: 0.9rem;
+}
+
+.cardTitleMerged {
+    display: flex;
+    justify-content: space-between;
+}
+
+
+/* NEW ORDER box behaviour after mouse hover and active selection (FromOffer, FromContract, SimpleOrder) */
+.new-order-radios input {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+.new-order-radios label {
+    font-size: 1.2rem;
+}
+.new-order-radios label:hover {
+    cursor: pointer;
+}
+.new-order-radios label.selected::after {
+    content: '';
+    display: block;
+    width: 100%;
+    border-bottom: 4px solid #5ca9ef;
+}
+.cool-link {
+    display: inline-block;
+    color: #000;
+    text-decoration: none;
+}
+.cool-link::after {
+    content: '';
+    display: block;
+    width: 0;
+    transition: width .3s;
+    border-bottom: 4px solid #5ca9ef;
+    border-radius: 4%;
+}
+.cool-link:hover::after {
+    width: 100%;
+}
+
+
 /* Bootstrap-Select fixes
 -------------------------------------------------- */
 .bootstrap-select .no-results {

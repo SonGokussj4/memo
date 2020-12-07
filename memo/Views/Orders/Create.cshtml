@@ -4,38 +4,11 @@
     ViewData["Title"] = "Nová zakázka";
 }
 
-@* @model memo.ViewModels.CreateOfferViewModel *@
 @model memo.ViewModels.OfferOrderVM
 
 <style>
-    .input-group-text {
-        font-size: 0.9rem;
-    }
     .input-validation-error {
         border-color: red;
-    }
-    .cardTitleMerged {
-        display: flex;
-        justify-content: space-between;
-    }
-    .input-group-text {
-        font-size: 0.9rem;
-    }
-    .new-order-radios input {
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        appearance: none;
-    }
-    .new-order-radios label {
-        font-size: 1.2rem;
-        padding-bottom: 4px;
-        border-radius: 4%;
-    }
-    .new-order-radios label:hover {
-        cursor: pointer;
-    }
-    .new-order-radios label.selected {
-        border-bottom: 4px solid #5ca9ef;
     }
 </style>
 
@@ -61,21 +34,21 @@
         <hr />
 
         <div class="d-flex flex-row justify-content-around new-order-radios">
-            <label class="radio-inline selected">
-                <input type="radio" name="optradio" value="opt1" id="opt1" checked /> Evektor nabídka
+            <label class="radio-inline cool-link">
+                <input type="radio" name="optradio" value="opt1" id="opt1" /> Evektor nabídka
             </label>
-            <label class="radio-inline">
+            <label class="radio-inline cool-link">
                 <input type="radio" name="optradio" value="opt2" id="opt2" /> Rámcová smlouva
             </label>
-            <label class="radio-inline" data-toggle="tooltip" title="Nemám nabídku">
-                <input type="radio" name="optradio" value="opt3" id="opt3" /> Zakázka bez nabídky
+            <label class="radio-inline cool-link selected" data-toggle="tooltip" title="Nemám nabídku">
+                <input type="radio" name="optradio" value="opt3" id="opt3" checked /> Zakázka bez nabídky
             </label>
         </div>
 
         <div class="form-group row justify-content-center mt-3">
 
             @* Evektor nabídka *@
-            <div class="col-lg-7 new-order-from-offer">
+            <div class="col-lg-7 new-order-from-offer" style="display: none;">
                 <input type="hidden" asp-for="Order.OrderId" />
                 <select asp-for="OfferId" asp-items="ViewBag.WonOffersList" class="form-control selectpicker" onchange="this.form.submit();">
                     <option select="">-- Vyber nabídku --</option>
@@ -93,7 +66,7 @@
             </div>
 
             @* Zakázka bez nabídky *@
-            <div class="col-lg-12 new-order-from-other" style="display: none;">
+            <div class="col-lg-12 new-order-from-other">
 
                 <div class="form-group row">
                     <label asp-for="Order.SharedInfo.ReceiveDate" class="col-lg-3 col-form-label form-control-label control-label">Datum přijetí</label>
@@ -185,11 +158,7 @@
                     </div>
                 </div>
 
-
-
-
             </div>
-
         </div>
 
 
@@ -226,7 +195,7 @@
         <!--------------------------------------------------------------------------------------
             FORM - ZAKAZKA
         --------------------------------------------------------------------------------------->
-        <form id="orderForm" class="card" role="form" autocomplete="on" asp-action="Create" method="post" style="visibility: hidden;">
+        <form id="orderForm" class="card" role="form" autocomplete="on" asp-action="Create" method="post" >
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <input type="hidden" asp-for="OfferId" />
         <input type="hidden" asp-for="Order.OfferId" />

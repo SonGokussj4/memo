@@ -13,9 +13,7 @@ namespace memo.Models
         public Order()
         {
             Active = true;
-            // PriceFinalCzk = 0;
-            // CreatedBy = "";
-            // ModifiedDate = DateTime.Now;
+            SharedInfo = new SharedInfo();
         }
 
         [Key]
@@ -48,11 +46,6 @@ namespace memo.Models
 
         [Display(Name = "Sleva z nabídky")]
         public int? PriceDiscount { get; set; }
-
-        // [Required]
-        // [Display(Name = "Kód vykazování EVE"), StringLength(50)]
-        // [RegularExpression(@"\d{3}[.]\d{4}", ErrorMessage = "Kód ve formátu xxx.xxxx")]
-        // public string OrderCode { get; set; }
 
         [Required]
         [Display(Name = "Vedoucí projektu v EVEKTORu")]

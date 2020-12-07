@@ -82,7 +82,19 @@ namespace memo.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Refresh(int offerId, int contractId)
+        // public IActionResult Refresh(int offerId, int contractId, string fromType)
         {
+            // if (fromType == "N")
+            // {
+            // }
+            // else if (fromType == "R")
+            // {
+
+            // }
+            // else
+            // {
+
+            // }
             return RedirectToAction("Create", new { offerId = offerId, contractId = contractId });
         }
 
@@ -101,12 +113,23 @@ namespace memo.Controllers
                         Text = $"{x.ContractName} - {x.SharedInfo.Subject}",
                     })
                 .ToListAsync();
-                OfferOrderVM vmm = new OfferOrderVM()
-                {
-                    Offer = new Offer(),
-                    Order = new Order(),
-                    ContractsList = contracts,
-                };
+                List<SelectListItem> currencies = _db.Currency
+                    .AsEnumerable()
+                    .Select(x => new SelectListItem {
+                        Value = x.CurrencyId.ToString(),
+                        Text = x.Name != "CZK" ? $"{x.Name} (kurz {getCurrencyStr(x.Name)})" : x.Name
+                    })
+                    .ToList();
+
+                OfferOrderVM vmm = new OfferOrderVM();
+                await populateModelAsync(vmm);
+
+                // vmm.Offer = new Offer();
+                // vmm.Order = new Order();
+                // vmm.ContractsList = contracts;
+                // vmm.DepartmentList = await getDepartmentListAsync(_eveDbDochna);
+                // vmm.EveContactList = await getEveContactsAsync(_eveDbDochna);
+                // vmm.CurrencyList = currencies;
 
                 return View(vmm);
             }
@@ -610,17 +633,49 @@ namespace memo.Controllers
             ViewBag.EveOrderCodes = await getOrderCodesAsync(_eveDb);
 
             return null;
-        //     // ViewBag.OfferStatusList = new SelectList(_db.OfferStatus.ToList(), "OfferStatusId", "Status");
+        }
 
-        //     if (model != null)
-        //     {
-        //         ViewBag.OfferStatusName = _db.OfferStatus.Find(model.OfferStatusId).Name;
-        //     }
+        private async Task populateModelAsync(dynamic vm)
+        {
+            List<Company> companies = await _db.Company.OrderBy(x => x.Name).ToListAsync();
+            vm.CompanyList = companies
+                .Select(x => new SelectListItem {
+                    Value = x.CompanyId.ToString(),
+                    Text = x.Name
+                });
 
-        //     if (id != 0)
-        //     {
-        //         ViewBag.CreatedOrders = _db.Order.Include(x => x.Offer).Where(x => x.OfferId == id).ToList();
-        //     }
+            List<Contact> contacts = await _db.Contact.OrderBy(x => x.PersonLastName).ToListAsync();
+            vm.ContactList = contacts
+                .Select(x => new SelectListItem {
+                    Value = x.ContactId.ToString(),
+                    Text = $"{x.PersonLastName} {x.PersonName}"
+                });
+
+            List<Currency> currencies = await _db.Currency.ToListAsync();
+            vm.CurrencyList = currencies
+                .Select(x => new SelectListItem {
+                    Value = x.CurrencyId.ToString(),
+                    Text = x.Name != "CZK" ? $"{x.Name} (kurz {getCurrencyStr(x.Name)})" : x.Name
+                });
+            vm.CurrencyListNoRate = currencies
+                .Select(x => new SelectListItem {
+                    Value = x.CurrencyId.ToString(),
+                    Text = x.Name
+                });
+
+            // vm.DepartmentList = await getDepartmentListAsync2(_eveDbDochna);  // TODO zjistit, co je rychlejsi (tohle nějak failuje)
+            vm.DepartmentList = await getDepartmentListAsync(_eveDbDochna);
+            vm.EveContactList = await getEveContactsAsync(_eveDbDochna);
+
+            // Fill default Division/Department/Username values of logged in user
+            string domainAndUsername = User.GetLoggedInUserName();
+            string username = domainAndUsername.Split('\\').LastOrDefault();
+            int userId = await _eveDbDochna.tUsers.Where(x => x.TxAccount == username).Select(x => x.Id).FirstOrDefaultAsync();
+
+            vEmployees employee = await _eveDbDochna.vEmployees.Where(x => x.Id == userId).FirstOrDefaultAsync();
+            vm.Order.SharedInfo.EveCreatedUser = employee.FormatedName;
+            vm.Order.SharedInfo.EveDepartment = employee.DepartName;
+            vm.Order.SharedInfo.EveDivision = employee.EVE == 1 ? "EVE" : "EVAT";
         }
 
         // TODO: odstranit SP

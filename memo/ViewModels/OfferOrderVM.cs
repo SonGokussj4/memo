@@ -7,13 +7,17 @@ namespace memo.ViewModels
 {
     public class OfferOrderVM
     {
+        public OfferOrderVM()
+        {
+            Order = new Order();
+            Offer = new Offer();
+        }
+
         public Offer Offer { get; set; }
         public Order Order { get; set; }
 
         public IEnumerable<Offer> Offers { get; set; }
         public IEnumerable<Order> Orders { get; set; }
-
-        // public IEnumerable<Invoice> Invoices { get; set; }
 
         public int IDOrder { get; set; }
         public int Minutes { get; set; }
