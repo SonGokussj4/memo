@@ -42,15 +42,29 @@ namespace memo.Controllers
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
 
+            List<Order> orders = await _db.Order
+                .Include(x => x.OtherCosts)
+                .Include(x => x.Invoices)
+                .ToListAsync();
+
+            var shares = await _db.SharedInfo.ToListAsync();
+            var currencies = await _db.Currency.ToListAsync();
+            var companies = await _db.Company.ToListAsync();
+            var contacts = await _db.Contact.ToListAsync();
+
+                    // .Include(x => x.SharedInfo)
+                    //     .ThenInclude(y => y.Currency)
+                    // .Include(x => x.SharedInfo)
+                    //     .ThenInclude(y => y.Company)
+                    // .Include(x => x.SharedInfo)
+                    //     .ThenInclude(y => y.Contact)
+                    // .Include(x => x.OtherCosts)
+                    // .Include(x => x.Invoices)
+                    // .ToListAsync();
+
             OrdersViewModel vm = new OrdersViewModel {
                 cOrdersAll = await _eveDb.cOrders.ToListAsync(),
-                Orders = await _db.Order
-                    .Include(x => x.Offer)
-                        .ThenInclude(z => z.Currency)
-                    .Include(x => x.Offer.Company)
-                    .Include(x => x.OtherCosts)
-                    .Include(x => x.Invoices)
-                    .ToListAsync()
+                Orders = orders,
             };
 
             // Filtr - Pouze aktivní
@@ -79,108 +93,86 @@ namespace memo.Controllers
             return View(vm);
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Refresh(int offerId, int contractId)
-        // public IActionResult Refresh(int offerId, int contractId, string fromType)
-        {
-            // if (fromType == "N")
-            // {
-            // }
-            // else if (fromType == "R")
-            // {
+        // [HttpPost]
+        // [ValidateAntiForgeryToken]
+        // public IActionResult Refresh(int offerId, int contractId)
+        // // public IActionResult Refresh(int offerId, int contractId, string fromType)
+        // {
+        //     // if (fromType == "N")
+        //     // {
+        //     // }
+        //     // else if (fromType == "R")
+        //     // {
 
-            // }
-            // else
-            // {
+        //     // }
+        //     // else
+        //     // {
 
-            // }
-            return RedirectToAction("Create", new { offerId = offerId, contractId = contractId });
-        }
+        //     // }
+        //     return RedirectToAction("Create", new { offerId = offerId, contractId = contractId });
+        // }
 
         [HttpGet]
-        public async Task<IActionResult> Create(int? offerId, int? contractId)
+        public async Task<IActionResult> Create()
         {
-            Offer offer = await _db.Offer.FirstOrDefaultAsync(x => x.OfferId == offerId);
+            OfferOrderVM vm = new OfferOrderVM();
+
+            await populateModelAsync(vm);
+
+            // Initialize models, vars
+            // vm.Order.SharedInfo = new SharedInfo();
+            // vm.Order.SharedInfo.Currency = new Currency();
+            vm.Order.SharedInfo.ReceiveDate = DateTime.Now;
+            vm.Order.SharedInfo.Currency.Name = "CZK";
 
 
-            if (offer == null)
-            {
-                await populateModel(null, 0);
-                List<SelectListItem> contracts = await _db.Contracts
-                    .Select(x => new SelectListItem {
-                        Value = x.ContractsId.ToString(),
-                        Text = $"{x.ContractName} - {x.SharedInfo.Subject}",
-                    })
-                .ToListAsync();
-                List<SelectListItem> currencies = _db.Currency
-                    .AsEnumerable()
-                    .Select(x => new SelectListItem {
-                        Value = x.CurrencyId.ToString(),
-                        Text = x.Name != "CZK" ? $"{x.Name} (kurz {getCurrencyStr(x.Name)})" : x.Name
-                    })
-                    .ToList();
+            // string offerCompanyName = "";
+            // int invoiceDueDays = 0;
+            // string curSymbol = "CZK";
+            // int offerFinalPrice = 0;
+            // int offerPriceDiscount = 0;
+            // int finalPriceCzk = 0;
+            // int negotiatedPrice = 0;
 
-                OfferOrderVM vmm = new OfferOrderVM();
-                await populateModelAsync(vmm);
+            // Currency cur = await _db.Currency.FirstOrDefaultAsync(x => x.CurrencyId == offer.CurrencyId);
+            // curSymbol = cur != null ? cur.Name : "";
+            // offerFinalPrice = (int)offer.Price;
+            // finalPriceCzk = Convert.ToInt32(offerFinalPrice * offer.ExchangeRate);
+            // negotiatedPrice = (int)offer.Price;
 
-                // vmm.Offer = new Offer();
-                // vmm.Order = new Order();
-                // vmm.ContractsList = contracts;
-                // vmm.DepartmentList = await getDepartmentListAsync(_eveDbDochna);
-                // vmm.EveContactList = await getEveContactsAsync(_eveDbDochna);
-                // vmm.CurrencyList = currencies;
+            // Company company = await _db.Company.FirstOrDefaultAsync(x => x.CompanyId == offer.CompanyId);
+            // if (company != null)
+            // {
+            //     offerCompanyName = company.Name;
+            //     invoiceDueDays = (int)company.InvoiceDueDays;
+            // }
 
-                return View(vmm);
-            }
+            // Order order = new Order();
+            // order.OfferId = offer.OfferId;
+            // order.ExchangeRate = Decimal.Parse(getCurrencyStr(curSymbol).Replace(",", "."), CultureInfo.InvariantCulture);
+            // order.PriceFinal = offerFinalPrice;
+            // order.PriceDiscount = offerPriceDiscount;
+            // order.PriceFinalCzk = finalPriceCzk;
+            // order.NegotiatedPrice = negotiatedPrice;
 
-            string offerCompanyName = "";
-            int invoiceDueDays = 0;
-            string curSymbol = "CZK";
-            int offerFinalPrice = 0;
-            int offerPriceDiscount = 0;
-            int finalPriceCzk = 0;
-            int negotiatedPrice = 0;
+            // await populateModel(order, (int)offerId);
+            // List<SelectListItem> contractsList = await _db.Contracts
+            //     .Select(x => new SelectListItem {
+            //         Value = x.ContractsId.ToString(),
+            //         Text = $"{x.ContractName} - {x.SharedInfo.Subject}",
+            //     })
+            //     .ToListAsync();
 
-            Currency cur = await _db.Currency.FirstOrDefaultAsync(x => x.CurrencyId == offer.CurrencyId);
-            curSymbol = cur != null ? cur.Name : "";
-            offerFinalPrice = (int)offer.Price;
-            finalPriceCzk = Convert.ToInt32(offerFinalPrice * offer.ExchangeRate);
-            negotiatedPrice = (int)offer.Price;
-
-            Company company = await _db.Company.FirstOrDefaultAsync(x => x.CompanyId == offer.CompanyId);
-            if (company != null)
-            {
-                offerCompanyName = company.Name;
-                invoiceDueDays = (int)company.InvoiceDueDays;
-            }
-
-            Order order = new Order();
-            order.OfferId = offer.OfferId;
-            order.ExchangeRate = Decimal.Parse(getCurrencyStr(curSymbol).Replace(",", "."), CultureInfo.InvariantCulture);
-            order.PriceFinal = offerFinalPrice;
-            order.PriceDiscount = offerPriceDiscount;
-            order.PriceFinalCzk = finalPriceCzk;
-            order.NegotiatedPrice = negotiatedPrice;
-
-            await populateModel(order, (int)offerId);
-            List<SelectListItem> contractsList = await _db.Contracts
-                .Select(x => new SelectListItem {
-                    Value = x.ContractsId.ToString(),
-                    Text = $"{x.ContractName} - {x.SharedInfo.Subject}",
-                })
-                .ToListAsync();
-
-            OfferOrderVM vm = new OfferOrderVM()
-            {
-                Offer = offer,
-                OfferId = (int)offerId,
-                Order = order,
-                OfferCompanyName = offerCompanyName,
-                InvoiceDueDays = invoiceDueDays,
-                CurrencyName = curSymbol,
-                ContractsList = contractsList,
-            };
+            // OfferOrderVM vm = new OfferOrderVM()
+            // {
+            //     Offer = offer,
+            //     OfferId = (int)offerId,
+            //     Order = order,
+            //     OfferCompanyName = offerCompanyName,
+            //     InvoiceDueDays = invoiceDueDays,
+            //     CurrencyName = curSymbol,
+            //     ContractsList = contractsList,
+            // };
 
             return View(vm);
         }

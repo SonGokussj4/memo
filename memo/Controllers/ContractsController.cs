@@ -24,24 +24,30 @@ namespace memo.Controllers
         protected readonly IWebHostEnvironment _env;
 
         public ContractsController(ApplicationDbContext db,
-                                // EvektorDbContext eveDb,
                                 EvektorDochnaDbContext eveDbDochna,
                                 IWebHostEnvironment hostEnvironment) : base(hostEnvironment)
         {
             _db = db;
-            // _eveDb = eveDb;
             _eveDbDochna = eveDbDochna;
             _env = hostEnvironment;
         }
 
         public async Task<IActionResult> Index()
         {
-            IEnumerable<Contract> contracts = await _db.Contracts
-                // .Include(x => x.SharedInfo)
-                // .Include(x => x.SharedInfo.Contact)
-                // .Include(x => x.SharedInfo.Currency)
-                // .Include(x => x.SharedInfo.Company)
-                .ToListAsync();
+            IEnumerable<Contract> contracts = await _db.Contracts.ToListAsync();
+            var shares = await _db.SharedInfo.ToListAsync();
+            var companies = await _db.Company.ToListAsync();
+            var currencies = await _db.Currency.ToListAsync();
+            var contacts = await _db.Contact.ToListAsync();
+
+            // IEnumerable<Contract> contracts = await _db.Contracts
+            //     .Include(x => x.SharedInfo)
+            //         .ThenInclude(info => info.Company)
+            //     .Include(x => x.SharedInfo)
+            //         .ThenInclude(info => info.Currency)
+            //     .Include(x => x.SharedInfo)
+            //         .ThenInclude(info => info.Contact)
+            //     .ToListAsync();
 
             IndexContractViewModel vm = new IndexContractViewModel()
             {

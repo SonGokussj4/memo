@@ -462,14 +462,14 @@ ADD
     CONSTRAINT [FK__memo.Order__memo.SharedInfo__SharedInfoId]
     FOREIGN KEY ([SharedInfoId])
     REFERENCES [memo].[SharedInfo] (SharedInfoId);
-
+GO
 
 -----------------------------------------------------------------------------------------
 -- VLOZIT DO TABULKY SharedInfo SLOUPCE Z TABULKY Offer
 INSERT INTO [memo].[SharedInfo](ReceiveDate, Subject, ContactId, CompanyId, CurrencyId, EveDivision, EveDepartment, EveCreatedUser, Price, PriceCzk, ExchangeRate)
 SELECT ReceiveDate, Subject, ContactId, CompanyId, CurrencyId, EveDivision, EveDepartment, EveCreatedUser, Price, PriceCzk, ExchangeRate
 FROM [memo].[Offer]
-
+GO
 
 -----------------------------------------------------------------------------------------
 -- SPÁROVAT SharedInfoId Z TABULKY SharedInfo S TABULKOU Offer
@@ -492,5 +492,5 @@ WHERE
     si.EveCreatedUser = o.EveCreatedUser AND
     (si.PriceCzk = o.PriceCzk OR (ISNULL(si.PriceCzk, o.PriceCzk) IS NULL)) AND
     (si.Price = o.Price OR (ISNULL(si.Price, o.Price) IS NULL))
-
+GO
 

@@ -80,7 +80,8 @@
         <form id="orderForm" class="card" role="form" autocomplete="on" asp-action="Create" method="post" style="display: none;">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         @* <input type="hidden" asp-for="OfferId" /> *@
-        @* <input type="hidden" asp-for="Order.OfferId" /> *@
+        <input type="hidden" asp-for="Offer.OfferId" />
+        <input type="hidden" asp-for="Order.OfferId" />
 
         <h5 class="card-title">Vyplnit novou zakázku</h5>
         <hr />
