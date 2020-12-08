@@ -9,7 +9,12 @@ namespace memo.Models
     [Table("SharedInfo", Schema = "memo")]
     public class SharedInfo
     {
-        public SharedInfo() { }
+        public SharedInfo()
+        {
+            Contact = new Contact();
+            Company = new Company();
+            Currency = new Currency();
+        }
 
         [Key]
         [Display(Name = "ID")]
