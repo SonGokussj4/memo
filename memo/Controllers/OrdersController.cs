@@ -419,30 +419,37 @@ namespace memo.Controllers
                 return NotFound();
             }
 
-            await populateModel(null, 0);
+            // await populateModel(null, 0);
 
             Order order = await _db.Order.FindAsync(id);
             if (order == null)
             {
                 return NotFound();
             }
+            var invoices = await _db.Invoice.ToListAsync();
+            var otherCosts = await _db.OtherCost.ToListAsync();
+            var orderCodes = await _db.OrderCodes.ToListAsync();
+            // order.Invoices = await _db.Invoice.Where(x => x.OrderId == id).ToListAsync();
+            // order.OtherCosts = await _db.OtherCost.Where(x => x.OrderId == id).ToListAsync();
+            // order.OrderCodes = await _db.OrderCodes.Where(x => x.OrderId == id).ToListAsync();
 
-            order.Invoices = await _db.Invoice.Where(x => x.OrderId == id).ToListAsync();
-            order.OtherCosts = await _db.OtherCost.Where(x => x.OrderId == id).ToListAsync();
-            order.OrderCodes = await _db.OrderCodes.Where(x => x.OrderId == id).ToListAsync();
-
-            if (offerId != null)
+            if (order.FromType == "N")
             {
-                order.OfferId = offerId;
-            }
-            Offer offer = await _db.Offer.FindAsync(order.OfferId);
-            if (offer == null)
-            {
-                return NotFound();
+                await _db.Offer.ToListAsync();
             }
 
-            Company company = await _db.Company.FindAsync(offer.CompanyId);
-            Currency currency= await _db.Currency.FindAsync(offer.CurrencyId);
+            // if (offerId != null)
+            // {
+            //     order.OfferId = offerId;
+            // }
+            // Offer offer = await _db.Offer.FindAsync(order.OfferId);
+            // if (offer == null)
+            // {
+            //     return NotFound();
+            // }
+
+            // Company company = await _db.Company.FindAsync(offer.CompanyId);
+            // Currency currency= await _db.Currency.FindAsync(offer.CurrencyId);
 
             // AUDITS
             List<int> orderIdInvoices = order.Invoices.Where(x => x.OrderId == id).Select(x => x.InvoiceId).ToList();
@@ -466,27 +473,33 @@ namespace memo.Controllers
                 orderCodesTooltips.Add(tooltip);
             }
 
+            var shares = await _db.SharedInfo.ToListAsync();
+            var currencies = await _db.Currency.ToListAsync();
+            var companies = await _db.Company.ToListAsync();
+            var contacts = await _db.Contact.ToListAsync();
+
             // VIEW MODEL
             OfferOrderVM vm = new OfferOrderVM()
             {
-                Offer = offer,
+                // Offer = offer,
                 Order = order,
-                OfferId = (int)order.OfferId,
-                OfferCompanyName = company.Name,
-                InvoiceDueDays = (int)company.InvoiceDueDays,
-                CurrencyName = currency.Name,
+                // OfferId = (int)order.OfferId,
+                OfferCompanyName = order.SharedInfo.Company.Name,
+                InvoiceDueDays = (int)order.SharedInfo.Company.InvoiceDueDays,
+                // CurrencyName = currency.Name,
                 UnspentMoney = (int)(order.NegotiatedPrice - order.PriceFinal),
                 Audits = audits,
                 OrderCodesTooltips = orderCodesTooltips,
             };
 
-            if (offerId == 0 && vm.Edit != "true")
-            {
-                ModelState.AddModelError(string.Empty, "Nelze vybrat prázdnou nabídku");
-                return View();
-            }
-
+            // if (offerId == 0 && vm.Edit != "true")
+            // {
+            //     ModelState.AddModelError(string.Empty, "Nelze vybrat prázdnou nabídku");
+            //     return View();
+            // }
+            await populateModelAsync(vm);
             return View(vm);
+            // return View(vm);
         }
 
         [HttpPost]

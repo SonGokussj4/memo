@@ -9,9 +9,9 @@ namespace memo.ViewModels
     {
         public OfferOrderVM()
         {
-            Order = new Order();
-            Offer = new Offer();
-            Contract = new Contract();
+            // Order = new Order();
+            // Offer = new Offer();
+            // Contract = new Contract();
         }
 
         public Offer Offer { get; set; }
