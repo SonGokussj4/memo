@@ -13,7 +13,7 @@ namespace memo.Data
     {
         public EvektorDbContext(DbContextOptions<EvektorDbContext> options) : base(options)
         {
-            this.ChangeTracker.LazyLoadingEnabled = false;
+            // this.ChangeTracker.LazyLoadingEnabled = false;
         }
 
         public virtual DbSet<tWorks> tWorks { get; set; }

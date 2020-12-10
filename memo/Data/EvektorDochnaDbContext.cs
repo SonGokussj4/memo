@@ -14,7 +14,7 @@ namespace memo.Data
 
         public EvektorDochnaDbContext(DbContextOptions<EvektorDochnaDbContext> options) : base(options)
         {
-            this.ChangeTracker.LazyLoadingEnabled = false;
+            // this.ChangeTracker.LazyLoadingEnabled = false;
         }
 
         public virtual DbSet<tUsers> tUsers { get; set; }

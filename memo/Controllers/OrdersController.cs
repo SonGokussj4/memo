@@ -84,7 +84,7 @@ namespace memo.Controllers
             ViewBag.AllOrdersCount = allOrders.Count();
 
             TimeSpan ts = stopwatch.Elapsed;
-            string message = string.Format("Stránka načtena za: {0:D1}.{1:D3}s", ts.Seconds, ts.Milliseconds);
+            string message = string.Format($"Stránka načtena za: {ts.Seconds:D1}.{ts.Milliseconds:D3}s");
             if (_env.IsDevelopment())
             {
                 TempData["Info"] = message;
@@ -117,7 +117,6 @@ namespace memo.Controllers
         {
             OfferOrderVM vm = new OfferOrderVM();
 
-            await populateModelAsync(vm);
 
             // Initialize models, vars
             // vm.Order.SharedInfo = new SharedInfo();
@@ -125,6 +124,7 @@ namespace memo.Controllers
             vm.Order.SharedInfo.ReceiveDate = DateTime.Now;
             vm.Order.SharedInfo.Currency.Name = "CZK";
 
+            await populateModelAsync(vm);
 
             // string offerCompanyName = "";
             // int invoiceDueDays = 0;
@@ -831,6 +831,9 @@ namespace memo.Controllers
             int userId = await _eveDbDochna.tUsers.Where(x => x.TxAccount == username).Select(x => x.Id).FirstOrDefaultAsync();
 
             vEmployees employee = await _eveDbDochna.vEmployees.Where(x => x.Id == userId).FirstOrDefaultAsync();
+
+            // vm.Order = new Order();
+            // vm.Order.SharedInfo = new SharedInfo();
             vm.Order.SharedInfo.EveCreatedUser = employee.FormatedName;
             vm.Order.SharedInfo.EveDepartment = employee.DepartName;
             vm.Order.SharedInfo.EveDivision = employee.EVE == 1 ? "EVE" : "EVAT";
