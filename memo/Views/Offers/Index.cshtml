@@ -199,8 +199,8 @@
                 </th>
                 @* Přijato *@
                 <th scope="row" class="text-left">
-                    <span style="display:none">@String.Format("{0:yyyy-MM-dd HH:mm}", @item.ReceiveDate)</span>  <!-- Hidden span for sorting date correctly-->
-                    @item.ReceiveDate.Value.ToString("dd.MM.yyyy")
+                    <span style="display:none">@String.Format("{0:yyyy-MM-dd HH:mm}", @item.SharedInfo.ReceiveDate)</span>  <!-- Hidden span for sorting date correctly-->
+                    @String.Format("{0:dd.MM.yyyy}", @item.SharedInfo.ReceiveDate)
                 </th>
                 @{
                     int OrdersCount = ((IEnumerable<dynamic>)ViewBag.AllOrders).Where(x => x.OfferId == item.OfferId).Count();
@@ -211,24 +211,24 @@
                 @* Zakázek *@
                 <th scope="row" class="text-right" data-toggle="tooltip" data-html="true" title="@OrdersListTooltip">@OrdersCount</th>
                 @* Oddělení *@
-                <th scope="row" class="text-left">@item.EveDepartment</th>
+                <th scope="row" class="text-left">@item.SharedInfo.EveDepartment</th>
                 @* Eve vytvořil *@
-                <th scope="row" class="text-left">@item.EveCreatedUser</th>
+                <th scope="row" class="text-left">@item.SharedInfo.EveCreatedUser</th>
                 @* Zákazník *@
-                <th scope="row" class="text-left">@item.Company?.Name</th>
+                <th scope="row" class="text-left">@item.SharedInfo.Company?.Name</th>
                 @* Kontakt *@
-                <th scope="row" class="text-left">@item.Contact?.PersonTitle @item.Contact?.PersonName @item.Contact?.PersonLastName </th>
+                <th scope="row" class="text-left">@item.SharedInfo.Contact?.PersonTitle @item.SharedInfo.Contact?.PersonName @item.SharedInfo.Contact?.PersonLastName </th>
                 @* Předmět *@
-                <th scope="row" class="notesWrap" data-toggle="tooltip" data-html="true" title="@item.Subject">
-                    @item.Subject
+                <th scope="row" class="notesWrap" data-toggle="tooltip" data-html="true" title="@item.SharedInfo.Subject">
+                    @item.SharedInfo.Subject
                 </th>
                 @* <th scope="row" class="text-left" >@item.Price</th> *@
                 @* Cena *@
-                <th scope="row" class="text-right">@String.Format(CultureInfo.CreateSpecificCulture(@item.Currency.CultureCode), "{0:C0}", @item.Price)</th>
+                <th scope="row" class="text-right">@String.Format(CultureInfo.CreateSpecificCulture(@item.SharedInfo.Currency.CultureCode), "{0:C0}", @item.SharedInfo.Price)</th>
                 @* Měna *@
-                <th scope="row" class="text-center" >@item.Currency?.Name</th>
+                <th scope="row" class="text-center" >@item.SharedInfo.Currency?.Name</th>
                 @* Cena [CZK] *@
-                <th scope="row" class="text-right">@String.Format(CultureInfo.CreateSpecificCulture("cs-CZ"), "{0:C0}", @item.PriceCzk)</th>
+                <th scope="row" class="text-right">@String.Format(CultureInfo.CreateSpecificCulture("cs-CZ"), "{0:C0}", @item.SharedInfo.PriceCzk)</th>
                 @* Poznámky *@
                 <th scope="row" class="notesWrap" data-toggle="tooltip" data-html="true" title="@item.Notes">
                     @item.Notes

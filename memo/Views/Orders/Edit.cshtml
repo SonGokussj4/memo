@@ -628,7 +628,7 @@
 
             $('.mycalendar input').datepicker(datepickerParameters[0]);
 
-            var offerPrice = parseInt('@Model.Order.Offer.Price');
+            var offerPrice = parseInt('@Model.Order.Offer.SharedInfo.Price');
 
             $('#Order_NegotiatedPrice').on('keydown input change textInput', function(){
                 var negotiatedPrice = parseInt($('#Order_NegotiatedPrice').val());
@@ -716,7 +716,7 @@
                 var _invoiceIssueInput = $('#Order_Invoices_' + idInvoice + '__InvoiceIssueDate');
                 var _invoiceDueInput = $('#Order_Invoices_' + idInvoice + '__InvoiceDueDate');
 
-                var parsed_date = @Html.Raw(Json.Serialize(Model.Order.Offer.EstimatedFinishDate))
+                var parsed_date = @Html.Raw(Json.Serialize(Model.Order.Offer.SharedInfo.EstimatedFinishDate))
                 if ( parsed_date != null) {
                     var issueDate = getPrettyDate(new Date(parsed_date), 0)
                     //_invoiceIssueInput.val(new Date(parsed_date).toISOString().substring(0, 10));

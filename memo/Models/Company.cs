@@ -10,7 +10,7 @@ namespace memo.Models
     {
         public Company()
         {
-            Offers = new HashSet<Offer>();
+            // Offers = new HashSet<Offer>();
             Active = true;
             // ModifiedDate = DateTime.Now;
         }
@@ -56,8 +56,8 @@ namespace memo.Models
         [Display(Name = "Poslední úprava"), Column(TypeName = "datetime")]
         public DateTime ModifiedDate { get; set; }
 
-        [InverseProperty("Company")]
-        public virtual ICollection<Offer> Offers { get; set; }
+        // [InverseProperty("Company")]
+        // public virtual ICollection<Offer> Offers { get; set; }
 
         public virtual List<SharedInfo> SharedInfo { get; set; }
     }

@@ -123,7 +123,7 @@
             @if (@Model.Offer?.OfferId != 0 && @Model.Offer?.OfferId != null)
             {
             <div class="col-lg-3">
-                <p class="mt-1">Cena nab: <b>@String.Format(CultureInfo.CreateSpecificCulture(Model.Offer?.Currency.CultureCode), "{0:C0}", @Model.Offer?.Price)</b></p>
+                <p class="mt-1">Cena nab: <b>@String.Format(CultureInfo.CreateSpecificCulture(Model.Offer?.SharedInfo.Currency.CultureCode), "{0:C0}", @Model.Offer?.SharedInfo.Price)</b></p>
             </div>
             }
         </div>
@@ -368,7 +368,7 @@
             // All .mycalendar input classes will have 'datepicker()' functionality
             $('.mycalendar input').datepicker(datepickerParameters[0]);
 
-            var offerPrice = parseInt('@Model.Offer.Price');
+            var offerPrice = parseInt('@Model.Offer.SharedInfo.Price');
 
             $('#Order_NegotiatedPrice').on('keydown input change textInput', function(){
                 var negotiatedPrice = parseInt($('#Order_NegotiatedPrice').val());
@@ -446,7 +446,7 @@
                 var _invoiceIssueInput = $('#Order_Invoices_' + idInvoice + '__InvoiceIssueDate');
                 var _invoiceDueInput = $('#Order_Invoices_' + idInvoice + '__InvoiceDueDate');
 
-                var parsed_date = @Html.Raw(Json.Serialize(Model.Offer.EstimatedFinishDate))
+                var parsed_date = @Html.Raw(Json.Serialize(Model.Offer.SharedInfo.EstimatedFinishDate))
                 if ( parsed_date != null) {
                     var issueDate = getPrettyDate(new Date(parsed_date), 0)
                     _invoiceIssueInput.val(issueDate);

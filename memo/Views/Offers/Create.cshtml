@@ -28,13 +28,13 @@
         </div>
 
         <div class="form-group row">
-            <label asp-for="Offer.ReceiveDate" class="required col-lg-3 col-form-label form-control-label control-label"></label>
+            <label asp-for="Offer.SharedInfo.ReceiveDate" class="required col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-9 mycalendar">
                 <span class="has-float-label">
-                    <input asp-for="Offer.ReceiveDate" class="form-control" type="text" placeholder=" " required="" autocomplete="off"/>
-                    <label asp-for="Offer.ReceiveDate">Datum přijetí poptávky</label>
+                    <input asp-for="Offer.SharedInfo.ReceiveDate" class="form-control" type="text" placeholder=" " required="" autocomplete="off"/>
+                    <label asp-for="Offer.SharedInfo.ReceiveDate">Datum přijetí poptávky</label>
                 </span>
-                <span asp-validation-for="Offer.ReceiveDate" class="text-danger"></span>
+                <span asp-validation-for="Offer.SharedInfo.ReceiveDate" class="text-danger"></span>
             </div>
         </div>
 
@@ -50,13 +50,13 @@
         </div>
 
         <div class="form-group row">
-            <label asp-for="Offer.Subject" class="required col-lg-3 col-form-label form-control-label control-label"></label>
+            <label asp-for="Offer.SharedInfo.Subject" class="required col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-9">
                 <span class="has-float-label">
-                    <input asp-for="Offer.Subject" class="form-control" placeholder="Krátký popis nabídky" type="text" />
-                    <label asp-for="Offer.Subject">Předmět nabídky</label>
+                    <input asp-for="Offer.SharedInfo.Subject" class="form-control" placeholder="Krátký popis nabídky" type="text" />
+                    <label asp-for="Offer.SharedInfo.Subject">Předmět nabídky</label>
                 </span>
-                <span asp-validation-for="Offer.Subject" class="text-danger"></span>
+                <span asp-validation-for="Offer.SharedInfo.Subject" class="text-danger"></span>
             </div>
         </div>
 
@@ -64,33 +64,31 @@
             <label class="col-lg-3 col-form-label form-control-label control-label">Evektor</label>
             <div class="col-lg-2">
                 <span class="has-float-label">
-                    <select class="form-control" asp-for="Offer.EveDivision" asp-items="@Model.Offer.EveDivisionList"></select>
-                    <label asp-for="Offer.EveDivision">Divize</label>
+                    <select class="form-control" asp-for="Offer.SharedInfo.EveDivision" asp-items="@Model.Offer.EveDivisionList"></select>
+                    <label asp-for="Offer.SharedInfo.EveDivision">Divize</label>
                 </span>
-                <span asp-validation-for="Offer.EveDivision" class="text-danger"></span>
+                <span asp-validation-for="Offer.SharedInfo.EveDivision" class="text-danger"></span>
             </div>
             <div class="col-lg-3">
                 <span class="has-float-label">
-                    <select asp-for="Offer.EveDepartment" asp-items="ViewBag.DepartmentList" class="form-control"></select>
-                    <label asp-for="Offer.EveDepartment">Oddělení</label>
+                    <select asp-for="Offer.SharedInfo.EveDepartment" asp-items="@Model.DepartmentList" class="form-control"></select>
+                    <label asp-for="Offer.SharedInfo.EveDepartment">Oddělení</label>
                 </span>
-                <span asp-validation-for="Offer.EveDepartment" class="text-danger"></span>
+                <span asp-validation-for="Offer.SharedInfo.EveDepartment" class="text-danger"></span>
             </div>
             <div class="col-lg-4">
-                <select class="form-control selectpicker" asp-for="Offer.EveCreatedUser" asp-items="@ViewBag.EveContactList" required>
-                    @* <option value="">-- Vyber uživatele --</option> *@
-                </select>
-                <span asp-validation-for="Offer.EveCreatedUser" class="text-danger"></span>
+                <select class="form-control selectpicker" asp-for="Offer.SharedInfo.EveCreatedUser" asp-items="@Model.EveContactList" required></select>
+                <span asp-validation-for="Offer.SharedInfo.EveCreatedUser" class="text-danger"></span>
             </div>
         </div>
 
         <div class="form-group row customerOffer">
             <label class="required col-lg-3 col-form-label form-control-label control-label">Zákazník</label>
             <div class="col-lg-4">
-                <select class="form-control selectpicker" asp-for="Offer.CompanyId" asp-items="@Model.CompanyList">
+                <select class="form-control selectpicker" asp-for="Offer.SharedInfo.CompanyId" asp-items="@Model.CompanyList">
                     <option value="">-- Vyber firmu --</option>
                 </select>
-                <span asp-validation-for="Offer.CompanyId" class="text-danger"></span>
+                <span asp-validation-for="Offer.SharedInfo.CompanyId" class="text-danger"></span>
             </div>
             <div class="col-lg-1" data-toggle="tooltip" title="Nová firma">
                 <a asp-action="create" asp-controller="Companies" target="_blank">
@@ -98,10 +96,10 @@
                 </a>
             </div>
             <div class="col-lg-3">
-                <select class="form-control selectpicker" asp-for="Offer.ContactId" asp-items="@ViewBag.ContactList">
+                <select class="form-control selectpicker" asp-for="Offer.SharedInfo.ContactId" asp-items="@Model.ContactList">
                     <option value="">-- Vyber kontakt --</option>
                 </select>
-                <span asp-validation-for="Offer.ContactId" class="text-danger"></span>
+                <span asp-validation-for="Offer.SharedInfo.ContactId" class="text-danger"></span>
             </div>
             <div class="col-lg-1" data-toggle="tooltip" title="Nový kontakt">
                 <a asp-action="create" asp-controller="Contacts" target="_blank">
@@ -111,38 +109,46 @@
         </div>
 
         <div class="form-group row">
-            <label asp-for="Offer.Price" class="required col-lg-3 col-form-label form-control-label control-label"></label>
+            <label asp-for="Offer.SharedInfo.Price" class="required col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-5">
                 <span class="has-float-label">
-                    <input asp-for="Offer.Price" class="form-control" type="text" placeholder=" "/>
-                    <label asp-for="Offer.Price">Cena bez DPH</label>
+                    <input asp-for="Offer.SharedInfo.Price" class="form-control" type="text" placeholder=" "/>
+                    <label asp-for="Offer.SharedInfo.Price">Cena bez DPH</label>
                 </span>
-                <span asp-validation-for="Offer.Price" class="text-danger"></span>
+                <span asp-validation-for="Offer.SharedInfo.Price" class="text-danger"></span>
+            </div>
+            <div class="col-lg-4">
+                <span class="has-float-label" data-toggle="tooltip" title="Aktuální kurz ČNB">
+                    <select asp-for="Offer.SharedInfo.CurrencyId" asp-items="Model.CurrencyList" class="form-control"></select>
+                    <label asp-for="Offer.SharedInfo.CurrencyId">Měna</label>
+                </span>
+                <span asp-validation-for="Offer.SharedInfo.CurrencyId" class="text-danger"></span>
+            </div>
+
+            @* <div class="col-lg-2">
+                <span class="has-float-label">
+                    <select asp-for="Offer.SharedInfo.CurrencyId" asp-items="ViewBag.CurrencyList" class="form-control"></select>
+                    <label asp-for="Offer.SharedInfo.CurrencyId">Měna</label>
+                </span>
+                <span asp-validation-for="Offer.SharedInfo.Currency" class="text-danger"></span>
             </div>
             <div class="col-lg-2">
                 <span class="has-float-label">
-                    <select asp-for="Offer.CurrencyId" asp-items="ViewBag.CurrencyList" class="form-control"></select>
-                    <label asp-for="Offer.CurrencyId">Měna</label>
+                    <input asp-for="Offer.SharedInfo.ExchangeRate" class="form-control" type="text" data-toggle="tooltip" data-placement="top" title="Měnový kurz z ČNB" />
+                    <label asp-for="Offer.SharedInfo.ExchangeRate">Kurz</label>
                 </span>
-                <span asp-validation-for="Offer.Currency" class="text-danger"></span>
-            </div>
-            <div class="col-lg-2">
-                <span class="has-float-label">
-                    <input asp-for="Offer.ExchangeRate" class="form-control" type="text" data-toggle="tooltip" data-placement="top" title="Měnový kurz z ČNB" />
-                    <label asp-for="Offer.ExchangeRate">Kurz</label>
-                </span>
-                <span asp-validation-for="Offer.ExchangeRate" class="text-danger"></span>
-            </div>
+                <span asp-validation-for="Offer.SharedInfo.ExchangeRate" class="text-danger"></span>
+            </div> *@
         </div>
 
         <div class="form-group row">
-            <label asp-for="Offer.EstimatedFinishDate" class="col-lg-3 col-form-label form-control-label control-label"></label>
+            <label asp-for="Offer.SharedInfo.EstimatedFinishDate" class="col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-9 mycalendar">
                 <span class="has-float-label">
-                    <input asp-for="Offer.EstimatedFinishDate" class="form-control" type="text" autocomplete="off" placeholder=" "/>
-                    <label asp-for="Offer.EstimatedFinishDate">Předpodkládaný termín ukončení</label>
+                    <input asp-for="Offer.SharedInfo.EstimatedFinishDate" class="form-control" type="text" autocomplete="off" placeholder=" "/>
+                    <label asp-for="Offer.SharedInfo.EstimatedFinishDate">Předpodkládaný termín ukončení</label>
                 </span>
-                <span asp-validation-for="Offer.EstimatedFinishDate" class="text-danger"></span>
+                <span asp-validation-for="Offer.SharedInfo.EstimatedFinishDate" class="text-danger"></span>
             </div>
         </div>
 

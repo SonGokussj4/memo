@@ -37,11 +37,10 @@ namespace memo.Controllers
 
         public async Task<IActionResult> Index(bool showInactive = false)
         {
-            ViewBag.showInactive = showInactive;
-
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
 
+            ViewBag.showInactive = showInactive;
             List<Order> orders = await _db.Order
                 .Include(x => x.OtherCosts)
                 .Include(x => x.Invoices)
@@ -62,6 +61,7 @@ namespace memo.Controllers
                     // .Include(x => x.Invoices)
                     // .ToListAsync();
 
+            // TODO(jverner) !!! Toto mi spotrebuje pul sekundy, boha............
             OrdersViewModel vm = new OrdersViewModel {
                 cOrdersAll = await _eveDb.cOrders.ToListAsync(),
                 Orders = orders,
@@ -73,6 +73,7 @@ namespace memo.Controllers
                 vm.Orders = vm.Orders.Where(x => x.Active == true);
             }
 
+            // TODO(jverner) !!! Toto mi spotrebuje dalsi pul sekundy, boha.......
             Dictionary<string, int> dc = await GetOrderSumHoursDictAsync();
             foreach (Order order in vm.Orders)
             {
@@ -180,7 +181,7 @@ namespace memo.Controllers
         [HttpGet]
         public async Task<IActionResult> CreateFromOffer(int? id)
         {
-            Offer offer = await _db.Offer.Include(x => x.Currency).FirstOrDefaultAsync(x => x.OfferId == id);
+            Offer offer = await _db.Offer.Include(x => x.SharedInfo.Currency).FirstOrDefaultAsync(x => x.OfferId == id);
 
             if (offer == null)
             {
@@ -227,9 +228,20 @@ namespace memo.Controllers
             //     })
             //     .ToListAsync();
 
+            Order order = new Order();
+            order.ExchangeRate = decimal.Parse(getCurrencyStr(offer.SharedInfo.Currency.Name));
+            order.Offer = offer;
+
+            // Fill nested models
+            var shares = await _db.SharedInfo.ToListAsync();
+            var contacts = await _db.Contact.ToListAsync();
+            var currencies = await _db.Currency.ToListAsync();
+            var companies = await _db.Company.ToListAsync();
+
             OfferOrderVM vm = new OfferOrderVM()
             {
                 Offer = offer,
+                Order = order,
             };
             await populateModelAsync(vm);
 
@@ -310,70 +322,80 @@ namespace memo.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(OfferOrderVM vm)
+        public async Task<IActionResult> CreateFromOffer(OfferOrderVM vm)
         {
             await populateModel(vm.Order, vm.Order.OrderId);
 
-            string offerCompanyName = string.Empty;
-            int invoiceDueDays = 0;
-            string curSymbol = "CZK";
-            int offerFinalPrice = 0;
-            int offerPriceDiscount = 0;
-            int finalPriceCzk = 0;
+            vm.Order.FromType = vm.Offer?.OfferId != 0 ? "N" : (vm.Contract?.ContractsId != 0 ? "R" : "-");
+            // vm.Order.PriceFinal = vm.Order.NegotiatedPrice;
+            // vm.Order.PriceFinalCzk = Convert.ToInt32(vm.Order.PriceFinal * vm.Order.ExchangeRate);
 
-            Offer offer = new Offer();
-            if (vm.Order.OfferId != null && vm.Order.OfferId != 0)
-            {
-                offer = await _db.Offer.FirstOrDefaultAsync(x => x.OfferId == vm.Order.OfferId);
-                Currency cur = await _db.Currency.FirstOrDefaultAsync(x => x.CurrencyId == offer.CurrencyId);
-                curSymbol = cur != null ? cur.Name : "";
-                offerFinalPrice = (int)offer.Price;
-                finalPriceCzk = Convert.ToInt32(offerFinalPrice * offer.ExchangeRate);
+            // string offerCompanyName = "";
+            // int invoiceDueDays = 0;
+            // string curSymbol = "CZK";
+            // int offerFinalPrice = 0;
+            // int offerPriceDiscount = 0;
+            // int finalPriceCzk = 0;
 
-                Company company = await _db.Company.FirstOrDefaultAsync(x => x.CompanyId == offer.CompanyId);
-                if (company != null)
-                {
-                    offerCompanyName = company.Name;
-                    invoiceDueDays = (int)company.InvoiceDueDays;
-                }
-            }
+            // Offer offer = new Offer();
+            // if (vm.Order.OfferId != null && vm.Order.OfferId != 0)
+            // {
+            //     offer = await _db.Offer.FirstOrDefaultAsync(x => x.OfferId == vm.Order.OfferId);
+            //     Currency cur = await _db.Currency.FirstOrDefaultAsync(x => x.CurrencyId == offer.CurrencyId);
+            //     curSymbol = cur != null ? cur.Name : "";
+            //     offerFinalPrice = (int)offer.Price;
+            //     finalPriceCzk = Convert.ToInt32(offerFinalPrice * offer.ExchangeRate);
 
-            vm.Order.ExchangeRate = Decimal.Parse(getCurrencyStr(curSymbol).Replace(",", "."), CultureInfo.InvariantCulture);
-            vm.Order.PriceFinal = offerFinalPrice;
-            vm.Order.PriceDiscount = offerPriceDiscount;
-            vm.Order.PriceFinalCzk = finalPriceCzk;
+            //     Company company = await _db.Company.FirstOrDefaultAsync(x => x.CompanyId == offer.CompanyId);
+            //     if (company != null)
+            //     {
+            //         offerCompanyName = company.Name;
+            //         invoiceDueDays = (int)company.InvoiceDueDays;
+            //     }
+            // }
 
-            vm.Offer = offer;
-            vm.OfferCompanyName = offerCompanyName;
-            vm.InvoiceDueDays = invoiceDueDays;
-            vm.CurrencyName = curSymbol;
+            // // vm.Order.ExchangeRate = Decimal.Parse(getCurrencyStr(curSymbol).Replace(",", "."), CultureInfo.InvariantCulture);
+            // vm.Order.PriceFinal = offerFinalPrice;
+            // vm.Order.PriceDiscount = offerPriceDiscount;
+            // vm.Order.PriceFinalCzk = finalPriceCzk;
 
-            string orderName = await _db.Order
-                .Where(x => x.OrderName == vm.Order.OrderName)
-                .Select(x => x.OrderName)
-                .FirstOrDefaultAsync();
-            if (orderName != null)
-            {
-                ModelState.AddModelError("Order.OrderName", "Číslo objednávky zákazníka již existuje");
-            }
+            // vm.Offer = offer;
+            // vm.OfferCompanyName = offerCompanyName;
+            // vm.InvoiceDueDays = invoiceDueDays;
+            // vm.CurrencyName = curSymbol;
 
+            // TODO(jverner) Na toto uz mam funkci, je treba to vubec backend pouzit, kdyz to mohu overit frontend???
+            // string orderName = await _db.Order
+            //     .Where(x => x.OrderName == vm.Order.OrderName)
+            //     .Select(x => x.OrderName)
+            //     .FirstOrDefaultAsync();
+            // if (orderName != null)
+            // {
+            //     ModelState.AddModelError("Order.OrderName", "Číslo objednávky zákazníka již existuje");
+            // }
+
+            // TODO(jverner) Na toto se kouknout, komunikace s Vitou, co sem vubec chce...
             vm.Order.PriceFinal = 0;
             vm.Order.PriceFinalCzk = 0;
-            vm.Order.PriceDiscount = offer.Price;
+            vm.Order.PriceDiscount = vm.Offer.SharedInfo.Price;
 
             foreach (Invoice invoice in vm.Order.Invoices)
             {
-                invoice.CostCzk = Convert.ToInt32(invoice.Cost * vm.Order.ExchangeRate);
-                vm.Order.PriceFinalCzk += Convert.ToInt32(invoice.CostCzk);
                 vm.Order.PriceFinal += Convert.ToInt32(invoice.Cost);
+                vm.Order.PriceFinalCzk += Convert.ToInt32(invoice.Cost * vm.Order.ExchangeRate);
                 vm.Order.PriceDiscount -= Convert.ToInt32(invoice.Cost);
             }
             foreach (OtherCost otherCost in vm.Order.OtherCosts)
             {
-                otherCost.CostCzk = Convert.ToInt32(otherCost.Cost * vm.Order.ExchangeRate);
-                vm.Order.PriceFinalCzk += Convert.ToInt32(otherCost.CostCzk);
                 vm.Order.PriceFinal += Convert.ToInt32(otherCost.Cost);
+                vm.Order.PriceFinalCzk += Convert.ToInt32(otherCost.Cost * vm.Order.ExchangeRate);
             }
+
+            vm.Order.SharedInfo = vm.Offer.SharedInfo;
+            // vm.Order.SharedInfo.Company.Name = vm.Offer.Company.Name;
+            // vm.Order.SharedInfo.Company.InvoiceDueDays = vm.Offer.Company.InvoiceDueDays;
+            // vm.Order.SharedInfo.Contact.PersonName = vm.Offer.Contact.PersonName;
+            // vm.Order.SharedInfo.Contact.PersonLastName = vm.Offer.Contact.PersonLastName;
 
             if (ModelState.IsValid)
             {
@@ -383,8 +405,9 @@ namespace memo.Controllers
                 //     .Select(t => t.Planned)
                 //     .FirstOrDefaultAsync();
 
-                int? totalMinutes = null;
-                vm.Order.TotalHours = totalMinutes != null ? totalMinutes / 60 : 0;
+                // TODO: tohle nemohu mit, protoze se o bude menit a ja nebudu porad ukladat model
+                // int? totalMinutes = null;
+                // vm.Order.TotalHours = totalMinutes != null ? totalMinutes / 60 : 0;
 
                 vm.Order.CreatedBy = User.GetLoggedInUserName();
                 vm.Order.CreatedDate = DateTime.Now;
@@ -407,7 +430,8 @@ namespace memo.Controllers
                 }
             }
 
-            return View("Create", vm);
+            await populateModelAsync(vm);
+            return View(vm);
         }
 
         // GET: Order/Edit/5
@@ -549,7 +573,7 @@ namespace memo.Controllers
                             .Where(x => x.TableName == "Order" && x.KeyValue == id.ToString())
                             .ToList(); ;
                         vm.Offer = await _db.Offer.Where(x => x.OfferId == vm.Order.OfferId).FirstOrDefaultAsync();
-                        vm.CurrencyName = vm.Offer.Currency.Name;
+                        vm.CurrencyName = vm.Offer.SharedInfo.Currency.Name;
 
                         await populateModel(vm.Order, id);
 
@@ -619,8 +643,8 @@ namespace memo.Controllers
 
             int offerId = Convert.ToInt32(vm.Order.OfferId);
             Offer offer = await _db.Offer.FindAsync(vm.Order.OfferId);
-            Company company = await _db.Company.FindAsync(offer.CompanyId);
-            Currency currency = await _db.Currency.FindAsync(offer.CurrencyId);
+            Company company = await _db.Company.FindAsync(offer.SharedInfo.CompanyId);
+            Currency currency = await _db.Currency.FindAsync(offer.SharedInfo.CurrencyId);
             vm.Order.Invoices = await _db.Invoice.Where(x => x.OrderId == id).ToListAsync();
 
             // AUDIT
@@ -760,7 +784,7 @@ namespace memo.Controllers
                 .OrderBy(t => t.OfferName)
                 .Select(x => new SelectListItem
                 {
-                    Text = x.OfferName + " - " + x.Subject,
+                    Text = x.OfferName + " - " + x.SharedInfo.Subject,
                     Value = x.OfferId.ToString(),
                 }
                 ).ToListAsync();
@@ -804,7 +828,7 @@ namespace memo.Controllers
                 .OrderBy(t => t.OfferName)
                 .Select(x => new SelectListItem
                 {
-                    Text = x.OfferName + " - " + x.Subject,
+                    Text = x.OfferName + " - " + x.SharedInfo.Subject,
                     Value = x.OfferId.ToString(),
                 }
                 ).ToListAsync();

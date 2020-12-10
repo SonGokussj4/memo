@@ -19,7 +19,6 @@ namespace memo.Controllers
     public class ContractsController : BaseController
     {
         public ApplicationDbContext _db { get; }
-        // public EvektorDbContext _eveDb { get; }
         public EvektorDochnaDbContext _eveDbDochna { get; }
         protected readonly IWebHostEnvironment _env;
 
@@ -34,6 +33,9 @@ namespace memo.Controllers
 
         public async Task<IActionResult> Index()
         {
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+
             IEnumerable<Contract> contracts = await _db.Contracts.ToListAsync();
             var shares = await _db.SharedInfo.ToListAsync();
             var companies = await _db.Company.ToListAsync();
@@ -53,6 +55,13 @@ namespace memo.Controllers
             {
                 Contracts = contracts
             };
+
+            TimeSpan ts = stopwatch.Elapsed;
+            string message = string.Format("Stránka načtena za: {0:D1}.{1:D3}s", ts.Seconds, ts.Milliseconds);
+            if (_env.IsDevelopment())
+            {
+                TempData["Info"] = message;
+            }
 
             return View(vm);
         }

@@ -10,9 +10,8 @@ namespace memo.Models
     {
         public Contact()
         {
-            Offers = new HashSet<Offer>();
+            // Offers = new HashSet<Offer>();
             Active = true;
-            // ModifiedDate = DateTime.Now;
         }
 
         [Key]
@@ -61,8 +60,8 @@ namespace memo.Models
         [Display(Name = "Aktivní")]
         public bool Active { get; set; }
 
-        [InverseProperty("Contact")]
-        public virtual ICollection<Offer> Offers { get; set; }
+        // [InverseProperty("Contact")]
+        // public virtual ICollection<Offer> Offers { get; set; }
 
         public virtual List<SharedInfo> SharedInfo { get; set; }
     }

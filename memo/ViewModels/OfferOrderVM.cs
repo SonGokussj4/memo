@@ -11,7 +11,7 @@ namespace memo.ViewModels
         {
             Order = new Order();
             Offer = new Offer();
-            Contract = new Contract();
+            // Contract = new Contract();
         }
 
         public Offer Offer { get; set; }

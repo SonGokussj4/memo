@@ -40,11 +40,22 @@ namespace memo.Controllers
             stopwatch.Start();
 
             List<Offer> offers = await _db.Offer
-                .Include(x => x.Company)
-                .Include(y => y.Contact)
-                .Include(z => z.Currency)
+                // .Include(x => x.SharedInfo)
+                //     .ThenInclude(y => y.Contact)
+                // .Include(x => x.SharedInfo)
+                //     .ThenInclude(y => y.Company)
+                // .Include(x => x.SharedInfo)
+                //     .ThenInclude(y => y.Currency)
+                // .Include(x => x.SharedInfo.Contact)
+                // .Include(x => x.SharedInfo.Company)
+                // .Include(x => x.SharedInfo.Currency)
                 .Include(a => a.OfferStatus)
                 .ToListAsync();
+
+            await _db.SharedInfo.ToListAsync();
+            await _db.Contact.ToListAsync();
+            await _db.Company.ToListAsync();
+            await _db.Currency.ToListAsync();
 
             if (showInactive is false)
             {
@@ -72,31 +83,33 @@ namespace memo.Controllers
         {
             Offer offer = new Offer();
 
-            offer.ExchangeRate = decimal.Parse(getCurrencyStr("CZK"));
+            offer.SharedInfo.ReceiveDate = DateTime.Now;
+            offer.SharedInfo.ExchangeRate = decimal.Parse(getCurrencyStr("CZK"));
             offer.OfferName = await getNewOfferNumAsync();
 
             OfferViewModel vm = new OfferViewModel()
             {
                 Offer = offer,
-                CompanyList = _db.Company.Select(x => new SelectListItem()
-                {
-                    Value = x.CompanyId.ToString(),
-                    Text = x.Name
-                }),
+                // CompanyList = _db.Company.Select(x => new SelectListItem()
+                // {
+                //     Value = x.CompanyId.ToString(),
+                //     Text = x.Name
+                // }),
             };
 
             populateModel(null, 0);
+            await populateModelAsync(vm);
 
-            // TODO: Dat do PopulateModel nebo tak nejak
+            // // TODO: Dat do PopulateModel nebo tak nejak
             string domainUser = User.GetLoggedInUserName();
             string username = domainUser.Split('\\').LastOrDefault();
             int userId = await _eveDbDochna.tUsers.Where(x => x.TxAccount == username).Select(x => x.Id).FirstOrDefaultAsync();
 
-            vEmployees res = await _eveDbDochna.vEmployees.Where(x => x.Id == userId).FirstOrDefaultAsync();
+            vEmployees vEmployee = await _eveDbDochna.vEmployees.Where(x => x.Id == userId).FirstOrDefaultAsync();
 
-            vm.Offer.EveCreatedUser = res.FormatedName;
-            vm.Offer.EveDepartment = res.DepartName;
-            vm.Offer.EveDivision = res.EVE == 1 ? "EVE" : "EVAT";
+            vm.Offer.SharedInfo.EveCreatedUser = vEmployee.FormatedName;
+            vm.Offer.SharedInfo.EveDepartment = vEmployee.DepartName;
+            vm.Offer.SharedInfo.EveDivision = vEmployee.EVE == 1 ? "EVE" : "EVAT";
 
             return View(vm);
         }
@@ -106,19 +119,21 @@ namespace memo.Controllers
         public async Task<IActionResult> Create(Offer offer)
         {
             // offer.OfferName = getNewOfferNum();  // TODO Tohle vratit zpet, az tam budou vsechny aktualni
-            offer.PriceCzk = Convert.ToInt32(offer.Price * offer.ExchangeRate);  // 1000 * 26,243
-            offer.CreatedDate = DateTime.Now;
+            offer.SharedInfo.PriceCzk = Convert.ToInt32(offer.SharedInfo.Price * offer.SharedInfo.ExchangeRate);  // 1000 * 26,243
+            // offer.CreatedDate = DateTime.Now;
 
             // Check if OfferName exists, if yes, add model error...
-            Offer existingOffer = await _db.Offer
-                .Where(x => x.OfferName == offer.OfferName)
-                .FirstOrDefaultAsync();
+            // Offer existingOffer = await _db.Offer
+            //     .Where(x => x.OfferName == offer.OfferName)
+            //     .FirstOrDefaultAsync();
 
-            if (existingOffer != null)
+            if (await _db.Offer.AnyAsync(x => x.OfferName == offer.OfferName))
+            // if (existingOffer != null)
             {
                 ModelState.AddModelError("Offer.OfferName", "Ev. Číslo nabídky již existuje. Zvolte jinou, nebo upravte stávající.");
             }
 
+            // TODO(jverner) tady to chce zas SharedInfo.Contact.PersonName, PersonLastName, SharedInfo.Company.InvoiceDays, atd... WHYYY
             // Save new offer to the DB
             if (ModelState.IsValid)
             {
@@ -127,26 +142,25 @@ namespace memo.Controllers
                 offer.ModifiedBy = offer.CreatedBy;
                 offer.ModifiedDate = offer.CreatedDate;
 
-                await _db.AddAsync(offer);
-                await _db.SaveChangesAsync(User.GetLoggedInUserName());
+            //     await _db.AddAsync(offer);
+            //     await _db.SaveChangesAsync(User.GetLoggedInUserName());
 
                 TempData["Success"] = "Vytvoření bylo úspěšné";
-
-                return RedirectToAction("Index");
+                OfferViewModel vmm = new OfferViewModel()
+                {
+                    Offer = offer,
+                };
+                await populateModelAsync(vmm);
+                return View(vmm);
+            //     return RedirectToAction("Index");
             }
 
             OfferViewModel vm = new OfferViewModel()
             {
                 Offer = offer,
-                CompanyList = _db.Company.Select(x => new SelectListItem()
-                {
-                    Value = x.CompanyId.ToString(),
-                    Text = x.Name
-                }),
             };
 
-            populateModel(offer, 0);
-
+            await populateModelAsync(vm);
             TempData["Error"] = "Nepovedlo se uložit.";
 
             return View(vm);
@@ -156,163 +170,166 @@ namespace memo.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            // if (id == null)
+            // {
+            //     return NotFound();
+            // }
 
-            Offer offer = await _db.Offer
-                .Include(x => x.Currency)
-                .FirstOrDefaultAsync(x => x.OfferId == id);
+            // Offer offer = await _db.Offer
+            //     .Include(x => x.Currency)
+            //     .FirstOrDefaultAsync(x => x.OfferId == id);
 
-            if (offer == null)
-            {
-                return NotFound();
-            }
+            // if (offer == null)
+            // {
+            //     return NotFound();
+            // }
 
-            List<AuditViewModel> audits = getAuditViewModel(_db).Audits
-                .Where(x => x.TableName == "Offer" && x.KeyValue == id.ToString())
-                .ToList();
+            // List<AuditViewModel> audits = getAuditViewModel(_db).Audits
+            //     .Where(x => x.TableName == "Offer" && x.KeyValue == id.ToString())
+            //     .ToList();
 
-            OfferViewModel vm = new OfferViewModel()
-            {
-                Offer = offer,
-                Audits = audits,
-                CompanyList = _db.Company.Select(x => new SelectListItem()
-                {
-                    Value = x.CompanyId.ToString(),
-                    Text = x.Name
-                }),
-            };
+            // OfferViewModel vm = new OfferViewModel()
+            // {
+            //     Offer = offer,
+            //     Audits = audits,
+            //     CompanyList = _db.Company.Select(x => new SelectListItem()
+            //     {
+            //         Value = x.CompanyId.ToString(),
+            //         Text = x.Name
+            //     }),
+            // };
 
-            populateModel(offer, (int)id);
+            // populateModel(offer, (int)id);
 
-            return View(vm);
+            // return View(vm);
+            return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(string actionType, int id, OfferViewModel vm)
         {
-            if (id != vm.Offer.OfferId)
-            {
-                return NotFound();
-            }
+            // if (id != vm.Offer.OfferId)
+            // {
+            //     return NotFound();
+            // }
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    OfferViewModel oldVm = new OfferViewModel();
-                    oldVm.Offer = await _db.Offer.AsNoTracking().FirstOrDefaultAsync(x => x.OfferId == vm.Offer.OfferId);
+            // if (ModelState.IsValid)
+            // {
+            //     try
+            //     {
+            //         OfferViewModel oldVm = new OfferViewModel();
+            //         oldVm.Offer = await _db.Offer.AsNoTracking().FirstOrDefaultAsync(x => x.OfferId == vm.Offer.OfferId);
 
-                    if (oldVm.Offer.OfferName == vm.Offer.OfferName &&
-                        oldVm.Offer.ReceiveDate == vm.Offer.ReceiveDate &&
-                        oldVm.Offer.SentDate == vm.Offer.SentDate &&
-                        oldVm.Offer.Subject == vm.Offer.Subject &&
-                        oldVm.Offer.ContactId == vm.Offer.ContactId &&
-                        oldVm.Offer.CompanyId == vm.Offer.CompanyId &&
-                        oldVm.Offer.EveDivision == vm.Offer.EveDivision &&
-                        oldVm.Offer.EveDepartment == vm.Offer.EveDepartment &&
-                        oldVm.Offer.EveCreatedUser == vm.Offer.EveCreatedUser &&
-                        oldVm.Offer.Price == vm.Offer.Price &&
-                        oldVm.Offer.CurrencyId == vm.Offer.CurrencyId &&
-                        oldVm.Offer.ExchangeRate == vm.Offer.ExchangeRate &&
-                        oldVm.Offer.LostReason == vm.Offer.LostReason &&
-                        oldVm.Offer.Notes == vm.Offer.Notes &&
-                        oldVm.Offer.Active == vm.Offer.Active)
-                    {
-                        TempData["Info"] = "Nebyla provedena změna, není co uložit";
+            //         if (oldVm.Offer.OfferName == vm.Offer.OfferName &&
+            //             oldVm.Offer.ReceiveDate == vm.Offer.ReceiveDate &&
+            //             oldVm.Offer.SentDate == vm.Offer.SentDate &&
+            //             oldVm.Offer.Subject == vm.Offer.Subject &&
+            //             oldVm.Offer.ContactId == vm.Offer.ContactId &&
+            //             oldVm.Offer.CompanyId == vm.Offer.CompanyId &&
+            //             oldVm.Offer.EveDivision == vm.Offer.EveDivision &&
+            //             oldVm.Offer.EveDepartment == vm.Offer.EveDepartment &&
+            //             oldVm.Offer.EveCreatedUser == vm.Offer.EveCreatedUser &&
+            //             oldVm.Offer.Price == vm.Offer.Price &&
+            //             oldVm.Offer.CurrencyId == vm.Offer.CurrencyId &&
+            //             oldVm.Offer.ExchangeRate == vm.Offer.ExchangeRate &&
+            //             oldVm.Offer.LostReason == vm.Offer.LostReason &&
+            //             oldVm.Offer.Notes == vm.Offer.Notes &&
+            //             oldVm.Offer.Active == vm.Offer.Active)
+            //         {
+            //             TempData["Info"] = "Nebyla provedena změna, není co uložit";
 
-                        // Populate VM
-                        List<AuditViewModel> audits = getAuditViewModel(_db).Audits
-                            .Where(x => x.TableName == "Offer" && x.KeyValue == id.ToString())
-                            .ToList();
-                        vm.Audits = audits;
-                        vm.CompanyList = _db.Company.Select(x => new SelectListItem()
-                        {
-                            Value = x.CompanyId.ToString(),
-                            Text = x.Name
-                        });
+            //             // Populate VM
+            //             List<AuditViewModel> audits = getAuditViewModel(_db).Audits
+            //                 .Where(x => x.TableName == "Offer" && x.KeyValue == id.ToString())
+            //                 .ToList();
+            //             vm.Audits = audits;
+            //             vm.CompanyList = _db.Company.Select(x => new SelectListItem()
+            //             {
+            //                 Value = x.CompanyId.ToString(),
+            //                 Text = x.Name
+            //             });
 
-                        populateModel(vm.Offer, id);
+            //             populateModel(vm.Offer, id);
 
-                        return View(vm);
-                    }
+            //             return View(vm);
+            //         }
 
-                    vm.Offer.PriceCzk = Convert.ToInt32(vm.Offer.Price * vm.Offer.ExchangeRate);  // 1000 * 26,243
-                    vm.Offer.ModifiedBy = User.GetLoggedInUserName();
-                    vm.Offer.ModifiedDate = DateTime.Now;
+            //         vm.Offer.PriceCzk = Convert.ToInt32(vm.Offer.Price * vm.Offer.ExchangeRate);  // 1000 * 26,243
+            //         vm.Offer.ModifiedBy = User.GetLoggedInUserName();
+            //         vm.Offer.ModifiedDate = DateTime.Now;
 
-                    _db.Update(vm.Offer);
-                    await _db.SaveChangesAsync(User.GetLoggedInUserName());
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    ModelState.AddModelError("", "Unable to save changes. " +
-                                             "Try again, and if the problem persists, " +
-                                             "see your system administrator.");
-                }
+            //         _db.Update(vm.Offer);
+            //         await _db.SaveChangesAsync(User.GetLoggedInUserName());
+            //     }
+            //     catch (DbUpdateConcurrencyException)
+            //     {
+            //         ModelState.AddModelError("", "Unable to save changes. " +
+            //                                  "Try again, and if the problem persists, " +
+            //                                  "see your system administrator.");
+            //     }
 
-                TempData["Success"] = "Editace uložena";
+            //     TempData["Success"] = "Editace uložena";
 
-                if (actionType == "Uložit")
-                {
-                    // Populate VM
-                    vm.Audits = getAuditViewModel(_db).Audits
-                        .Where(x => x.TableName == "Offer" && x.KeyValue == id.ToString())
-                        .ToList();
-                    vm.CompanyList = _db.Company.Select(x => new SelectListItem()
-                    {
-                        Value = x.CompanyId.ToString(),
-                        Text = x.Name
-                    });
+            //     if (actionType == "Uložit")
+            //     {
+            //         // Populate VM
+            //         vm.Audits = getAuditViewModel(_db).Audits
+            //             .Where(x => x.TableName == "Offer" && x.KeyValue == id.ToString())
+            //             .ToList();
+            //         vm.CompanyList = _db.Company.Select(x => new SelectListItem()
+            //         {
+            //             Value = x.CompanyId.ToString(),
+            //             Text = x.Name
+            //         });
 
-                    populateModel(vm.Offer, id);
-                    return View(vm);
-                }
-                else
-                {
-                    return RedirectToAction(nameof(Index));
-                }
-            }
+            //         populateModel(vm.Offer, id);
+            //         return View(vm);
+            //     }
+            //     else
+            //     {
+            //         return RedirectToAction(nameof(Index));
+            //     }
+            // }
 
-            // Populate VM
-            vm.Audits = getAuditViewModel(_db).Audits
-                .Where(x => x.TableName == "Offer" && x.KeyValue == id.ToString())
-                .ToList();
-            vm.CompanyList = _db.Company.Select(x => new SelectListItem()
-            {
-                Value = x.CompanyId.ToString(),
-                Text = x.Name
-            });
+            // // Populate VM
+            // vm.Audits = getAuditViewModel(_db).Audits
+            //     .Where(x => x.TableName == "Offer" && x.KeyValue == id.ToString())
+            //     .ToList();
+            // vm.CompanyList = _db.Company.Select(x => new SelectListItem()
+            // {
+            //     Value = x.CompanyId.ToString(),
+            //     Text = x.Name
+            // });
 
-            populateModel(vm.Offer, id);
+            // populateModel(vm.Offer, id);
 
-            return View(vm);
+            // return View(vm);
+            return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            // if (id == null)
+            // {
+            //     return NotFound();
+            // }
 
-            Offer offer = await _db.Offer.FirstOrDefaultAsync(m => m.OfferId == id);
-            if (offer == null)
-            {
-                return NotFound();
-            }
+            // Offer offer = await _db.Offer.FirstOrDefaultAsync(m => m.OfferId == id);
+            // if (offer == null)
+            // {
+            //     return NotFound();
+            // }
 
-            _db.Offer.Remove(offer);
-            await _db.SaveChangesAsync(User.GetLoggedInUserName());
+            // _db.Offer.Remove(offer);
+            // await _db.SaveChangesAsync(User.GetLoggedInUserName());
 
-            TempData["Success"] = "Nabídka odstraněna";
+            // TempData["Success"] = "Nabídka odstraněna";
 
-            return RedirectToAction("Index");
+            // return RedirectToAction("Index");
+            return View();
         }
 
         // [HttpPost]
@@ -473,18 +490,16 @@ namespace memo.Controllers
         private void populateModel(Offer model, int id)
         {
             // Populate
-            ViewBag.DepartmentList = getDepartmentList(_eveDbDochna);
-            // ViewBag.CompanyList = new SelectList(_db.Company.ToList(), "CompanyId", "Name");
-            ViewBag.ContactList = new SelectList((
-                from s in _db.Contact.ToList()
-                select new {
-                    ContactId = s.ContactId,
-                    FullName = s.PersonName + " " + s.PersonLastName
-                }
-            ), "ContactId", "FullName");
-            ViewBag.EveContactList = getEveContacts(_eveDbDochna);
-            ViewBag.CurrencyList = new SelectList(_db.Currency.ToList(), "CurrencyId", "Name");
-            // ViewBag.OfferStatusList = new SelectList(_db.OfferStatus.ToList(), "OfferStatusId", "Status");
+            // ViewBag.DepartmentList = getDepartmentList(_eveDbDochna);
+            // ViewBag.ContactList = new SelectList((
+            //     from s in _db.Contact.ToList()
+            //     select new {
+            //         ContactId = s.ContactId,
+            //         FullName = s.PersonName + " " + s.PersonLastName
+            //     }
+            // ), "ContactId", "FullName");
+            // ViewBag.EveContactList = getEveContacts(_eveDbDochna);
+            // ViewBag.CurrencyList = new SelectList(_db.Currency.ToList(), "CurrencyId", "Name");
 
             if (model != null)
             {
@@ -496,6 +511,50 @@ namespace memo.Controllers
                 ViewBag.CreatedOrders = _db.Order.Include(x => x.Offer).Where(x => x.OfferId == id).ToList();
             }
         }
+
+        private async Task populateModelAsync(dynamic vm)
+        {
+            List<Company> companies = await _db.Company.OrderBy(x => x.Name).ToListAsync();
+            vm.CompanyList = companies
+                .Select(x => new SelectListItem {
+                    Value = x.CompanyId.ToString(),
+                    Text = x.Name
+                });
+
+            List<Contact> contacts = await _db.Contact.OrderBy(x => x.PersonLastName).ToListAsync();
+            vm.ContactList = contacts
+                .Select(x => new SelectListItem {
+                    Value = x.ContactId.ToString(),
+                    Text = $"{x.PersonLastName} {x.PersonName}"
+                });
+
+            List<Currency> currencies = await _db.Currency.ToListAsync();
+            vm.CurrencyList = currencies
+                .Select(x => new SelectListItem {
+                    Value = x.CurrencyId.ToString(),
+                    Text = x.Name != "CZK" ? $"{x.Name} (kurz {getCurrencyStr(x.Name)})" : x.Name
+                });
+            vm.CurrencyListNoRate = currencies
+                .Select(x => new SelectListItem {
+                    Value = x.CurrencyId.ToString(),
+                    Text = x.Name
+                });
+
+            // vm.DepartmentList = await getDepartmentListAsync2(_eveDbDochna);  // TODO zjistit, co je rychlejsi (tohle nějak failuje)
+            vm.DepartmentList = await getDepartmentListAsync(_eveDbDochna);
+            vm.EveContactList = await getEveContactsAsync(_eveDbDochna);
+
+            // Fill default Division/Department/Username values of logged in user
+            string domainAndUsername = User.GetLoggedInUserName();
+            string username = domainAndUsername.Split('\\').LastOrDefault();
+            int userId = await _eveDbDochna.tUsers.Where(x => x.TxAccount == username).Select(x => x.Id).FirstOrDefaultAsync();
+
+            vEmployees vEmployee = await _eveDbDochna.vEmployees.Where(x => x.Id == userId).FirstOrDefaultAsync();
+            vm.Offer.SharedInfo.EveCreatedUser = vEmployee.FormatedName;
+            vm.Offer.SharedInfo.EveDepartment = vEmployee.DepartName;
+            vm.Offer.SharedInfo.EveDivision = vEmployee.EVE == 1 ? "EVE" : "EVAT";
+        }
+
 
         /// <summary>
         /// Return Json{ exists = true/false } if itemName exists

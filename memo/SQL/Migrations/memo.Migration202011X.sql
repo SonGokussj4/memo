@@ -465,14 +465,14 @@ ADD
 GO
 
 -----------------------------------------------------------------------------------------
--- VLOZIT DO TABULKY SharedInfo SLOUPCE Z TABULKY Offer
+-- VLOZIT DO TABULKY SharedInfo SLOUPCE Z TABULKY Order
 INSERT INTO [memo].[SharedInfo](ReceiveDate, Subject, ContactId, CompanyId, CurrencyId, EveDivision, EveDepartment, EveCreatedUser, Price, PriceCzk, ExchangeRate)
 SELECT ReceiveDate, Subject, ContactId, CompanyId, CurrencyId, EveDivision, EveDepartment, EveCreatedUser, Price, PriceCzk, ExchangeRate
 FROM [memo].[Offer]
 GO
 
 -----------------------------------------------------------------------------------------
--- SPÁROVAT SharedInfoId Z TABULKY SharedInfo S TABULKOU Offer
+-- SPÁROVAT SharedInfoId Z TABULKY SharedInfo S TABULKOU Order
 UPDATE [memo].[Order]
 SET
     SharedInfoId = si.SharedInfoId
@@ -493,4 +493,68 @@ WHERE
     (si.PriceCzk = o.PriceCzk OR (ISNULL(si.PriceCzk, o.PriceCzk) IS NULL)) AND
     (si.Price = o.Price OR (ISNULL(si.Price, o.Price) IS NULL))
 GO
+
+
+-- 10.12.2020 --
+
+
+-----------------------------------------------------------------------------------------
+-- PRIDAT DO TABULKY Offer SLOUPEC SharedInfoId
+ALTER TABLE [memo].[Offer]
+ADD SharedInfoId INT NULL;
+GO
+
+
+-----------------------------------------------------------------------------------------
+-- NAVÁZAT Offer.SharedInfoId JAKO FOREIGN KEY NA SharedInfo.SharedInfoId
+ALTER TABLE [memo].[Offer]
+ADD
+    CONSTRAINT [FK__memo.Offer__memo.SharedInfo__SharedInfoId]
+    FOREIGN KEY ([SharedInfoId])
+    REFERENCES [memo].[SharedInfo] (SharedInfoId);
+GO
+
+
+-----------------------------------------------------------------------------------------
+-- SPÁROVAT SharedInfoId Z TABULKY SharedInfo S TABULKOU Order
+UPDATE [memo].[Offer]
+SET
+    SharedInfoId = x.SharedInfoId
+-- SELECT x.SharedInfoId
+FROM
+    [memo].[SharedInfo] x,
+    [memo].[Offer] y
+WHERE
+    x.ReceiveDate = y.ReceiveDate AND
+    x.Subject = y.Subject AND
+    x.ContactId = y.ContactId AND
+    x.CompanyId = y.CompanyId AND
+    x.EveDivision = y.EveDivision AND
+    x.EveDepartment = y.EveDepartment AND
+    x.EveCreatedUser = y.EveCreatedUser AND
+    (x.PriceCzk = y.PriceCzk OR (ISNULL(x.PriceCzk, y.PriceCzk) IS NULL)) AND
+    (x.Price = y.Price OR (ISNULL(x.Price, y.Price) IS NULL))
+
+
+-----------------------------------------------------------------------------------------
+-- ODSTRANIT FOREIGN KLICE Z TABULKY Offer a INDEX IX_OrdersOffers
+ALTER TABLE [memo].[Offer] DROP CONSTRAINT [FK_memo.Offer_memo_Company_CompanyId];
+GO
+ALTER TABLE [memo].[Offer] DROP CONSTRAINT [FK_memo.Offer_memo_Currency_CurrencyId];
+GO
+ALTER TABLE [memo].[Offer] DROP CONSTRAINT [FK_memo_Offer_memo_Contact_ContactId];
+GO
+DROP INDEX [memo].[Offer].IX_OrdersOffers
+GO
+
+
+-----------------------------------------------------------------------------------------
+-- ODSTRANIT Z TABULKY Offer SLOUPCE, KTERE BYLY PREVEDENY DO TABULKY SharedInfo, TEDY NASLEDUJICI:
+-- ReceiveDate, Subject, ContactId, CompanyId, CurrencyId, EveDivision, EveDepartment, EveCreatedUser, Price, PriceCzk, ExchangeRate, EstimatedFinishDate
+ALTER TABLE [memo].[Offer]
+DROP COLUMN ReceiveDate, Subject, ContactId, CompanyId, CurrencyId, EveDivision, EveDepartment, EveCreatedUser, Price, PriceCzk, ExchangeRate, EstimatedFinishDate;
+GO
+
+
+
 
