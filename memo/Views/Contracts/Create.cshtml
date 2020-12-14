@@ -157,58 +157,39 @@
 
         $(document).ready(function(){
 
+            // Init calendar datepickers
             $('.mycalendar input').datepicker(datepickerParameters[0]);
 
-            function changeExchangeRate(curSymbol) {
-                $.ajax({
-                    url: '@Url.Action("getCurrencyStr", "Contracts")',
-                    type: 'GET',
-                    //dataType: 'json',
-                    // we set cache: false because GET requests are often cached by browsers
-                    // IE is particularly aggressive in that respect
-                    cache: false,
-                    data: { symbol: curSymbol },
-                    success: function(res) {
-                        $('#ExchangeRate').val(res);
-                    }
-                });
-            }
+            // Green/Red border if item name is free
+            checkItemNameExists($("#Contract_ContractName"), 'Contracts', ignoreName='@Model.Contract.ContractName');
+        });
 
-            $('#CurrencyId').change(function() {
-                var sel = document.getElementById('CurrencyId');
-                var opt = sel.options[sel.selectedIndex];
-                curSymbol = opt.text
-                console.log("Changing... to " + curSymbol);
-                changeExchangeRate(curSymbol);
+        $("#Contract_ContractName").keyup(function() {
+            checkItemNameExists($(this), 'Contracts', ignoreName='@Model.Contract.ContractName');
+        });
+
+        function changeExchangeRate(curSymbol) {
+            $.ajax({
+                url: '@Url.Action("getCurrencyStr", "Contracts")',
+                type: 'GET',
+                //dataType: 'json',
+                // we set cache: false because GET requests are often cached by browsers
+                // IE is particularly aggressive in that respect
+                cache: false,
+                data: { symbol: curSymbol },
+                success: function(res) {
+                    $('#ExchangeRate').val(res);
+                }
             });
+        }
 
-//            // After each keypress, POST to method that checks for availability of entered item
-//            // If False is returned, show warning text and color border to red, hiden and green otherwise.
-//            $("#Contract_ContractName").keyup(function() {
-//                var enteredItemName = $(this).val();
-//                var $t = $(this);
-//                $.ajax({
-//                    url: '@Url.Action("contractExistsJson", "Contracts")',
-//                    type: 'POST',
-//                    dataType: "json",
-//                    data: { contractName: enteredItemName },
-//                    @* async: true, *@
-//                    @* contentType: 'application/json', *@
-//                    success: function (response) {
-//                        if(response.exists == true) {
-//                            $t.css("border-bottom", "4px solid red");
-//                            $('#NumberAlreadyExistsWarning').show();
-//                        } else {
-//                            $t.css("border-bottom", "4px solid limegreen");
-//                            $('#NumberAlreadyExistsWarning').hide();
-//                        }
-//                    },
-//                    error: function(response) {
-//                        console.log("Error...", response.response);
-//                    }
-//                });
-//            });
-        })
+        $('#CurrencyId').change(function() {
+            var sel = document.getElementById('CurrencyId');
+            var opt = sel.options[sel.selectedIndex];
+            curSymbol = opt.text
+            console.log("Changing... to " + curSymbol);
+            changeExchangeRate(curSymbol);
+        });
 
     </script>
 

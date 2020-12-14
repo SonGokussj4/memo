@@ -9,10 +9,12 @@ namespace memo.ViewModels
     {
         public EditContractViewModel()
         {
+            CreatedOrders = new List<Order>();
         }
 
         // public IEnumerable<Contract> Contracts { get; set; }
         public Contract Contract { get; set; }
+        public List<Order> CreatedOrders { get; set; }
 
         // // SelectLists
         public IEnumerable<SelectListItem> CompanyList { get; set; }

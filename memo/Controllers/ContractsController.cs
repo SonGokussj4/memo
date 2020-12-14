@@ -89,7 +89,7 @@ namespace memo.Controllers
         public async Task<IActionResult> Create(CreateContractViewModel vm)
         {
             // Check for duplicate, raise Invalid ModelState if the same ContractName is found
-            CheckIfAlreadyExists(ModelState, vm);
+            await CheckIfAlreadyExists(ModelState, vm);
 
             if (!ModelState.IsValid)
             {
@@ -148,6 +148,7 @@ namespace memo.Controllers
             vm.Audits = await getAuditViewModelAsync(_db, "Contracts", (int)id);
 
             await populateModelAsync(vm);
+            vm.CreatedOrders = _db.Order.Include(x => x.Contract).Where(x => x.ContractId == id).ToList();
 
             return View(vm);
         }
@@ -342,34 +343,62 @@ namespace memo.Controllers
             vm.Contract.SharedInfo.EveDivision = employee.EVE == 1 ? "EVE" : "EVAT";
         }
 
-        private void CheckIfAlreadyExists(ModelStateDictionary modelState, CreateContractViewModel vm)
+        private async Task CheckIfAlreadyExists(ModelStateDictionary modelState, CreateContractViewModel vm)
         {
-            bool existingContract = contractExists(vm.Contract.ContractName);
+            bool existingContract = await contractExistsAsync(vm.Contract.ContractName);
 
             // Check if ContractName exists, if yes, add model error...
             if (existingContract)
             {
                 ModelState.AddModelError("Contract.ContractName", "Číslo rámcové smlouvy již existuje. Zvolte jiné, nebo upravte stávající.");
             }
-        }
 
-        [HttpPost]
-        public JsonResult contractExistsJson(string contractName)
-        {
-            // return Json(contractExistsAsync(contractName), JsonRequestBehavior.AllowGet);
-            bool result = contractExists(contractName);
-            return Json(new { exists = result });
+            // return existingContract;
         }
 
         /// <summary>
-        /// Return True if ContractName already exists
+        /// Return Json{ exists = true/false } if itemName exists
         /// </summary>
-        /// <param name="contractName"></param>
+        /// <param name="itemName"></param>
         /// <returns></returns>
-        private bool contractExists(string contractName)
+        [HttpPost]
+        public async Task<JsonResult> itemNameExistsAsync(string itemName, string ignoreName = "")
         {
-            bool found = _db.Contracts.Any(x => x.ContractName == contractName);
-            return found;
+            return Json(new { exists = await contractExistsAsync(itemName, ignoreName) });
         }
+
+        /// <summary>
+        /// Return True if itemName already exists
+        /// </summary>
+        /// <param name="itemName"></param>
+        /// <returns></returns>
+        private async Task<bool> contractExistsAsync(string itemName, string ignoreName = "")
+        {
+            if (ignoreName != "" && ignoreName == itemName)
+            {
+                return false;
+            }
+
+            return await _db.Contracts.AnyAsync(x => x.ContractName == itemName);
+        }
+
+        // [HttpPost]
+        // public JsonResult contractExistsJson(string contractName)
+        // {
+        //     // return Json(contractExistsAsync(contractName), JsonRequestBehavior.AllowGet);
+        //     bool result = contractExists(contractName);
+        //     return Json(new { exists = result });
+        // }
+
+        // /// <summary>
+        // /// Return True if ContractName already exists
+        // /// </summary>
+        // /// <param name="contractName"></param>
+        // /// <returns></returns>
+        // private bool contractExists(string contractName)
+        // {
+        //     bool found = _db.Contracts.Any(x => x.ContractName == contractName);
+        //     return found;
+        // }
     }
 }

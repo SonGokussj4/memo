@@ -86,6 +86,64 @@
             </div>
         </div>
 
+        <div class="createOrder">
+
+            <div class="form-group row">
+
+                <table class="table table-sm mt-3" style="font-size: 0.9em;">
+                    <thead>
+                        <tr>
+                            <th class="text-center">Vytvořené zakázky</th>
+                            <th class="text-center">Vyjednaná cena</th>
+                            <th class="text-center">Aktuálně</th>
+                            <th class="text-center">Vyčerpáno</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (Order order in Model.CreatedOrders)
+                    {
+                        <tr>
+                            <td class="pl-3"><a asp-action="Edit" asp-controller="Orders" asp-route-id="@order.OrderId">@order.OrderName</a></td>
+                            <td class="text-right">@string.Format(CultureInfo.CreateSpecificCulture(@order.Contract?.SharedInfo.Currency.CultureCode), "{0:C0}", @order.NegotiatedPrice)</td>
+                            <td class="text-right">
+                                @string.Format(CultureInfo.CreateSpecificCulture(@order.Contract?.SharedInfo.Currency.CultureCode), "{0:C0}", @order.PriceFinal)
+                                <div class="progress" style="height: 5px; margin-left: 25%;">
+                                @{
+                                    int percentValue = (int)Math.Ceiling((double)order.PriceFinal / order.NegotiatedPrice * 100);
+                                    string progressBarWidth = percentValue <= 100 ? (percentValue).ToString() : "100";
+                                    string progressbarClassColor = percentValue <= 100 ? "" : "bg-danger";
+                                }
+                                    <div class="progress-bar @progressbarClassColor progress-bar-striped" role="progressbar" style="width: @progressBarWidth%;"></div>
+                                </div>
+                            </td>
+                            <td class="text-right pr-3">
+                                @( order.Burned / 60 )/@order.TotalHours hod = @( (float)order.Burned / 60 / order.TotalHours * 100 ) %
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="createOrder">
+            @* <hr /> *@
+            <div class="form-group row text-center">
+                <div class="col-md-12 from-control">
+                    @* <button class="col-md-4 btn btn-success mt-3" type="submit"
+                            asp-action="ChangeOfferStatus" asp-controller="Offers"
+                            asp-route-id="@Model.Offer.OfferId" asp-route-btnOfferStatusId="0"> *@
+                            @* "CreateFromOffer", "Orders", new { id = id } *@
+                    <button class="col-md-4 btn btn-success mt-3"
+                        asp-action="CreateFromContract" asp-controller="Order" asp-route-id="@Model.Contract.ContractsId">
+                        <i class="fa fa-plus"></i> Vytvořit novou zakázku
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <hr />
+
         <div class="form-group row">
             <label asp-for="Contract.SharedInfo.ReceiveDate" class="required col-lg-3 col-form-label form-control-label control-label">Datum přijetí</label>
             <div class="col-lg-9 mycalendar">
@@ -270,6 +328,11 @@
         // TODO(jverner) dve nize uvedene jsou duplicitni v Offers
         $(document).ready(function(){
             handleExchangeRateVisibility();
+            checkItemNameExists($("#Contract_ContractName"), 'Contracts', ignoreName='@Model.Contract.ContractName');
+        });
+
+        $("#Contract_ContractName").keyup(function() {
+            checkItemNameExists($(this), 'Contracts', ignoreName='@Model.Contract.ContractName');
         });
 
         // Changing currency Selectlist behaviour
