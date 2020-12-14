@@ -52,6 +52,8 @@
 
         <input type="hidden" asp-for="Offer.OfferId" />
         <input type="hidden" asp-for="Offer.OfferStatusId" />
+        @* <input type="hidden" asp-for="Offer.SharedInfoId" /> *@
+        <input type="hidden" asp-for="Offer.SharedInfo.SharedInfoId" />
 
         <div class="cardTitleMerged">
 
@@ -235,7 +237,7 @@
             </div>
             <div class="col-lg-4">
                 <div data-toggle="tooltip" title="Nabídku vytvořil">
-                    <select class="form-control selectpicker" asp-for="Offer.SharedInfo.EveCreatedUser" asp-items="@ViewBag.EveContactList"></select>
+                    <select class="form-control selectpicker" asp-for="Offer.SharedInfo.EveCreatedUser" asp-items="@Model.EveContactList"></select>
                 </div>
                 <span asp-validation-for="Offer.SharedInfo.EveCreatedUser" class="text-danger"></span>
             </div>
@@ -255,7 +257,7 @@
                 </a>
             </div>
             <div class="col-lg-3">
-                <select class="form-control selectpicker" asp-for="Offer.SharedInfo.ContactId" asp-items="@ViewBag.ContactList"></select>
+                <select class="form-control selectpicker" asp-for="Offer.SharedInfo.ContactId" asp-items="Model.ContactList"></select>
                 <span asp-validation-for="Offer.SharedInfo.ContactId" class="text-danger"></span>
             </div>
             <div class="col-lg-1" data-toggle="tooltip" title="Nový kontakt">
@@ -276,13 +278,13 @@
             </div>
             <div class="col-lg-2">
                 <span class="has-float-label">
-                    <select asp-for="Offer.SharedInfo.CurrencyId" asp-items="ViewBag.CurrencyList" class="form-control"></select>
+                    <select asp-for="Offer.SharedInfo.CurrencyId" asp-items="Model.CurrencyListNoRate" class="form-control"></select>
                     <label asp-for="Offer.SharedInfo.CurrencyId">Měna</label>
                 </span>
-                <span asp-validation-for="Offer.SharedInfo.Currency" class="text-danger"></span>
+                <span asp-validation-for="Offer.SharedInfo.CurrencyId" class="text-danger"></span>
             </div>
             <div class="col-lg-2">
-                <span class="has-float-label">
+                <span class="has-float-label hiddenOnLoad">
                     <input asp-for="Offer.SharedInfo.ExchangeRate" class="form-control" type="text" data-toggle="tooltip" data-placement="top" title="Měnový kurz z ČNB" />
                     <label asp-for="Offer.SharedInfo.ExchangeRate">Kurz</label>
                 </span>
@@ -292,7 +294,7 @@
 
         <div class="form-group row">
             <label asp-for="Offer.SharedInfo.EstimatedFinishDate" class="col-lg-3 col-form-label form-control-label control-label"></label>
-            <div class="col-lg-9 mycalendar">s
+            <div class="col-lg-9 mycalendar">
                 <span class="has-float-label">
                     <input asp-for="Offer.SharedInfo.EstimatedFinishDate" class="form-control" type="text" autocomplete="off" placeholder=" "/>
                     <label asp-for="Offer.SharedInfo.EstimatedFinishDate">Předpodkládaný termín ukončení</label>
@@ -384,6 +386,54 @@
     <script src="~/js/CustomValidation.js"></script>
 
     <script>
+
+        $(document).ready(function(){
+            handleExchangeRateVisibility();
+            checkItemNameExists($("#Offer_OfferName"), 'Offers', ignoreName='@Model.Offer.OfferName');
+        });
+
+        $("#Offer_OfferName").keyup(function() {
+            checkItemNameExists($(this), 'Offers', ignoreName='@Model.Offer.OfferName');
+        });
+
+        // Changing currency Selectlist behaviour
+        $('select#Offer_SharedInfo_CurrencyId').on('change', function() {
+            handleExchangeRateVisibility();
+        });
+
+        function handleExchangeRateVisibility() {
+            let currencySymbol = $('select#Offer_SharedInfo_CurrencyId').find("option:selected").text();  // selected text
+            let exchangeRate = getExchangeRate(currencySymbol);  // call baseController function to get 'EUR' --> '26.360'
+            let txtExchangeRate = $('#Offer_SharedInfo_ExchangeRate').val(exchangeRate);
+
+            // Handle visibility of the textbox (don't show when CZK is selected)
+            if(exchangeRate == "1" && txtExchangeRate.is(":visible")) {
+                txtExchangeRate.parent().hide();
+            }
+            else if(exchangeRate != "1" && txtExchangeRate.not(":visible")) {
+                txtExchangeRate.parent().show();
+            };
+        };
+
+        function getExchangeRate(currencySymbol) {
+            let exchangeRate = "";
+            $.ajax({
+                url: '@Url.Action("getCurrencyStr", "Base")',
+                data: { symbol: currencySymbol },
+                type: 'GET',
+                dataType: 'json',
+                contentType: "application/json; charset=utf-8",
+                // we set cache: false because GET requests are often cached by browsers
+                // IE is particularly aggressive in that respect
+                cache: false,
+                async: false,
+                success: function (data) {
+                    exchangeRate = data;
+                },
+                error: function () {},
+            });
+            return exchangeRate;
+        }
 
         // MODAL dialog for delete confirmation
         //-------------------------------------

@@ -191,9 +191,9 @@
 
         $(document).ready(function(){
 
-            checkItemNameExists($("#Offer_OfferName"), 'Offers');
-
             $('.mycalendar input').datepicker(datepickerParameters[0]);
+
+            checkItemNameExists($("#Offer_OfferName"), 'Offers');
 
             $("#Offer_OfferName").keyup(function() {
                 checkItemNameExists($(this), 'Offers');

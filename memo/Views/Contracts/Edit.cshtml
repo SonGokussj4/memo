@@ -267,12 +267,20 @@
 
     <script>
 
+        // TODO(jverner) dve nize uvedene jsou duplicitni v Offers
+        $(document).ready(function(){
+            handleExchangeRateVisibility();
+        });
+
         // Changing currency Selectlist behaviour
         $('select#Contract_SharedInfo_CurrencyId').on('change', function() {
-            let currencySymbol = $(this).find("option:selected").text();  // selected text
+            handleExchangeRateVisibility();
+        });
+
+        function handleExchangeRateVisibility() {
+            let currencySymbol = $('select#Contract_SharedInfo_CurrencyId').find("option:selected").text();  // selected text
             let exchangeRate = getExchangeRate(currencySymbol);  // call baseController function to get 'EUR' --> '26.360'
             let txtExchangeRate = $('#Contract_SharedInfo_ExchangeRate').val(exchangeRate);
-            @* txtExchangeRate.val(exchangeRate); *@
 
             // Handle visibility of the textbox (don't show when CZK is selected)
             if(exchangeRate == "1" && txtExchangeRate.is(":visible")) {
@@ -281,7 +289,7 @@
             else if(exchangeRate != "1" && txtExchangeRate.not(":visible")) {
                 txtExchangeRate.parent().show();
             };
-        });
+        };
 
         function getExchangeRate(currencySymbol) {
             let exchangeRate = "";

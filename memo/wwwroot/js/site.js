@@ -105,8 +105,9 @@ function getBaseUrl() {
  * If False is returned, show warning text and color border to red, hiden and green otherwise.
  * @param {element} parent $(this) element every time
  * @param {string} controllerName Controller Name
+ * @param {string} [ignoreName] String which has to be ignored, if it's the same as entered name, return False
  */
-function checkItemNameExists(parent, controllerName) {
+function checkItemNameExists(parent, controllerName, ignoreName="") {
     var baseUrl = getBaseUrl();
     $warningElement = $('#NumberAlreadyExistsWarning');
     if (!$($warningElement).length) {
@@ -122,7 +123,7 @@ function checkItemNameExists(parent, controllerName) {
         url: `${baseUrl}/${controllerName}/itemNameExists`,
         type: 'POST',
         dataType: "json",
-        data: { itemName: enteredText },
+        data: { itemName: enteredText, ignoreName: ignoreName },
         success: function (response) {
             if(response.exists == true) {
                 $this.css("border-bottom", "4px solid red");

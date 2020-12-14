@@ -12,7 +12,7 @@ namespace memo.Models
         public Offer()
         {
             OfferStatusId = 1;  // Default: Ceka
-            SharedInfo = new SharedInfo();
+            // SharedInfo = new SharedInfo();
         }
 
         [Key]
