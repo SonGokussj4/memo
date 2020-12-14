@@ -397,7 +397,7 @@
 
             // Add new INVOICES row
             var idInvoice = @Model.Order.Invoices.Count();
-            var invoiceDueDays = @Html.Raw(Json.Serialize(Model.Order.SharedInfo.Company.InvoiceDueDays));
+            var invoiceDueDays = @Html.Raw(Json.Serialize(Model.Offer.SharedInfo.Company.InvoiceDueDays));
             $('.add-row-invoice').click(function () {
                 console.log('Adding invoice: ' + idInvoice);
                 var html =''+
@@ -459,7 +459,7 @@
                 if ( parsed_date != null) {
                     var issueDate = getPrettyDate(new Date(parsed_date), 0)
                     _invoiceIssueInput.val(issueDate);
-                    var futureDate = getPrettyDate(new Date(parsed_date), @Model.Order.SharedInfo.Company.InvoiceDueDays);
+                    var futureDate = getPrettyDate(new Date(parsed_date), @Model.Offer.SharedInfo.Company.InvoiceDueDays);
                     _invoiceDueInput.val(futureDate);
                 }
 
@@ -469,7 +469,7 @@
 
                 _invoiceIssueInput.on("changeDate", function(data) {
                     var date = data.date;
-                    var futureDate = getPrettyDate(date, @Model.Order.SharedInfo.Company.InvoiceDueDays);
+                    var futureDate = getPrettyDate(date, @Model.Offer.SharedInfo.Company.InvoiceDueDays);
                     $('#Order_Invoices_' + _invoiceIssueInput.data('id') + '__InvoiceDueDate').val(futureDate);
                  });
 
