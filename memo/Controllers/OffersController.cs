@@ -120,7 +120,7 @@ namespace memo.Controllers
             public async Task<IActionResult> Create(Offer offer)
             {
                 // offer.OfferName = getNewOfferNum();  // TODO Tohle vratit zpet, az tam budou vsechny aktualni
-                string exchangeRateText = await _db.Currency.Where(x => x.CurrencyId == offer.SharedInfo.Currency.CurrencyId).Select(x => x.Name).FirstOrDefaultAsync();
+                string exchangeRateText = await _db.Currency.Where(x => x.CurrencyId == offer.SharedInfo.CurrencyId).Select(x => x.Name).FirstOrDefaultAsync();
                 Decimal ExchangeRate = Convert.ToDecimal(getCurrencyStr(exchangeRateText));
 
                 offer.SharedInfo.PriceCzk = Convert.ToInt32(offer.SharedInfo.Price * ExchangeRate);  // 1000 * 26,243
@@ -142,8 +142,8 @@ namespace memo.Controllers
 
                 // // TODO(jverner) tady to chce zas SharedInfo.Contact.PersonName, PersonLastName, SharedInfo.Company.InvoiceDays, atd... WHYYY
                 // // Save new offer to the DB
-                // if (ModelState.IsValid)
-                // {
+                if (ModelState.IsValid)
+                {
                     offer.CreatedBy = User.GetLoggedInUserName();
                     offer.CreatedDate = DateTime.Now;
                     offer.ModifiedBy = offer.CreatedBy;
@@ -160,7 +160,7 @@ namespace memo.Controllers
                 //     await populateModelAsync(vmm);
                 //     return View(vmm);
                 // //     return RedirectToAction("Index");
-                // }
+                }
 
                 OfferViewModel vm = new OfferViewModel()
                 {

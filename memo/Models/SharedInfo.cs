@@ -11,9 +11,9 @@ namespace memo.Models
     {
         public SharedInfo()
         {
-            Contact = new Contact();
-            Company = new Company();
-            Currency = new Currency();
+            // Contact = new Contact();
+            // Company = new Company();
+            // Currency = new Currency();
         }
 
         [Key]
