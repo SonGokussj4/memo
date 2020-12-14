@@ -16,6 +16,13 @@
         <form class="card" role="form" autocomplete="on" asp-action="Create" method="post">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
+        <input type="hidden" asp-for="Offer.SharedInfo.Currency.Name" />
+        <input type="hidden" asp-for="Offer.SharedInfo.Company.Name" />
+        @* <input type="hidden" asp-for="Offer.SharedInfo.Company.InvoiceDueDays" /> *@
+        @* <input type="hidden" asp-for="Offer.SharedInfo.Contact.CompanyId" /> *@
+        @* <input type="hidden" asp-for="Offer.SharedInfo.Contact.PersonName" /> *@
+        @* <input type="hidden" asp-for="Offer.SharedInfo.Contact.PersonLastName" /> *@
+
         <div class="form-group row">
             <label asp-for="Offer.OfferName" class="required col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-9">
@@ -85,10 +92,10 @@
         <div class="form-group row customerOffer">
             <label class="required col-lg-3 col-form-label form-control-label control-label">Zákazník</label>
             <div class="col-lg-4">
-                <select class="form-control selectpicker" asp-for="Offer.SharedInfo.CompanyId" asp-items="@Model.CompanyList">
+                <select class="form-control selectpicker" asp-for="Offer.SharedInfo.Company.CompanyId" asp-items="@Model.CompanyList">
                     <option value="">-- Vyber firmu --</option>
                 </select>
-                <span asp-validation-for="Offer.SharedInfo.CompanyId" class="text-danger"></span>
+                <span asp-validation-for="Offer.SharedInfo.Company.CompanyId" class="text-danger"></span>
             </div>
             <div class="col-lg-1" data-toggle="tooltip" title="Nová firma">
                 <a asp-action="create" asp-controller="Companies" target="_blank">
@@ -96,10 +103,10 @@
                 </a>
             </div>
             <div class="col-lg-3">
-                <select class="form-control selectpicker" asp-for="Offer.SharedInfo.ContactId" asp-items="@Model.ContactList">
+                <select class="form-control selectpicker" asp-for="Offer.SharedInfo.Contact.ContactId" asp-items="@Model.ContactList">
                     <option value="">-- Vyber kontakt --</option>
                 </select>
-                <span asp-validation-for="Offer.SharedInfo.ContactId" class="text-danger"></span>
+                <span asp-validation-for="Offer.SharedInfo.Contact.ContactId" class="text-danger"></span>
             </div>
             <div class="col-lg-1" data-toggle="tooltip" title="Nový kontakt">
                 <a asp-action="create" asp-controller="Contacts" target="_blank">
@@ -119,10 +126,10 @@
             </div>
             <div class="col-lg-4">
                 <span class="has-float-label" data-toggle="tooltip" title="Aktuální kurz ČNB">
-                    <select asp-for="Offer.SharedInfo.CurrencyId" asp-items="Model.CurrencyList" class="form-control"></select>
-                    <label asp-for="Offer.SharedInfo.CurrencyId">Měna</label>
+                    <select asp-for="Offer.SharedInfo.Currency.CurrencyId" asp-items="Model.CurrencyList" class="form-control"></select>
+                    <label asp-for="Offer.SharedInfo.Currency.CurrencyId">Měna</label>
                 </span>
-                <span asp-validation-for="Offer.SharedInfo.CurrencyId" class="text-danger"></span>
+                <span asp-validation-for="Offer.SharedInfo.Currency.CurrencyId" class="text-danger"></span>
             </div>
 
             @* <div class="col-lg-2">

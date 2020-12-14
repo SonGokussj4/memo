@@ -97,7 +97,7 @@ namespace memo.Controllers
                 // }),
             };
 
-            populateModel(null, 0);
+            // populateModel(null, 0);
             await populateModelAsync(vm);
 
             // // TODO: Dat do PopulateModel nebo tak nejak
@@ -114,57 +114,64 @@ namespace memo.Controllers
             return View(vm);
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Offer offer)
-        {
-            // offer.OfferName = getNewOfferNum();  // TODO Tohle vratit zpet, az tam budou vsechny aktualni
-            offer.SharedInfo.PriceCzk = Convert.ToInt32(offer.SharedInfo.Price * offer.SharedInfo.ExchangeRate);  // 1000 * 26,243
-            // offer.CreatedDate = DateTime.Now;
-
-            // Check if OfferName exists, if yes, add model error...
-            // Offer existingOffer = await _db.Offer
-            //     .Where(x => x.OfferName == offer.OfferName)
-            //     .FirstOrDefaultAsync();
-
-            if (await _db.Offer.AnyAsync(x => x.OfferName == offer.OfferName))
-            // if (existingOffer != null)
+            [HttpPost]
+            [ValidateAntiForgeryToken]
+            // public async Task<IActionResult> Create([Bind("Offer")] Offer offer)
+            public async Task<IActionResult> Create(Offer offer)
             {
-                ModelState.AddModelError("Offer.OfferName", "Ev. Číslo nabídky již existuje. Zvolte jinou, nebo upravte stávající.");
-            }
+                // offer.OfferName = getNewOfferNum();  // TODO Tohle vratit zpet, az tam budou vsechny aktualni
+                string exchangeRateText = await _db.Currency.Where(x => x.CurrencyId == offer.SharedInfo.Currency.CurrencyId).Select(x => x.Name).FirstOrDefaultAsync();
+                Decimal ExchangeRate = Convert.ToDecimal(getCurrencyStr(exchangeRateText));
 
-            // TODO(jverner) tady to chce zas SharedInfo.Contact.PersonName, PersonLastName, SharedInfo.Company.InvoiceDays, atd... WHYYY
-            // Save new offer to the DB
-            if (ModelState.IsValid)
-            {
-                offer.CreatedBy = User.GetLoggedInUserName();
-                offer.CreatedDate = DateTime.Now;
-                offer.ModifiedBy = offer.CreatedBy;
-                offer.ModifiedDate = offer.CreatedDate;
+                offer.SharedInfo.PriceCzk = Convert.ToInt32(offer.SharedInfo.Price * ExchangeRate);  // 1000 * 26,243
+                // // offer.CreatedDate = DateTime.Now;
+                // offer.SharedInfo.Company = await _db.Company.Where(x => x.CompanyId == offer.SharedInfo.Company.CompanyId).FirstOrDefaultAsync();
+                // offer.SharedInfo.Currency = await _db.Currency.Where(x => x.CurrencyId == offer.SharedInfo.Currency.CurrencyId).FirstOrDefaultAsync();
+                // offer.SharedInfo.Contact = await _db.Contact.Where(x => x.ContactId == offer.SharedInfo.Contact.ContactId).FirstOrDefaultAsync();
 
-            //     await _db.AddAsync(offer);
-            //     await _db.SaveChangesAsync(User.GetLoggedInUserName());
+                // // Check if OfferName exists, if yes, add model error...
+                // // Offer existingOffer = await _db.Offer
+                // //     .Where(x => x.OfferName == offer.OfferName)
+                // //     .FirstOrDefaultAsync();
 
-                TempData["Success"] = "Vytvoření bylo úspěšné";
-                OfferViewModel vmm = new OfferViewModel()
+                // if (await _db.Offer.AnyAsync(x => x.OfferName == offer.OfferName))
+                // // if (existingOffer != null)
+                // {
+                //     ModelState.AddModelError("Offer.OfferName", "Ev. Číslo nabídky již existuje. Zvolte jinou, nebo upravte stávající.");
+                // }
+
+                // // TODO(jverner) tady to chce zas SharedInfo.Contact.PersonName, PersonLastName, SharedInfo.Company.InvoiceDays, atd... WHYYY
+                // // Save new offer to the DB
+                // if (ModelState.IsValid)
+                // {
+                    offer.CreatedBy = User.GetLoggedInUserName();
+                    offer.CreatedDate = DateTime.Now;
+                    offer.ModifiedBy = offer.CreatedBy;
+                    offer.ModifiedDate = offer.CreatedDate;
+
+                    await _db.AddAsync(offer);
+                    await _db.SaveChangesAsync(User.GetLoggedInUserName());
+
+                    // TempData["Success"] = "Vytvoření bylo úspěšné";
+                //     OfferViewModel vmm = new OfferViewModel()
+                //     {
+                //         Offer = offer,
+                //     };
+                //     await populateModelAsync(vmm);
+                //     return View(vmm);
+                // //     return RedirectToAction("Index");
+                // }
+
+                OfferViewModel vm = new OfferViewModel()
                 {
                     Offer = offer,
                 };
-                await populateModelAsync(vmm);
-                return View(vmm);
-            //     return RedirectToAction("Index");
+
+                await populateModelAsync(vm);
+                TempData["Error"] = "Nepovedlo se uložit.";
+
+                return View(vm);
             }
-
-            OfferViewModel vm = new OfferViewModel()
-            {
-                Offer = offer,
-            };
-
-            await populateModelAsync(vm);
-            TempData["Error"] = "Nepovedlo se uložit.";
-
-            return View(vm);
-        }
 
         // GET: Offer/Edit/5
         [HttpGet]

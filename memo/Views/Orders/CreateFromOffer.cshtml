@@ -80,14 +80,6 @@
             <form id="orderForm" class="card" role="form" autocomplete="on" asp-action="CreateFromOffer" method="post" style="display: none;">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Offer.OfferId" />
-            @* <input type="hidden" asp-for="Offer.Price" />
-            <input type="hidden" asp-for="Offer.Subject" />
-            <input type="hidden" asp-for="Offer.CompanyId" />
-            <input type="hidden" asp-for="Offer.ContactId" />
-            <input type="hidden" asp-for="Offer.OfferName" />
-            <input type="hidden" asp-for="Offer.EveDivision" />
-            <input type="hidden" asp-for="Offer.EveDepartment" />
-            <input type="hidden" asp-for="Offer.EveCreatedUser" /> *@
             <input type="hidden" asp-for="Order.SharedInfo.EveDivision" />
             <input type="hidden" asp-for="Order.SharedInfo.EveDepartment" />
             <input type="hidden" asp-for="Order.SharedInfo.EveCreatedUser" />
