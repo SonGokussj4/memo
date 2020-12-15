@@ -123,7 +123,10 @@ namespace memo.Controllers
             // vm.Order.SharedInfo = new SharedInfo();
             // vm.Order.SharedInfo.Currency = new Currency();
             vm.Order.SharedInfo.ReceiveDate = DateTime.Now;
-            vm.Order.SharedInfo.Currency.Name = "CZK";
+            vm.Order.SharedInfo.Currency = new Currency()
+            {
+                Name = "CZK",
+            };
 
             await populateModelAsync(vm);
 
@@ -181,7 +184,9 @@ namespace memo.Controllers
         [HttpGet]
         public async Task<IActionResult> CreateFromOffer(int? id)
         {
-            Offer offer = await _db.Offer.Include(x => x.SharedInfo.Currency).FirstOrDefaultAsync(x => x.OfferId == id);
+            Offer offer = await _db.Offer
+                .Include(x => x.SharedInfo.Currency)
+                .FirstOrDefaultAsync(x => x.OfferId == id);
 
             if (offer == null)
             {
@@ -231,6 +236,9 @@ namespace memo.Controllers
             Order order = new Order();
             order.ExchangeRate = decimal.Parse(getCurrencyStr(offer.SharedInfo.Currency.Name));
             order.Offer = offer;
+            order.OfferId = offer.OfferId;
+            order.SharedInfo = offer.SharedInfo;
+            order.SharedInfoId = offer.SharedInfoId;
 
             // Fill nested models
             var shares = await _db.SharedInfo.ToListAsync();
@@ -240,80 +248,8 @@ namespace memo.Controllers
 
             OfferOrderVM vm = new OfferOrderVM()
             {
-                Offer = offer,
+                // Offer = offer,
                 Order = order,
-            };
-            await populateModelAsync(vm);
-
-            // {
-            //     Offer = offer,
-            //     OfferId = (int)offerId,
-            //     Order = order,
-            //     OfferCompanyName = offerCompanyName,
-            //     InvoiceDueDays = invoiceDueDays,
-            //     CurrencyName = curSymbol,
-            //     ContractsList = contractsList,
-            // };
-
-            return View(vm);
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> CreateFromContract(int? id)
-        {
-            Contract contract = await _db.Contracts
-                .Include(x => x.SharedInfo)
-                    .ThenInclude(x => x.Currency)
-                .FirstOrDefaultAsync(x => x.ContractsId == id);
-
-            if (contract == null)
-            {
-                OfferOrderVM vmm = new OfferOrderVM();
-                await populateModelAsync(vmm);
-
-                return View(vmm);
-            }
-
-            // string offerCompanyName = "";
-            // int invoiceDueDays = 0;
-            // string curSymbol = "CZK";
-            // int offerFinalPrice = 0;
-            // int offerPriceDiscount = 0;
-            // int finalPriceCzk = 0;
-            // int negotiatedPrice = 0;
-
-            // Currency cur = await _db.Currency.FirstOrDefaultAsync(x => x.CurrencyId == offer.CurrencyId);
-            // curSymbol = cur != null ? cur.Name : "";
-            // offerFinalPrice = (int)offer.Price;
-            // finalPriceCzk = Convert.ToInt32(offerFinalPrice * offer.ExchangeRate);
-            // negotiatedPrice = (int)offer.Price;
-
-            // Company company = await _db.Company.FirstOrDefaultAsync(x => x.CompanyId == offer.CompanyId);
-            // if (company != null)
-            // {
-            //     offerCompanyName = company.Name;
-            //     invoiceDueDays = (int)company.InvoiceDueDays;
-            // }
-
-            // Order order = new Order();
-            // order.OfferId = offer.OfferId;
-            // order.ExchangeRate = Decimal.Parse(getCurrencyStr(curSymbol).Replace(",", "."), CultureInfo.InvariantCulture);
-            // order.PriceFinal = offerFinalPrice;
-            // order.PriceDiscount = offerPriceDiscount;
-            // order.PriceFinalCzk = finalPriceCzk;
-            // order.NegotiatedPrice = negotiatedPrice;
-
-            // await populateModel(order, (int)offerId);
-            // List<SelectListItem> contractsList = await _db.Contracts
-            //     .Select(x => new SelectListItem {
-            //         Value = x.ContractsId.ToString(),
-            //         Text = $"{x.ContractName} - {x.SharedInfo.Subject}",
-            //     })
-            //     .ToListAsync();
-
-            OfferOrderVM vm = new OfferOrderVM()
-            {
-                Contract = contract,
             };
             await populateModelAsync(vm);
 
@@ -324,9 +260,19 @@ namespace memo.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateFromOffer(OfferOrderVM vm)
         {
-            await populateModel(vm.Order, vm.Order.OrderId);
+            // await populateModel(vm.Order, vm.Order.OrderId);
 
-            vm.Order.FromType = vm.Offer?.OfferId != 0 ? "N" : (vm.Contract?.ContractsId != 0 ? "R" : "-");
+            vm.Order.FromType = vm.Order.OfferId != 0 ? "N" : (vm.Contract?.ContractsId != 0 ? "R" : "-");
+            vm.Order.Offer = await _db.Offer
+                .Where(x => x.OfferId == vm.Order.OfferId)
+                .Include(x => x.SharedInfo)
+                .FirstOrDefaultAsync();
+
+            vm.Order.SharedInfoId = vm.Order.Offer.SharedInfoId;
+            vm.Order.SharedInfo = await _db.SharedInfo
+                .Where(x => x.SharedInfoId == vm.Order.SharedInfoId)
+                .FirstOrDefaultAsync();
+
             // vm.Order.PriceFinal = vm.Order.NegotiatedPrice;
             // vm.Order.PriceFinalCzk = Convert.ToInt32(vm.Order.PriceFinal * vm.Order.ExchangeRate);
 
@@ -377,7 +323,9 @@ namespace memo.Controllers
             // TODO(jverner) Na toto se kouknout, komunikace s Vitou, co sem vubec chce...
             vm.Order.PriceFinal = 0;
             vm.Order.PriceFinalCzk = 0;
-            vm.Order.PriceDiscount = vm.Offer.SharedInfo.Price;
+            // vm.Order.PriceDiscount = vm.Offer.SharedInfo.Price;
+            vm.Order.PriceDiscount = vm.Order.Offer.SharedInfo.Price;
+            // vm.Order.SharedInfoId = vm.Order.Offer.SharedInfoId;
 
             foreach (Invoice invoice in vm.Order.Invoices)
             {
@@ -391,7 +339,7 @@ namespace memo.Controllers
                 vm.Order.PriceFinalCzk += Convert.ToInt32(otherCost.Cost * vm.Order.ExchangeRate);
             }
 
-            vm.Order.SharedInfo = vm.Offer.SharedInfo;
+            // vm.Order.SharedInfo = vm.Offer.SharedInfo;
             // vm.Order.SharedInfo.Company.Name = vm.Offer.Company.Name;
             // vm.Order.SharedInfo.Company.InvoiceDueDays = vm.Offer.Company.InvoiceDueDays;
             // vm.Order.SharedInfo.Contact.PersonName = vm.Offer.Contact.PersonName;
@@ -425,12 +373,48 @@ namespace memo.Controllers
                 }
                 catch (Exception e)
                 {
-
                     TempData["Error"] = $"Problém s uložením do databáze... Detail: '@{e}'";
                 }
             }
 
+            TempData["Error"] = "Nepovedlo se uložit...";
+
             await populateModelAsync(vm);
+            return View(vm);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> CreateFromContract(int? id)
+        {
+            Contract contract = await _db.Contracts
+                .Include(x => x.SharedInfo.Currency)
+                .FirstOrDefaultAsync(x => x.ContractsId == id);
+
+            if (contract == null)
+            {
+                OfferOrderVM vmm = new OfferOrderVM();
+                await populateModelAsync(vmm);
+
+                return View(vmm);
+            }
+
+            Order order = new Order();
+            order.ExchangeRate = decimal.Parse(getCurrencyStr(contract.SharedInfo.Currency.Name));
+            order.Contract = contract;
+
+            // Fill nested models
+            var shares = await _db.SharedInfo.ToListAsync();
+            var contacts = await _db.Contact.ToListAsync();
+            var currencies = await _db.Currency.ToListAsync();
+            var companies = await _db.Company.ToListAsync();
+
+            OfferOrderVM vm = new OfferOrderVM()
+            {
+                Contract = contract,
+                Order = order
+            };
+            await populateModelAsync(vm);
+
             return View(vm);
         }
 

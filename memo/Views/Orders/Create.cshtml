@@ -484,7 +484,7 @@
                 var _invoiceIssueInput = $('#Order_Invoices_' + idInvoice + '__InvoiceIssueDate');
                 var _invoiceDueInput = $('#Order_Invoices_' + idInvoice + '__InvoiceDueDate');
 
-                var parsed_date = @Html.Raw(Json.Serialize(Model.Offer.SharedInfo.EstimatedFinishDate))
+                var parsed_date = @Html.Raw(Json.Serialize(Model.Offer?.SharedInfo.EstimatedFinishDate))
                 if ( parsed_date != null) {
                     var issueDate = getPrettyDate(new Date(parsed_date), 0)
                     _invoiceIssueInput.val(issueDate);

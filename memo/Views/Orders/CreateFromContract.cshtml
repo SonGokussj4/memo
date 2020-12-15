@@ -355,8 +355,8 @@
 
             // Upon page load, check if OfferId != 0 (offer is selected) then set orderForm as visible
             //if (@Model.Order.OfferId != 0) {
-            if (@Model.Contract.ContractsId != 0) {
-                console.log("ContractsId: " + @Model.Contract.ContractsId);
+            if (@Model.ContractId != 0) {
+                console.log("ContractsId: " + @Model.ContractId);
                 $('#orderForm').show();
             }
 
@@ -368,7 +368,7 @@
             // All .mycalendar input classes will have 'datepicker()' functionality
             $('.mycalendar input').datepicker(datepickerParameters[0]);
 
-            var offerPrice = parseInt('@Model.Offer.SharedInfo.Price');
+            var offerPrice = parseInt('@Model.Contract?.SharedInfo.Price');
 
             $('#Order_NegotiatedPrice').on('keydown input change textInput', function(){
                 var negotiatedPrice = parseInt($('#Order_NegotiatedPrice').val());
@@ -446,7 +446,7 @@
                 var _invoiceIssueInput = $('#Order_Invoices_' + idInvoice + '__InvoiceIssueDate');
                 var _invoiceDueInput = $('#Order_Invoices_' + idInvoice + '__InvoiceDueDate');
 
-                var parsed_date = @Html.Raw(Json.Serialize(Model.Offer.SharedInfo.EstimatedFinishDate))
+                var parsed_date = @Html.Raw(Json.Serialize(Model.Contract?.SharedInfo.EstimatedFinishDate))
                 if ( parsed_date != null) {
                     var issueDate = getPrettyDate(new Date(parsed_date), 0)
                     _invoiceIssueInput.val(issueDate);
