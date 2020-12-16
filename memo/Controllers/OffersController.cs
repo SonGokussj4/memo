@@ -52,10 +52,10 @@ namespace memo.Controllers
                 .Include(a => a.OfferStatus)
                 .ToListAsync();
 
-            await _db.SharedInfo.ToListAsync();
-            await _db.Contact.ToListAsync();
-            await _db.Company.ToListAsync();
-            await _db.Currency.ToListAsync();
+            await _db.SharedInfo.LoadAsync();
+            await _db.Contact.LoadAsync();
+            await _db.Company.LoadAsync();
+            await _db.Currency.LoadAsync();
 
             if (showInactive is false)
             {

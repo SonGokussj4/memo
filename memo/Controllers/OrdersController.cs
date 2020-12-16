@@ -901,6 +901,21 @@ namespace memo.Controllers
             return sumMinutes;
         }
 
+        public async Task<int> GetOrderSumHoursAsync(string idOrder)
+        {
+            var result = await _eveDb.tWorks
+                .Where(x => x.Idorder == Convert.ToInt32(idOrder))
+                // .AsEnumerable()
+                .GroupBy(x => x.Idorder)
+                .Select(gi => new {
+                    // idOrder = gi.Key,
+                    minutes = gi.Sum(x => x.Minutes),
+                })
+                .FirstOrDefaultAsync();
+
+            return result.minutes;
+        }
+
         /// <summary>
         /// Check if Order (cOrders table) exists by OrderId
         /// </summary>
