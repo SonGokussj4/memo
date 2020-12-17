@@ -94,24 +94,6 @@ namespace memo.Controllers
             return View(vm);
         }
 
-        // [HttpPost]
-        // [ValidateAntiForgeryToken]
-        // public IActionResult Refresh(int offerId, int contractId)
-        // // public IActionResult Refresh(int offerId, int contractId, string fromType)
-        // {
-        //     // if (fromType == "N")
-        //     // {
-        //     // }
-        //     // else if (fromType == "R")
-        //     // {
-
-        //     // }
-        //     // else
-        //     // {
-
-        //     // }
-        //     return RedirectToAction("Create", new { offerId = offerId, contractId = contractId });
-        // }
 
         [HttpGet]
         public async Task<IActionResult> Create()
@@ -178,6 +160,83 @@ namespace memo.Controllers
             //     ContractsList = contractsList,
             // };
 
+            return View(vm);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(OfferOrderVM vm)
+        {
+            // await populateModel(vm.Order, vm.Order.OrderId);
+
+            vm.Order.FromType = "-";
+            // vm.Order.Offer = await _db.Offer
+            //     .Where(x => x.OfferId == vm.Order.OfferId)
+            //     .Include(x => x.SharedInfo)
+            //     .FirstOrDefaultAsync();
+
+            // vm.Order.SharedInfoId = 0;
+            // vm.Order.SharedInfo = new SharedInfo();
+
+            // TODO(jverner) Na toto se kouknout, komunikace s Vitou Cernym, co sem vubec chce...
+            vm.Order.PriceFinal = 0;
+            vm.Order.PriceFinalCzk = 0;
+            vm.Order.PriceDiscount = vm.Order.Offer.SharedInfo.Price;
+            vm.Order.SharedInfo.Currency = await _db.Currency.Where(x => x.CurrencyId == vm.Order.SharedInfo.CurrencyId).FirstOrDefaultAsync();
+            vm.Order.ExchangeRate = decimal.Parse(getCurrencyStr(vm.Order.SharedInfo.Currency.Name));
+
+            foreach (Invoice invoice in vm.Order.Invoices)
+            {
+                vm.Order.PriceFinal += Convert.ToInt32(invoice.Cost);
+                vm.Order.PriceFinalCzk += Convert.ToInt32(invoice.Cost * vm.Order.ExchangeRate);
+                vm.Order.PriceDiscount -= Convert.ToInt32(invoice.Cost);
+            }
+            foreach (OtherCost otherCost in vm.Order.OtherCosts)
+            {
+                vm.Order.PriceFinal += Convert.ToInt32(otherCost.Cost);
+                vm.Order.PriceFinalCzk += Convert.ToInt32(otherCost.Cost * vm.Order.ExchangeRate);
+            }
+
+            if (ModelState.IsValid)
+            {
+                // TODO: Pozor na toto nezapomenout
+                // int? totalMinutes = await _eveDb.cOrders  // Planned
+                //     .Where(t => t.OrderCode == vm.Order.OrderCode)
+                //     .Select(t => t.Planned)
+                //     .FirstOrDefaultAsync();
+
+                // TODO: tohle nemohu mit, protoze se o bude menit a ja nebudu porad ukladat model
+                // int? totalMinutes = null;
+                // vm.Order.TotalHours = totalMinutes != null ? totalMinutes / 60 : 0;
+
+                vm.Order.CreatedBy = User.GetLoggedInUserName();
+                vm.Order.CreatedDate = DateTime.Now;
+                vm.Order.ModifiedBy = vm.Order.CreatedBy;
+                vm.Order.ModifiedDate = vm.Order.CreatedDate;
+
+                try
+                {
+                    await _db.AddAsync(vm.Order);
+                    await _db.SaveChangesAsync(User.GetLoggedInUserName());
+
+                    TempData["Success"] = "Nová zakázka vytvořena.";
+
+                    return RedirectToAction("Index");
+                }
+                catch (Exception e)
+                {
+                    TempData["Error"] = $"Problém s uložením do databáze... Detail: '@{e}'";
+                }
+            }
+
+            TempData["Error"] = "Nepovedlo se uložit...";
+
+            await populateModelAsync(vm);
+            vm.Order.SharedInfo.ReceiveDate = DateTime.Now;
+            vm.Order.SharedInfo.Currency = new Currency()
+            {
+                Name = "CZK",
+            };
             return View(vm);
         }
 
@@ -273,54 +332,7 @@ namespace memo.Controllers
                 .Where(x => x.SharedInfoId == vm.Order.SharedInfoId)
                 .FirstOrDefaultAsync();
 
-            // vm.Order.PriceFinal = vm.Order.NegotiatedPrice;
-            // vm.Order.PriceFinalCzk = Convert.ToInt32(vm.Order.PriceFinal * vm.Order.ExchangeRate);
-
-            // string offerCompanyName = "";
-            // int invoiceDueDays = 0;
-            // string curSymbol = "CZK";
-            // int offerFinalPrice = 0;
-            // int offerPriceDiscount = 0;
-            // int finalPriceCzk = 0;
-
-            // Offer offer = new Offer();
-            // if (vm.Order.OfferId != null && vm.Order.OfferId != 0)
-            // {
-            //     offer = await _db.Offer.FirstOrDefaultAsync(x => x.OfferId == vm.Order.OfferId);
-            //     Currency cur = await _db.Currency.FirstOrDefaultAsync(x => x.CurrencyId == offer.CurrencyId);
-            //     curSymbol = cur != null ? cur.Name : "";
-            //     offerFinalPrice = (int)offer.Price;
-            //     finalPriceCzk = Convert.ToInt32(offerFinalPrice * offer.ExchangeRate);
-
-            //     Company company = await _db.Company.FirstOrDefaultAsync(x => x.CompanyId == offer.CompanyId);
-            //     if (company != null)
-            //     {
-            //         offerCompanyName = company.Name;
-            //         invoiceDueDays = (int)company.InvoiceDueDays;
-            //     }
-            // }
-
-            // // vm.Order.ExchangeRate = Decimal.Parse(getCurrencyStr(curSymbol).Replace(",", "."), CultureInfo.InvariantCulture);
-            // vm.Order.PriceFinal = offerFinalPrice;
-            // vm.Order.PriceDiscount = offerPriceDiscount;
-            // vm.Order.PriceFinalCzk = finalPriceCzk;
-
-            // vm.Offer = offer;
-            // vm.OfferCompanyName = offerCompanyName;
-            // vm.InvoiceDueDays = invoiceDueDays;
-            // vm.CurrencyName = curSymbol;
-
-            // TODO(jverner) Na toto uz mam funkci, je treba to vubec backend pouzit, kdyz to mohu overit frontend???
-            // string orderName = await _db.Order
-            //     .Where(x => x.OrderName == vm.Order.OrderName)
-            //     .Select(x => x.OrderName)
-            //     .FirstOrDefaultAsync();
-            // if (orderName != null)
-            // {
-            //     ModelState.AddModelError("Order.OrderName", "Číslo objednávky zákazníka již existuje");
-            // }
-
-            // TODO(jverner) Na toto se kouknout, komunikace s Vitou, co sem vubec chce...
+            // TODO(jverner) Na toto se kouknout, komunikace s Vitou Cernym, co sem vubec chce...
             vm.Order.PriceFinal = 0;
             vm.Order.PriceFinalCzk = 0;
             // vm.Order.PriceDiscount = vm.Offer.SharedInfo.Price;
@@ -338,12 +350,6 @@ namespace memo.Controllers
                 vm.Order.PriceFinal += Convert.ToInt32(otherCost.Cost);
                 vm.Order.PriceFinalCzk += Convert.ToInt32(otherCost.Cost * vm.Order.ExchangeRate);
             }
-
-            // vm.Order.SharedInfo = vm.Offer.SharedInfo;
-            // vm.Order.SharedInfo.Company.Name = vm.Offer.Company.Name;
-            // vm.Order.SharedInfo.Company.InvoiceDueDays = vm.Offer.Company.InvoiceDueDays;
-            // vm.Order.SharedInfo.Contact.PersonName = vm.Offer.Contact.PersonName;
-            // vm.Order.SharedInfo.Contact.PersonLastName = vm.Offer.Contact.PersonLastName;
 
             if (ModelState.IsValid)
             {
