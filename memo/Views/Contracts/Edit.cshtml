@@ -325,14 +325,15 @@
 
     <script>
 
+        let contractName = '@Html.Raw(@Model.Contract.ContractName)';
         // TODO(jverner) dve nize uvedene jsou duplicitni v Offers
         $(document).ready(function(){
             handleExchangeRateVisibility();
-            checkItemNameExists($("#Contract_ContractName"), 'Contracts', ignoreName='@Model.Contract.ContractName');
+            checkItemNameExists($("#Contract_ContractName"), 'Contracts', ignoreName=contractName);
         });
 
         $("#Contract_ContractName").keyup(function() {
-            checkItemNameExists($(this), 'Contracts', ignoreName='@Model.Contract.ContractName');
+            checkItemNameExists($(this), 'Contracts', ignoreName=contractName);
         });
 
         // Changing currency Selectlist behaviour

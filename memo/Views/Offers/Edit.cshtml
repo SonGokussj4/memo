@@ -387,13 +387,15 @@
 
     <script>
 
+        let offerName = '@Html.Raw(@Model.Offer.OfferName)';
+
         $(document).ready(function(){
-            handleExchangeRateVisibility();
-            checkItemNameExists($("#Offer_OfferName"), 'Offers', ignoreName='@Model.Offer.OfferName');
+            handleExchangeRateVisibility(firstLoad=true);
+            checkItemNameExists($("#Offer_OfferName"), 'Offers', ignoreName=offerName);
         });
 
         $("#Offer_OfferName").keyup(function() {
-            checkItemNameExists($(this), 'Offers', ignoreName='@Model.Offer.OfferName');
+            checkItemNameExists($(this), 'Offers', ignoreName=offerName);
         });
 
         // Changing currency Selectlist behaviour
@@ -401,10 +403,17 @@
             handleExchangeRateVisibility();
         });
 
-        function handleExchangeRateVisibility() {
+        function handleExchangeRateVisibility(firstLoad) {
             let currencySymbol = $('select#Offer_SharedInfo_CurrencyId').find("option:selected").text();  // selected text
             let exchangeRate = getExchangeRate(currencySymbol);  // call baseController function to get 'EUR' --> '26.360'
-            let txtExchangeRate = $('#Offer_SharedInfo_ExchangeRate').val(exchangeRate);
+
+            let txtExchangeRate = null;
+            if (firstLoad == true) {
+                txtExchangeRate = $('#Offer_SharedInfo_ExchangeRate');
+            }
+            else {
+                txtExchangeRate = $('#Offer_SharedInfo_ExchangeRate').val(exchangeRate);
+            }
 
             // Handle visibility of the textbox (don't show when CZK is selected)
             if(exchangeRate == "1" && txtExchangeRate.is(":visible")) {
