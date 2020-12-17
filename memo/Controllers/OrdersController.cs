@@ -427,23 +427,24 @@ namespace memo.Controllers
                 return NotFound();
             }
 
-            // await populateModel(null, 0);
-
             Order order = await _db.Order.FindAsync(id);
             if (order == null)
             {
                 return NotFound();
             }
-            var invoices = await _db.Invoice.ToListAsync();
-            var otherCosts = await _db.OtherCost.ToListAsync();
-            var orderCodes = await _db.OrderCodes.ToListAsync();
+
+            await _db.Invoice.LoadAsync();
+            await _db.OtherCost.LoadAsync();
+            await _db.OrderCodes.LoadAsync();
+
             // order.Invoices = await _db.Invoice.Where(x => x.OrderId == id).ToListAsync();
             // order.OtherCosts = await _db.OtherCost.Where(x => x.OrderId == id).ToListAsync();
             // order.OrderCodes = await _db.OrderCodes.Where(x => x.OrderId == id).ToListAsync();
 
             if (order.FromType == "N")
             {
-                await _db.Offer.ToListAsync();
+                // await _db.Offer.ToListAsync();
+                await _db.Offer.LoadAsync();
             }
 
             // if (offerId != null)
@@ -551,17 +552,39 @@ namespace memo.Controllers
                     )
                     {
                         TempData["Info"] = "Nebyla provedena změna, není co uložit";
+                        if (actionType == "Uložit")
+                        {
+                            // Populate VM
+                            vm.Audits = getAuditViewModel(_db).Audits
+                                .Where(x => x.TableName == "Order" && x.KeyValue == id.ToString())
+                                .ToList(); ;
 
-                        // Populate VM
-                        vm.Audits = getAuditViewModel(_db).Audits
-                            .Where(x => x.TableName == "Order" && x.KeyValue == id.ToString())
-                            .ToList(); ;
-                        vm.Offer = await _db.Offer.Where(x => x.OfferId == vm.Order.OfferId).FirstOrDefaultAsync();
-                        vm.CurrencyName = vm.Offer.SharedInfo.Currency.Name;
+                            if (vm.Order.FromType == "N")
+                            {
+                                vm.Order.Offer = await _db.Offer.Where(x => x.OfferId == vm.Order.OfferId).FirstOrDefaultAsync();
+                            }
+                            else if (vm.Order.FromType == "Z")
+                            {
+                                vm.Order.Contract = await _db.Contracts.Where(x => x.ContractsId == vm.Order.ContractId).FirstOrDefaultAsync();
+                            }
+                            // vm.Offer = await _db.Offer.Include(x => x.SharedInfo).Where(x => x.OfferId == vm.Order.OfferId).FirstOrDefaultAsync();
 
-                        await populateModel(vm.Order, id);
+                            // await populateModel(vm.Order, id);
+                            vm.Order.SharedInfo = await _db.SharedInfo
+                                .Where(x => x.SharedInfoId == vm.Order.SharedInfoId)
+                                .Include(x => x.Currency)
+                                .Include(x => x.Company)
+                                .Include(x => x.Contact)
+                                .FirstOrDefaultAsync();
 
-                        return View(vm);
+                            await populateModelAsync(vm);
+
+                            return View(vm);
+                        }
+                        else
+                        {
+                            return RedirectToAction(nameof(Index));
+                        }
                     }
 
                     // TODO tohle delat v ramci zobrazeni a do ViewModelu, NEUKLADAT V DATABAZI....
@@ -576,6 +599,8 @@ namespace memo.Controllers
                     vm.Order.PriceFinal = 0;
                     vm.Order.PriceFinalCzk = 0;
                     vm.UnspentMoney = vm.Order.NegotiatedPrice;
+
+                    vm.Order.SharedInfo = await _db.SharedInfo.Where(x => x.SharedInfoId == vm.Order.SharedInfoId).FirstOrDefaultAsync();
 
                     foreach (Invoice invoice in vm.Order.Invoices)
                     {
@@ -623,7 +648,8 @@ namespace memo.Controllers
                 }
             }
 
-            await populateModel(vm.Order, id);
+            // await populateModel(vm.Order, id);
+            await populateModelAsync(vm);
 
             int offerId = Convert.ToInt32(vm.Order.OfferId);
             Offer offer = await _db.Offer.FindAsync(vm.Order.OfferId);
@@ -650,7 +676,7 @@ namespace memo.Controllers
                 OfferId = offerId,
                 OfferCompanyName = company.Name,
                 InvoiceDueDays = (int)company.InvoiceDueDays,
-                CurrencyName = currency.Name,
+                // CurrencyName = currency.Name,
                 Audits = audits,
             };
 
@@ -660,7 +686,7 @@ namespace memo.Controllers
         }
 
         /// <summary>
-        /// Iterate over pre-selected elements in the list and checkt if they are different. If true, return false.
+        /// Iterate over pre-selected elements in the list and check if they are different. If true, return false.
         /// </summary>
         /// <param name="orderCodes1">Old ViewModel</param>
         /// <param name="orderCodes2">Checking ViewModel</param>
@@ -680,7 +706,7 @@ namespace memo.Controllers
         }
 
         /// <summary>
-        /// Iterate over pre-selected elements in the list and checkt if they are different. If true, return false.
+        /// Iterate over pre-selected elements in the list and check if they are different. If true, return false.
         /// </summary>
         /// <param name="otherCosts1">Old ViewModel</param>
         /// <param name="otherCosts2">Checking ViewModel</param>
@@ -699,7 +725,7 @@ namespace memo.Controllers
         }
 
         /// <summary>
-        /// Iterate over pre-selected elements in the list and checkt if they are different. If true, return false.
+        /// Iterate over pre-selected elements in the list and check if they are different. If true, return false.
         /// </summary>
         /// <param name="invoices1">Old ViewModel</param>
         /// <param name="invoices2">Checking ViewModel</param>
@@ -760,27 +786,17 @@ namespace memo.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        private async Task<object> populateModel(Order model, int id)
-        {
-            // Populate
-            ViewBag.WonOffersList = await _db.Offer
-                .Where(t => t.OfferStatusId == 2)
-                .OrderBy(t => t.OfferName)
-                .Select(x => new SelectListItem
-                {
-                    Text = x.OfferName + " - " + x.SharedInfo.Subject,
-                    Value = x.OfferId.ToString(),
-                }
-                ).ToListAsync();
-            ViewBag.CurrencyList = new SelectList(_db.Currency.ToList(), "CurrencyId", "Name");
-            ViewBag.EveContactList = await getEveContactsAsync(_eveDbDochna);
-            ViewBag.EveOrderCodes = await getOrderCodesAsync(_eveDb);
-
-            return null;
-        }
-
         private async Task populateModelAsync(dynamic vm)
         {
+            List<string> orderCodesTooltips = new List<string>();
+            foreach (OrderCodes orderCode in vm.Order.OrderCodes)
+            {
+                string tooltip = await _eveDb.cOrders.Where(x => x.OrderCode == orderCode.OrderCode)
+                    .Select(x => x.OrderName).FirstOrDefaultAsync();
+                orderCodesTooltips.Add(tooltip);
+            }
+            vm.OrderCodesTooltips = orderCodesTooltips;
+
             List<Company> companies = await _db.Company.OrderBy(x => x.Name).ToListAsync();
             vm.CompanyList = companies
                 .Select(x => new SelectListItem {
@@ -807,7 +823,7 @@ namespace memo.Controllers
                     Text = x.Name
                 });
 
-            List<SelectListItem> wonOffers = await _db.Offer
+            vm.WonOffersList = await _db.Offer
                 .Where(t => t.OfferStatusId == 2)
                 .OrderBy(t => t.OfferName)
                 .Select(x => new SelectListItem
@@ -816,9 +832,8 @@ namespace memo.Controllers
                     Value = x.OfferId.ToString(),
                 }
                 ).ToListAsync();
-            vm.WonOffersList = wonOffers;
 
-            List<SelectListItem> contracts = await _db.Contracts
+            vm.ContractsList = await _db.Contracts
                 .OrderBy(t => t.ContractName)
                 .Select(x => new SelectListItem
                 {
@@ -826,7 +841,6 @@ namespace memo.Controllers
                     Value = x.ContractsId.ToString(),
                 }
                 ).ToListAsync();
-            vm.ContractsList = contracts;
 
 
             // vm.DepartmentList = await getDepartmentListAsync2(_eveDbDochna);  // TODO zjistit, co je rychlejsi (tohle nějak failuje)

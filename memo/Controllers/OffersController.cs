@@ -224,17 +224,24 @@ namespace memo.Controllers
                     {
                         TempData["Info"] = "Nebyla provedena změna, není co uložit";
 
-                        // Populate VM
-                        List<AuditViewModel> audits = getAuditViewModel(_db).Audits
-                            .Where(x => x.TableName == "Offer" && x.KeyValue == id.ToString())
-                            .ToList();
-                        vm.Audits = audits;
+                        if (actionType == "Uložit")
+                        {
+                            // Populate VM
+                            vm.Audits = getAuditViewModel(_db).Audits
+                                .Where(x => x.TableName == "Offer" && x.KeyValue == id.ToString())
+                                .ToList();
 
-                        await populateModelAsync(vm);
+                            await populateModelAsync(vm);
 
-                        ViewBag.OfferStatusName = _db.OfferStatus.Find(vm.Offer.OfferStatusId).Name;
-                        ViewBag.CreatedOrders = _db.Order.Include(x => x.Offer).Where(x => x.OfferId == id).ToList();
-                        return View(vm);
+                            ViewBag.OfferStatusName = _db.OfferStatus.Find(vm.Offer.OfferStatusId).Name;
+                            ViewBag.CreatedOrders = _db.Order.Include(x => x.Offer).ThenInclude(x => x.SharedInfo).Where(x => x.OfferId == id).ToList();
+
+                            return View(vm);
+                        }
+                        else
+                        {
+                            return RedirectToAction(nameof(Index));
+                        }
                     }
 
             //         vm.Offer.PriceCzk = Convert.ToInt32(vm.Offer.Price * vm.Offer.ExchangeRate);  // 1000 * 26,243
