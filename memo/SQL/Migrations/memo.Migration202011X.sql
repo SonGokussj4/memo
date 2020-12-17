@@ -556,5 +556,12 @@ DROP COLUMN ReceiveDate, Subject, ContactId, CompanyId, CurrencyId, EveDivision,
 GO
 
 
+-- 17.12.2020 --
 
+
+-----------------------------------------------------------------------------------------
+-- PRIDAT DO TABULKY Order SLOUPEC KeyAccountManager (string 50)
+ALTER TABLE [memo].[Order]
+ADD KeyAccountManager NVARCHAR(50) NULL;
+GO
 

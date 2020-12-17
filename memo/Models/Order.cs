@@ -51,6 +51,9 @@ namespace memo.Models
         [Display(Name = "Vedoucí projektu v EVEKTORu")]
         public string EveContactName { get; set; }
 
+        [Display(Name = "Key acc. manager")]
+        public string KeyAccountManager { get; set; }
+
         [Display(Name = "Celkem hodin plánovaných")]
         public int? TotalHours { get; set; }
 

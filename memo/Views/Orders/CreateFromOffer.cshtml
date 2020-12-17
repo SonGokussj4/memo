@@ -134,11 +134,18 @@
 
             <div class="form-group row">
                 <label asp-for="Order.EveContactName" class="required col-lg-3 col-form-label form-control-label control-label"></label>
-                <div class="col-lg-9">
+                <div class="col-lg-3">
                     <select asp-for="Order.EveContactName" asp-items="Model.EveContactList" class="form-control selectpicker">
                         <option value="">-- Vyber kontakt --</option>
                     </select>
                     <span asp-validation-for="Order.EveContactName" class="text-danger"></span>
+                </div>
+                <label asp-for="Order.KeyAccountManager" class="col-lg-2 col-form-label form-control-label control-label"></label>
+                <div class="col-lg-3">
+                    <select asp-for="Order.KeyAccountManager" asp-items="Model.EveContactList" class="form-control selectpicker">
+                        <option value="">-- Vyber k.a.m --</option>
+                    </select>
+                    <span asp-validation-for="Order.KeyAccountManager" class="text-danger"></span>
                 </div>
             </div>
 

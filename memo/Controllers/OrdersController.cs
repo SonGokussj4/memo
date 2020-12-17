@@ -537,6 +537,7 @@ namespace memo.Controllers
                         oldVm.Order.PriceFinal == vm.Order.PriceFinal &&
                         oldVm.Order.PriceDiscount == vm.Order.PriceDiscount &&
                         oldVm.Order.EveContactName == vm.Order.EveContactName &&
+                        oldVm.Order.KeyAccountManager == vm.Order.KeyAccountManager &&
                         oldVm.Order.ExchangeRate == vm.Order.ExchangeRate &&
                         oldVm.Order.PriceFinalCzk == vm.Order.PriceFinalCzk &&
                         oldVm.Order.Notes == vm.Order.Notes &&
