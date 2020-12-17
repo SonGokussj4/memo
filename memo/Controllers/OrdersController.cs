@@ -74,7 +74,7 @@ namespace memo.Controllers
             }
 
             // TODO(jverner) !!! Toto mi spotrebuje dalsi pul sekundy, boha.......
-            Dictionary<string, int> dc = await GetOrderSumHoursDictAsync();
+            // Dictionary<string, int> dc = await GetOrderSumHoursDictAsync();
             foreach (Order order in vm.Orders)
             {
                 // order.Burned = dc.Get(order.OrderCode, 0);  // TODO delat ve ViewModelu
