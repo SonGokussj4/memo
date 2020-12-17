@@ -48,7 +48,7 @@
         {
             <ul>
                 <li><b>Předmět:</b> @Model.Contract.SharedInfo.Subject - <b>@String.Format(CultureInfo.CreateSpecificCulture(Model.Contract.SharedInfo.Currency.CultureCode), "{0:C0}", @Model.Contract.SharedInfo.Price)</b> (@String.Format(CultureInfo.CreateSpecificCulture("cs-CZ"), "{0:C0}", Model.Contract.SharedInfo.PriceCzk))</li>
-                @* <li><b>Zákazník:</b> @Model.OfferCompanyName (<b>Splatnost faktury:</b> @Model.InvoiceDueDays dní)</li>
+                @* <li><b>Zákazník:</b> @Model.OfferCompanyName (<b>Splatnost faktury:</b> @Model.Order?.SharedInfo?.Company?.InvoiceDueDays dní)</li>
                 <li>
                     <b>Přijetí poptávky:</b> @String.Format("{0:dd.MM.yyyy}", @Model.Offer.ReceiveDate) /
                     <b>Odeslání nabídky:</b> @String.Format("{0:dd.MM.yyyy}", @Model.Offer.SentDate) /
@@ -109,14 +109,14 @@
             <div class="col-lg-3">
                 <span class="has-float-label">
                     <input asp-for="Order.NegotiatedPrice" class="form-control" type="text" required placeholder=" "/>
-                    <label asp-for="Order.NegotiatedPrice">Vyjednaná cena [@Model.CurrencyName]</label>
+                    <label asp-for="Order.NegotiatedPrice">Vyjednaná cena [@Model.Contract?.SharedInfo?.Currency?.Name]</label>
                 </span>
                 <span asp-validation-for="Order.NegotiatedPrice" class="text-danger"></span>
             </div>
             <div class="col-lg-3">
                 <span class="has-float-label">
                     <input asp-for="Order.PriceDiscount" class="form-control" type="text" placeholder=" "/>
-                    <label asp-for="Order.PriceDiscount">Sleva z nabídky [@Model.CurrencyName]</label>
+                    <label asp-for="Order.PriceDiscount">Sleva z nabídky [@Model.Contract?.SharedInfo?.Currency?.Name]</label>
                 </span>
                 <span asp-validation-for="Order.PriceDiscount" class="text-danger"></span>
             </div>
@@ -194,7 +194,7 @@
                     <div class="col-lg-3">
                         <div class="input-group mb-2 mr-sm-2">
                             <div class="input-group-prepend">
-                                <div class="input-group-text">@Model.CurrencyName</div>
+                                <div class="input-group-text">@Model.Contract?.SharedInfo?.Currency?.Name</div>
                             </div>
                             <input asp-for="@Model.Order.Invoices[i].Cost" class="form-control" type="text" placeholder="Částka" />
                             <span asp-validation-for="@Model.Order.Invoices[i].Cost" class="text-danger"></span>
@@ -230,7 +230,7 @@
                     <div class="col-lg-3">
                         <div class="input-group mb-2 mr-sm-2">
                             <div class="input-group-prepend">
-                                <div class="input-group-text">@Model.CurrencyName</div>
+                                <div class="input-group-text">@Model.Contract?.SharedInfo?.Currency?.Name</div>
                             </div>
                             <input asp-for="@Model.Order.OtherCosts[i].Cost" class="form-control" type="text" placeholder="Částka" />
                             <span asp-validation-for="@Model.Order.OtherCosts[i].Cost" class="text-danger"></span>
@@ -249,11 +249,11 @@
             <div class="col-lg-3">
                  <div class="input-group mb-2 mr-sm-2">
                     <div class="input-group-prepend">
-                        <div class="input-group-text"><span>@Model.CurrencyName</span></div>
+                        <div class="input-group-text"><span>@Model.Contract?.SharedInfo?.Currency?.Name</span></div>
                     </div>
                     <input asp-for="Order.ExchangeRate" class="form-control" type="text" />
                     <div class="input-group-append">
-                        <div class="input-group-text" data-toggle="tooltip" title="Vložit dnešní kurz z ČNB" onclick="changeExchangeRate('@Model.CurrencyName');" style="cursor: pointer;">
+                        <div class="input-group-text" data-toggle="tooltip" title="Vložit dnešní kurz z ČNB" onclick="changeExchangeRate('@Model.Contract?.SharedInfo?.Currency?.Name');" style="cursor: pointer;">
                             <i class="fa fa-caret-left">&nbsp;<i class="fa fa-cloud-download"></i></i>
                         </div>
                     </div>
@@ -298,7 +298,7 @@
         function AddInvoiceDueDays(inputId) {
             var _invoiceIssueInput = $('#Order_Invoices_' + inputId + '__InvoiceIssueDate');
             var date = new Date(_invoiceIssueInput.val());
-            var futureDate = getPrettyDate(date, @Model.InvoiceDueDays);
+            var futureDate = getPrettyDate(date, @Model.Order?.SharedInfo?.Company?.InvoiceDueDays);
             var _invoiceDueInput = $('#Order_Invoices_' + inputId + '__InvoiceDueDate').val(futureDate);
         }
 
@@ -382,7 +382,7 @@
 
             //$('.invoiceDate').change('input', function(){
             //    var date = new Date($('.invoiceDate').val());
-            //    var futureDate = getPrettyDate(date, @Model.InvoiceDueDays);
+            //    var futureDate = getPrettyDate(date, @Model.Order?.SharedInfo?.Company?.InvoiceDueDays);
             //    $('#Order_InvoiceDueDate').val(futureDate);
             //});
 
@@ -416,7 +416,7 @@
                             '<div class="col-lg-3">'+
                                 '<span class="has-float-label">'+
                                     '<input class="form-control" type="text" placeholder="Částka" data-val="true" data-val-number="The field Částka must be a number." data-val-required="The Částka field is required." id="Order_Invoices_' + idInvoice + '__Cost" name="Order.Invoices[' + idInvoice + '].Cost" value="" />'+
-                                    '<label for="Order_Invoices_' + idInvoice + '__Cost">Částka [@Model.CurrencyName]</label>'+
+                                    '<label for="Order_Invoices_' + idInvoice + '__Cost">Částka [@Model.Contract?.SharedInfo?.Currency?.Name]</label>'+
                                 '</span>'+
                                 '<span class="text-danger field-validation-valid" data-valmsg-for="Order.Invoices[' + idInvoice + '].Cost" data-valmsg-replace="true"></span>'+
                             '</div>'+
@@ -450,7 +450,7 @@
                 if ( parsed_date != null) {
                     var issueDate = getPrettyDate(new Date(parsed_date), 0)
                     _invoiceIssueInput.val(issueDate);
-                    var futureDate = getPrettyDate(new Date(parsed_date), @Model.InvoiceDueDays);
+                    var futureDate = getPrettyDate(new Date(parsed_date), @Model.Order?.SharedInfo?.Company?.InvoiceDueDays);
                     _invoiceDueInput.val(futureDate);
                 }
 
@@ -460,7 +460,7 @@
 
                 _invoiceIssueInput.on("changeDate", function(data) {
                     var date = data.date;
-                    var futureDate = getPrettyDate(date, @Model.InvoiceDueDays);
+                    var futureDate = getPrettyDate(date, @Model.Order?.SharedInfo?.Company?.InvoiceDueDays);
                     $('#Order_Invoices_' + _invoiceIssueInput.data('id') + '__InvoiceDueDate').val(futureDate);
                  });
 
@@ -488,7 +488,7 @@
                         '<div class="col-lg-3">'+
                             '<span class="has-float-label">'+
                                 '<input class="form-control" type="text" placeholder="Částka" data-val="true" data-val-number="The field Částka must be a number." data-val-required="The Částka field is required." id="Order_OtherCosts_' + idOtherCosts + '__Cost" name="Order.OtherCosts[' + idOtherCosts + '].Cost" value="" />'+
-                                '<label for="Order_OtherCosts_' + idOtherCosts + '__Cost"">Částka [@Model.CurrencyName]</label>'+
+                                '<label for="Order_OtherCosts_' + idOtherCosts + '__Cost"">Částka [@Model.Contract?.SharedInfo?.Currency?.Name]</label>'+
                             '</span>'+
                             '<span class="text-danger field-validation-valid" data-valmsg-for="Order.Invoices[' + idOtherCosts + '].Cost" data-valmsg-replace="true"></span>'+
                         '</div>'+
@@ -539,7 +539,7 @@
 
                         '<div class="col-lg-3">'+
                             '<span class="has-float-label">'+
-                                '<input class="form-control" type="text" autocomplete="off" placeholder=" " data-val="true" data-val-length="The field Hodinová mzda @Model.CurrencyName must be a string with a maximum length of 50." data-val-length-max="50" id="Order_OrderCodes_' + idOrderCode + '__HourWageSubject" maxlength="50" name="Order.OrderCodes[' + idOrderCode + '].HourWageSubject" value="">'+
+                                '<input class="form-control" type="text" autocomplete="off" placeholder=" " data-val="true" data-val-length="The field Hodinová mzda @Model.Contract?.SharedInfo?.Currency?.Name must be a string with a maximum length of 50." data-val-length-max="50" id="Order_OrderCodes_' + idOrderCode + '__HourWageSubject" maxlength="50" name="Order.OrderCodes[' + idOrderCode + '].HourWageSubject" value="">'+
                                 '<label for="Order_OrderCodes_' + idOrderCode + '__HourWageSubject">Popis hod. mzdy</label>'+
                             '</span>'+
                             '<span class="text-danger field-validation-valid" data-valmsg-for="Order.OrderCodes[' + idOrderCode + '].HourWageSubject" data-valmsg-replace="true"></span>'+
@@ -548,7 +548,7 @@
                         '<div class="col-lg-3">'+
                             '<span class="has-float-label">'+
                                 '<input class="form-control" type="text" placeholder=" " data-val="true" data-val-number="The field Hodinová mzda must be a number." id="Order_OrderCodes_' + idOrderCode + '__HourWageCost" name="Order.OrderCodes[' + idOrderCode + '].HourWageCost" value="">'+
-                                '<label for="Order_OrderCodes_' + idOrderCode + '__HourWageCost">Hod. mzda [@Model.CurrencyName]</label>'+
+                                '<label for="Order_OrderCodes_' + idOrderCode + '__HourWageCost">Hod. mzda [@Model.Contract?.SharedInfo?.Currency?.Name]</label>'+
                             '</span>'+
                             '<span class="text-danger field-validation-valid" data-valmsg-for="Order.OrderCodes[' + idOrderCode + '].HourWageCost" data-valmsg-replace="true"></span>'+
                         '</div>'+

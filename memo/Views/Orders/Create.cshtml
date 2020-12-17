@@ -343,7 +343,7 @@
         function AddInvoiceDueDays(inputId) {
             var _invoiceIssueInput = $('#Order_Invoices_' + inputId + '__InvoiceIssueDate');
             var date = new Date(_invoiceIssueInput.val());
-            var futureDate = getPrettyDate(date, @Model.InvoiceDueDays);
+            var futureDate = getPrettyDate(date, @Model.Order?.SharedInfo?.Company?.InvoiceDueDays);
             var _invoiceDueInput = $('#Order_Invoices_' + inputId + '__InvoiceDueDate').val(futureDate);
         }
 
@@ -420,7 +420,7 @@
 
             //$('.invoiceDate').change('input', function(){
             //    var date = new Date($('.invoiceDate').val());
-            //    var futureDate = getPrettyDate(date, @Model.InvoiceDueDays);
+            //    var futureDate = getPrettyDate(date, @Model.Order?.SharedInfo?.Company?.InvoiceDueDays);
             //    $('#Order_InvoiceDueDate').val(futureDate);
             //});
 
@@ -488,7 +488,7 @@
                 if ( parsed_date != null) {
                     var issueDate = getPrettyDate(new Date(parsed_date), 0)
                     _invoiceIssueInput.val(issueDate);
-                    var futureDate = getPrettyDate(new Date(parsed_date), @Model.InvoiceDueDays);
+                    var futureDate = getPrettyDate(new Date(parsed_date), @Model.Order?.SharedInfo?.Company?.InvoiceDueDays);
                     _invoiceDueInput.val(futureDate);
                 }
 
@@ -498,7 +498,7 @@
 
                 _invoiceIssueInput.on("changeDate", function(data) {
                     var date = data.date;
-                    var futureDate = getPrettyDate(date, @Model.InvoiceDueDays);
+                    var futureDate = getPrettyDate(date, @Model.Order?.SharedInfo?.Company?.InvoiceDueDays);
                     $('#Order_Invoices_' + _invoiceIssueInput.data('id') + '__InvoiceDueDate').val(futureDate);
                  });
 

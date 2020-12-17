@@ -24,11 +24,6 @@
         <div class="card">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-            @* <input type="hidden" asp-for="Offer.SharedInfo.EveCreatedUser" />
-            <input type="hidden" asp-for="Offer.SharedInfo.EveDivision" />
-            <input type="hidden" asp-for="Offer.SharedInfo.EveDepartment" />
-            <input type="hidden" asp-for="Offer.SharedInfo.Subject" /> *@
-
             @* PARTIAL: SELECT  *@
             @await Html.PartialAsync("_PartialOrder-Create-SelectFrom", new ViewDataDictionary(ViewData) {{ "selectedOffer", "selected" }})
 
@@ -129,10 +124,10 @@
                     </span>
                     <span asp-validation-for="Order.PriceDiscount" class="text-danger"></span>
                 </div>
-                @if (@Model.Order?.OfferId != 0 && @Model.Order?.OfferId != null)
+                @if (@Model.Order.OfferId != 0)
                 {
                 <div class="col-lg-3">
-                    <p class="mt-1">Cena nab: <b>@String.Format(CultureInfo.CreateSpecificCulture(Model.Order?.Offer?.SharedInfo?.Currency.CultureCode), "{0:C0}", @Model.Order?.Offer?.SharedInfo?.Price)</b></p>
+                    <p class="mt-1">Cena nab: <b>@String.Format(CultureInfo.CreateSpecificCulture(Model.Order.SharedInfo.Currency.CultureCode), "{0:C0}", @Model.Order.SharedInfo.Price)</b></p>
                 </div>
                 }
             </div>
@@ -308,7 +303,7 @@
         function AddInvoiceDueDays(inputId) {
             var _invoiceIssueInput = $('#Order_Invoices_' + inputId + '__InvoiceIssueDate');
             var date = new Date(_invoiceIssueInput.val());
-            var futureDate = getPrettyDate(date, @Model.InvoiceDueDays);
+            var futureDate = getPrettyDate(date, @Model.Order?.SharedInfo?.Company?.InvoiceDueDays);
             var _invoiceDueInput = $('#Order_Invoices_' + inputId + '__InvoiceDueDate').val(futureDate);
         }
 
@@ -364,9 +359,8 @@
         $(document).ready(function(){
 
             // Upon page load, check if OfferId != 0 (offer is selected) then set orderForm as visible
-            //if (@Model.Order.OfferId != 0) {
-            if (@Model.Order.OfferId != 0) {
-                console.log("OfferId: " + @Model.Order.OfferId);
+            if (@Html.Raw(Json.Serialize(@Model.Order.OfferId)) != null) {
+                console.log("OfferId: " + @Json.Serialize(@Model.Order.OfferId));
                 $("#orderForm").show();
             }
 
@@ -392,13 +386,13 @@
 
             //$('.invoiceDate').change('input', function(){
             //    var date = new Date($('.invoiceDate').val());
-            //    var futureDate = getPrettyDate(date, @Model.InvoiceDueDays);
+            //    var futureDate = getPrettyDate(date, @Model.Order?.SharedInfo?.Company?.InvoiceDueDays);
             //    $('#Order_InvoiceDueDate').val(futureDate);
             //});
 
             // Add new INVOICES row
             var idInvoice = @Model.Order.Invoices.Count();
-            var invoiceDueDays = @Html.Raw(Json.Serialize(Model.Offer?.SharedInfo.Company.InvoiceDueDays));
+            var invoiceDueDays = @Html.Raw(Json.Serialize(Model.Order?.SharedInfo?.Company?.InvoiceDueDays));
             $('.add-row-invoice').click(function () {
                 console.log('Adding invoice: ' + idInvoice);
                 var html =''+
@@ -460,7 +454,7 @@
                 if ( parsed_date != null) {
                     var issueDate = getPrettyDate(new Date(parsed_date), 0)
                     _invoiceIssueInput.val(issueDate);
-                    var futureDate = getPrettyDate(new Date(parsed_date), @Model.Offer?.SharedInfo.Company.InvoiceDueDays);
+                    var futureDate = getPrettyDate(new Date(parsed_date), @Model.Order?.SharedInfo?.Company?.InvoiceDueDays);
                     _invoiceDueInput.val(futureDate);
                 }
 
@@ -470,7 +464,7 @@
 
                 _invoiceIssueInput.on("changeDate", function(data) {
                     var date = data.date;
-                    var futureDate = getPrettyDate(date, @Model.Offer?.SharedInfo.Company.InvoiceDueDays);
+                    var futureDate = getPrettyDate(date, @Model.Order?.SharedInfo?.Company?.InvoiceDueDays);
                     $('#Order_Invoices_' + _invoiceIssueInput.data('id') + '__InvoiceDueDate').val(futureDate);
                  });
 

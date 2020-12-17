@@ -100,8 +100,8 @@
         <tr>
             <th scope="col" class="text-center" data-field="0" data-sortable="true" data-filter-control="input" data-footer-formatter="idFormatter">Edit</th>
             <th scope="col" class="text-center" data-field="1" data-sortable="true"><span data-toggle="tooltip" title="Aktivní / Neaktivní"><i class="fa fa-eye text-secondary"></i></span></th>
-            <th scope="col" class="text-center" data-field="2" data-sortable="true" data-filter-control="input">Číslo</th>
-            <th scope="col" class="text-center" data-field="3" data-sortable="true" data-filter-control="input">Vytvořeno</th>
+            <th scope="col" class="text-center" data-field="2" data-sortable="true" data-filter-control="input">Vytvořeno</th>
+            <th scope="col" class="text-center" data-field="3" data-sortable="true" data-filter-control="input">Číslo</th>
             <th scope="col" class="text-center" data-field="4" data-sortable="true" data-filter-control="input">Předmět</th>
             <th scope="col" class="text-center" data-field="5" data-sortable="true" data-filter-control="input">Datum přijetí</th>
             <th scope="col" class="text-center" data-field="6" data-sortable="true" data-filter-control="input">Divize</th>
@@ -139,12 +139,12 @@
                     </th>
                 }
                 @* Vytvořeno *@
-                <th scope="row" class="text-left">@item.ContractName</th>
-                @* Vytvořeno *@
                 <th scope="row" class="text-left">
                     <span style="display:none">@String.Format("{0:yyyy-MM-dd HH:mm}", @item.CreatedDate)</span>  <!-- Hidden span for sorting date correctly-->
                     @item.CreatedDate.ToString("dd.MM.yyyy")
                 </th>
+                @* Číslo *@
+                <th scope="row" class="text-left">@item.ContractName</th>
                 @* Předmět *@
                 <th scope="row" class="text-left">@item.SharedInfo.Subject</th>
                 @* Datum přijetí *@

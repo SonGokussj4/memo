@@ -19,10 +19,9 @@
 
 // Parameters for DatePicker calendar
 var datepickerParameters = new Array({
-    // format: "yyyy-mm-dd",
     format: "dd.mm.yyyy",
     todayBtn: "linked",
-    startDate: "1980-01-01",
+    startDate: "1988-09-02",
     language: "cs",
     daysOfWeekHighlighted: "0,6",
     calendarWeeks: true,
@@ -42,47 +41,6 @@ $.fn.modal.Constructor.prototype._enforceFocus = function () { };
 // Add 'replaceAll()' function to JavaScript Strings
 String.prototype.replaceAllTxt = function replaceAll(search, replace) { return this.split(search).join(replace); };
 
-
-// ==========================================================================
-// BOOTSTRAP ADDITIONS - NAVBAR DROPDOWN ON HOVER
-// ==========================================================================
-// const $dropdown = $(".dropdown");
-// const $dropdownMenu = $(".dropdown-menu");
-// const $dropdownToggle = $(".dropdown-toggle");
-// const showClass = "show";
-
-// $(window).on("load resize", function() {
-//     if (this.matchMedia("(min-width: 768px)").matches) {
-//         $dropdown.hover(
-//             function() {
-//                 const $this = $(this);
-//                 $this.addClass(showClass);
-//                 $this.find($dropdownToggle).attr("aria-expanded", "true");
-//                 $this.find($dropdownMenu).addClass(showClass);
-//             },
-//             function() {
-//                 const $this = $(this);
-//                 $this.removeClass(showClass);
-//                 $this.find($dropdownToggle).attr("aria-expanded", "false");
-//                 $this.find($dropdownMenu).removeClass(showClass);
-//             }
-//         );
-//     } else {
-//         $dropdown.off("mouseenter mouseleave");
-//     }
-// });
-
-// $('.dropdown-submenu > a').on("click", function(e) {
-//     var submenu = $(this);
-//     $('.dropdown-submenu .dropdown-menu').removeClass('show');
-//     submenu.next('.dropdown-menu').addClass('show');
-//     e.stopPropagation();
-// });
-
-// $('.dropdown').on("hidden.bs.dropdown", function() {
-//     // hide any open menus when parent closes
-//     $('.dropdown-menu.show').removeClass('show');
-// });
 
 // ==========================================================================
 // INITIALIZE UPON PAGE LOAD

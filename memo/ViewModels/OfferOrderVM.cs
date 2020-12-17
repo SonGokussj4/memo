@@ -36,7 +36,7 @@ namespace memo.ViewModels
         [Display(Name = "Splatnost")]
         public int InvoiceDueDays { get; set; }
 
-        public string CurrencyName { get; set; }
+        // public string CurrencyName { get; set; }
 
         [Display(Name = "Zbývá k vyčerpání")]
         public int UnspentMoney { get; set; }

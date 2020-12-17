@@ -1,15 +1,14 @@
 @using System.Globalization;
 
-@{
-    ViewData["Title"] = "Úprava zakázky";
-}
-
-@* @model memo.ViewModels.CreateOfferViewModel *@
 @model memo.ViewModels.OfferOrderVM
 
-<style>
-
-</style>
+@{
+    ViewData["Title"] = "Úprava zakázky";
+    string EvektorSourceText = "";
+    EvektorSourceText = Model.Order.FromType == "N" ? "Evektor nabídka" : (Model.Order.FromType == "Z" ? "Evektor rámcovka" : "Bez smlouvy");
+    @* if (Model.Order.FromType == "N") { EvektorSourceText = "Evektor nabídka"; }
+    else if (Model.Order.FromType == "Z") { EvektorSourceText = "Evektor rámcovka"; } *@
+}
 
 @await Html.PartialAsync("_PartialToastNotification")
 
@@ -27,6 +26,9 @@
         --------------------------------------------------------------------------------------->
         <form class="card" role="form" autocomplete="on" asp-action="Refresh" method="post">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <input type="hidden" asp-for="Order.Offer.OfferId" />
+        <input type="hidden" asp-for="Order.OrderId" />
         <input type="hidden" asp-for="Edit" value="true" />
 
         <h5 class="card-title">Detaily nabídky</h5>
@@ -34,12 +36,8 @@
         <hr />
 
         <div class="form-group row">
-            <label asp-for="Order.Offer.OfferId" class="required col-lg-3 col-form-label form-control-label control-label">Evektor nabídka</label>
+            <label asp-for="Order.Offer.OfferId" class="col-lg-3 col-form-label form-control-label control-label">@EvektorSourceText</label>
             <div class="col-lg-4">
-                <input type="hidden" asp-for="Order.Offer.OfferId" />
-                <input type="hidden" asp-for="Order.OrderId" />
-                @* <input type="hidden" asp-for="Order.SharedInfo.EveCreatedUser" /> *@
-
                 <input asp-for="Order.Offer.OfferName" class="form-control" type="text" readonly />
                 <span asp-validation-for="Order.Offer.OfferId" class="text-danger"></span>
             </div>
@@ -48,13 +46,13 @@
         @* @if (@Model.Offer?.OfferId != 0 && @Model.Offer?.OfferId != null)
         { *@
             <ul>
-                <li><b>Předmět:</b> @Model.Order.SharedInfo.Subject - <b>@String.Format(CultureInfo.CreateSpecificCulture(Model.Order.SharedInfo.Currency.CultureCode), "{0:C0}", @Model.Order.SharedInfo.Price)</b> (@String.Format(CultureInfo.CreateSpecificCulture("cs-CZ"), "{0:C0}", Model.Order.SharedInfo.PriceCzk))</li>
-                @* <li><b>Zákazník:</b> @Model.OfferCompanyName (<b>Splatnost faktury:</b> @Model.InvoiceDueDays dní)</li> *@
-                @* <li>
-                    <b>Přijetí poptávky:</b> @String.Format("{0:dd.MM.yyyy}", @Model.Offer.ReceiveDate) /
-                    <b>Odeslání nabídky:</b> @String.Format("{0:dd.MM.yyyy}", @Model.Offer.SentDate) /
-                    <b><label asp-for="Offer.EstimatedFinishDate"></label>:</b> @String.Format("{0:dd.MM.yyyy}", @Model.Offer.EstimatedFinishDate)
-                </li> *@
+                <li><b>Předmět:</b> @Model.Order.SharedInfo.Subject - (<b>Cena:</b> @String.Format(CultureInfo.CreateSpecificCulture(Model.Order.SharedInfo.Currency.CultureCode), "{0:C0}", @Model.Order.SharedInfo.Price) @String.Format(CultureInfo.CreateSpecificCulture("cs-CZ"), "{0:C0}", Model.Order.SharedInfo.PriceCzk))</li>
+                <li><b>Zákazník:</b> @Model.Order.SharedInfo.Company.Name (<b>Splatnost faktury:</b> @Model.Order.SharedInfo.Company.InvoiceDueDays dní)</li>
+                <li>
+                    <b>Přijetí poptávky:</b> @String.Format("{0:dd.MM.yyyy}", @Model.Order.SharedInfo.ReceiveDate) /
+                    @* <b>Odeslání nabídky:</b> @String.Format("{0:dd.MM.yyyy}", @Model.Order.SharedInfo.SentDate) / *@
+                    <b><label asp-for="Order.SharedInfo.EstimatedFinishDate"></label>:</b> @String.Format("{0:dd.MM.yyyy}", @Model.Order.SharedInfo.EstimatedFinishDate)
+                </li>
             </ul>
         @* } *@
 
@@ -63,10 +61,16 @@
                 <a asp-action="Index" class="btn btn-light border"><i class="fa fa-arrow-left"></i> Zpět</a>
             </div>
 
-            @if (@Model.Offer?.OfferId != 0 && @Model.Offer?.OfferId != null)
+            @if (@Model.Order.OfferId != 0)
             {
                 <div class="">
-                    <a asp-action="Edit" asp-controller="Offers" asp-route-id="@Model.Offer.OfferId" class="btn btn-primary"><i class="fa fa-list-alt"></i> Přejít na nabídku</a>
+                    <a asp-action="Edit" asp-controller="Offers" asp-route-id="@Model.Order.OfferId" class="btn btn-primary"><i class="fa fa-list-alt"></i> Přejít na nabídku</a>
+                </div>
+            }
+            else if (@Model.Order.ContractId != 0)
+            {
+                <div class="">
+                    <a asp-action="Edit" asp-controller="Contracts" asp-route-id="@Model.Order.ContractId" class="btn btn-primary"><i class="fa fa-list-alt"></i> Přejít na rámcovku</a>
                 </div>
             }
         </div>
@@ -82,15 +86,20 @@
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <input type="hidden" asp-for="Order.OfferId" />
         <input type="hidden" asp-for="Order.OrderId" />
+        <input type="hidden" asp-for="Order.FromType" />
+        <input type="hidden" asp-for="Order.SharedInfoId" />
         <input type="hidden" asp-for="Order.SharedInfo.Subject" />
         <input type="hidden" asp-for="Order.SharedInfo.EveDivision" />
         <input type="hidden" asp-for="Order.SharedInfo.EveDepartment" />
         <input type="hidden" asp-for="Order.SharedInfo.EveCreatedUser" />
-        <input type="hidden" asp-for="Order.SharedInfo.Company.Name" />
-        <input type="hidden" asp-for="Order.SharedInfo.Company.InvoiceDueDays" />
-        <input type="hidden" asp-for="Order.SharedInfo.Contact.CompanyId" />
-        <input type="hidden" asp-for="Order.SharedInfo.Contact.PersonName" />
-        <input type="hidden" asp-for="Order.SharedInfo.Contact.PersonLastName" />
+        <input type="hidden" asp-for="Order.SharedInfo.ReceiveDate" />
+        <input type="hidden" asp-for="Order.SharedInfo.CompanyId" />
+        <input type="hidden" asp-for="Order.SharedInfo.ContactId" />
+        <input type="hidden" asp-for="Order.SharedInfo.CurrencyId" />
+        <input type="hidden" asp-for="Order.CreatedDate" />
+        <input type="hidden" asp-for="Order.CreatedBy" />
+        <input type="hidden" asp-for="Order.ModifiedBy" />
+        <input type="hidden" asp-for="Order.ModifiedDate" />
 
         <div class="cardTitleMerged">
 
@@ -383,11 +392,6 @@
             </div>
         </div>
 
-        <input asp-for="Order.FromType" type="text" readonly hidden />
-        <input asp-for="Order.CreatedDate" type="text" readonly hidden />
-        <input asp-for="Order.CreatedBy" type="text" readonly hidden />
-        <input asp-for="Order.ModifiedBy" type="text" readonly hidden />
-
         </form>
     </div>
 </div>
@@ -445,7 +449,7 @@
         function AddInvoiceDueDays(inputId) {
             var _invoiceIssueInput = $('#Order_Invoices_' + inputId + '__InvoiceIssueDate');
             var date = new Date(_invoiceIssueInput.val());
-            var futureDate = getPrettyDate(date, @Model.InvoiceDueDays);
+            var futureDate = getPrettyDate(date, @Model.Order.SharedInfo.Company.InvoiceDueDays);
             var _invoiceDueInput = $('#Order_Invoices_' + inputId + '__InvoiceDueDate').val(futureDate);
         }
 
@@ -628,7 +632,7 @@
 
             $('.mycalendar input').datepicker(datepickerParameters[0]);
 
-            var offerPrice = parseInt('@Model.Order.Offer.SharedInfo.Price');
+            var offerPrice = parseInt('@Model.Order.SharedInfo.Price');
 
             $('#Order_NegotiatedPrice').on('keydown input change textInput', function(){
                 var negotiatedPrice = parseInt($('#Order_NegotiatedPrice').val());
@@ -642,7 +646,7 @@
 
             $('#Order_InvoiceIssueDate').change('input', function(){
                 var date = new Date($('#Order_InvoiceIssueDate').val());
-                var futureDate = getPrettyDate(date, @Model.InvoiceDueDays);
+                var futureDate = getPrettyDate(date, @Model.Order.SharedInfo.Company.InvoiceDueDays);
                 $('#Order_InvoiceDueDate').val(futureDate);
             });
 
@@ -652,7 +656,7 @@
                 let dateInput = $(`#${item.id}`);
                 dateInput.on("changeDate", function(data) {
                     var date = data.date;
-                    var futureDate = getPrettyDate(date, @Model.InvoiceDueDays);
+                    var futureDate = getPrettyDate(date, @Model.Order.SharedInfo.Company.InvoiceDueDays);
                     var childIssueId = data.target.id.split("__")[0];  // Order_Invoices_X
                     childDue = $(`#${childIssueId}__InvoiceDueDate`).val(futureDate);
                 });
@@ -716,13 +720,13 @@
                 var _invoiceIssueInput = $('#Order_Invoices_' + idInvoice + '__InvoiceIssueDate');
                 var _invoiceDueInput = $('#Order_Invoices_' + idInvoice + '__InvoiceDueDate');
 
-                var parsed_date = @Html.Raw(Json.Serialize(Model.Order.Offer.SharedInfo.EstimatedFinishDate))
+                var parsed_date = @Html.Raw(Json.Serialize(Model.Order.SharedInfo.EstimatedFinishDate))
                 if ( parsed_date != null) {
                     var issueDate = getPrettyDate(new Date(parsed_date), 0)
                     //_invoiceIssueInput.val(new Date(parsed_date).toISOString().substring(0, 10));
                     _invoiceIssueInput.val(issueDate);
                     var date = new Date(_invoiceIssueInput.val());
-                    var futureDate = getPrettyDate(date, @Model.InvoiceDueDays);
+                    var futureDate = getPrettyDate(date, @Model.Order.SharedInfo.Company.InvoiceDueDays);
                     _invoiceDueInput.val(futureDate);
                 }
 
@@ -732,7 +736,7 @@
 
                 _invoiceIssueInput.on("changeDate", function(data) {
                     var date = data.date;
-                    var futureDate = getPrettyDate(date, @Model.InvoiceDueDays);
+                    var futureDate = getPrettyDate(date, @Model.Order.SharedInfo.Company.InvoiceDueDays);
                     $('#Order_Invoices_' + _invoiceIssueInput.data('id') + '__InvoiceDueDate').val(futureDate);
                 });
 
