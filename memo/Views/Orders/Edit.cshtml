@@ -8,6 +8,12 @@
     EvektorSourceText = Model.Order.FromType == "N" ? "Evektor nabídka" : (Model.Order.FromType == "Z" ? "Evektor rámcovka" : "Bez smlouvy");
     @* if (Model.Order.FromType == "N") { EvektorSourceText = "Evektor nabídka"; }
     else if (Model.Order.FromType == "Z") { EvektorSourceText = "Evektor rámcovka"; } *@
+
+    string PriceInCzk = "";
+    if (Model.Order.SharedInfo.Currency.Name != "CZK")
+    {
+        PriceInCzk = $"({@String.Format(CultureInfo.CreateSpecificCulture("cs-CZ"), "{0:C0}", Model.Order.SharedInfo.PriceCzk)})";
+    }
 }
 
 @await Html.PartialAsync("_PartialToastNotification")
@@ -46,7 +52,7 @@
         @* @if (@Model.Offer?.OfferId != 0 && @Model.Offer?.OfferId != null)
         { *@
             <ul>
-                <li><b>Předmět:</b> @Model.Order.SharedInfo.Subject - (<b>Cena:</b> @String.Format(CultureInfo.CreateSpecificCulture(Model.Order.SharedInfo.Currency.CultureCode), "{0:C0}", @Model.Order.SharedInfo.Price) @String.Format(CultureInfo.CreateSpecificCulture("cs-CZ"), "{0:C0}", Model.Order.SharedInfo.PriceCzk))</li>
+                <li><b>Předmět:</b> @Model.Order.SharedInfo.Subject - <b>Cena:</b> @String.Format(CultureInfo.CreateSpecificCulture(Model.Order.SharedInfo.Currency.CultureCode), "{0:C0}", @Model.Order.SharedInfo.Price) @PriceInCzk</li>
                 <li><b>Zákazník:</b> @Model.Order.SharedInfo.Company.Name (<b>Splatnost faktury:</b> @Model.Order.SharedInfo.Company.InvoiceDueDays dní)</li>
                 <li>
                     <b>Přijetí poptávky:</b> @String.Format("{0:dd.MM.yyyy}", @Model.Order.SharedInfo.ReceiveDate) /
@@ -141,10 +147,10 @@
                     </select>
                     <span asp-validation-for="Order.EveContactName" class="text-danger"></span>
                 </div>
-                <label asp-for="Order.KeyAccountManager" class="col-lg-2 col-form-label form-control-label control-label"></label>
+                <label asp-for="Order.KeyAccountManager" class="col-lg-3 col-form-label form-control-label control-label"></label>
                 <div class="col-lg-3">
                     <select asp-for="Order.KeyAccountManager" asp-items="Model.EveContactList" class="form-control selectpicker">
-                        <option value="">-- Vyber k.a.m --</option>
+                        <option value="">-- Vyber managera --</option>
                     </select>
                     <span asp-validation-for="Order.KeyAccountManager" class="text-danger"></span>
                 </div>
@@ -204,17 +210,45 @@
             </div>
         </div>
 
+        <div class="form-group row">
+            <label asp-for="Order.PriceFinalCzk" class="col-lg-3 col-form-label form-control-label control-label"></label>
+            <div class="col-lg-3">
+                <div class="input-group mb-2 mr-sm-2">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text">CZK</div>
+                    </div>
+                    <input asp-for="Order.PriceFinalCzk" class="form-control" type="text" readonly />
+                </div>
+                <span asp-validation-for="Order.PriceFinalCzk" class="text-danger"></span>
+            </div>
+            <label asp-for="Order.ExchangeRate" class="col-lg-3 col-form-label form-control-label control-label"></label>
+            <div class="col-lg-3">
+                 <div class="input-group mb-2 mr-sm-2">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text"><span>@Model.Order.SharedInfo.Currency.Name</span></div>
+                    </div>
+                    <input asp-for="Order.ExchangeRate" class="form-control" type="text" />
+                    <div class="input-group-append">
+                        <div class="input-group-text" data-toggle="tooltip" title="Vložit dnešní kurz z ČNB" onclick="changeExchangeRate('@Model.Order.SharedInfo.Currency.Name');" style="cursor: pointer;">
+                            <i class="fa fa-caret-left">&nbsp;<i class="fa fa-cloud-download"></i></i>
+                        </div>
+                    </div>
+                </div>
+                <span asp-validation-for="Order.ExchangeRate" class="text-danger"></span>
+            </div>
+        </div>
+
         <div class="form-group row justify-content-center">
-            <div class="col-lg-4">
+            <div class="col-lg-5">
                 <a href="@Url.Action("CreateEveProject")" target="_blank" class="btn btn-outline-success form-control"
                     data-toggle="tooltip" data-placement="top" title="Nová EVE zakázka">
-                    <i class="fa fa-plus-square"></i> Vytvořit eve zakázku
+                    <i class="fa fa-plus-square"></i> Vytvořit eve zakázku (intranet)
                 </a>
             </div>
-            <div class="col-lg-4">
+            <div class="col-lg-5">
                 <a href="@Url.Action("CreateEveProject")" target="_blank" class="btn btn-outline-success form-control"
                 data-toggle="tooltip" data-placement="top" title="Nová EVE modulová zakázka">
-                    <i class="fa fa-plus-square"> </i> Vytvořit eve [M] zakázku
+                    <i class="fa fa-plus-square"> </i> Vytvořit eve [M] zakázku (intranet)
                 </a>
             </div>
         </div>
@@ -345,29 +379,6 @@
                 </div>
             }
             <span asp-validation-for="Order.OtherCosts" class="text-danger"></span>
-        </div>
-
-        <div class="form-group row">
-            <label asp-for="Order.PriceFinalCzk" class="col-lg-3 col-form-label form-control-label control-label"></label>
-            <div class="col-lg-3">
-                <input asp-for="Order.PriceFinalCzk" class="form-control" type="text" readonly />
-                <span asp-validation-for="Order.PriceFinalCzk" class="text-danger"></span>
-            </div>
-            <label asp-for="Order.ExchangeRate" class="col-lg-3 col-form-label form-control-label control-label"></label>
-            <div class="col-lg-3">
-                 <div class="input-group mb-2 mr-sm-2">
-                    <div class="input-group-prepend">
-                        <div class="input-group-text"><span>@Model.Order.SharedInfo.Currency.Name</span></div>
-                    </div>
-                    <input asp-for="Order.ExchangeRate" class="form-control" type="text" />
-                    <div class="input-group-append">
-                        <div class="input-group-text" data-toggle="tooltip" title="Vložit dnešní kurz z ČNB" onclick="changeExchangeRate('@Model.Order.SharedInfo.Currency.Name');" style="cursor: pointer;">
-                            <i class="fa fa-caret-left">&nbsp;<i class="fa fa-cloud-download"></i></i>
-                        </div>
-                    </div>
-                </div>
-                <span asp-validation-for="Order.ExchangeRate" class="text-danger"></span>
-            </div>
         </div>
 
         <div class="form-group row">
@@ -637,6 +648,10 @@
 
         // -----------------------  DOCUMENT READY  --------------------------//
         $(document).ready(function(){
+
+            let orderName = '@Html.Raw(@Model.Order.OrderName)';
+
+            checkItemNameExists($("#Order_OrderName"), 'Orders', ignoreName=orderName);
 
             $('.mycalendar input').datepicker(datepickerParameters[0]);
 

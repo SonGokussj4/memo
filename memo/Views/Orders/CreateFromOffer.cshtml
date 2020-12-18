@@ -140,10 +140,10 @@
                     </select>
                     <span asp-validation-for="Order.EveContactName" class="text-danger"></span>
                 </div>
-                <label asp-for="Order.KeyAccountManager" class="col-lg-2 col-form-label form-control-label control-label"></label>
+                <label asp-for="Order.KeyAccountManager" class="col-lg-3 col-form-label form-control-label control-label"></label>
                 <div class="col-lg-3">
                     <select asp-for="Order.KeyAccountManager" asp-items="Model.EveContactList" class="form-control selectpicker">
-                        <option value="">-- Vyber k.a.m --</option>
+                        <option value="">-- Vyber managera --</option>
                     </select>
                     <span asp-validation-for="Order.KeyAccountManager" class="text-danger"></span>
                 </div>
