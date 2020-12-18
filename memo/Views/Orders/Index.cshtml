@@ -150,11 +150,11 @@
                 </th>
                 @* Nabídka *@
                 <th scope="row" class="text-left" data-toggle="tooltip" title="@item.Offer?.OfferName">
-                    @item.Offer?.OfferName.Replace("EV-quo/", "")
+                    <a asp-action="Edit" asp-controller="Offers" asp-route-id="@item.OfferId">@item.Offer?.OfferName.Replace("EV-quo/", "")</a>
                 </th>
                 @* Rámcovka *@
                 <th scope="row" class="text-left" data-toggle="tooltip" title="@item.Offer?.OfferName">
-                    @item.Contract?.ContractName
+                    <a asp-action="Edit" asp-controller="Contracts" asp-route-id="@item.ContractId">@item.Contract?.ContractName</a>
                 </th>
                 @* Č. obj. zákazníka *@
                 <th scope="row" class="text-left">@item.OrderName</th>

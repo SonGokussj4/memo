@@ -75,7 +75,8 @@
         <!--------------------------------------------------------------------------------------
             FORM - ZAKAZKA
         --------------------------------------------------------------------------------------->
-        @if (@Model.Order?.OfferId != 0 && @Model.Order?.OfferId != null)
+        @* @if (@Model.Order?.OfferId != 0 && @Model.Order?.OfferId != null) *@
+        @if (@Model.Order?.OfferId != null )  // TODO(jverner) bude stacit se neptat na 0?
         {
             <form id="orderForm" class="card" role="form" autocomplete="on" asp-action="CreateFromOffer" method="post" style="display: none;">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>

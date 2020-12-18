@@ -43,5 +43,8 @@ namespace memo.Models
 
         [Display(Name = "Aktivní")]
         public Boolean Active { get; set; }
+
+
+        public virtual List<Order> Orders { get; set; }
     }
 }
