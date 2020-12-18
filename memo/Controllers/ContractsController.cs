@@ -127,7 +127,7 @@ namespace memo.Controllers
         {
             if (id == null)
             {
-                return NotFound("Hmm");
+                return NotFound("Nebylo zadáno 'id' pro vyhledání rámcové smlouvy.");
             }
 
             Contract contract = await _db.Contracts
@@ -142,9 +142,6 @@ namespace memo.Controllers
             EditContractViewModel vm = new EditContractViewModel();
             vm.Contract = contract;
 
-            // vm.Audits = getAuditViewModel(_db).Audits
-            //     .Where(x => x.TableName == "Contracts" && x.KeyValue == id.ToString())
-            //     .ToList();
             vm.Audits = await getAuditViewModelAsync(_db, "Contracts", (int)id);
 
             await populateModelAsync(vm);

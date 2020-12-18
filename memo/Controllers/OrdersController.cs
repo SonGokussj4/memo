@@ -112,54 +112,6 @@ namespace memo.Controllers
 
             await populateModelAsync(vm);
 
-            // string offerCompanyName = "";
-            // int invoiceDueDays = 0;
-            // string curSymbol = "CZK";
-            // int offerFinalPrice = 0;
-            // int offerPriceDiscount = 0;
-            // int finalPriceCzk = 0;
-            // int negotiatedPrice = 0;
-
-            // Currency cur = await _db.Currency.FirstOrDefaultAsync(x => x.CurrencyId == offer.CurrencyId);
-            // curSymbol = cur != null ? cur.Name : "";
-            // offerFinalPrice = (int)offer.Price;
-            // finalPriceCzk = Convert.ToInt32(offerFinalPrice * offer.ExchangeRate);
-            // negotiatedPrice = (int)offer.Price;
-
-            // Company company = await _db.Company.FirstOrDefaultAsync(x => x.CompanyId == offer.CompanyId);
-            // if (company != null)
-            // {
-            //     offerCompanyName = company.Name;
-            //     invoiceDueDays = (int)company.InvoiceDueDays;
-            // }
-
-            // Order order = new Order();
-            // order.OfferId = offer.OfferId;
-            // order.ExchangeRate = Decimal.Parse(getCurrencyStr(curSymbol).Replace(",", "."), CultureInfo.InvariantCulture);
-            // order.PriceFinal = offerFinalPrice;
-            // order.PriceDiscount = offerPriceDiscount;
-            // order.PriceFinalCzk = finalPriceCzk;
-            // order.NegotiatedPrice = negotiatedPrice;
-
-            // await populateModel(order, (int)offerId);
-            // List<SelectListItem> contractsList = await _db.Contracts
-            //     .Select(x => new SelectListItem {
-            //         Value = x.ContractsId.ToString(),
-            //         Text = $"{x.ContractName} - {x.SharedInfo.Subject}",
-            //     })
-            //     .ToListAsync();
-
-            // OfferOrderVM vm = new OfferOrderVM()
-            // {
-            //     Offer = offer,
-            //     OfferId = (int)offerId,
-            //     Order = order,
-            //     OfferCompanyName = offerCompanyName,
-            //     InvoiceDueDays = invoiceDueDays,
-            //     CurrencyName = curSymbol,
-            //     ContractsList = contractsList,
-            // };
-
             return View(vm);
         }
 
@@ -170,13 +122,6 @@ namespace memo.Controllers
             // await populateModel(vm.Order, vm.Order.OrderId);
 
             vm.Order.FromType = "-";
-            // vm.Order.Offer = await _db.Offer
-            //     .Where(x => x.OfferId == vm.Order.OfferId)
-            //     .Include(x => x.SharedInfo)
-            //     .FirstOrDefaultAsync();
-
-            // vm.Order.SharedInfoId = 0;
-            // vm.Order.SharedInfo = new SharedInfo();
 
             // TODO(jverner) Na toto se kouknout, komunikace s Vitou Cernym, co sem vubec chce...
             vm.Order.PriceFinal = 0;
@@ -254,43 +199,6 @@ namespace memo.Controllers
 
                 return View(vmm);
             }
-
-            // string offerCompanyName = "";
-            // int invoiceDueDays = 0;
-            // string curSymbol = "CZK";
-            // int offerFinalPrice = 0;
-            // int offerPriceDiscount = 0;
-            // int finalPriceCzk = 0;
-            // int negotiatedPrice = 0;
-
-            // Currency cur = await _db.Currency.FirstOrDefaultAsync(x => x.CurrencyId == offer.CurrencyId);
-            // curSymbol = cur != null ? cur.Name : "";
-            // offerFinalPrice = (int)offer.Price;
-            // finalPriceCzk = Convert.ToInt32(offerFinalPrice * offer.ExchangeRate);
-            // negotiatedPrice = (int)offer.Price;
-
-            // Company company = await _db.Company.FirstOrDefaultAsync(x => x.CompanyId == offer.CompanyId);
-            // if (company != null)
-            // {
-            //     offerCompanyName = company.Name;
-            //     invoiceDueDays = (int)company.InvoiceDueDays;
-            // }
-
-            // Order order = new Order();
-            // order.OfferId = offer.OfferId;
-            // order.ExchangeRate = Decimal.Parse(getCurrencyStr(curSymbol).Replace(",", "."), CultureInfo.InvariantCulture);
-            // order.PriceFinal = offerFinalPrice;
-            // order.PriceDiscount = offerPriceDiscount;
-            // order.PriceFinalCzk = finalPriceCzk;
-            // order.NegotiatedPrice = negotiatedPrice;
-
-            // await populateModel(order, (int)offerId);
-            // List<SelectListItem> contractsList = await _db.Contracts
-            //     .Select(x => new SelectListItem {
-            //         Value = x.ContractsId.ToString(),
-            //         Text = $"{x.ContractName} - {x.SharedInfo.Subject}",
-            //     })
-            //     .ToListAsync();
 
             Order order = new Order();
             order.ExchangeRate = decimal.Parse(getCurrencyStr(offer.SharedInfo.Currency.Name));
@@ -452,19 +360,6 @@ namespace memo.Controllers
                 // await _db.Offer.ToListAsync();
                 await _db.Offer.LoadAsync();
             }
-
-            // if (offerId != null)
-            // {
-            //     order.OfferId = offerId;
-            // }
-            // Offer offer = await _db.Offer.FindAsync(order.OfferId);
-            // if (offer == null)
-            // {
-            //     return NotFound();
-            // }
-
-            // Company company = await _db.Company.FindAsync(offer.CompanyId);
-            // Currency currency= await _db.Currency.FindAsync(offer.CurrencyId);
 
             // AUDITS
             List<int> orderIdInvoices = order.Invoices.Where(x => x.OrderId == id).Select(x => x.InvoiceId).ToList();
@@ -893,6 +788,21 @@ namespace memo.Controllers
                 .SumAsync(x => x.Minutes);
 
             return sumMinutes;
+
+            // tWorks
+            //     .Join(cOrders,
+            //         x => x.IDOrder, y => y.IDOrder,
+            //         (x, y) => new
+            //         {
+            //             Idorder = x.IDOrder,
+            //             OrderCode = y.OrderCode,
+            //             Minutes = x.Minutes
+            //         })
+            //     .Where(x => x.OrderCode == "005.0373")
+            //     .GroupBy(x => x.OrderCode)
+            //     .Select(gi => new {
+            //         Hours = gi.Sum(x => x.Minutes) / 60,
+            //     })
         }
 
         /// <summary>

@@ -306,8 +306,6 @@ namespace memo.Controllers
                     UpdateDate = g.First().UpdateDate,
                     KeyName = Regex.Match(g.First().PK, @"<\[(.+?)\]=(.+?)>").Groups[1].Value,
                     KeyValue = Regex.Match(g.First().PK, @"<\[(.+?)\]=(.+?)>").Groups[2].Value,
-                    // LogList = g.Select(i => @$"{{""FieldName"": ""{i.FieldName}"", ""OldValue"": ""{i.OldValue}"", ""NewValue"": ""{i.NewValue}""}}"),
-                    // LogJson = "[" + string.Join(", ", g.Select(i => @$"{{""FieldName"": ""{i.FieldName}"", ""OldValue"": ""{i.OldValue}"", ""NewValue"": ""{i.NewValue}""}}")) + "]"
                     Json = g.Select(i => JsonConvert.SerializeObject(i)),
                 })
                 .OrderByDescending(x => x.UpdateDate);
@@ -352,13 +350,6 @@ namespace memo.Controllers
                 .ToList();
 
             return filteredAudits;
-
-            // AuditsViewModel vm = new AuditsViewModel
-            // {
-            //     Audits = hmm,
-            // };
-
-            // return vm;
         }
     }
 
