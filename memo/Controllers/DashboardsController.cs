@@ -26,48 +26,56 @@ namespace memo.Controllers
         [HttpGet]
         public async Task<IActionResult> Index(DashboardVM vm = null)
         {
-            // // ===========================================================================================================
-            // // SETUP
-            // // ===========================================================================================================
-            // // Fill DepartmentList ComboBox with only used Offer Department values
+            // ===========================================================================================================
+            // SETUP
+            // ===========================================================================================================
+            // Fill DepartmentList ComboBox with only used Offer Department values
 
-            // List<string> filteredDepartments = await _db.Offer.Select(x => x.EveDepartment).Distinct().ToListAsync();
-            // foreach (string department in filteredDepartments)
-            // {
-            //     vm.DepartmentList.Add(new SelectListItem { Value = department, Text = department });
-            // }
+            List<string> filteredDepartments = await _db.SharedInfo.Select(x => x.EveDepartment).Distinct().ToListAsync();
+            foreach (string department in filteredDepartments)
+            {
+                vm.DepartmentList.Add(new SelectListItem { Value = department, Text = department });
+            }
 
-            // vm.DepartmentList.Insert(0, new SelectListItem { Value = "All", Text = "Vše" } );
+            vm.DepartmentList.Insert(0, new SelectListItem { Value = "All", Text = "Vše" } );
 
             // // TODO: Join?
-            // List<int?> companyIds = await _db.Offer.Select(x => x.CompanyId).Distinct().ToListAsync();
-            // List<Company> filteredCompanies = await _db.Company.Where(x => companyIds.Contains(x.CompanyId)).ToListAsync();
-            // foreach (Company company in filteredCompanies)
-            // {
-            //     vm.CustomerList.Add(new SelectListItem { Value = company.Name, Text = company.Name });
-            // }
+            List<int> usedCompaniesFromOffer = await _db.Offer.Include(x => x.SharedInfo).Select(x => x.SharedInfo.CompanyId).Distinct().ToListAsync();
+            List<int> usedCompaniesFromOrder = await _db.Order.Include(x => x.SharedInfo).Select(x => x.SharedInfo.CompanyId).Distinct().ToListAsync();
+            List<int> usedCompaniesFromContract = await _db.Contracts.Include(x => x.SharedInfo).Select(x => x.SharedInfo.CompanyId).Distinct().ToListAsync();
+            List<int> usedCompanies = usedCompaniesFromOffer;
+            usedCompanies.AddRange(usedCompaniesFromOrder);
+            usedCompanies.AddRange(usedCompaniesFromContract);
+            usedCompanies = usedCompanies.Distinct().ToList();
 
-            // vm.CustomerList = vm.CustomerList.OrderBy(x => x.Text).ToList();
-            // vm.CustomerList.Insert(0, new SelectListItem { Value = "All", Text = "Vše" } );
+            // List<Company>
+            List<Company> filteredCompanies = await _db.Company.Where(x => usedCompanies.Contains(x.CompanyId)).ToListAsync();
+            foreach (Company company in filteredCompanies)
+            {
+                vm.CustomerList.Add(new SelectListItem { Value = company.Name, Text = company.Name });
+            }
 
-            // List<SelectListItem> yearList = await _db.Invoice
-            //     .GroupBy(x => x.InvoiceDueDate.Value.Year)
-            //     .Select(gi => new SelectListItem {
-            //         Text = gi.Key.ToString(),
-            //         Value = gi.Key.ToString(),
-            //     })
-            //     .ToListAsync();
+            vm.CustomerList = vm.CustomerList.OrderBy(x => x.Text).ToList();
+            vm.CustomerList.Insert(0, new SelectListItem { Value = "All", Text = "Vše" } );
 
-            // vm.YearList = yearList;
+            List<SelectListItem> yearList = await _db.Invoice
+                .GroupBy(x => x.InvoiceDueDate.Value.Year)
+                .Select(gi => new SelectListItem {
+                    Text = gi.Key.ToString(),
+                    Value = gi.Key.ToString(),
+                })
+                .ToListAsync();
 
-            // // Default values for filter
-            // if (vm.TimePeriod == null)
-            // {
-            //     vm.Year = DateTime.Now.Year;
-            //     vm.TimePeriod = "months";
-            //     vm.Department = "All";
-            //     vm.Customer = "All";
-            // }
+            vm.YearList = yearList;
+
+            // Default values for filter
+            if (vm.TimePeriod == null)
+            {
+                vm.Year = DateTime.Now.Year;
+                vm.TimePeriod = "months";
+                vm.Department = "All";
+                vm.Customer = "All";
+            }
 
             // List<Invoice> invoices = new List<Invoice>();
 
@@ -245,60 +253,71 @@ namespace memo.Controllers
 
             // vm.DashboardWonOffersVM = viewModelWonOffers;
 
-            // // ===========================================================================================================
-            // // TABLE - Successes
-            // // ===========================================================================================================
-            // List<DashboardTableVM> dashboardTableVMs = new List<DashboardTableVM>();
-            // var departments = await _db.Offer.Select(x => x.EveDepartment).Distinct().ToListAsync();
-            // foreach (var department in departments)
-            // {
-            //     var allOffers = _db.Offer.Where(x => x.EveDepartment == department);
+            // ===========================================================================================================
+            // TABLE - Successes
+            // ===========================================================================================================
+            List<DashboardTableVM> dashboardTableVMs = new List<DashboardTableVM>();
+            var departments = await _db.Offer.Include(x => x.SharedInfo).Select(x => x.SharedInfo.EveDepartment).Distinct().ToListAsync();
+            foreach (var department in departments)
+            {
+                var allOffers = _db.Offer.Include(x => x.SharedInfo).Where(x => x.SharedInfo.EveDepartment == department);
 
-            //     var waitingOffers = await allOffers.Where(x => x.OfferStatusId == 1).ToListAsync();
-            //     var wonOffers = await allOffers.Where(x => x.OfferStatusId == 2).ToListAsync();
-            //     var lostOffers = await allOffers.Where(x => x.OfferStatusId == 3).ToListAsync();
+                var waitingOffers = await allOffers.Where(x => x.OfferStatusId == 1).ToListAsync();
+                var wonOffers = await allOffers.Where(x => x.OfferStatusId == 2).ToListAsync();
+                var lostOffers = await allOffers.Where(x => x.OfferStatusId == 3).ToListAsync();
 
-            //     // Get hours
-            //     // List<int> offersIds = await allOffers.Select(x => x.OfferId).ToListAsync();
-            //     // IEnumerable<Order> orders = _db.Order.Where(x => offersIds.Contains((int)x.OfferId));
+                // Get hours
+                // List<int> offersIds = await allOffers.Select(x => x.OfferId).ToListAsync();
+                // IEnumerable<Order> orders = _db.Order.Where(x => offersIds.Contains((int)x.OfferId));
 
-            //     DashboardTableVM dashboardTableVM = new DashboardTableVM()
-            //     {
-            //         Department = department,
-            //         SuccessRate = (wonOffers.Count() + lostOffers.Count()) != 0 ? wonOffers.Count() / (float)(wonOffers.Count() + lostOffers.Count()) : 0,
-            //         WonSum = wonOffers.Count(),
-            //         LostSum = lostOffers.Count(),
-            //         WaitingSum = waitingOffers.Count(),
-            //     };
-            //     dashboardTableVMs.Add(dashboardTableVM);
-            // }
-            // vm.DashboardTableVM = dashboardTableVMs;
+                DashboardTableVM dashboardTableVM = new DashboardTableVM()
+                {
+                    Department = department,
+                    SuccessRate = (wonOffers.Count() + lostOffers.Count()) != 0 ? wonOffers.Count() / (float)(wonOffers.Count() + lostOffers.Count()) : 0,
+                    WonSum = wonOffers.Count(),
+                    LostSum = lostOffers.Count(),
+                    WaitingSum = waitingOffers.Count(),
+                };
+                dashboardTableVMs.Add(dashboardTableVM);
+            }
+            vm.DashboardTableVM = dashboardTableVMs;
 
 
-            // // ===========================================================================================================
-            // // TABLE - Invoices
-            // // ===========================================================================================================
-            // List<DashboardInvoiceTableViewModel> dashboardInvoiceTableViewModels = new List<DashboardInvoiceTableViewModel>();
-            // var invoicesList = await _db.Invoice.Include(x => x.Order).ToListAsync();
-            // foreach (var invoice in invoicesList)
-            // {
-            //     // Need to load related data (3rd jump of related entities is null?)
-            //     _db.Entry(invoice.Order.Offer).Reference(p => p.Currency).Load();
+            // ===========================================================================================================
+            // TABLE - Invoices
+            // ===========================================================================================================
+            List<DashboardInvoiceTableViewModel> dashboardInvoiceTableViewModels = new List<DashboardInvoiceTableViewModel>();
+            var invoices = await _db.Invoice
+                .Include(x => x.Order)
+                    // .ThenInclude(x => x.SharedInfo)
+                        // .ThenInclude(x => x.Company)
+                // .Include(x => x.Order.SharedInfo)
+                // .Include(x => x.Order.SharedInfo.Company)
+                // .Include(x => x.Order.SharedInfo.Currency)
+                .ToListAsync();
+            // await _db.Company.LoadAsync();
+            // await _db.Currency.ToListAsync();
 
-            //     DashboardInvoiceTableViewModel dashboardInvoiceTableViewModel = new DashboardInvoiceTableViewModel()
-            //     {
-            //         Invoice = invoice,
-            //         Order = invoice.Order,
-            //         Company = invoice.Order.Offer.Company,
-            //         Currency = invoice.Order.Offer.Currency,
-            //     };
+            foreach (var invoice in invoices)
+            {
+                // Need to load related data (3rd jump of related entities is null?)
+                _db.Entry(invoice.Order).Reference(p => p.SharedInfo).Load();
+                _db.Entry(invoice.Order.SharedInfo).Reference(p => p.Company).Load();
+                _db.Entry(invoice.Order.SharedInfo).Reference(p => p.Currency).Load();
 
-            //     dashboardInvoiceTableViewModels.Add(dashboardInvoiceTableViewModel);
-            // }
-            // vm.DashboardInvoiceTableViewModel = dashboardInvoiceTableViewModels;
+                DashboardInvoiceTableViewModel dashboardInvoiceTableViewModel = new DashboardInvoiceTableViewModel()
+                {
+                    Invoice = invoice,
+                    Order = invoice.Order,
+                    Company = invoice.Order.SharedInfo.Company,
+                    Currency = invoice.Order.SharedInfo.Currency,
+                };
 
-            // return View(vm);
-            return View();
+                dashboardInvoiceTableViewModels.Add(dashboardInvoiceTableViewModel);
+            }
+            vm.DashboardInvoiceTableViewModel = dashboardInvoiceTableViewModels;
+
+            return View(vm);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

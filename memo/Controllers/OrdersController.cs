@@ -107,6 +107,7 @@ namespace memo.Controllers
             // Initialize models, vars
             // vm.Order.SharedInfo = new SharedInfo();
             // vm.Order.SharedInfo.Currency = new Currency();
+            vm.Order.SharedInfo = new SharedInfo();
             vm.Order.SharedInfo.ReceiveDate = DateTime.Now;
             vm.Order.SharedInfo.Currency = new Currency()
             {
@@ -842,9 +843,14 @@ namespace memo.Controllers
             int userId = await _eveDbDochna.tUsers.Where(x => x.TxAccount == username).Select(x => x.Id).FirstOrDefaultAsync();
 
             vEmployees employee = await _eveDbDochna.vEmployees.Where(x => x.Id == userId).FirstOrDefaultAsync();
-
-            // vm.Order = new Order();
-            // vm.Order.SharedInfo = new SharedInfo();
+            if (vm.Order == null)
+            {
+                vm.Order = new Order();
+            }
+            if (vm.Order.SharedInfo == null)
+            {
+                vm.Order.SharedInfo = new SharedInfo();
+            }
             vm.Order.SharedInfo.EveCreatedUser = employee.FormatedName;
             vm.Order.SharedInfo.EveDepartment = employee.DepartName;
             vm.Order.SharedInfo.EveDivision = employee.EVE == 1 ? "EVE" : "EVAT";

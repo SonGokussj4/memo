@@ -13,7 +13,7 @@ namespace memo.Models
         public Order()
         {
             Active = true;
-            SharedInfo = new SharedInfo();
+            // SharedInfo = new SharedInfo();
         }
 
         [Key]
