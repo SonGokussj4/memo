@@ -1,18 +1,18 @@
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
+using System.Diagnostics;
+using System.Globalization;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using memo.Data;
 using memo.Models;
 using memo.ViewModels;
-using Microsoft.Extensions.Hosting;
-using Microsoft.AspNetCore.Hosting;
-using System.Globalization;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace memo.Controllers
 {
@@ -31,10 +31,12 @@ namespace memo.Controllers
             _env = hostEnvironment;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(bool showInactive = false)
         {
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
+
+            ViewBag.showInactive = showInactive;
 
             IEnumerable<Contract> contracts = await _db.Contracts.ToListAsync();
             var shares = await _db.SharedInfo.ToListAsync();
@@ -62,6 +64,15 @@ namespace memo.Controllers
             {
                 TempData["Info"] = message;
             }
+
+            // Filtr - Pouze aktivní
+            if (showInactive is false)
+            {
+                vm.Contracts = vm.Contracts.Where(x => x.Active == true);
+            }
+
+            List<Contract> allContracts = await _db.Contracts.ToListAsync();
+            ViewBag.AllContractsCount = allContracts.Count();
 
             return View(vm);
         }
@@ -259,43 +270,43 @@ namespace memo.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        // [HttpGet]
-        // public async Task<IActionResult> Deactivate(int id, string showInactive)
-        // {
-        //     Offer model = await _db.Offer.FirstOrDefaultAsync(m => m.OfferId == id);
-        //     if (model == null)
-        //     {
-        //         return NotFound();
-        //     }
+        [HttpGet]
+        public async Task<IActionResult> Deactivate(int id, string showInactive)
+        {
+            Contract model = await _db.Contracts.FirstOrDefaultAsync(m => m.ContractsId == id);
+            if (model == null)
+            {
+                return NotFound();
+            }
 
-        //     model.Active = false;
+            model.Active = false;
 
-        //     _db.Offer.Update(model);
-        //     _db.SaveChanges(User.GetLoggedInUserName());
+            _db.Contracts.Update(model);
+            _db.SaveChanges(User.GetLoggedInUserName());
 
-        //     TempData["Success"] = "Změněno na neaktivní";
+            TempData["Success"] = "Změněno na neaktivní";
 
-        //     return RedirectToAction("Index", new { showInactive });
-        // }
+            return RedirectToAction("Index", new { showInactive });
+        }
 
-        // [HttpGet]
-        // public async Task<IActionResult> Activate(int id, string showInactive)
-        // {
-        //     Offer model = await _db.Offer.FirstOrDefaultAsync(m => m.OfferId == id);
-        //     if (model == null)
-        //     {
-        //         return NotFound();
-        //     }
+        [HttpGet]
+        public async Task<IActionResult> Activate(int id, string showInactive)
+        {
+            Contract model = await _db.Contracts.FirstOrDefaultAsync(m => m.ContractsId == id);
+            if (model == null)
+            {
+                return NotFound();
+            }
 
-        //     model.Active = true;
+            model.Active = true;
 
-        //     _db.Offer.Update(model);
-        //     _db.SaveChanges(User.GetLoggedInUserName());
+            _db.Contracts.Update(model);
+            _db.SaveChanges(User.GetLoggedInUserName());
 
-        //     TempData["Success"] = "Změněno na aktivní";
+            TempData["Success"] = "Změněno na aktivní";
 
-        //     return RedirectToAction("Index", new { showInactive });
-        // }
+            return RedirectToAction("Index", new { showInactive });
+        }
 
         private async Task populateModelAsync(dynamic vm)
         {
