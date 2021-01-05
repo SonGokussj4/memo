@@ -534,7 +534,7 @@ WHERE
     x.EveCreatedUser = y.EveCreatedUser AND
     (x.PriceCzk = y.PriceCzk OR (ISNULL(x.PriceCzk, y.PriceCzk) IS NULL)) AND
     (x.Price = y.Price OR (ISNULL(x.Price, y.Price) IS NULL))
-
+GO
 
 -----------------------------------------------------------------------------------------
 -- ODSTRANIT FOREIGN KLICE Z TABULKY Offer a INDEX IX_OrdersOffers
@@ -542,7 +542,7 @@ ALTER TABLE [memo].[Offer] DROP CONSTRAINT [FK_memo.Offer_memo_Company_CompanyId
 GO
 ALTER TABLE [memo].[Offer] DROP CONSTRAINT [FK_memo.Offer_memo_Currency_CurrencyId];
 GO
-ALTER TABLE [memo].[Offer] DROP CONSTRAINT [FK_memo_Offer_memo_Contact_ContactId];
+ALTER TABLE [memo].[Offer] DROP CONSTRAINT [FK_memo.Offer_memo_Contact_ContactId];
 GO
 DROP INDEX [memo].[Offer].IX_OrdersOffers
 GO
