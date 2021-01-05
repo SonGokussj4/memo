@@ -565,3 +565,18 @@ ALTER TABLE [memo].[Order]
 ADD KeyAccountManager NVARCHAR(50) NULL;
 GO
 
+
+-- 05.01.2021 --
+
+
+-----------------------------------------------------------------------------------------
+-- ODSTRANIT Z TABULKY Order SLOUPEC PriceDiscount
+ALTER TABLE [memo].[Order]
+DROP COLUMN PriceDiscount;
+GO
+
+-----------------------------------------------------------------------------------------
+-- ODSTRANIT Z TABULKY Order SLOUPEC PriceCzk
+ALTER TABLE [memo].[Order]
+DROP COLUMN PriceFinalCzk;
+GO

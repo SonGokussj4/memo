@@ -129,7 +129,7 @@ namespace memo.Controllers
 
             // TODO(jverner) Na toto se kouknout, komunikace s Vitou Cernym, co sem vubec chce...
             vm.Order.PriceFinal = 0;
-            vm.Order.PriceFinalCzk = 0;
+            // vm.Order.PriceFinalCzk = 0;
             // vm.Order.PriceDiscount = vm.Order.Offer.SharedInfo.Price;
             vm.Order.SharedInfo.Currency = await _db.Currency.Where(x => x.CurrencyId == vm.Order.SharedInfo.CurrencyId).FirstOrDefaultAsync();
             vm.Order.ExchangeRate = decimal.Parse(getCurrencyStr(vm.Order.SharedInfo.Currency.Name));
@@ -152,7 +152,7 @@ namespace memo.Controllers
                 vm.Order.PriceFinal -= Convert.ToInt32(burnedHours * orderCode.HourWageCost);
             }
 
-            vm.Order.PriceFinalCzk = Convert.ToInt32(vm.Order.PriceFinal * vm.Order.ExchangeRate);
+            // vm.Order.PriceFinalCzk = Convert.ToInt32(vm.Order.PriceFinal * vm.Order.ExchangeRate);
 
             if (ModelState.IsValid)
             {
@@ -244,7 +244,7 @@ namespace memo.Controllers
 
             // TODO(jverner) Na toto se kouknout, komunikace s Vitou Cernym, co sem vubec chce...
             vm.Order.PriceFinal = 0;
-            vm.Order.PriceFinalCzk = 0;
+            // vm.Order.PriceFinalCzk = 0;
             // vm.Order.PriceDiscount = vm.Order.Offer.SharedInfo.Price;
             vm.Order.SharedInfo.Currency = await _db.Currency.Where(x => x.CurrencyId == vm.Order.SharedInfo.CurrencyId).FirstOrDefaultAsync();
             vm.Order.ExchangeRate = decimal.Parse(getCurrencyStr(vm.Order.SharedInfo.Currency.Name));
@@ -267,7 +267,7 @@ namespace memo.Controllers
                 vm.Order.PriceFinal -= Convert.ToInt32(burnedHours * orderCode.HourWageCost);
             }
 
-            vm.Order.PriceFinalCzk = Convert.ToInt32(vm.Order.PriceFinal * vm.Order.ExchangeRate);
+            // vm.Order.PriceFinalCzk = Convert.ToInt32(vm.Order.PriceFinal * vm.Order.ExchangeRate);
 
             if (ModelState.IsValid)
             {
@@ -365,7 +365,7 @@ namespace memo.Controllers
 
             // TODO(jverner) Na toto se kouknout, komunikace s Vitou Cernym, co sem vubec chce...
             vm.Order.PriceFinal = 0;
-            vm.Order.PriceFinalCzk = 0;
+            // vm.Order.PriceFinalCzk = 0;
             // vm.Order.PriceDiscount = vm.Order.Offer.SharedInfo.Price;
             vm.Order.SharedInfo.Currency = await _db.Currency.Where(x => x.CurrencyId == vm.Order.SharedInfo.CurrencyId).FirstOrDefaultAsync();
             vm.Order.ExchangeRate = decimal.Parse(getCurrencyStr(vm.Order.SharedInfo.Currency.Name));
@@ -388,7 +388,7 @@ namespace memo.Controllers
                 vm.Order.PriceFinal -= Convert.ToInt32(burnedHours * orderCode.HourWageCost);
             }
 
-            vm.Order.PriceFinalCzk = Convert.ToInt32(vm.Order.PriceFinal * vm.Order.ExchangeRate);
+            // vm.Order.PriceFinalCzk = Convert.ToInt32(vm.Order.PriceFinal * vm.Order.ExchangeRate);
 
             if (ModelState.IsValid)
             {
@@ -526,11 +526,11 @@ namespace memo.Controllers
                     if (oldVm.Order.OrderName == vm.Order.OrderName &&
                         oldVm.Order.NegotiatedPrice == vm.Order.NegotiatedPrice &&
                         oldVm.Order.PriceFinal == vm.Order.PriceFinal &&
-                        oldVm.Order.PriceDiscount == vm.Order.PriceDiscount &&
+                        // oldVm.Order.PriceDiscount == vm.Order.PriceDiscount &&
                         oldVm.Order.EveContactName == vm.Order.EveContactName &&
                         oldVm.Order.KeyAccountManager == vm.Order.KeyAccountManager &&
                         oldVm.Order.ExchangeRate == vm.Order.ExchangeRate &&
-                        oldVm.Order.PriceFinalCzk == vm.Order.PriceFinalCzk &&
+                        // oldVm.Order.PriceFinalCzk == vm.Order.PriceFinalCzk &&
                         oldVm.Order.Notes == vm.Order.Notes &&
                         oldVm.Order.ModifiedBy == vm.Order.ModifiedBy &&
                         oldVm.Order.Active == vm.Order.Active &&
@@ -581,9 +581,9 @@ namespace memo.Controllers
 
                     // TODO(jverner) Na toto se kouknout, komunikace s Vitou Cernym, co sem vubec chce...
                     vm.Order.PriceFinal = 0;
-                    vm.Order.PriceFinalCzk = 0;
+                    // vm.Order.PriceFinalCzk = 0;
                     // vm.Order.PriceDiscount = vm.Order.Offer.SharedInfo.Price;
-                    vm.Order.SharedInfo.Currency = await _db.Currency.Where(x => x.CurrencyId == vm.Order.SharedInfo.CurrencyId).FirstOrDefaultAsync();
+                    // vm.Order.SharedInfo.Currency = await _db.Currency.Where(x => x.CurrencyId == vm.Order.SharedInfo.CurrencyId).FirstOrDefaultAsync();
                     // vm.Order.ExchangeRate = decimal.Parse(getCurrencyStr(vm.Order.SharedInfo.Currency.Name));
                     vm.UnspentMoney = vm.Order.NegotiatedPrice;
 
@@ -607,7 +607,7 @@ namespace memo.Controllers
                         vm.Order.PriceFinal += Convert.ToInt32(burnedHours * orderCode.HourWageCost);
                     }
                     vm.UnspentMoney = (int)(vm.Order.NegotiatedPrice - vm.Order.PriceFinal);
-                    vm.Order.PriceFinalCzk = Convert.ToInt32(vm.Order.PriceFinal * vm.Order.ExchangeRate);
+                    // vm.Order.PriceFinalCzk = Convert.ToInt32(vm.Order.PriceFinal * vm.Order.ExchangeRate);
 
                     vm.Order.ModifiedDate = DateTime.Now;
                     vm.Order.ModifiedBy = User.GetLoggedInUserName();
@@ -630,7 +630,8 @@ namespace memo.Controllers
                 TempData["Success"] = "Editace zakázky uložena.";
                 if (actionType == "Uložit")
                 {
-                    return RedirectToAction("Edit", new { id = id, offerId = vm.Order.OfferId });
+                    // return RedirectToAction("Edit", new { id = id, offerId = vm.Order.OfferId });
+                    return RedirectToAction("Edit", new { id = id });
                 }
                 else
                 {
@@ -854,6 +855,7 @@ namespace memo.Controllers
             vm.Order.SharedInfo.EveCreatedUser = employee.FormatedName;
             vm.Order.SharedInfo.EveDepartment = employee.DepartName;
             vm.Order.SharedInfo.EveDivision = employee.EVE == 1 ? "EVE" : "EVAT";
+            // vm.Order.PriceDiscount = vm.Order.SharedInfo.Price - vm.Order.NegotiatedPrice;
         }
 
         // TODO: odstranit SP
