@@ -107,7 +107,7 @@
             <th scope="col" class="text-center" data-field="9" data-sortable="true" data-filter-control="input">Vedoucí <br />projektu</th>
             <th scope="col" class="text-center" data-field="10" data-sortable="true" data-filter-control="input">Oddělení</th>
             <th scope="col" class="text-center" data-field="11" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatterCz"><div data-toggle="tooltip" title="Po odečtení poskytnuté slevy">Vyjednaná <br />cena</div></th>
-            <th scope="col" class="text-center" data-field="12" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatterProgress"><div data-toggle="tooltip" title="Součet fakturací + dalších nákladů">Aktuálně</div></th>
+            <th scope="col" class="text-center" data-field="12" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatterProgress"><div data-toggle="tooltip" title="Součet fakturací + dalších nákladů">Vyfakturováno</div></th>
             <th scope="col" class="text-center" data-field="13" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatterCz"><div data-toggle="tooltip" title="Částka, která zbývá do vyjednané ceny">Zbývá</div></th>
             <th scope="col" class="text-center" data-field="14" data-sortable="true" data-filter-control="input">Poznámky</th>
             <th scope="col" class="text-center" data-field="15" data-sortable="true" data-filter-control="input" data-footer-formatter="sumHoursFormatter">Vyčerpáno</th>
@@ -176,12 +176,13 @@
                 <th scope="row" class="text-left">@item.SharedInfo.EveDepartment</th>
                 @* Vyjednaná cena *@
                 <th scope="row" class="text-right">@string.Format(CultureInfo.CreateSpecificCulture(@item.SharedInfo.Currency.CultureCode), "{0:C0}", @item.NegotiatedPrice)</th>
-                @* Aktuálně *@
+                @* Vyfakturováno *@
                 <th scope="row" class="text-right">
-                    <span style="font-size: 0.9rem;">@string.Format(CultureInfo.CreateSpecificCulture(@item.SharedInfo.Currency.CultureCode), "{0:C0}", @item.PriceFinal)</span>
+                    <span style="font-size: 0.9rem;">@string.Format(CultureInfo.CreateSpecificCulture(@item.SharedInfo.Currency.CultureCode), "{0:C0}", @item.GetSumInvoices())</span>
                     <div class="progress" style="height: 5px;">
                     @{
-                        int percentValue = (int)Math.Ceiling((double)item.PriceFinal / item.NegotiatedPrice * 100);
+                        @* int percentValue = (int)Math.Ceiling((double)item.PriceFinal / item.NegotiatedPrice * 100); *@
+                        int percentValue = item.GetSumInvoicesPercentage();
                         string progressBarWidth = percentValue <= 100 ? (percentValue).ToString() : "100";
                         string progressbarClassColor = percentValue <= 100 ? "" : "bg-danger";
                     }
@@ -189,7 +190,7 @@
                     </div>
                 </th>
                 @* Zbývá *@
-                <th scope="row" class="text-right">@string.Format(CultureInfo.CreateSpecificCulture(@item.SharedInfo.Currency.CultureCode), "{0:C0}", @item.NegotiatedPrice - @item.PriceFinal)</th>
+                <th scope="row" class="text-right">@string.Format(CultureInfo.CreateSpecificCulture(@item.SharedInfo.Currency.CultureCode), "{0:C0}", @item.NegotiatedPrice - @item.GetSumInvoices())</th>
                 @* Poznámky *@
                 <th scope="row" class="notesWrap" data-toggle="tooltip" data-html="true" title="@item.Notes">
                     @item.Notes

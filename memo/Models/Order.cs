@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
@@ -96,5 +97,15 @@ namespace memo.Models
         public virtual List<Invoice> Invoices { get; set; } = new List<Invoice>();
         public virtual List<OtherCost> OtherCosts { get; set; } = new List<OtherCost>();
         public virtual List<OrderCodes> OrderCodes { get; set; } = new List<OrderCodes>();
+
+        public int GetSumInvoices()
+        {
+            return (int)Invoices.Sum(x => x.Cost);
+        }
+
+        public int GetSumInvoicesPercentage()
+        {
+            return (int)Math.Ceiling((double)GetSumInvoices() / this.NegotiatedPrice * 100);
+        }
     }
 }
