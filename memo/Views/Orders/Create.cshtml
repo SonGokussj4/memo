@@ -107,7 +107,7 @@
                     </div>
                 </div>
 
-                <div class="form-group row">
+                <div class="form-group row" hidden>
                     <label asp-for="Order.SharedInfo.Price" class="col-lg-3 col-form-label form-control-label control-label"></label>
                     <div class="col-lg-5">
                         <span class="has-float-label">
@@ -116,13 +116,7 @@
                         </span>
                         <span asp-validation-for="Order.SharedInfo.Price" class="text-danger"></span>
                     </div>
-                    <div class="col-lg-4">
-                        <span class="has-float-label" data-toggle="tooltip" title="Aktuální kurz ČNB">
-                            <select asp-for="Order.SharedInfo.CurrencyId" asp-items="Model.CurrencyList" class="form-control"></select>
-                            <label asp-for="Order.SharedInfo.CurrencyId">Měna</label>
-                        </span>
-                        <span asp-validation-for="Order.SharedInfo.CurrencyId" class="text-danger"></span>
-                    </div>
+
                 </div>
 
             </div>
@@ -134,7 +128,7 @@
 
         @* </form> *@
 
-        <br />
+        @* <br /> *@
 
         <!--------------------------------------------------------------------------------------
             FORM - ZAKAZKA
@@ -156,7 +150,7 @@
         </div>
 
         <div class="form-group row">
-            <label class="required col-lg-3 col-form-label form-control-label control-label">Cena dle jednacího protokolu</label>
+            <label class="col-lg-3 col-form-label form-control-label control-label">Cena dle jednacího protokolu</label>
             <div class="col-lg-3">
                 <span class="has-float-label">
                     <input asp-for="Order.NegotiatedPrice" class="form-control" type="text" required placeholder=" "/>
@@ -164,12 +158,19 @@
                 </span>
                 <span asp-validation-for="Order.NegotiatedPrice" class="text-danger"></span>
             </div>
-            <div class="col-lg-3">
+            @* <div class="col-lg-3">
                 <span class="has-float-label">
                     <input asp-for="Order.PriceDiscount" class="form-control" type="text" placeholder=" "/>
                     <label asp-for="Order.PriceDiscount">Sleva z nabídky [@Model.Order.SharedInfo.Currency.Name]</label>
                 </span>
                 <span asp-validation-for="Order.PriceDiscount" class="text-danger"></span>
+            </div> *@
+            <div class="col-lg-3">
+                <span class="has-float-label" data-toggle="tooltip" title="Aktuální kurz ČNB">
+                    <select asp-for="Order.SharedInfo.CurrencyId" asp-items="Model.CurrencyList" class="form-control"></select>
+                    <label asp-for="Order.SharedInfo.CurrencyId">Měna</label>
+                </span>
+                <span asp-validation-for="Order.SharedInfo.CurrencyId" class="text-danger"></span>
             </div>
         </div>
 
@@ -191,16 +192,16 @@
             </div>
 
         <div class="form-group row justify-content-center">
-            <div class="col-lg-4">
+            <div class="col-lg-5">
                 <a href="@Url.Action("CreateEveProject")" target="_blank" class="btn btn-outline-success form-control"
                    data-toggle="tooltip" data-placement="top" title="Nová EVE zakázka">
-                    <i class="fa fa-plus-square"></i> Vytvořit eve zakázku
+                    <i class="fa fa-plus-square"></i> Vytvořit eve zakázku (intranet)
                 </a>
             </div>
-            <div class="col-lg-4">
+            <div class="col-lg-5">
                 <a href="@Url.Action("CreateEveProject")" target="_blank" class="btn btn-outline-success form-control"
                    data-toggle="tooltip" data-placement="top" title="Nová EVE modulová zakázka">
-                    <i class="fa fa-plus-square"> </i> Vytvořit eve [M] zakázku
+                    <i class="fa fa-plus-square"> </i> Vytvořit eve [M] zakázku (intranet)
                 </a>
             </div>
         </div>
@@ -296,7 +297,7 @@
             <span asp-validation-for="Order.OtherCosts" class="text-danger"></span>
         </div>
 
-        <div class="form-group row">
+        @* <div class="form-group row">
             <label asp-for="Order.ExchangeRate" class="col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-3">
                  <div class="input-group mb-2 mr-sm-2">
@@ -312,9 +313,9 @@
                  </div>
                 <span asp-validation-for="Order.ExchangeRate" class="text-danger"></span>
             </div>
-        </div>
+        </div> *@
 
-        <div class="form-group row">
+        <div class="form-group row border-top pt-2">
             <label asp-for="Order.Notes" class="col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-9">
                 <textarea asp-for="Order.Notes" class="form-control"></textarea>

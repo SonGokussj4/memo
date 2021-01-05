@@ -44,8 +44,15 @@ namespace memo.Models
         [Display(Name = "Aktuální čerpání")]
         public int? PriceFinal { get; set; }
 
+        // [Required]
+        [Display(Name = "Aktuání čerpání v Kč")]
+        [NotMapped]
+        public int? PriceFinalCzk => (int?)(this.ExchangeRate * this.PriceFinal);
+
         [Display(Name = "Sleva z nabídky")]
-        public int? PriceDiscount { get; set; }
+        [NotMapped]
+        public int? PriceDiscount => this.SharedInfo?.Price - NegotiatedPrice;
+        // public int? PriceDiscount { get; set; }
 
         [Required]
         [Display(Name = "Vedoucí projektu v EVEKTORu")]
@@ -55,16 +62,13 @@ namespace memo.Models
         public string KeyAccountManager { get; set; }
 
         [Display(Name = "Celkem hodin plánovaných")]
+        [NotMapped]
         public int? TotalHours { get; set; }
 
         [Display(Name = "Kurz")]
         [Column(TypeName = "decimal(18,3)")]
         [RegularExpression(@"\d+([,.]\d+)?", ErrorMessage = "Pouze čísla s čárkou. Např: 26,49")]
         public decimal ExchangeRate { get; set; }
-
-        [Required]
-        [Display(Name = "Aktuání čerpání v Kč")]
-        public int PriceFinalCzk { get; set; }
 
         [Display(Name = "Poznámky"), Column(TypeName = "nvarchar(max)")]
         public string Notes { get; set; } = "";
