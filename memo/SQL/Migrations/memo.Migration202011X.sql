@@ -580,3 +580,28 @@ GO
 ALTER TABLE [memo].[Order]
 DROP COLUMN PriceFinalCzk;
 GO
+
+
+-- 07.01.2021 --
+
+
+-----------------------------------------------------------------------------------------
+PRINT 'Změna INT na DECIMAL u částek s penězi ... memo.Order.NegotiatedPrice'
+ALTER TABLE [memo].[Order]
+ALTER COLUMN NegotiatedPrice DECIMAL(18,3)
+GO
+
+PRINT 'Změna INT na DECIMAL u částek s penězi ... memo.Order.PriceFinal'
+ALTER TABLE [memo].[Order]
+ALTER COLUMN PriceFinal DECIMAL(18,3)
+GO
+
+PRINT 'Změna INT na DECIMAL u částek s penězi ... memo.SharedInfo.Price'
+ALTER TABLE [memo].[SharedInfo]
+ALTER COLUMN Price DECIMAL(18,3)
+GO
+
+PRINT 'Změna INT na DECIMAL u částek s penězi ... memo.SharedInfo.PriceCzk'
+ALTER TABLE [memo].[SharedInfo]
+ALTER COLUMN PriceCzk DECIMAL(18,3)
+GO

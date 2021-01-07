@@ -264,6 +264,23 @@ function OrderCodeToInput(id) {
 // ==========================================================================
 // OTHER
 // ==========================================================================
+// Jak clovek pise, delat mezery za tisicovkami
+// $('.space-separated-thousands').keyup(function(event) {
+
+//     // skip for arrow keys
+//     if(event.which >= 37 && event.which <= 40) return;
+
+//     // format number
+//     $(this).val(function(index, value) {
+//       return value
+//       .replace(/\D/g, "")
+//       .replace(/\B(?=(\d{3})+(?!\d))/g, " ")
+//       ;
+//     });
+//   });
+
+
+
 // NOTE: Stara vec, predtim jsem klikal na Order/Create z nabidky, ramcovky nebo bez nabidky
 // a menil jsem dynamicky zbytek contentu, nyni je to delane pres individualni cshtml stranky
 //$("#opt1").click(function () {
