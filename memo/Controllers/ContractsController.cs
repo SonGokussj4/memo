@@ -170,6 +170,7 @@ namespace memo.Controllers
                 return NotFound();
             }
 
+            // Trim potencial spaces
             if (!ModelState.IsValid)
             {
                 TempData["Error"] = "Něco se porouchalo...";

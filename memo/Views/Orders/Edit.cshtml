@@ -100,15 +100,6 @@
         <input type="hidden" asp-for="Order.OrderId" />
         <input type="hidden" asp-for="Order.FromType" />
         <input type="hidden" asp-for="Order.SharedInfoId" />
-        @* <input type="hidden" asp-for="Order.SharedInfo.SharedInfoId" />
-        <input type="hidden" asp-for="Order.SharedInfo.Subject" />
-        <input type="hidden" asp-for="Order.SharedInfo.EveDivision" />
-        <input type="hidden" asp-for="Order.SharedInfo.EveDepartment" />
-        <input type="hidden" asp-for="Order.SharedInfo.EveCreatedUser" />
-        <input type="hidden" asp-for="Order.SharedInfo.ReceiveDate" />
-        <input type="hidden" asp-for="Order.SharedInfo.CompanyId" />
-        <input type="hidden" asp-for="Order.SharedInfo.ContactId" />
-        <input type="hidden" asp-for="Order.SharedInfo.CurrencyId" /> *@
         <input type="hidden" asp-for="Order.CreatedDate" />
         <input type="hidden" asp-for="Order.CreatedBy" />
         <input type="hidden" asp-for="Order.ModifiedBy" />
@@ -146,22 +137,24 @@
             </div>
         </div>
 
-        <div class="form-group row">
-                <label asp-for="Order.EveContactName" class="required col-lg-3 col-form-label form-control-label control-label"></label>
-                <div class="col-lg-3">
-                    <select asp-for="Order.EveContactName" asp-items="Model.EveContactList" class="form-control selectpicker">
-                        <option value="">-- Vyber kontakt --</option>
-                    </select>
-                    <span asp-validation-for="Order.EveContactName" class="text-danger"></span>
-                </div>
-                <label asp-for="Order.KeyAccountManager" class="col-lg-3 col-form-label form-control-label control-label"></label>
-                <div class="col-lg-3">
-                    <select asp-for="Order.KeyAccountManager" asp-items="Model.EveContactList" class="form-control selectpicker">
-                        <option value="">-- Vyber managera --</option>
-                    </select>
-                    <span asp-validation-for="Order.KeyAccountManager" class="text-danger"></span>
-                </div>
+        <div class="form-group row pb-2">
+            <label asp-for="Order.EveContactName" class="required col-lg-3 col-form-label form-control-label control-label"></label>
+            <div class="col-lg-3">
+                <span style="color: gray; font-size: 0.9em;">Vedoucí projektu</span>
+                <select asp-for="Order.EveContactName" asp-items="Model.EveContactList" class="form-control selectpicker">
+                    <option value="">-- Vyber kontakt --</option>
+                </select>
+                <span asp-validation-for="Order.EveContactName" class="text-danger"></span>
             </div>
+            @* <label asp-for="Order.KeyAccountManager" class="col-lg-3 col-form-label form-control-label control-label"></label> *@
+            <div class="col-lg-3">
+                <span style="color: gray; font-size: 0.9em;">Key account manager</span>
+                <select asp-for="Order.KeyAccountManager" asp-items="Model.EveContactList" class="form-control selectpicker">
+                    <option value="">-- Vyber managera --</option>
+                </select>
+                <span asp-validation-for="Order.KeyAccountManager" class="text-danger"></span>
+            </div>
+        </div>
 
         <div class="form-group row">
             <label class="required col-lg-3 col-form-label form-control-label control-label">Cena dle jednacího protokolu</label>
@@ -170,53 +163,56 @@
                     <input asp-for="Order.NegotiatedPrice" class="form-control" type="text" required placeholder=" "/>
                     <label asp-for="Order.NegotiatedPrice">Vyjednaná cena [@Model.Order.SharedInfo.Currency.Name]</label>
                 </span>
+                <span style="color: gray; font-size: 0.9em;">Sleva: @string.Format(CultureInfo.CreateSpecificCulture(@Model.Order.SharedInfo.Currency.CultureCode), "{0:C0}", @Model.Order.PriceDiscount)</span>
                 <span asp-validation-for="Order.NegotiatedPrice" class="text-danger"></span>
             </div>
-            <div class="col-lg-3">
-                <span class="has-float-label">
-                    <input asp-for="Order.PriceDiscount" class="form-control" type="text" placeholder=" "/>
-                    <label asp-for="Order.PriceDiscount">Sleva z nabídky [@Model.Order.SharedInfo.Currency.Name]</label>
-                </span>
-                <span asp-validation-for="Order.PriceDiscount" class="text-danger"></span>
-            </div>
-            <div class="col-lg-3">
+            @* <div class="col-lg-4" style="color: gray; font-size: 0.9em;"> *@
+                @* <span>Sleva z nabídky: @string.Format(CultureInfo.CreateSpecificCulture(@Model.Order.SharedInfo.Currency.CultureCode), "{0:C0}", @Model.Order.PriceDiscount)</span> *@
+                @* <span class="has-float-label"> *@
+                    @* <input asp-for="Order.PriceDiscount" class="form-control" type="text" placeholder=" "/> *@
+                    @* <label asp-for="Order.PriceDiscount">Sleva z nabídky [@Model.Order.SharedInfo.Currency.Name]</label> *@
+                @* </span> *@
+                @* <span asp-validation-for="Order.PriceDiscount" class="text-danger"></span> *@
+            @* </div> *@
+            @* <div class="col-lg-3">
                 <p class="mt-1">Cena nab: <b>@String.Format(CultureInfo.CreateSpecificCulture(Model.Order.SharedInfo.Currency.CultureCode), "{0:C0}", @Model.Order.SharedInfo.Price)</b></p>
-            </div>
+            </div> *@
         </div>
 
-        <div class="form-group row">
-            <label asp-for="Order.PriceFinal" class="col-lg-3 col-form-label form-control-label control-label"></label>
-            <div class="col-lg-3">
-                <div class="input-group mb-2 mr-sm-2">
-                    <div class="input-group-prepend">
-                        <div class="input-group-text">@Model.Order.SharedInfo.Currency.Name</div>
-                    </div>
-                    <input asp-for="Order.PriceFinal" class="form-control" type="text" required="" readonly/>
-                </div>
-                <span asp-validation-for="Order.PriceFinal" class="text-danger"></span>
-            </div>
-            <div class="col-lg-3">
-                <label asp-for="UnspentMoney" class="col-form-label form-control-label control-label"></label>
-            </div>
-            <div class="col-lg-3">
-                <div class="input-group mb-2 mr-sm-2">
-                    <div class="input-group-prepend">
-                        <div class="input-group-text">@Model.Order.SharedInfo.Currency.Name</div>
-                    </div>
-                    <input asp-for="UnspentMoney" class="form-control" type="text" readonly />
-                </div>
-                <span asp-validation-for="UnspentMoney" class="text-danger"></span>
-                <div class="progress" style="height: 5px;">
-                    @{
-                        int percentValue = Model.Order.NegotiatedPrice != 0 ? (int)Math.Ceiling(Model.UnspentMoney / (decimal)Model.Order.NegotiatedPrice * 100) : 0;
-                        string progressBarWidth = percentValue >= 0 ? (100 - percentValue).ToString() : "100";
-                        string progressbarClassColor = percentValue >= 0 ? "" : "bg-danger";
-                    }
-                    <div class="progress-bar @progressbarClassColor progress-bar-striped" role="progressbar" style="width: @progressBarWidth%;"></div>
-                </div>
-            </div>
-        </div>
+        @* <div class="form-group row"> *@
+            @* <label asp-for="Order.PriceFinal" class="col-lg-3 col-form-label form-control-label control-label"></label> *@
+            @* <div class="col-lg-3"> *@
+                @* <div class="input-group mb-2 mr-sm-2"> *@
+                    @* <div class="input-group-prepend"> *@
+                        @* <div class="input-group-text">@Model.Order.SharedInfo.Currency.Name</div> *@
+                    @* </div> *@
+                    @* <input asp-for="Order.PriceFinal" class="form-control" type="text" required="" readonly/> *@
+                @* </div> *@
+                @* <span asp-validation-for="Order.PriceFinal" class="text-danger"></span> *@
+            @* </div> *@
+            @* <div class="col-lg-3"> *@
+                @* <label asp-for="UnspentMoney" class="col-form-label form-control-label control-label"></label> *@
+            @* </div> *@
+            @* <div class="col-lg-3"> *@
+                @* <div class="input-group mb-2 mr-sm-2"> *@
+                    @* <div class="input-group-prepend"> *@
+                        @* <div class="input-group-text">@Model.Order.SharedInfo.Currency.Name</div> *@
+                    @* </div> *@
+                    @* <input asp-for="UnspentMoney" class="form-control" type="text" readonly /> *@
+                @* </div> *@
+                @* <span asp-validation-for="UnspentMoney" class="text-danger"></span> *@
+                @* <div class="progress" style="height: 5px;"> *@
+                    @* @{ *@
+                        @* int percentValue = Model.Order.NegotiatedPrice != 0 ? (int)Math.Ceiling(Model.UnspentMoney / (decimal)Model.Order.NegotiatedPrice * 100) : 0; *@
+                        @* string progressBarWidth = percentValue >= 0 ? (100 - percentValue).ToString() : "100"; *@
+                        @* string progressbarClassColor = percentValue >= 0 ? "" : "bg-danger"; *@
+                    @* } *@
+                    @* <div class="progress-bar @progressbarClassColor progress-bar-striped" role="progressbar" style="width: @progressBarWidth%;"></div> *@
+                @* </div> *@
+            @* </div> *@
+        @* </div> *@
 
+        @* Show only if not CZK *@
         <div class="form-group row @HiddenCzkField">
             <label asp-for="Order.PriceFinalCzk" class="col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-3">
@@ -264,10 +260,20 @@
             <div class="col-lg-2 col-form-label d-flex justify-content-left">
                 <label class="form-control-label control-label">Kód(y) vykazování</label>
             </div>
-            <div class="col-lg-10">
-                <a href="javascript:void(0)" class="btn btn-success col-lg-3 add-row-order-codes mt-1" data-toggle="tooltip" title="Přidat hodinové sazby">
+            <div class="col-lg-3">
+                <a href="javascript:void(0)" class="btn btn-success add-row-order-codes mt-1" data-toggle="tooltip" title="Přidat hodinové sazby">
                     <i class="fa fa-plus"></i> Přidat kód
                 </a>
+            </div>
+            <div class="col-lg-6 text-right" style="color: gray; font-size: 0.9em;">
+                <span>Skutečné náklady: @string.Format(CultureInfo.CreateSpecificCulture(@Model.Order.SharedInfo.Currency.CultureCode), "{0:C0}", @Model.Order.RealExpensesSum)</span>
+                <i class="fa fa-question" data-toggle="tooltip" title="@Model.Order.RealExpensesSumTooltip"></i>
+                <br>
+                <span>Celkové skut. náklady: @string.Format(CultureInfo.CreateSpecificCulture(@Model.Order.SharedInfo.Currency.CultureCode), "{0:C0}", @Model.Order.RealExpensesAndOtherCostsSum)</span>
+                <i class="fa fa-question" data-toggle="tooltip" title="@Model.Order.RealExpensesAndOtherCostsSumTooltip"></i>
+                <br>
+                <span>Odčerpáno nákladů: @string.Format(CultureInfo.CreateSpecificCulture(@Model.Order.SharedInfo.Currency.CultureCode), "{0:C0}", @Model.Order.RealExpensesUsedUpSum)</span>
+                <i class="fa fa-question" data-toggle="tooltip" title="@Model.Order.RealExpensesUsedUpSumTooltip"></i>
             </div>
         </div>
 
@@ -286,12 +292,21 @@
             <div class="col-lg-2 col-form-label d-flex justify-content-left">
                 <label class="form-control-label control-label">Faktury</label>
             </div>
-            <div class="col-lg-10">
-                <a href="javascript:void(0)" class="btn btn-success col-lg-3 add-row-invoices mt-1" data-toggle="tooltip" title="Přidat fakturaci">
+            <div class="col-lg-3">
+                <a href="javascript:void(0)" class="btn btn-success add-row-invoices mt-1" data-toggle="tooltip" title="Přidat fakturaci">
                     <i class="fa fa-plus"></i> Přidat fakturaci
                 </a>
             </div>
+            <div class="col-lg-6 text-right" style="color: gray; font-size: 0.9em;">
+                <span>Celkem: @string.Format(CultureInfo.CreateSpecificCulture(@Model.Order.SharedInfo.Currency.CultureCode), "{0:C0}", @Model.Order.GetSumInvoices())</span>
+                <i class="fa fa-question" data-toggle="tooltip" title="Suma jednotlivých vyfakturovaných částek"></i>
+                <br>
+                <span>Zbývá: @string.Format(CultureInfo.CreateSpecificCulture(@Model.Order.SharedInfo.Currency.CultureCode), "{0:C0}", @Model.Order.NegotiatedPrice - @Model.Order.GetSumInvoices())</span>
+                <i class="fa fa-question" data-toggle="tooltip" title="Vyjednaná cena - Suma faktur"></i>
+            </div>
         </div>
+
+
 
         @Html.ValidationMessage("InvoiceMissing", "", new { @class = "text-danger" })
         <div class="dynamic-rows-invoices" id="template-invoices" data-order="@Model.Order.Invoices.Count()">

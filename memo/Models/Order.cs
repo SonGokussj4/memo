@@ -39,21 +39,13 @@ namespace memo.Models
         public string OrderName { get; set; }
 
         [Display(Name = "Vyjednaná cena")]
-        // [Column(TypeName = "decimal(18,3)")]
-        public int NegotiatedPrice { get; set; }
+        [Column(TypeName = "decimal(18,3)")]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:N0}")]
+        public decimal NegotiatedPrice { get; set; }
 
         [Display(Name = "Aktuální čerpání")]
-        public int? PriceFinal { get; set; }
-
-        // [Required]
-        [Display(Name = "Aktuání čerpání v Kč")]
-        [NotMapped]
-        public int? PriceFinalCzk => (int?)(this.ExchangeRate * this.PriceFinal);
-
-        [Display(Name = "Sleva z nabídky")]
-        [NotMapped]
-        public int? PriceDiscount => this.SharedInfo?.Price - NegotiatedPrice;
-        // public int? PriceDiscount { get; set; }
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:N0}")]
+        public decimal? PriceFinal { get; set; }
 
         [Required]
         [Display(Name = "Vedoucí projektu v EVEKTORu")]
@@ -61,10 +53,6 @@ namespace memo.Models
 
         [Display(Name = "Key acc. manager")]
         public string KeyAccountManager { get; set; }
-
-        [Display(Name = "Celkem hodin plánovaných")]
-        [NotMapped]
-        public int? TotalHours { get; set; }
 
         [Display(Name = "Kurz")]
         [Column(TypeName = "decimal(18,3)")]
@@ -89,15 +77,12 @@ namespace memo.Models
         [Display(Name = "Aktivní")]
         public Boolean Active { get; set; }
 
-        [NotMapped]
-        [Display(Name = "Spáleno")]
-        public int Burned { get; set; }
-
-        // [InverseProperty("Invoice")]
+        // VIRTUAL
         public virtual List<Invoice> Invoices { get; set; } = new List<Invoice>();
         public virtual List<OtherCost> OtherCosts { get; set; } = new List<OtherCost>();
         public virtual List<OrderCodes> OrderCodes { get; set; } = new List<OrderCodes>();
 
+        // METHODS
         public int GetSumInvoices()
         {
             return (int)Invoices.Sum(x => x.Cost);
@@ -105,7 +90,54 @@ namespace memo.Models
 
         public int GetSumInvoicesPercentage()
         {
-            return (int)Math.Ceiling((double)GetSumInvoices() / this.NegotiatedPrice * 100);
+            if (NegotiatedPrice != 0)
+            {
+                return (int)Math.Ceiling((decimal)GetSumInvoices() / NegotiatedPrice * 100);
+            }
+
+            return 0;
         }
+
+        // NOT MAPPED PROPERTIES
+
+        [Display(Name = "Aktuání čerpání v Kč")]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:N0}")]
+        [NotMapped]
+        public decimal? PriceFinalCzk => (int?)(this.ExchangeRate * this.PriceFinal);
+
+        [Display(Name = "Sleva z nabídky")]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:N0}")]
+
+        [NotMapped]
+        public decimal? PriceDiscount => this.SharedInfo?.Price - NegotiatedPrice;
+
+        [Display(Name = "Celkem hodin plánovaných")]
+        [NotMapped]
+        public int? TotalHours { get; set; }
+
+        [NotMapped]
+        [Display(Name = "Spáleno")]
+        public int Burned { get; set; }
+
+        [NotMapped]
+        public int OrderCodesHoursSum => OrderCodes.Sum(x => x.SumHours);
+
+        [NotMapped]
+        public int PlannedHoursSum => OrderCodes.Sum(x => x.PlannedHours);
+
+        [NotMapped]
+        public decimal RealExpensesSum => OrderCodes.Sum(x => x.HourWageSum);
+        [NotMapped]
+        public string RealExpensesSumTooltip { get; } = "Suma (vykázáno hodin * hod. mzda) jednotlivých kódů vykazování";
+
+        [NotMapped]
+        public decimal RealExpensesAndOtherCostsSum => RealExpensesSum + OtherCosts.Sum(x => x.Cost);
+        [NotMapped]
+        public string RealExpensesAndOtherCostsSumTooltip { get; } = "Skutečné náklady + suma dalších nákladů";
+
+        [NotMapped]
+        public decimal RealExpensesUsedUpSum => NegotiatedPrice - (RealExpensesSum + OtherCosts.Sum(x => x.Cost));
+        [NotMapped]
+        public string RealExpensesUsedUpSumTooltip { get; } = "Vyjednaná cena - Celkové skut. náklady";
     }
 }

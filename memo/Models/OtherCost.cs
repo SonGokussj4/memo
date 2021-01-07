@@ -24,11 +24,13 @@ namespace memo.Models
         [Required]
         [Display(Name = "Částka")]
         [Column(TypeName = "decimal(18,3)")]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:N0}")]
         public decimal Cost { get; set; }
 
         [Required]
         [Display(Name = "Částka v Czk")]
         [Column(TypeName = "decimal(18,3)")]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:N0}")]
         public decimal CostCzk { get; set; }
     }
 }

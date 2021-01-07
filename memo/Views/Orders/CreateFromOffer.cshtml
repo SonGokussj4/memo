@@ -118,31 +118,32 @@
                     </span>
                     <span asp-validation-for="Order.NegotiatedPrice" class="text-danger"></span>
                 </div>
-                <div class="col-lg-3">
+                @* <div class="col-lg-3">
                     <span class="has-float-label">
                         <input asp-for="Order.PriceDiscount" class="form-control" type="text" placeholder=" "/>
                         <label asp-for="Order.PriceDiscount">Sleva z nabídky [@Model.Order?.SharedInfo?.Currency?.Name]</label>
                     </span>
                     <span asp-validation-for="Order.PriceDiscount" class="text-danger"></span>
-                </div>
-                @if (@Model.Order.OfferId != 0)
+                </div> *@
+                @* @if (@Model.Order.OfferId != 0)
                 {
                 <div class="col-lg-3">
                     <p class="mt-1">Cena nab: <b>@String.Format(CultureInfo.CreateSpecificCulture(Model.Order.SharedInfo.Currency.CultureCode), "{0:C0}", @Model.Order.SharedInfo.Price)</b></p>
                 </div>
-                }
+                } *@
             </div>
 
             <div class="form-group row">
                 <label asp-for="Order.EveContactName" class="required col-lg-3 col-form-label form-control-label control-label"></label>
                 <div class="col-lg-3">
+                    <span style="color: gray; font-size: 0.9em;">Vedoucí projektu</span>
                     <select asp-for="Order.EveContactName" asp-items="Model.EveContactList" class="form-control selectpicker">
                         <option value="">-- Vyber kontakt --</option>
                     </select>
                     <span asp-validation-for="Order.EveContactName" class="text-danger"></span>
                 </div>
-                <label asp-for="Order.KeyAccountManager" class="col-lg-3 col-form-label form-control-label control-label"></label>
                 <div class="col-lg-3">
+                    <span style="color: gray; font-size: 0.9em;">Key account manager</span>
                     <select asp-for="Order.KeyAccountManager" asp-items="Model.EveContactList" class="form-control selectpicker">
                         <option value="">-- Vyber managera --</option>
                     </select>
@@ -151,16 +152,16 @@
             </div>
 
             <div class="form-group row justify-content-center">
-                <div class="col-lg-4">
+                <div class="col-lg-5">
                     <a href="@Url.Action("CreateEveProject")" target="_blank" class="btn btn-outline-success form-control"
                         data-toggle="tooltip" data-placement="top" title="Nová EVE zakázka">
-                        <i class="fa fa-plus-square"></i> Vytvořit eve zakázku
+                        <i class="fa fa-plus-square"></i> Vytvořit eve zakázku (intranet)
                     </a>
                 </div>
-                <div class="col-lg-4">
+                <div class="col-lg-5">
                     <a href="@Url.Action("CreateEveProject")" target="_blank" class="btn btn-outline-success form-control"
                     data-toggle="tooltip" data-placement="top" title="Nová EVE modulová zakázka">
-                        <i class="fa fa-plus-square"> </i> Vytvořit eve [M] zakázku
+                        <i class="fa fa-plus-square"> </i> Vytvořit eve [M] zakázku (intranet)
                     </a>
                 </div>
             </div>
@@ -383,13 +384,17 @@
             var offerPrice = parseInt('@Model.Order.SharedInfo.Price');  // TODO: tohle dat do SharedInfo
 
             $('#Order_NegotiatedPrice').on('keydown input change textInput', function(){
-                var negotiatedPrice = parseInt($('#Order_NegotiatedPrice').val());
-                $('#Order_PriceDiscount').val(offerPrice - negotiatedPrice);
+                if (negotiatedPrice != null) {
+                    var negotiatedPrice = parseInt($('#Order_NegotiatedPrice').val());
+                    $('#Order_PriceDiscount').val(offerPrice - negotiatedPrice);
+                }
             });
 
             $('#Order_PriceDiscount').on('keydown input change textInput', function(){
-                var priceDiscount = parseInt($('#Order_PriceDiscount').val());
-                $('#Order_NegotiatedPrice').val(offerPrice - priceDiscount);
+                if (negotiatedPrice != null) {
+                    var priceDiscount = parseInt($('#Order_PriceDiscount').val());
+                    $('#Order_NegotiatedPrice').val(offerPrice - priceDiscount);
+                }
             });
 
             //$('.invoiceDate').change('input', function(){

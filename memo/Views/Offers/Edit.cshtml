@@ -142,7 +142,11 @@
                                 @string.Format(CultureInfo.CreateSpecificCulture(@order.Offer?.SharedInfo.Currency.CultureCode), "{0:C0}", @order.PriceFinal)
                                 <div class="progress" style="height: 5px; margin-left: 25%;">
                                 @{
-                                    int percentValue = (int)Math.Ceiling((double)order.PriceFinal / order.NegotiatedPrice * 100);
+                                    int percentValue = 0;
+                                    if (order.NegotiatedPrice != 0)
+                                    {
+                                        percentValue = (int)Math.Ceiling((decimal)order.PriceFinal / order.NegotiatedPrice * 100);
+                                    }
                                     string progressBarWidth = percentValue <= 100 ? (percentValue).ToString() : "100";
                                     string progressbarClassColor = percentValue <= 100 ? "" : "bg-danger";
                                 }

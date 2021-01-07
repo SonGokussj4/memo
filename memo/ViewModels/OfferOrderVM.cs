@@ -42,7 +42,8 @@ namespace memo.ViewModels
         public int UnspentMoney { get; set; }
 
         public List<string> OrderCodesTooltips { get; set; }
-
+        // public int OrderCodesHoursSum { get; set; }
+        // public int PlannedHoursSum { get; set; }
 
         public IEnumerable<AuditViewModel> Audits { get; set; }
 

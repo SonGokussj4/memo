@@ -54,10 +54,14 @@ namespace memo.Models
         public string EveCreatedUser { get; set; }
 
         [Display(Name = "Cena bez DPH")]
-        public int? Price { get; set; }
+        [Column(TypeName = "decimal(18,3)")]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:N0}")]
+        public decimal? Price { get; set; }
 
         [Display(Name = "Cena v CZK")]
-        public int? PriceCzk { get; set; }
+        [Column(TypeName = "decimal(18,3)")]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:N0}")]
+        public decimal? PriceCzk { get; set; }
 
         [Display(Name = "Směnný kurz")]
         [Column(TypeName = "decimal(18,3)")]
@@ -66,9 +70,6 @@ namespace memo.Models
 
         [Display(Name = "Předp. termín ukončení"), Column(TypeName = "DATE"), DisplayFormat(DataFormatString = "{0:dd.MM.yyyy}", ApplyFormatInEditMode = true)]
         public DateTime? EstimatedFinishDate { get; set; }
-
-        // public int ContractId { get; set; }
-        // public virtual Contract Contract { get; set; }
 
         // [NotMapped]
         // public List<SelectListItem> EveDivisionList { get; } = new List<SelectListItem>
