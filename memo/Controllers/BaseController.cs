@@ -96,6 +96,7 @@ namespace memo.Controllers
                 "jhubacek",
                 "jkerndl",
                 "jmatuska",
+                "jprokop",
                 "jverner",  // ADMIN
                 "kgalasova",
                 "kvsetula",
