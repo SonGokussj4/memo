@@ -19,17 +19,19 @@ namespace memo.Data
 
         // TABLES
         // dotnet ef dbcontext scaffold "Server=ar-nexus,1433;Initial catalog=MemoDB;User ID=SA;Password=Pa55w0rd2019" Microsoft.EntityFrameworkCore.SqlServer -o Models -t Contact --context-dir Data --data-annotations
+        public virtual DbSet<Offer> Offer { get; set; }
+        public virtual DbSet<Order> Order { get; set; }
+        public virtual DbSet<Contract> Contracts { get; set; }
         public virtual DbSet<Contact> Contact { get; set; }
         public virtual DbSet<Company> Company { get; set; }
         public virtual DbSet<Currency> Currency { get; set; }
-        public virtual DbSet<Offer> Offer { get; set; }
         public virtual DbSet<OfferStatus> OfferStatus { get; set; }
-        public virtual DbSet<Order> Order { get; set; }
         public virtual DbSet<Invoice> Invoice { get; set; }
         public virtual DbSet<OtherCost> OtherCost { get; set; }
         public virtual DbSet<OrderCodes> OrderCodes { get; set; }
         public virtual DbSet<BugReport> BugReport { get; set; }
         public virtual DbSet<Audit> Audit { get; set; }
+        public virtual DbSet<SharedInfo> SharedInfo { get; set; }
 
 
         /// <summary>

@@ -13,7 +13,7 @@ namespace memo.Models
         [Required]
         [Display(Name = "Zakázka")]
         public int OrderId { get; set; }
-        public Order Order { get; set; }
+        public virtual Order Order { get; set; }
 
         [Required]
         [Display(Name = "Kód vykazování EVE"), StringLength(50)]
@@ -22,13 +22,36 @@ namespace memo.Models
 
         [Display(Name = "Hodinová mzda")]
         [Column(TypeName = "decimal(18,3)")]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:N0}")]
         public decimal? HourWageCost { get; set; }
 
         [Display(Name = "Hodinová mzda CZK")]
         [Column(TypeName = "decimal(18,3)")]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:N0}")]
         public decimal? HourWageCostCzk { get; set; }
 
         [Display(Name = "Hodinová mzda CZK"), StringLength(50)]
         public string HourWageSubject { get; set; }
+
+        // Additional properties
+
+        [NotMapped]
+        public int SumMinutes { get; set; }
+
+        [NotMapped]
+        public int SumHours => Convert.ToInt32((double)SumMinutes / 60);
+
+        [NotMapped]
+        public int PlannedMinutes { get; set; }
+
+        [NotMapped]
+        public int PlannedHours => Convert.ToInt32((double)PlannedMinutes / 60);
+
+        [NotMapped]
+        public decimal HourWageSum => (decimal)((HourWageCost != null ? HourWageCost : 0 ) * SumHours);
+
+        // [NotMapped]
+        // public decimal HourWageCzkSum => (decimal)(Order.ExchangeRate * (HourWageCost != null ? HourWageCost : 0 ) * SumHours);
+
     }
 }

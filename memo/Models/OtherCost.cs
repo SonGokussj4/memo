@@ -15,7 +15,7 @@ namespace memo.Models
         // [Required]
         [Display(Name = "Zakázka")]
         public int OrderId { get; set; }
-        public Order Order { get; set; }
+        public virtual Order Order { get; set; }
 
         [Required]
         [Display(Name = "Popis")]
@@ -24,11 +24,13 @@ namespace memo.Models
         [Required]
         [Display(Name = "Částka")]
         [Column(TypeName = "decimal(18,3)")]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:N0}")]
         public decimal Cost { get; set; }
 
         [Required]
         [Display(Name = "Částka v Czk")]
         [Column(TypeName = "decimal(18,3)")]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:N0}")]
         public decimal CostCzk { get; set; }
     }
 }

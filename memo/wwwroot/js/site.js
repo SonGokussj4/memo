@@ -19,16 +19,27 @@
 
 // Parameters for DatePicker calendar
 var datepickerParameters = new Array({
-    format: "yyyy-mm-dd",
-    // format: "dd.mm.yyyy",
+    format: "dd.mm.yyyy",
     todayBtn: "linked",
-    startDate: "1980-01-01",
+    startDate: "1988-09-02",
     language: "cs",
     daysOfWeekHighlighted: "0,6",
     calendarWeeks: true,
     autoclose: true,
     todayHighlight: true
 });
+
+
+// ==========================================================================
+// FIXES
+// ==========================================================================
+
+// Fix Select2 not able to write text when in popup Modal
+// Source: https://stackoverflow.com/questions/18487056/select2-doesnt-work-when-embedded-in-a-bootstrap-modal/19574076#19574076
+$.fn.modal.Constructor.prototype._enforceFocus = function () { };
+
+// Add 'replaceAll()' function to JavaScript Strings
+String.prototype.replaceAllTxt = function replaceAll(search, replace) { return this.split(search).join(replace); };
 
 
 // ==========================================================================
@@ -52,8 +63,9 @@ function getBaseUrl() {
  * If False is returned, show warning text and color border to red, hiden and green otherwise.
  * @param {element} parent $(this) element every time
  * @param {string} controllerName Controller Name
+ * @param {string} [ignoreName] String which has to be ignored, if it's the same as entered name, return False
  */
-function checkItemNameExists(parent, controllerName) {
+function checkItemNameExists(parent, controllerName, ignoreName="") {
     var baseUrl = getBaseUrl();
     $warningElement = $('#NumberAlreadyExistsWarning');
     if (!$($warningElement).length) {
@@ -69,7 +81,7 @@ function checkItemNameExists(parent, controllerName) {
         url: `${baseUrl}/${controllerName}/itemNameExists`,
         type: 'POST',
         dataType: "json",
-        data: { itemName: enteredText },
+        data: { itemName: enteredText, ignoreName: ignoreName },
         success: function (response) {
             if(response.exists == true) {
                 $this.css("border-bottom", "4px solid red");
@@ -101,7 +113,6 @@ function initializeTooltips() {
  * Selectpicker: select2 [https://select2.org/]
  */
 function initializeSelectpicker() {
-    console.log("Initializing Selectpicker");
     $('.selectpicker').select2({
         // dropdownCssClass: 'form-control',
         minimumInputLength: 0,  // minimum number of characters required to start a search
@@ -123,6 +134,28 @@ $(function() {
     });
 });
 
+
+/**
+ * @summary Return date (can do days additon) in format dd.MM.yyyy
+ * @description
+ * - Example:
+ *  - var futureDate = getPrettyDate(new Date("24.12.2020"), 1)
+ *  - "25.12.2020"
+ * @param  {[Date]} date [date e.g. new Date('xxxx')]
+ * @param  {[integer]} daysToAdd [default: 0; days to add to the <date>]
+ * @return {[string]}     [String in format dd.MM.yyyy]
+ */
+function getPrettyDate(date, daysToAdd = 0) {
+    date.setDate(date.getUTCDate() + daysToAdd);
+    var futureDate =
+    ('0' + (date.getDate())).slice(-2)
+    + '.'
+    + ('0' + (date.getMonth() + 1)).slice(-2)
+    + '.'
+    + date.getFullYear();
+    return futureDate;  // dd.MM.yyyy
+}
+
 /**
  * @summary Return date (can do days additon) in format RRRR-MM-DD
  * @description
@@ -133,7 +166,7 @@ $(function() {
  * @param  {[integer]} daysToAdd [default: 0; days to add to the <date>]
  * @return {[string]}     [String in format RRRR-MM-DD]
  */
-function getPrettyDate(date, daysToAdd = 0) {
+function getPrettyDateUS(date, daysToAdd = 0) {
     date.setDate(date.getUTCDate() + daysToAdd);
     var futureDate = date.getFullYear()
         + '-'
@@ -179,6 +212,9 @@ function floatingLabelsInit () {
     }).focusout(); //trigger the focusout event manually
 }
 
+// ==========================================================================
+// NOTIFICATIONS - ALERTS
+// ==========================================================================
 $("#success-alert").fadeTo(4000, 500).slideUp(500, function(){
     $("#success-alert").slideUp(500);
 });
@@ -189,8 +225,6 @@ $("#error-alert").fadeTo(60000, 500).slideUp(500, function(){
     $("#error-alert").slideUp(500);
 });
 
-// Add 'replaceAll()' function to JavaScript Strings
-String.prototype.replaceAllTxt = function replaceAll(search, replace) { return this.split(search).join(replace); };
 
 // Ajax modal popup the partial view
 function initializeOrderAjaxModalClickEvent() {
@@ -224,10 +258,56 @@ function OrderCodeToInput(id) {
 }
 
 
-// ==========================================================================
-// FIXES
-// ==========================================================================
 
-// Fix Select2 not able to write text when in popup Modal
-// Source: https://stackoverflow.com/questions/18487056/select2-doesnt-work-when-embedded-in-a-bootstrap-modal/19574076#19574076
-$.fn.modal.Constructor.prototype._enforceFocus = function () { };
+
+
+// ==========================================================================
+// OTHER
+// ==========================================================================
+// Jak clovek pise, delat mezery za tisicovkami
+// $('.space-separated-thousands').keyup(function(event) {
+
+//     // skip for arrow keys
+//     if(event.which >= 37 && event.which <= 40) return;
+
+//     // format number
+//     $(this).val(function(index, value) {
+//       return value
+//       .replace(/\D/g, "")
+//       .replace(/\B(?=(\d{3})+(?!\d))/g, " ")
+//       ;
+//     });
+//   });
+
+
+
+// NOTE: Stara vec, predtim jsem klikal na Order/Create z nabidky, ramcovky nebo bez nabidky
+// a menil jsem dynamicky zbytek contentu, nyni je to delane pres individualni cshtml stranky
+//$("#opt1").click(function () {
+//    $(".new-order-from-offer").show();
+//    $(".new-order-from-contract").hide();
+//    $(".new-order-from-other").hide();
+//    $(this).parent().addClass("selected");
+//    $("#opt2").parent().removeClass("selected");
+//    $("#opt3").parent().removeClass("selected");
+//    $("#orderForm").css("visibility", "hidden");
+//});
+//$("#opt2").click(function () {
+//    $(".new-order-from-offer").hide();
+//    $(".new-order-from-contract").show();
+//    $(".new-order-from-other").hide();
+//    $(this).parent().addClass("selected");
+//    $("#opt1").parent().removeClass("selected");
+//    $("#opt3").parent().removeClass("selected");
+//    $("#orderForm").css("visibility", "hidden");
+//});
+//$("#opt3").click(function () {
+//    $(".new-order-from-offer").hide();
+//    $(".new-order-from-contract").hide();
+//    $(".new-order-from-other").show();
+//    $(this).parent().addClass("selected");
+//    $("#opt1").parent().removeClass("selected");
+//    $("#opt2").parent().removeClass("selected");
+//    $("#orderForm").css("visibility", "visible");
+//});
+

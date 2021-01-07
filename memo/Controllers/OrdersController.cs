@@ -37,19 +37,38 @@ namespace memo.Controllers
 
         public async Task<IActionResult> Index(bool showInactive = false)
         {
-            ViewBag.showInactive = showInactive;
-
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
 
+            ViewBag.showInactive = showInactive;
+            List<Order> orders = await _db.Order
+                .Include(x => x.OtherCosts)
+                .Include(x => x.OrderCodes)
+                .Include(x => x.Invoices)
+                .ToListAsync();
+
+            var shares = await _db.SharedInfo.ToListAsync();
+            var currencies = await _db.Currency.ToListAsync();
+            var companies = await _db.Company.ToListAsync();
+            var contacts = await _db.Contact.ToListAsync();
+
+            await _db.Offer.LoadAsync();
+            await _db.Contracts.LoadAsync();
+
+                    // .Include(x => x.SharedInfo)
+                    //     .ThenInclude(y => y.Currency)
+                    // .Include(x => x.SharedInfo)
+                    //     .ThenInclude(y => y.Company)
+                    // .Include(x => x.SharedInfo)
+                    //     .ThenInclude(y => y.Contact)
+                    // .Include(x => x.OtherCosts)
+                    // .Include(x => x.Invoices)
+                    // .ToListAsync();
+
+            // TODO(jverner) !!! Toto mi spotrebuje pul sekundy, boha............
             OrdersViewModel vm = new OrdersViewModel {
                 cOrdersAll = await _eveDb.cOrders.ToListAsync(),
-                Orders = await _db.Order
-                    .Include(x => x.Offer).ThenInclude(z => z.Currency)
-                    .Include(x => x.Offer.Company)
-                    .Include(x => x.OtherCosts)
-                    .Include(x => x.Invoices)
-                    .ToListAsync()
+                Orders = orders,
             };
 
             // Filtr - Pouze aktivní
@@ -58,18 +77,24 @@ namespace memo.Controllers
                 vm.Orders = vm.Orders.Where(x => x.Active == true);
             }
 
-            Dictionary<string, int> dc = await GetOrderSumHoursDictAsync();
+            // TODO(jverner) !!! Toto mi spotrebuje dalsi pul sekundy, boha.......
+            Dictionary<string, int> dc = await GetOrderSumMinutesDictAsync();
+            Dictionary<string, int> dc2 = await GetOrderPlannedMinutesDictAsync();
+
             foreach (Order order in vm.Orders)
             {
-                // order.Burned = dc.Get(order.OrderCode, 0);  // TODO delat ve ViewModelu
-                order.Burned = 0;
+                foreach (OrderCodes orderCode in order.OrderCodes)
+                {
+                    orderCode.SumMinutes = dc.Get(orderCode.OrderCode);
+                    orderCode.PlannedMinutes = dc2.Get(orderCode.OrderCode);
+                }
             }
 
             List<Order> allOrders = await _db.Order.ToListAsync();
             ViewBag.AllOrdersCount = allOrders.Count();
 
             TimeSpan ts = stopwatch.Elapsed;
-            string message = string.Format("Stránka načtena za: {0:D1}.{1:D3}s", ts.Seconds, ts.Milliseconds);
+            string message = string.Format($"Stránka načtena za: {ts.Seconds:D1}.{ts.Milliseconds:D3}s");
             if (_env.IsDevelopment())
             {
                 TempData["Info"] = message;
@@ -78,71 +103,30 @@ namespace memo.Controllers
             return View(vm);
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Refresh(int offerId)
-        {
-            return RedirectToAction("Create", new { id = offerId });
-        }
 
         [HttpGet]
-        public async Task<IActionResult> Create(int? id)
+        public async Task<IActionResult> Create()
         {
-            Offer offer = await _db.Offer.FirstOrDefaultAsync(x => x.OfferId == id);
+            OfferOrderVM vm = new OfferOrderVM();
 
-            await populateModel(null, 0);
-
-            if (offer == null)
+            // Initialize models, vars
+            vm.Order.SharedInfo = new SharedInfo();
+            vm.Order.SharedInfo.ReceiveDate = DateTime.Now;
+            vm.Order.SharedInfo.Currency = new Currency()
             {
-                OfferOrderVM vmm = new OfferOrderVM()
-                {
-                    Offer = new Offer(),
-                    Order = new Order(),
-                };
-
-                return View(vmm);
-            }
-
-            string offerCompanyName = string.Empty;
-            int invoiceDueDays = 0;
-            string curSymbol = "CZK";
-            int offerFinalPrice = 0;
-            int offerPriceDiscount = 0;
-            int finalPriceCzk = 0;
-            int negotiatedPrice = 0;
-
-            Currency cur = await _db.Currency.FirstOrDefaultAsync(x => x.CurrencyId == offer.CurrencyId);
-            curSymbol = cur != null ? cur.Name : "";
-            offerFinalPrice = (int)offer.Price;
-            finalPriceCzk = Convert.ToInt32(offerFinalPrice * offer.ExchangeRate);
-            negotiatedPrice = (int)offer.Price;
-
-            Company company = await _db.Company.FirstOrDefaultAsync(x => x.CompanyId == offer.CompanyId);
-            if (company != null)
-            {
-                offerCompanyName = company.Name;
-                invoiceDueDays = (int)company.InvoiceDueDays;
-            }
-            // }
-            Order order = new Order();
-            order.OfferId = offer.OfferId;
-            order.ExchangeRate = Decimal.Parse(getCurrencyStr(curSymbol).Replace(",", "."), CultureInfo.InvariantCulture);
-            order.PriceFinal = offerFinalPrice;
-            order.PriceDiscount = offerPriceDiscount;
-            order.PriceFinalCzk = finalPriceCzk;
-            order.NegotiatedPrice = negotiatedPrice;
-
-            await populateModel(order, (int)id);
-
-            OfferOrderVM vm = new OfferOrderVM()
-            {
-                Offer = offer,
-                OfferId = (int)id,
-                Order = order,
-                OfferCompanyName = offerCompanyName,
-                InvoiceDueDays = invoiceDueDays,
-                CurrencyName = curSymbol,
+                Name = "CZK",
             };
+            // TODO: Dat do PopulateModel nebo tak nejak
+            string domainUser = User.GetLoggedInUserName();
+            string username = domainUser.Split('\\').LastOrDefault();
+            int userId = await _eveDbDochna.tUsers.Where(x => x.TxAccount == username).Select(x => x.Id).FirstOrDefaultAsync();
+
+            vEmployees vEmployee = await _eveDbDochna.vEmployees.Where(x => x.Id == userId).FirstOrDefaultAsync();
+
+            vm.Order.EveContactName = vEmployee.FormatedName;
+            vm.Order.KeyAccountManager = vEmployee.FormatedName;
+
+            await populateModelAsync(vm);
 
             return View(vm);
         }
@@ -151,80 +135,33 @@ namespace memo.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(OfferOrderVM vm)
         {
-            await populateModel(vm.Order, vm.Order.OrderId);
+            // await populateModel(vm.Order, vm.Order.OrderId);
 
-            string offerCompanyName = string.Empty;
-            int invoiceDueDays = 0;
-            string curSymbol = "CZK";
-            int offerFinalPrice = 0;
-            int offerPriceDiscount = 0;
-            int finalPriceCzk = 0;
+            vm.Order.FromType = "-";
 
-            Offer offer = new Offer();
-            if (vm.Order.OfferId != null && vm.Order.OfferId != 0)
-            {
-                offer = await _db.Offer.FirstOrDefaultAsync(x => x.OfferId == vm.Order.OfferId);
-                Currency cur = await _db.Currency.FirstOrDefaultAsync(x => x.CurrencyId == offer.CurrencyId);
-                curSymbol = cur != null ? cur.Name : "";
-                offerFinalPrice = (int)offer.Price;
-                finalPriceCzk = Convert.ToInt32(offerFinalPrice * offer.ExchangeRate);
-
-                Company company = await _db.Company.FirstOrDefaultAsync(x => x.CompanyId == offer.CompanyId);
-                if (company != null)
-                {
-                    offerCompanyName = company.Name;
-                    invoiceDueDays = (int)company.InvoiceDueDays;
-                }
-            }
-
-            vm.Order.ExchangeRate = Decimal.Parse(getCurrencyStr(curSymbol).Replace(",", "."), CultureInfo.InvariantCulture);
-            vm.Order.PriceFinal = offerFinalPrice;
-            vm.Order.PriceDiscount = offerPriceDiscount;
-            vm.Order.PriceFinalCzk = finalPriceCzk;
-
-            vm.Offer = offer;
-            vm.OfferCompanyName = offerCompanyName;
-            vm.InvoiceDueDays = invoiceDueDays;
-            vm.CurrencyName = curSymbol;
-
-            string orderName = await _db.Order
-                .Where(x => x.OrderName == vm.Order.OrderName)
-                .Select(x => x.OrderName)
-                .FirstOrDefaultAsync();
-            if (orderName != null)
-            {
-                ModelState.AddModelError("Order.OrderName", "Číslo objednávky zákazníka již existuje");
-            }
-
+            // TODO(jverner) Na toto se kouknout, komunikace s Vitou Cernym, co sem vubec chce...
             vm.Order.PriceFinal = 0;
-            vm.Order.PriceFinalCzk = 0;
-            vm.Order.PriceDiscount = offer.Price;
+            vm.Order.SharedInfo.Currency = await _db.Currency.Where(x => x.CurrencyId == vm.Order.SharedInfo.CurrencyId).FirstOrDefaultAsync();
+            vm.Order.ExchangeRate = decimal.Parse(getCurrencyStr(vm.Order.SharedInfo.Currency.Name));
 
             foreach (Invoice invoice in vm.Order.Invoices)
             {
-                invoice.CostCzk = Convert.ToInt32(invoice.Cost * vm.Order.ExchangeRate);
-                vm.Order.PriceFinalCzk += Convert.ToInt32(invoice.CostCzk);
                 vm.Order.PriceFinal += Convert.ToInt32(invoice.Cost);
-                vm.Order.PriceDiscount -= Convert.ToInt32(invoice.Cost);
             }
             foreach (OtherCost otherCost in vm.Order.OtherCosts)
             {
-                otherCost.CostCzk = Convert.ToInt32(otherCost.Cost * vm.Order.ExchangeRate);
-                vm.Order.PriceFinalCzk += Convert.ToInt32(otherCost.CostCzk);
-                vm.Order.PriceFinal += Convert.ToInt32(otherCost.Cost);
+                vm.Order.PriceFinal -= Convert.ToInt32(otherCost.Cost);
             }
+
+            foreach (OrderCodes orderCode in vm.Order.OrderCodes)
+            {
+                int burnedHours = await GetSumMinutesAsync(orderCode.OrderCode) / 60;
+                vm.Order.PriceFinal -= Convert.ToInt32(burnedHours * orderCode.HourWageCost);
+            }
+
 
             if (ModelState.IsValid)
             {
-                // TODO: Pozor na toto nezapomenout
-                // int? totalMinutes = await _eveDb.cOrders  // Planned
-                //     .Where(t => t.OrderCode == vm.Order.OrderCode)
-                //     .Select(t => t.Planned)
-                //     .FirstOrDefaultAsync();
-
-                int? totalMinutes = null;
-                vm.Order.TotalHours = totalMinutes != null ? totalMinutes / 60 : 0;
-
                 vm.Order.CreatedBy = User.GetLoggedInUserName();
                 vm.Order.CreatedDate = DateTime.Now;
                 vm.Order.ModifiedBy = vm.Order.CreatedBy;
@@ -241,12 +178,247 @@ namespace memo.Controllers
                 }
                 catch (Exception e)
                 {
-
                     TempData["Error"] = $"Problém s uložením do databáze... Detail: '@{e}'";
                 }
             }
 
-            return View("Create", vm);
+            TempData["Error"] = "Nepovedlo se uložit...";
+
+            await populateModelAsync(vm);
+            vm.Order.SharedInfo.ReceiveDate = DateTime.Now;
+            vm.Order.SharedInfo.Currency = new Currency()
+            {
+                Name = "CZK",
+            };
+            return View(vm);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> CreateFromOffer(int? id)
+        {
+            Offer offer = await _db.Offer
+                .Include(x => x.SharedInfo.Currency)
+                .FirstOrDefaultAsync(x => x.OfferId == id);
+
+            if (offer == null)
+            {
+                OfferOrderVM vmm = new OfferOrderVM();
+                await populateModelAsync(vmm);
+
+                return View(vmm);
+            }
+
+            Order order = new Order();
+            order.ExchangeRate = decimal.Parse(getCurrencyStr(offer.SharedInfo.Currency.Name));
+            order.Offer = offer;
+            order.OfferId = offer.OfferId;
+            order.SharedInfo = offer.SharedInfo;
+            order.SharedInfoId = offer.SharedInfoId;
+
+            // Fill nested models
+            var shares = await _db.SharedInfo.ToListAsync();
+            var contacts = await _db.Contact.ToListAsync();
+            var currencies = await _db.Currency.ToListAsync();
+            var companies = await _db.Company.ToListAsync();
+
+            // TODO: Dat do PopulateModel nebo tak nejak
+            string domainUser = User.GetLoggedInUserName();
+            string username = domainUser.Split('\\').LastOrDefault();
+            int userId = await _eveDbDochna.tUsers.Where(x => x.TxAccount == username).Select(x => x.Id).FirstOrDefaultAsync();
+
+            vEmployees vEmployee = await _eveDbDochna.vEmployees.Where(x => x.Id == userId).FirstOrDefaultAsync();
+
+            order.EveContactName = vEmployee.FormatedName;
+            order.KeyAccountManager = vEmployee.FormatedName;
+
+            OfferOrderVM vm = new OfferOrderVM()
+            {
+                Order = order,
+            };
+            await populateModelAsync(vm);
+
+            return View(vm);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateFromOffer(OfferOrderVM vm)
+        {
+            // await populateModel(vm.Order, vm.Order.OrderId);
+
+            // vm.Order.FromType = vm.Order.OfferId != 0 ? "N" : (vm.Contract?.ContractsId != 0 ? "R" : "-");
+            vm.Order.FromType = "N";
+            vm.Order.Offer = await _db.Offer
+                .Where(x => x.OfferId == vm.Order.OfferId)
+                .Include(x => x.SharedInfo)
+                .FirstOrDefaultAsync();
+
+            vm.Order.SharedInfoId = vm.Order.Offer.SharedInfoId;
+            vm.Order.SharedInfo = await _db.SharedInfo
+                .Where(x => x.SharedInfoId == vm.Order.SharedInfoId)
+                .FirstOrDefaultAsync();
+
+            // TODO(jverner) Na toto se kouknout, komunikace s Vitou Cernym, co sem vubec chce...
+            vm.Order.PriceFinal = 0;
+            vm.Order.SharedInfo.Currency = await _db.Currency.Where(x => x.CurrencyId == vm.Order.SharedInfo.CurrencyId).FirstOrDefaultAsync();
+            vm.Order.ExchangeRate = decimal.Parse(getCurrencyStr(vm.Order.SharedInfo.Currency.Name));
+
+            foreach (Invoice invoice in vm.Order.Invoices)
+            {
+                vm.Order.PriceFinal += Convert.ToInt32(invoice.Cost);
+            }
+            foreach (OtherCost otherCost in vm.Order.OtherCosts)
+            {
+                vm.Order.PriceFinal -= Convert.ToInt32(otherCost.Cost);
+            }
+
+            foreach (OrderCodes orderCode in vm.Order.OrderCodes)
+            {
+                int burnedHours = await GetSumMinutesAsync(orderCode.OrderCode) / 60;
+                vm.Order.PriceFinal -= Convert.ToInt32(burnedHours * orderCode.HourWageCost);
+            }
+
+
+            if (ModelState.IsValid)
+            {
+                vm.Order.CreatedBy = User.GetLoggedInUserName();
+                vm.Order.CreatedDate = DateTime.Now;
+                vm.Order.ModifiedBy = vm.Order.CreatedBy;
+                vm.Order.ModifiedDate = vm.Order.CreatedDate;
+
+                try
+                {
+                    await _db.AddAsync(vm.Order);
+                    await _db.SaveChangesAsync(User.GetLoggedInUserName());
+
+                    TempData["Success"] = "Nová zakázka vytvořena.";
+
+                    return RedirectToAction("Index");
+                }
+                catch (Exception e)
+                {
+                    TempData["Error"] = $"Problém s uložením do databáze... Detail: '@{e}'";
+                }
+            }
+
+            TempData["Error"] = "Nepovedlo se uložit...";
+
+            await populateModelAsync(vm);
+            return View(vm);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> CreateFromContract(int? id)
+        {
+            Contract contract = await _db.Contracts
+                .Include(x => x.SharedInfo.Currency)
+                .FirstOrDefaultAsync(x => x.ContractsId == id);
+
+            if (contract == null)
+            {
+                OfferOrderVM vmm = new OfferOrderVM();
+                await populateModelAsync(vmm);
+
+                return View(vmm);
+            }
+
+            Order order = new Order();
+            order.ExchangeRate = decimal.Parse(getCurrencyStr(contract.SharedInfo.Currency.Name));
+            order.Contract = contract;
+            order.ContractId = contract.ContractsId;
+            order.SharedInfo = contract.SharedInfo;
+            order.SharedInfoId = contract.SharedInfoId;
+
+            // Fill nested models
+            var shares = await _db.SharedInfo.ToListAsync();
+            var contacts = await _db.Contact.ToListAsync();
+            var currencies = await _db.Currency.ToListAsync();
+            var companies = await _db.Company.ToListAsync();
+
+            // TODO: Dat do PopulateModel nebo tak nejak
+            string domainUser = User.GetLoggedInUserName();
+            string username = domainUser.Split('\\').LastOrDefault();
+            int userId = await _eveDbDochna.tUsers.Where(x => x.TxAccount == username).Select(x => x.Id).FirstOrDefaultAsync();
+
+            vEmployees vEmployee = await _eveDbDochna.vEmployees.Where(x => x.Id == userId).FirstOrDefaultAsync();
+
+            order.EveContactName = vEmployee.FormatedName;
+            order.KeyAccountManager = vEmployee.FormatedName;
+
+            OfferOrderVM vm = new OfferOrderVM()
+            {
+                // Contract = contract,
+                Order = order
+            };
+            await populateModelAsync(vm);
+
+            return View(vm);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateFromContract(OfferOrderVM vm)
+        {
+            // await populateModel(vm.Order, vm.Order.OrderId);
+
+            // vm.Order.FromType = vm.Order.OfferId != 0 ? "N" : (vm.Contract?.ContractsId != 0 ? "R" : "-");
+            vm.Order.FromType = "Z";
+            vm.Order.Contract = await _db.Contracts
+                .Where(x => x.ContractsId == vm.Order.ContractId)
+                .Include(x => x.SharedInfo)
+                .FirstOrDefaultAsync();
+
+            vm.Order.SharedInfoId = vm.Order.Contract.SharedInfoId;
+            vm.Order.SharedInfo = await _db.SharedInfo
+                .Where(x => x.SharedInfoId == vm.Order.SharedInfoId)
+                .FirstOrDefaultAsync();
+
+            // TODO(jverner) Na toto se kouknout, komunikace s Vitou Cernym, co sem vubec chce...
+            vm.Order.PriceFinal = 0;
+            vm.Order.SharedInfo.Currency = await _db.Currency.Where(x => x.CurrencyId == vm.Order.SharedInfo.CurrencyId).FirstOrDefaultAsync();
+            vm.Order.ExchangeRate = decimal.Parse(getCurrencyStr(vm.Order.SharedInfo.Currency.Name));
+
+            foreach (Invoice invoice in vm.Order.Invoices)
+            {
+                vm.Order.PriceFinal += Convert.ToInt32(invoice.Cost);
+            }
+            foreach (OtherCost otherCost in vm.Order.OtherCosts)
+            {
+                vm.Order.PriceFinal -= Convert.ToInt32(otherCost.Cost);
+            }
+
+            foreach (OrderCodes orderCode in vm.Order.OrderCodes)
+            {
+                int burnedHours = await GetSumMinutesAsync(orderCode.OrderCode) / 60;
+                vm.Order.PriceFinal -= Convert.ToInt32(burnedHours * orderCode.HourWageCost);
+            }
+
+            if (ModelState.IsValid)
+            {
+                vm.Order.CreatedBy = User.GetLoggedInUserName();
+                vm.Order.CreatedDate = DateTime.Now;
+                vm.Order.ModifiedBy = vm.Order.CreatedBy;
+                vm.Order.ModifiedDate = vm.Order.CreatedDate;
+
+                try
+                {
+                    await _db.AddAsync(vm.Order);
+                    await _db.SaveChangesAsync(User.GetLoggedInUserName());
+
+                    TempData["Success"] = "Nová zakázka vytvořena.";
+
+                    return RedirectToAction("Index");
+                }
+                catch (Exception e)
+                {
+                    TempData["Error"] = $"Problém s uložením do databáze... Detail: '@{e}'";
+                }
+            }
+
+            TempData["Error"] = "Nepovedlo se uložit...";
+
+            await populateModelAsync(vm);
+            return View(vm);
         }
 
         // GET: Order/Edit/5
@@ -258,30 +430,34 @@ namespace memo.Controllers
                 return NotFound();
             }
 
-            await populateModel(null, 0);
-
             Order order = await _db.Order.FindAsync(id);
             if (order == null)
             {
                 return NotFound();
             }
 
-            order.Invoices = await _db.Invoice.Where(x => x.OrderId == id).ToListAsync();
-            order.OtherCosts = await _db.OtherCost.Where(x => x.OrderId == id).ToListAsync();
-            order.OrderCodes = await _db.OrderCodes.Where(x => x.OrderId == id).ToListAsync();
+            await _db.Invoice.LoadAsync();
+            await _db.OtherCost.LoadAsync();
+            await _db.OrderCodes.LoadAsync();
 
-            if (offerId != null)
+            // order.Invoices = await _db.Invoice.Where(x => x.OrderId == id).ToListAsync();
+            // order.OtherCosts = await _db.OtherCost.Where(x => x.OrderId == id).ToListAsync();
+            // order.OrderCodes = await _db.OrderCodes.Where(x => x.OrderId == id).ToListAsync();
+
+            foreach (OrderCodes orderCode in order.OrderCodes)
             {
-                order.OfferId = offerId;
-            }
-            Offer offer = await _db.Offer.FindAsync(order.OfferId);
-            if (offer == null)
-            {
-                return NotFound();
+                orderCode.SumMinutes = await GetSumMinutesAsync(orderCode.OrderCode);
+                orderCode.PlannedMinutes = await GetPlannedMinutesAsync(orderCode.OrderCode);
             }
 
-            Company company = await _db.Company.FindAsync(offer.CompanyId);
-            Currency currency= await _db.Currency.FindAsync(offer.CurrencyId);
+            if (order.FromType == "N")
+            {
+                await _db.Offer.LoadAsync();
+            }
+            else if (order.FromType == "Z")
+            {
+                await _db.Contracts.LoadAsync();
+            }
 
             // AUDITS
             List<int> orderIdInvoices = order.Invoices.Where(x => x.OrderId == id).Select(x => x.InvoiceId).ToList();
@@ -305,28 +481,35 @@ namespace memo.Controllers
                 orderCodesTooltips.Add(tooltip);
             }
 
+            var shares = await _db.SharedInfo.ToListAsync();
+            var currencies = await _db.Currency.ToListAsync();
+            var companies = await _db.Company.ToListAsync();
+            var contacts = await _db.Contact.ToListAsync();
+
             // VIEW MODEL
             OfferOrderVM vm = new OfferOrderVM()
             {
-                Offer = offer,
+                // Offer = offer,
                 Order = order,
-                OfferId = (int)order.OfferId,
-                OfferCompanyName = company.Name,
-                InvoiceDueDays = (int)company.InvoiceDueDays,
-                CurrencyName = currency.Name,
+                // OfferId = (int)order.OfferId,
+                OfferCompanyName = order.SharedInfo.Company.Name,
+                InvoiceDueDays = (int)order.SharedInfo.Company.InvoiceDueDays,
+                // CurrencyName = currency.Name,
                 UnspentMoney = (int)(order.NegotiatedPrice - order.PriceFinal),
                 Audits = audits,
                 OrderCodesTooltips = orderCodesTooltips,
             };
 
-            if (offerId == 0 && vm.Edit != "true")
-            {
-                ModelState.AddModelError(string.Empty, "Nelze vybrat prázdnou nabídku");
-                return View();
-            }
-
+            // if (offerId == 0 && vm.Edit != "true")
+            // {
+            //     ModelState.AddModelError(string.Empty, "Nelze vybrat prázdnou nabídku");
+            //     return View();
+            // }
+            await populateModelAsync(vm);
             return View(vm);
+            // return View(vm);
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -337,6 +520,7 @@ namespace memo.Controllers
             {
                 return NotFound();
             }
+            // vm.Order.NegotiatedPrice = Convert.ToInt32(vm.Order.NegotiatedPrice.ToString().Replace(" ", ""));
 
             if (ModelState.IsValid)
             {
@@ -352,10 +536,11 @@ namespace memo.Controllers
                     if (oldVm.Order.OrderName == vm.Order.OrderName &&
                         oldVm.Order.NegotiatedPrice == vm.Order.NegotiatedPrice &&
                         oldVm.Order.PriceFinal == vm.Order.PriceFinal &&
-                        oldVm.Order.PriceDiscount == vm.Order.PriceDiscount &&
+                        // oldVm.Order.PriceDiscount == vm.Order.PriceDiscount &&
                         oldVm.Order.EveContactName == vm.Order.EveContactName &&
+                        oldVm.Order.KeyAccountManager == vm.Order.KeyAccountManager &&
                         oldVm.Order.ExchangeRate == vm.Order.ExchangeRate &&
-                        oldVm.Order.PriceFinalCzk == vm.Order.PriceFinalCzk &&
+                        // oldVm.Order.PriceFinalCzk == vm.Order.PriceFinalCzk &&
                         oldVm.Order.Notes == vm.Order.Notes &&
                         oldVm.Order.ModifiedBy == vm.Order.ModifiedBy &&
                         oldVm.Order.Active == vm.Order.Active &&
@@ -369,48 +554,61 @@ namespace memo.Controllers
                     )
                     {
                         TempData["Info"] = "Nebyla provedena změna, není co uložit";
+                        if (actionType == "Uložit")
+                        {
+                            // Populate VM
+                            vm.Audits = getAuditViewModel(_db).Audits
+                                .Where(x => x.TableName == "Order" && x.KeyValue == id.ToString())
+                                .ToList(); ;
 
-                        // Populate VM
-                        vm.Audits = getAuditViewModel(_db).Audits
-                            .Where(x => x.TableName == "Order" && x.KeyValue == id.ToString())
-                            .ToList(); ;
-                        vm.Offer = await _db.Offer.Where(x => x.OfferId == vm.Order.OfferId).FirstOrDefaultAsync();
-                        vm.CurrencyName = vm.Offer.Currency.Name;
+                            if (vm.Order.FromType == "N")
+                            {
+                                vm.Order.Offer = await _db.Offer.Where(x => x.OfferId == vm.Order.OfferId).FirstOrDefaultAsync();
+                            }
+                            else if (vm.Order.FromType == "Z")
+                            {
+                                vm.Order.Contract = await _db.Contracts.Where(x => x.ContractsId == vm.Order.ContractId).FirstOrDefaultAsync();
+                            }
 
-                        await populateModel(vm.Order, id);
+                            foreach (OrderCodes orderCode in vm.Order.OrderCodes)
+                            {
+                                orderCode.SumMinutes = await GetSumMinutesAsync(orderCode.OrderCode);
+                                orderCode.PlannedMinutes = await GetPlannedMinutesAsync(orderCode.OrderCode);
+                            }
 
-                        return View(vm);
+                            vm.Order.SharedInfo = await _db.SharedInfo
+                                .Where(x => x.SharedInfoId == vm.Order.SharedInfoId)
+                                .Include(x => x.Currency)
+                                .Include(x => x.Company)
+                                .Include(x => x.Contact)
+                                .FirstOrDefaultAsync();
+
+                            await populateModelAsync(vm);
+
+                            return View(vm);
+                        }
+                        else
+                        {
+                            return RedirectToAction(nameof(Index));
+                        }
                     }
 
-                    // TODO tohle delat v ramci zobrazeni a do ViewModelu, NEUKLADAT V DATABAZI....
-                    // int? totalMinutes = await _eveDb.cOrders  // Planned
-                    //     .Where(t => t.OrderCode == vm.Order.OrderCode)
-                    //     .Select(t => t.Planned)
-                    //     .FirstOrDefaultAsync();
-                    int? totalMinutes = null;  // TODO: tohle pak dopocitat ve ViewModelu a KE KAZDEMU ORDER CODE
-
-                    vm.Order.TotalHours = totalMinutes != null ? totalMinutes / 60 : 0;
-
+                    // TODO(jverner) Na toto se kouknout, komunikace s Vitou Cernym, co sem vubec chce...
                     vm.Order.PriceFinal = 0;
-                    vm.Order.PriceFinalCzk = 0;
-                    vm.UnspentMoney = vm.Order.NegotiatedPrice;
+                    vm.UnspentMoney = Convert.ToInt32(vm.Order.NegotiatedPrice);
 
-                    foreach (Invoice invoice in vm.Order.Invoices)
-                    {
-                        invoice.CostCzk = Convert.ToInt32(invoice.Cost * vm.Order.ExchangeRate);
-
-                        vm.Order.PriceFinal += Convert.ToInt32(invoice.Cost);
-                        vm.Order.PriceFinalCzk += Convert.ToInt32(invoice.CostCzk);
-                        vm.UnspentMoney -= Convert.ToInt32(invoice.Cost);
-                    }
                     foreach (OtherCost otherCost in vm.Order.OtherCosts)
                     {
-                        otherCost.CostCzk = Convert.ToInt32(otherCost.Cost * vm.Order.ExchangeRate);
-
                         vm.Order.PriceFinal += Convert.ToInt32(otherCost.Cost);
-                        vm.Order.PriceFinalCzk += Convert.ToInt32(otherCost.Cost * vm.Order.ExchangeRate);
                         vm.UnspentMoney -= Convert.ToInt32(otherCost.Cost);
                     }
+
+                    foreach (OrderCodes orderCode in vm.Order.OrderCodes)
+                    {
+                        int burnedHours = await GetSumMinutesAsync(orderCode.OrderCode) / 60;
+                        vm.Order.PriceFinal += Convert.ToInt32(burnedHours * orderCode.HourWageCost);
+                    }
+                    vm.UnspentMoney = (int)(vm.Order.NegotiatedPrice - vm.Order.PriceFinal);
 
                     vm.Order.ModifiedDate = DateTime.Now;
                     vm.Order.ModifiedBy = User.GetLoggedInUserName();
@@ -433,7 +631,8 @@ namespace memo.Controllers
                 TempData["Success"] = "Editace zakázky uložena.";
                 if (actionType == "Uložit")
                 {
-                    return RedirectToAction("Edit", new { id = id, offerId = vm.Order.OfferId });
+                    // return RedirectToAction("Edit", new { id = id, offerId = vm.Order.OfferId });
+                    return RedirectToAction("Edit", new { id = id });
                 }
                 else
                 {
@@ -441,44 +640,43 @@ namespace memo.Controllers
                 }
             }
 
-            await populateModel(vm.Order, id);
+            // Populate VM
+            vm.Audits = getAuditViewModel(_db).Audits
+                .Where(x => x.TableName == "Order" && x.KeyValue == id.ToString())
+                .ToList(); ;
 
-            int offerId = Convert.ToInt32(vm.Order.OfferId);
-            Offer offer = await _db.Offer.FindAsync(vm.Order.OfferId);
-            Company company = await _db.Company.FindAsync(offer.CompanyId);
-            Currency currency = await _db.Currency.FindAsync(offer.CurrencyId);
-            vm.Order.Invoices = await _db.Invoice.Where(x => x.OrderId == id).ToListAsync();
-
-            // AUDIT
-            List<int> orderIdInvoices = vm.Order.Invoices.Where(x => x.OrderId == id).Select(x => x.InvoiceId).ToList();
-            List<int> orderIdOtherCosts = vm.Order.OtherCosts.Where(x => x.OrderId == id).Select(x => x.OtherCostId).ToList();
-
-            List<AuditViewModel> audits = getAuditViewModel(_db).Audits
-                .Where(x =>
-                    (x.TableName == "Order" && x.KeyValue == id.ToString()) ||
-                    (x.TableName == "Invoice" && orderIdInvoices.Contains(Convert.ToInt32(x.KeyValue))) ||
-                    (x.TableName == "OtherCost" && orderIdOtherCosts.Contains(Convert.ToInt32(x.KeyValue)))
-                )
-                .ToList();
-
-            OfferOrderVM viewModel = new OfferOrderVM()
+            if (vm.Order.FromType == "N")
             {
-                Offer = offer,
-                Order = vm.Order,
-                OfferId = offerId,
-                OfferCompanyName = company.Name,
-                InvoiceDueDays = (int)company.InvoiceDueDays,
-                CurrencyName = currency.Name,
-                Audits = audits,
-            };
+                vm.Order.Offer = await _db.Offer.Where(x => x.OfferId == vm.Order.OfferId).FirstOrDefaultAsync();
+            }
+            else if (vm.Order.FromType == "Z")
+            {
+                vm.Order.Contract = await _db.Contracts.Where(x => x.ContractsId == vm.Order.ContractId).FirstOrDefaultAsync();
+            }
 
-            TempData["Error"] = "Něco se porouchalo";
+            foreach (OrderCodes orderCode in vm.Order.OrderCodes)
+            {
+                orderCode.SumMinutes = await GetSumMinutesAsync(orderCode.OrderCode);
+                orderCode.PlannedMinutes = await GetPlannedMinutesAsync(orderCode.OrderCode);
+            }
 
-            return View(viewModel);
+            // await populateModel(vm.Order, id);
+            vm.Order.SharedInfo = await _db.SharedInfo
+                .Where(x => x.SharedInfoId == vm.Order.SharedInfoId)
+                .Include(x => x.Currency)
+                .Include(x => x.Company)
+                .Include(x => x.Contact)
+                .FirstOrDefaultAsync();
+
+            TempData["Error"] = "Nepodařilo se uložit.";
+
+            await populateModelAsync(vm);
+
+            return View(vm);
         }
 
         /// <summary>
-        /// Iterate over pre-selected elements in the list and checkt if they are different. If true, return false.
+        /// Iterate over pre-selected elements in the list and check if they are different. If true, return false.
         /// </summary>
         /// <param name="orderCodes1">Old ViewModel</param>
         /// <param name="orderCodes2">Checking ViewModel</param>
@@ -498,7 +696,7 @@ namespace memo.Controllers
         }
 
         /// <summary>
-        /// Iterate over pre-selected elements in the list and checkt if they are different. If true, return false.
+        /// Iterate over pre-selected elements in the list and check if they are different. If true, return false.
         /// </summary>
         /// <param name="otherCosts1">Old ViewModel</param>
         /// <param name="otherCosts2">Checking ViewModel</param>
@@ -517,7 +715,7 @@ namespace memo.Controllers
         }
 
         /// <summary>
-        /// Iterate over pre-selected elements in the list and checkt if they are different. If true, return false.
+        /// Iterate over pre-selected elements in the list and check if they are different. If true, return false.
         /// </summary>
         /// <param name="invoices1">Old ViewModel</param>
         /// <param name="invoices2">Checking ViewModel</param>
@@ -578,34 +776,85 @@ namespace memo.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        private async Task<object> populateModel(Order model, int id)
+        private async Task populateModelAsync(dynamic vm)
         {
-            // Populate
-            ViewBag.WonOffersList = await _db.Offer
+            List<string> orderCodesTooltips = new List<string>();
+            foreach (OrderCodes orderCode in vm.Order.OrderCodes)
+            {
+                string tooltip = await _eveDb.cOrders.Where(x => x.OrderCode == orderCode.OrderCode)
+                    .Select(x => x.OrderName).FirstOrDefaultAsync();
+                orderCodesTooltips.Add(tooltip);
+            }
+            vm.OrderCodesTooltips = orderCodesTooltips;
+
+            List<Company> companies = await _db.Company.OrderBy(x => x.Name).ToListAsync();
+            vm.CompanyList = companies
+                .Select(x => new SelectListItem {
+                    Value = x.CompanyId.ToString(),
+                    Text = x.Name
+                });
+
+            List<Contact> contacts = await _db.Contact.OrderBy(x => x.PersonLastName).ToListAsync();
+            vm.ContactList = contacts
+                .Select(x => new SelectListItem {
+                    Value = x.ContactId.ToString(),
+                    Text = $"{x.PersonLastName} {x.PersonName}"
+                });
+
+            List<Currency> currencies = await _db.Currency.ToListAsync();
+            vm.CurrencyList = currencies
+                .Select(x => new SelectListItem {
+                    Value = x.CurrencyId.ToString(),
+                    Text = x.Name != "CZK" ? $"{x.Name} (kurz {getCurrencyStr(x.Name)})" : x.Name
+                });
+            vm.CurrencyListNoRate = currencies
+                .Select(x => new SelectListItem {
+                    Value = x.CurrencyId.ToString(),
+                    Text = x.Name
+                });
+
+            vm.WonOffersList = await _db.Offer
                 .Where(t => t.OfferStatusId == 2)
                 .OrderBy(t => t.OfferName)
                 .Select(x => new SelectListItem
                 {
-                    Text = x.OfferName + " - " + x.Subject,
+                    Text = x.OfferName + " - " + x.SharedInfo.Subject,
                     Value = x.OfferId.ToString(),
                 }
                 ).ToListAsync();
-            ViewBag.CurrencyList = new SelectList(_db.Currency.ToList(), "CurrencyId", "Name");
-            ViewBag.EveContactList = await getEveContactsAsync(_eveDbDochna);
-            ViewBag.EveOrderCodes = await getOrderCodesAsync(_eveDb);
 
-            return null;
-        //     // ViewBag.OfferStatusList = new SelectList(_db.OfferStatus.ToList(), "OfferStatusId", "Status");
+            vm.ContractsList = await _db.Contracts
+                .OrderBy(t => t.ContractName)
+                .Select(x => new SelectListItem
+                {
+                    Text = x.ContractName + " - " + x.SharedInfo.Subject,
+                    Value = x.ContractsId.ToString(),
+                }
+                ).ToListAsync();
 
-        //     if (model != null)
-        //     {
-        //         ViewBag.OfferStatusName = _db.OfferStatus.Find(model.OfferStatusId).Name;
-        //     }
 
-        //     if (id != 0)
-        //     {
-        //         ViewBag.CreatedOrders = _db.Order.Include(x => x.Offer).Where(x => x.OfferId == id).ToList();
-        //     }
+            // vm.DepartmentList = await getDepartmentListAsync2(_eveDbDochna);  // TODO zjistit, co je rychlejsi (tohle nějak failuje)
+            vm.DepartmentList = await getDepartmentListAsync(_eveDbDochna);
+            vm.EveContactList = await getEveContactsAsync(_eveDbDochna);
+
+            // Fill default Division/Department/Username values of logged in user
+            string domainAndUsername = User.GetLoggedInUserName();
+            string username = domainAndUsername.Split('\\').LastOrDefault();
+            int userId = await _eveDbDochna.tUsers.Where(x => x.TxAccount == username).Select(x => x.Id).FirstOrDefaultAsync();
+
+            vEmployees employee = await _eveDbDochna.vEmployees.Where(x => x.Id == userId).FirstOrDefaultAsync();
+            if (vm.Order == null)
+            {
+                vm.Order = new Order();
+            }
+            if (vm.Order.SharedInfo == null)
+            {
+                vm.Order.SharedInfo = new SharedInfo();
+            }
+            vm.Order.SharedInfo.EveCreatedUser = employee.FormatedName;
+            vm.Order.SharedInfo.EveDepartment = employee.DepartName;
+            vm.Order.SharedInfo.EveDivision = employee.EVE == 1 ? "EVE" : "EVAT";
+            // vm.Order.PriceDiscount = vm.Order.SharedInfo.Price - vm.Order.NegotiatedPrice;
         }
 
         // TODO: odstranit SP
@@ -633,13 +882,44 @@ namespace memo.Controllers
                 .SumAsync(x => x.Minutes);
 
             return sumMinutes;
+
+            // tWorks
+            //     .Join(cOrders,
+            //         x => x.IDOrder, y => y.IDOrder,
+            //         (x, y) => new
+            //         {
+            //             Idorder = x.IDOrder,
+            //             OrderCode = y.OrderCode,
+            //             Minutes = x.Minutes
+            //         })
+            //     .Where(x => x.OrderCode == "005.0373")
+            //     .GroupBy(x => x.OrderCode)
+            //     .Select(gi => new {
+            //         Hours = gi.Sum(x => x.Minutes) / 60,
+            //     })
+        }
+
+        private async Task<int> GetPlannedMinutesAsync(string orderCode)
+        {
+            int? totalMinutes = await _eveDb.cOrders  // Planned
+                .Where(t => t.OrderCode == orderCode)
+                .Select(t => t.Planned)
+                .FirstOrDefaultAsync();
+
+            if (totalMinutes != null)
+            {
+                return (int)totalMinutes;
+            }
+
+            return 0;
         }
 
         /// <summary>
-        /// Get dictionary of OrderCode: Sum(Hours)
+        /// Get dictionary of OrderCode: Sum(Minutes)
         /// </summary>
         /// <returns></returns>
-        public async Task<Dictionary<string, int>> GetOrderSumHoursDictAsync()
+        public async Task<Dictionary<string, int>> GetOrderSumMinutesDictAsync()
+        // public async Task<Dictionary<string, Tuple<int, int>>> GetOrderSumMinutesDictAsync()
         {
             var sumMinutes = await _eveDb.tWorks
                 .Join(_eveDb.cOrders,
@@ -648,18 +928,69 @@ namespace memo.Controllers
                     (works, orders) => new {
                         Idorder = works.Idorder,
                         OrderCode = orders.OrderCode,
-                        Minutes = works.Minutes
+                        // Planned = orders.Planned,
+                        Minutes = works.Minutes,
                 })
                 .GroupBy(x => x.OrderCode)
                 .Select( gi => new {
                     OrderCode = gi.Key,
                     // Minutes = gi.Sum(x => x.Minutes),
-                    Hours = gi.Sum(x => (x.Minutes / 60)),
+                    Hours = gi.Sum(x => (x.Minutes)),
+                    // Planned = gi.First(x => x.Planned),
                 })
                 .OrderBy(x => x.OrderCode)
                 .ToDictionaryAsync(x => x.OrderCode, x => x.Hours);
 
             return sumMinutes;
+        }
+
+        public async Task<Dictionary<string, int>> GetOrderPlannedMinutesDictAsync()
+        {
+            var plannedMinutes = await _eveDb.cOrders
+                .Select(x => new {
+                    OrderCode = x.OrderCode,
+                    Planned = (int)(x.Planned != null ? x.Planned : 0),
+                })
+                .ToDictionaryAsync(x => x.OrderCode, y => y.Planned);
+
+            return plannedMinutes;
+
+            // var sumMinutes = await _eveDb.tWorks
+            //     .Join(_eveDb.cOrders,
+            //         works => works.Idorder,
+            //         orders => orders.Idorder,
+            //         (works, orders) => new {
+            //             Idorder = works.Idorder,
+            //             OrderCode = orders.OrderCode,
+            //             // Planned = orders.Planned,
+            //             Minutes = works.Minutes,
+            //     })
+            //     .GroupBy(x => x.OrderCode)
+            //     .Select( gi => new {
+            //         OrderCode = gi.Key,
+            //         // Minutes = gi.Sum(x => x.Minutes),
+            //         Hours = gi.Sum(x => (x.Minutes)),
+            //         // Planned = gi.First(x => x.Planned),
+            //     })
+            //     .OrderBy(x => x.OrderCode)
+            //     .ToDictionaryAsync(x => x.OrderCode, x => x.Hours);
+
+            // return sumMinutes;
+        }
+
+        public async Task<int> GetOrderSumHoursAsync(string idOrder)
+        {
+            var result = await _eveDb.tWorks
+                .Where(x => x.Idorder == Convert.ToInt32(idOrder))
+                // .AsEnumerable()
+                .GroupBy(x => x.Idorder)
+                .Select(gi => new {
+                    // idOrder = gi.Key,
+                    minutes = gi.Sum(x => x.Minutes),
+                })
+                .FirstOrDefaultAsync();
+
+            return result.minutes;
         }
 
         /// <summary>
@@ -775,11 +1106,12 @@ namespace memo.Controllers
 
             List<Invoice> thisOrderInvoices = await _db.Invoice.Where(x => x.OrderId == invoice.OrderId).ToListAsync();
 
-            if (thisOrderInvoices.Count() <= 1)
-            {
-                Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                return Json(new { errorMessage = "Nelze odstranit všechny fakturace" });
-            }
+            // TODO: Proc jsem sem daval tohle? Nemohu odstranit vsechny? proc?
+            // if (thisOrderInvoices.Count() <= 1)
+            // {
+            //     Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+            //     return Json(new { errorMessage = "Nelze odstranit všechny fakturace" });
+            // }
 
             _db.Invoice.Remove(invoice);
             await _db.SaveChangesAsync(User.GetLoggedInUserName());
@@ -833,9 +1165,9 @@ namespace memo.Controllers
         /// <param name="itemName"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<JsonResult> itemNameExists(string itemName)
+        public async Task<JsonResult> itemNameExists(string itemName, string ignoreName = "")
         {
-            return Json(new { exists = await orderExists(itemName) });
+            return Json(new { exists = await orderExists(itemName, ignoreName) });
         }
 
         /// <summary>
@@ -843,8 +1175,13 @@ namespace memo.Controllers
         /// </summary>
         /// <param name="itemName"></param>
         /// <returns></returns>
-        private async Task<bool> orderExists(string itemName)
+        private async Task<bool> orderExists(string itemName, string ignoreName = "")
         {
+            if (ignoreName != "" && ignoreName == itemName)
+            {
+                return false;
+            }
+
             return await _db.Order.AnyAsync(x => x.OrderName == itemName);
         }
     }
