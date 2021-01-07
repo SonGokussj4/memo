@@ -35,6 +35,10 @@
         width: calc(100% - 4rem);
         overflow-x: inherit;
     }
+
+    .container, .container-lg, .container-md, .container-sm, .container-xl {
+        max-width: calc(100% - 4rem);
+    }
 </style>
 
 @await Html.PartialAsync("_PartialToastNotification")
@@ -43,39 +47,14 @@
     <h1 class="display-4">@ViewData["Title"]</h1>
 </div>
 
-@* <div class="text-center">
-    <span data-toggle="tooltip" title="Zobrazit legendu">
-        <a class="btn btn-light" href="#showLegend" data-toggle="collapse" role="button">
-            <i class="fa fa-question-circle-o"></i>
-        </a>
-    </span>
-</div> *@
-
-@* <div class="card collapse text-center" id="showLegend">
-    <h4 class="pb-2">Legenda</h4>
-    <ul class="p-0" style="list-style-type:none">
-        <li class="pb-3">
-            <span class="badge badge-secondary">Čeká</span>  <br />
-            Nabídka, která je v řešení.
-        </li>
-        <li class="pb-3">
-            <span class="badge badge-success">Výhra</span> <br />
-            Nabídka se stává objednávkou. Možno založit jednu/více zakázek.
-        </li>
-        <li class="pb-3">
-            <span class="badge badge-danger">Prohra</span> <br />
-            Nevyhraná nabídka. Je dobré ji deaktivovat.
-        </li>
-    </ul>
-</div> *@
 
 <div id="toolbar" style="padding-bottom: 10px;">
     <a asp-action="Create" class="btn btn-outline-success">
         <i class="fa fa-plus-square-o"></i> Nová nabídka
     </a>
-    <button style="margin-right: 5px;" class="btn btn-outline-info" name="BtnMujFilter" id="BtnMujFilter" type="button">
+    @* <button style="margin-right: 5px;" class="btn btn-outline-info" name="BtnMujFilter" id="BtnMujFilter" type="button">
         <i class="fa fa-filter"></i> Filter
-    </button>
+    </button> *@
     @if (ViewBag.ShowInactive == true)
     {
         <a asp-action="index" class="btn btn-outline-secondary" data-toggle="tooltip" title="Zobrazit pouze aktivní"><i class="fa fa-eye"></i> Vše (@Model.Count())</a>
@@ -84,57 +63,53 @@
     {
         <a asp-action="index" class="btn btn-outline-secondary" asp-route-ShowInactive="true" data-toggle="tooltip" title="Zobrazit vše"><i class="fa fa-eye-slash"></i> Aktivní (@Model.Count()/@ViewBag.AllOffersCount)</a>
     }
-    @* <span data-toggle="tooltip" title="Zobrazit legendu">
-        <a class="btn btn-light border" href="#showLegend" data-toggle="collapse" role="button">
-            <i class="fa fa-question-circle-o"></i>
-        </a>
-    </span> *@
 </div>
 
-<div class="table-responsive">
 <table
     id="table"
     class="table table-sm text-xsmall text-nowrap"
     style="width:100%"
     data-cookie="true"
     data-cookie-id-table="offersTableCookie"
-    data-filter-control="false"
+    data-export-data-type="basic"  @* 'basic', 'all', 'selected' *@
+    data-export-footer=false  @* false, true *@
+    data-export-types="['txt', 'csv', 'excel']"  @* ['json', 'xml', 'csv', 'txt', 'sql', 'excel', 'png', 'doc', 'xlsx', 'pdf'] *@
+    data-filter-control="true"
     data-footer-style="footerStyle"
-    data-height="800"
+    @* data-height="800" *@
     data-maintain-meta-data="true"
-    @* data-pagination="true" *@
+    data-page-list="[15, 25, 50, 100, All]"
+    data-page-size="15"
+    data-pagination="true"
     data-show-search-clear-button="true"
     data-show-toggle="true"
     data-show-columns-toggle-all="true"
     data-show-columns="true"
-    data-export-data-type="basic"  @* 'basic', 'all', 'selected' *@
-    data-export-footer=false  @* false, true *@
-    data-export-types="['txt', 'csv', 'excel']"  @* ['json', 'xml', 'csv', 'txt', 'sql', 'excel', 'png', 'doc', 'xlsx', 'pdf'] *@
+    data-show-export="true"
+    data-show-footer="true"
     data-show-fullscreen="true"
-    data-sort-name="CreatedDate"
+    data-sort-name="3"
     data-sort-order="desc"
     data-search="true"
     data-silent-sort="true"
-    data-show-footer="true"
     data-toolbar="#toolbar"
     data-toggle="table"
+    data-virtual-scroll="true"
     data-visible-search="true"
     @* data-reorderable-columns="true" *@
     @* data-show-pagination-switch="true" *@
-    @* data-page-size="50" *@
-    @* data-page-list="[10, 25, 50, 100, 200, All]" *@
+    cellspacing="0"
     style="font-size: 0.9em;"
     >
     <thead>
         <tr>
-            <th scope="col" class="text-center" data-field="0" data-sortable="true" data-filter-control="input" data-footer-formatter="idFormatter"  >Edit</th>
-            <th scope="col" class="text-center" data-field="1" data-sortable="true"><span data-toggle="tooltip" title="Aktivní / Neaktivní"><i class="fa fa-eye text-secondary"></i></span></th>
+            <th scope="col" class="text-center" data-field="0" data-sortable="true" data-filter-control="false" data-footer-formatter="idFormatter"  >Edit</th>
+            <th scope="col" class="text-center" data-field="1" data-sortable="true" data-filter-control="false"><span data-toggle="tooltip" title="Aktivní / Neaktivní"><i class="fa fa-eye text-secondary"></i></span></th>
             <th scope="col" class="text-center" data-field="2" data-sortable="true" data-filter-control="input">Status</th>
             <th scope="col" class="text-center" data-field="3" data-sortable="true" data-filter-control="input">Vytvořeno</th>
             <th scope="col" class="text-center" data-field="4" data-sortable="true" data-filter-control="input">Ev. číslo</th>
             <th scope="col" class="text-center" data-field="5" data-sortable="true" data-filter-control="input">Přijato</th>
-            <th scope="col" class="text-right" data-field="6" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatter">Zakázek</th>
-            <th scope="col" class="text-center" data-field="7" data-sortable="true" data-filter-control="input">Oddělení</th>
+            <th scope="col" class="text-center" data-field="6" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatter">Zakázek</th> <th scope="col" class="text-center" data-field="7" data-sortable="true" data-filter-control="input">Oddělení</th>
             <th scope="col" class="text-center" data-field="8" data-sortable="true" data-filter-control="input">Eve vytvořil</th>
             <th scope="col" class="text-center" data-field="9" data-sortable="true" data-filter-control="input">Zákazník</th>
             <th scope="col" class="text-center" data-field="10" data-sortable="true" data-filter-control="input">Kontakt</th>
@@ -197,7 +172,10 @@
                     @item.OfferName.Replace("EV-quo/", "")
                 </th>
                 @* Přijato *@
-                <th scope="row" class="text-left">@item.ReceiveDate.Value.ToString("yyyy-MM-dd")</th>
+                <th scope="row" class="text-left">
+                    <span style="display:none">@String.Format("{0:yyyy-MM-dd HH:mm}", @item.SharedInfo.ReceiveDate)</span>  <!-- Hidden span for sorting date correctly-->
+                    @String.Format("{0:dd.MM.yyyy}", @item.SharedInfo.ReceiveDate)
+                </th>
                 @{
                     int OrdersCount = ((IEnumerable<dynamic>)ViewBag.AllOrders).Where(x => x.OfferId == item.OfferId).Count();
                     List<dynamic> OrdersList = ((IEnumerable<dynamic>)ViewBag.AllOrders).Where(x => x.OfferId == item.OfferId).Select(x => x.OrderName).ToList();
@@ -207,24 +185,24 @@
                 @* Zakázek *@
                 <th scope="row" class="text-right" data-toggle="tooltip" data-html="true" title="@OrdersListTooltip">@OrdersCount</th>
                 @* Oddělení *@
-                <th scope="row" class="text-left">@item.EveDepartment</th>
+                <th scope="row" class="text-left">@item.SharedInfo.EveDepartment</th>
                 @* Eve vytvořil *@
-                <th scope="row" class="text-left">@item.EveCreatedUser</th>
+                <th scope="row" class="text-left">@item.SharedInfo.EveCreatedUser</th>
                 @* Zákazník *@
-                <th scope="row" class="text-left">@item.Company?.Name</th>
+                <th scope="row" class="text-left">@item.SharedInfo.Company?.Name</th>
                 @* Kontakt *@
-                <th scope="row" class="text-left">@item.Contact?.PersonTitle @item.Contact?.PersonName @item.Contact?.PersonLastName </th>
+                <th scope="row" class="text-left">@item.SharedInfo.Contact?.PersonTitle @item.SharedInfo.Contact?.PersonName @item.SharedInfo.Contact?.PersonLastName </th>
                 @* Předmět *@
-                <th scope="row" class="notesWrap" data-toggle="tooltip" data-html="true" title="@item.Subject">
-                    @item.Subject
+                <th scope="row" class="notesWrap" data-toggle="tooltip" data-html="true" title="@item.SharedInfo.Subject">
+                    @item.SharedInfo.Subject
                 </th>
                 @* <th scope="row" class="text-left" >@item.Price</th> *@
                 @* Cena *@
-                <th scope="row" class="text-right">@String.Format(CultureInfo.CreateSpecificCulture(@item.Currency.CultureCode), "{0:C0}", @item.Price)</th>
+                <th scope="row" class="text-right">@String.Format(CultureInfo.CreateSpecificCulture(@item.SharedInfo.Currency.CultureCode), "{0:C0}", @item.SharedInfo.Price)</th>
                 @* Měna *@
-                <th scope="row" class="text-center" >@item.Currency?.Name</th>
+                <th scope="row" class="text-center" >@item.SharedInfo.Currency?.Name</th>
                 @* Cena [CZK] *@
-                <th scope="row" class="text-right">@String.Format(CultureInfo.CreateSpecificCulture("cs-CZ"), "{0:C0}", @item.PriceCzk)</th>
+                <th scope="row" class="text-right">@String.Format(CultureInfo.CreateSpecificCulture("cs-CZ"), "{0:C0}", @item.SharedInfo.PriceCzk)</th>
                 @* Poznámky *@
                 <th scope="row" class="notesWrap" data-toggle="tooltip" data-html="true" title="@item.Notes">
                     @item.Notes
@@ -234,7 +212,6 @@
         }
     </tbody>
 </table>
-</div>
 
 <!-- Modal Confirm Delete-->
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
@@ -338,7 +315,7 @@
     }
 
     function idFormatter() {
-        return 'Total'
+        return 'Součet'
     }
 
     function nameFormatter(data) {

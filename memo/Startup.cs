@@ -46,19 +46,23 @@ namespace memo
             }
 
             services.AddDbContext<LoginDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("EvektorDbConnectionTest")));
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+                    // .UseLazyLoadingProxies());
 
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("EvektorDbConnectionEvektor")));
-            // options.UseSqlServer(Configuration.GetConnectionString("EvektorDbConnectionTest")));
+                // options.UseSqlServer(Configuration.GetConnectionString("EvektorDbConnectionMock")));
+                    // .UseLazyLoadingProxies());
 
             services.AddDbContext<EvektorDbContext>(options =>
                   options.UseSqlServer(Configuration.GetConnectionString("EvektorDbConnectionEvektor")));
-            // options.UseSqlServer(Configuration.GetConnectionString("EvektorDbConnectionMock")));
+                // options.UseSqlServer(Configuration.GetConnectionString("EvektorDBdev")));
+                    // .UseLazyLoadingProxies());
 
             services.AddDbContext<EvektorDochnaDbContext>(options =>
                   options.UseSqlServer(Configuration.GetConnectionString("EvektorDbConnectionDochna")));
-            // options.UseSqlServer(Configuration.GetConnectionString("EvektorDbConnectionMock")));
+                // options.UseSqlServer(Configuration.GetConnectionString("DochadzkaDBdev")));
+                    // .UseLazyLoadingProxies());
 
             //services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
             services.AddDefaultIdentity<IdentityUser>()

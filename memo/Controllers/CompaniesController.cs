@@ -155,23 +155,24 @@ namespace memo.Controllers
                 return BadRequest("You have to specify 'id' to delete");
             }
 
-            Company company = await _db.Company
-                .Include(x => x.Offers)
-                .FirstOrDefaultAsync(x => x.CompanyId == id);
+            // TODO: NEZPRACOVANO....
+            // Company company = await _db.Company
+            //     .Include(x => x.Offers)
+            //     .FirstOrDefaultAsync(x => x.CompanyId == id);
 
-            if (company == null)
-            {
-                return NotFound();
-            }
-            // TODO: overit, zda neni v nejakem Offer/Order uveden kontakt, popr co delat pak?
+            // if (company == null)
+            // {
+            //     return NotFound();
+            // }
+            // // TODO: overit, zda neni v nejakem Offer/Order uveden kontakt, popr co delat pak?
 
-            if (company.Offers.Count() != 0)
-            {
-                TempData["Error"] = $"Nemohu odstranit, je na to navázáno [{company.Offers.Count()}] nabídek";
-                return BadRequest(TempData["Error"]);
-            }
-            _db.Company.Remove(company);
-            _db.SaveChanges(User.GetLoggedInUserName());
+            // if (company.Offers.Count() != 0)
+            // {
+            //     TempData["Error"] = $"Nemohu odstranit, je na to navázáno [{company.Offers.Count()}] nabídek";
+            //     return BadRequest(TempData["Error"]);
+            // }
+            // _db.Company.Remove(company);
+            // _db.SaveChanges(User.GetLoggedInUserName());
 
             return RedirectToAction("Index");
         }

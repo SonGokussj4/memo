@@ -10,17 +10,20 @@ namespace memo.Models
     {
         public Currency()
         {
-            Offers = new HashSet<Offer>();
+            // Offers = new HashSet<Offer>();
         }
 
         [Key]
         public int CurrencyId { get; set; }
+
         [StringLength(10)]
         public string Name { get; set; }
+
         [StringLength(10)]
         public string CultureCode { get; set; }
 
-        [InverseProperty("Currency")]
-        public virtual ICollection<Offer> Offers { get; set; }
+        // [InverseProperty("Currency")]
+        // public virtual IList<Offer> Offers { get; set; }
+        public virtual IList<SharedInfo> SharedInfo { get; set; }
     }
 }

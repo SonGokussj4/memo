@@ -10,3 +10,5 @@ memo/Properties/serviceDependencies.json
 memo/memo.csproj.user
 memo/.config/dotnet-tools.json
 memo/Startup.cs
+memo/DATABASE/*
+memo/logs/xvba_debug.log
