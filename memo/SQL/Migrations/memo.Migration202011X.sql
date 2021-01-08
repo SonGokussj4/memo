@@ -1,5 +1,6 @@
 -----------------------------------------------------------------------------------------
--- VYTVORIT TABULKU Contracts
+PRINT('VYTVORIT TABULKU Contracts')
+-----------------------------------------------------------------------------------------
 IF OBJECT_ID('memo.Contracts', 'U') IS NOT NULL
   DROP TABLE [memo].[Contracts]
 GO
@@ -40,7 +41,7 @@ GO
 
 
 -----------------------------------------------------------------------------------------
--- VYTVORIT TRIGGER PRO TABULKU Contracts
+PRINT('VYTVORIT TRIGGER PRO TABULKU Contracts')
 -----------------------------------------------------------------------------------------
 IF OBJECT_ID('[memo].TR__Contracts__AUDIT', 'TR') IS NOT NULL
     DROP TRIGGER [memo].TR__Contracts__AUDIT
@@ -173,54 +174,43 @@ GO
 
 
 -----------------------------------------------------------------------------------------
--- PRIDAT DO Order SLOUPEC FromType jako CHAR(1), bude tam buď N, R nebo -
+PRINT('PRIDAT DO Order SLOUPEC FromType jako CHAR(1), bude tam buď N, R nebo -')
+-----------------------------------------------------------------------------------------
 ALTER TABLE [memo].[Order]
 ADD FromType CHAR(1) NULL;
 GO
 
 
 -----------------------------------------------------------------------------------------
--- NAPLNIT Order SLOUPEC FromType == 'N'
+PRINT('NAPLNIT Order SLOUPEC FromType == "N"')
+-----------------------------------------------------------------------------------------
 UPDATE [memo].[Order]
 SET FromType = 'N';
 GO
 
 
 -----------------------------------------------------------------------------------------
--- ZMENIT Order SLOUPEC FromType Z Null NA Not Null
+PRINT('ZMENIT Order SLOUPEC FromType Z Null NA Not Null')
+-----------------------------------------------------------------------------------------
 ALTER TABLE [memo].[Order]
 ALTER COLUMN FromType CHAR(1) NULL;
 GO
 
 
 -----------------------------------------------------------------------------------------
--- PRIDAT Order SLOUPEC ContractId
+PRINT('PRIDAT Order SLOUPEC ContractId')
+-----------------------------------------------------------------------------------------
 ALTER TABLE [memo].[Order]
 ADD ContractId INT NULL;
 GO
 
+
 -- 25.11.2020 --
 
 
--- -----------------------------------------------------------------------------------------
--- -- VYTVORIT TABULKU EveUsers
--- IF OBJECT_ID('memo.EveUsers', 'U') IS NOT NULL
---   DROP TABLE [memo].[EveUsers]
--- GO
--- -----------------------------------------------------------------------------------------
--- CREATE TABLE [memo].[EveUsers]
--- (
---     [EveUserId] INT PRIMARY KEY IDENTITY(1, 1),
---     [Division] NVARCHAR(50) NOT NULL,
---     [Department] NVARCHAR(50) NOT NULL,
---     [FullName] NVARCHAR(50) NOT NULL,
---     [UserId] INT NULL,
--- )
--- GO
-
-
 -----------------------------------------------------------------------------------------
--- VYTVORIT TABULKU SharedInfo
+PRINT('VYTVORIT TABULKU SharedInfo')
+-----------------------------------------------------------------------------------------
 IF OBJECT_ID('memo.SharedInfo', 'U') IS NOT NULL
   DROP TABLE [memo].[SharedInfo]
 GO
@@ -254,7 +244,7 @@ GO
 
 
 -----------------------------------------------------------------------------------------
--- VYTVORIT TRIGGER PRO TABULKU SharedInfo
+PRINT('VYTVORIT TRIGGER PRO TABULKU SharedInfo')
 -----------------------------------------------------------------------------------------
 IF OBJECT_ID('[memo].TR__SharedInfo__AUDIT', 'TR') IS NOT NULL
     DROP TRIGGER [memo].TR__SharedInfo__AUDIT
@@ -387,30 +377,36 @@ GO
 
 
 -----------------------------------------------------------------------------------------
--- PRIDAT DO TABULKY Contracts SLOUPEC SharedInfoId
+PRINT('PRIDAT DO TABULKY Contracts SLOUPEC SharedInfoId')
+-----------------------------------------------------------------------------------------
 ALTER TABLE [memo].[Contracts]
 ADD SharedInfoId INT NULL;
 GO
 
 
 -----------------------------------------------------------------------------------------
--- NAVÁZAT Contracts.SharedInfoId JAKO FOREIGN KEY NA SharedInfo.SharedInfoId
+PRINT('NAVÁZAT Contracts.SharedInfoId JAKO FOREIGN KEY NA SharedInfo.SharedInfoId')
+-----------------------------------------------------------------------------------------
 ALTER TABLE [memo].[Contracts]
 ADD
     CONSTRAINT [FK__memo.Contracts__memo.SharedInfo__SharedInfoId]
     FOREIGN KEY ([SharedInfoId])
     REFERENCES [memo].[SharedInfo] (SharedInfoId);
+GO
 
 
 -----------------------------------------------------------------------------------------
--- VLOZIT DO TABULKY SharedInfo SLOUPCE Z TABULKY Contracts
+PRINT('VLOZIT DO TABULKY SharedInfo SLOUPCE Z TABULKY Contracts')
+-----------------------------------------------------------------------------------------
 INSERT INTO [memo].[SharedInfo](ReceiveDate, Subject, ContactId, CompanyId, CurrencyId, EveDivision, EveDepartment, EveCreatedUser, Price, PriceCzk, ExchangeRate)
 SELECT ReceiveDate, Subject, ContactId, CompanyId, CurrencyId, EveDivision, EveDepartment, EveCreatedUser, Price, PriceCzk, ExchangeRate
 FROM [memo].[Contracts]
+GO
 
 
 -----------------------------------------------------------------------------------------
--- SPÁROVAT SharedInfoId Z TABULKY SharedInfo S TABULKOU Contracts
+PRINT('SPÁROVAT SharedInfoId Z TABULKY SharedInfo S TABULKOU Contracts')
+-----------------------------------------------------------------------------------------
 UPDATE [memo].[Contracts]
 SET
     SharedInfoId = x.SharedInfoId
@@ -428,10 +424,12 @@ WHERE
     x.EveCreatedUser = y.EveCreatedUser AND
     (x.PriceCzk = y.PriceCzk OR (ISNULL(x.PriceCzk, y.PriceCzk) IS NULL)) AND
     (x.Price = y.Price OR (ISNULL(x.Price, y.Price) IS NULL))
+GO
 
 
 -----------------------------------------------------------------------------------------
--- SMAZAT NEPOTŘEBNÉ SLOUPCE Z Contracts KTERÉ JSOU NAVÁZÁNY NA SharedInfo
+PRINT('SMAZAT NEPOTŘEBNÉ SLOUPCE Z Contracts KTERÉ JSOU NAVÁZÁNY NA SharedInfo')
+-----------------------------------------------------------------------------------------
 ALTER TABLE [memo].[Contracts]
     DROP CONSTRAINT
         [FK__memo.Contracts__memo.Company__CompanyId],
@@ -449,14 +447,16 @@ GO
 
 
 -----------------------------------------------------------------------------------------
--- PRIDAT DO TABULKY Order SLOUPEC SharedInfoId
+PRINT('PRIDAT DO TABULKY Order SLOUPEC SharedInfoId')
+-----------------------------------------------------------------------------------------
 ALTER TABLE [memo].[Order]
 ADD SharedInfoId INT NULL;
 GO
 
 
 -----------------------------------------------------------------------------------------
--- NAVÁZAT Order.SharedInfoId JAKO FOREIGN KEY NA SharedInfo.SharedInfoId
+PRINT('NAVÁZAT Order.SharedInfoId JAKO FOREIGN KEY NA SharedInfo.SharedInfoId')
+-----------------------------------------------------------------------------------------
 ALTER TABLE [memo].[Order]
 ADD
     CONSTRAINT [FK__memo.Order__memo.SharedInfo__SharedInfoId]
@@ -464,15 +464,19 @@ ADD
     REFERENCES [memo].[SharedInfo] (SharedInfoId);
 GO
 
+
 -----------------------------------------------------------------------------------------
--- VLOZIT DO TABULKY SharedInfo SLOUPCE Z TABULKY Order
+PRINT('VLOZIT DO TABULKY SharedInfo SLOUPCE Z TABULKY Order')
+-----------------------------------------------------------------------------------------
 INSERT INTO [memo].[SharedInfo](ReceiveDate, Subject, ContactId, CompanyId, CurrencyId, EveDivision, EveDepartment, EveCreatedUser, Price, PriceCzk, ExchangeRate)
 SELECT ReceiveDate, Subject, ContactId, CompanyId, CurrencyId, EveDivision, EveDepartment, EveCreatedUser, Price, PriceCzk, ExchangeRate
 FROM [memo].[Offer]
 GO
 
+
 -----------------------------------------------------------------------------------------
--- SPÁROVAT SharedInfoId Z TABULKY SharedInfo S TABULKOU Order
+PRINT('SPÁROVAT SharedInfoId Z TABULKY SharedInfo S TABULKOU Order')
+-----------------------------------------------------------------------------------------
 UPDATE [memo].[Order]
 SET
     SharedInfoId = si.SharedInfoId
@@ -499,14 +503,16 @@ GO
 
 
 -----------------------------------------------------------------------------------------
--- PRIDAT DO TABULKY Offer SLOUPEC SharedInfoId
+PRINT('PRIDAT DO TABULKY Offer SLOUPEC SharedInfoId')
+-----------------------------------------------------------------------------------------
 ALTER TABLE [memo].[Offer]
 ADD SharedInfoId INT NULL;
 GO
 
 
 -----------------------------------------------------------------------------------------
--- NAVÁZAT Offer.SharedInfoId JAKO FOREIGN KEY NA SharedInfo.SharedInfoId
+PRINT('NAVÁZAT Offer.SharedInfoId JAKO FOREIGN KEY NA SharedInfo.SharedInfoId')
+-----------------------------------------------------------------------------------------
 ALTER TABLE [memo].[Offer]
 ADD
     CONSTRAINT [FK__memo.Offer__memo.SharedInfo__SharedInfoId]
@@ -516,7 +522,8 @@ GO
 
 
 -----------------------------------------------------------------------------------------
--- SPÁROVAT SharedInfoId Z TABULKY SharedInfo S TABULKOU Order
+PRINT('SPÁROVAT SharedInfoId Z TABULKY SharedInfo S TABULKOU Order')
+-----------------------------------------------------------------------------------------
 UPDATE [memo].[Offer]
 SET
     SharedInfoId = x.SharedInfoId
@@ -537,7 +544,8 @@ WHERE
 GO
 
 -----------------------------------------------------------------------------------------
--- ODSTRANIT FOREIGN KLICE Z TABULKY Offer a INDEX IX_OrdersOffers
+PRINT('ODSTRANIT FOREIGN KLICE Z TABULKY Offer a INDEX IX_OrdersOffers')
+-----------------------------------------------------------------------------------------
 ALTER TABLE [memo].[Offer] DROP CONSTRAINT [FK_memo.Offer_memo_Company_CompanyId];
 GO
 ALTER TABLE [memo].[Offer] DROP CONSTRAINT [FK_memo.Offer_memo_Currency_CurrencyId];
@@ -549,8 +557,9 @@ GO
 
 
 -----------------------------------------------------------------------------------------
--- ODSTRANIT Z TABULKY Offer SLOUPCE, KTERE BYLY PREVEDENY DO TABULKY SharedInfo, TEDY NASLEDUJICI:
--- ReceiveDate, Subject, ContactId, CompanyId, CurrencyId, EveDivision, EveDepartment, EveCreatedUser, Price, PriceCzk, ExchangeRate, EstimatedFinishDate
+PRINT('ODSTRANIT Z TABULKY Offer SLOUPCE, KTERE BYLY PREVEDENY DO TABULKY SharedInfo, TEDY NASLEDUJICI:')
+PRINT('ReceiveDate, Subject, ContactId, CompanyId, CurrencyId, EveDivision, EveDepartment, EveCreatedUser, Price, PriceCzk, ExchangeRate, EstimatedFinishDate')
+-----------------------------------------------------------------------------------------
 ALTER TABLE [memo].[Offer]
 DROP COLUMN ReceiveDate, Subject, ContactId, CompanyId, CurrencyId, EveDivision, EveDepartment, EveCreatedUser, Price, PriceCzk, ExchangeRate, EstimatedFinishDate;
 GO
@@ -560,7 +569,8 @@ GO
 
 
 -----------------------------------------------------------------------------------------
--- PRIDAT DO TABULKY Order SLOUPEC KeyAccountManager (string 50)
+PRINT('PRIDAT DO TABULKY Order SLOUPEC KeyAccountManager (string 50)')
+-----------------------------------------------------------------------------------------
 ALTER TABLE [memo].[Order]
 ADD KeyAccountManager NVARCHAR(50) NULL;
 GO
@@ -570,13 +580,15 @@ GO
 
 
 -----------------------------------------------------------------------------------------
--- ODSTRANIT Z TABULKY Order SLOUPEC PriceDiscount
+PRINT('ODSTRANIT Z TABULKY Order SLOUPEC PriceDiscount')
+-----------------------------------------------------------------------------------------
 ALTER TABLE [memo].[Order]
 DROP COLUMN PriceDiscount;
 GO
 
 -----------------------------------------------------------------------------------------
--- ODSTRANIT Z TABULKY Order SLOUPEC PriceCzk
+PRINT('ODSTRANIT Z TABULKY Order SLOUPEC PriceCzk')
+-----------------------------------------------------------------------------------------
 ALTER TABLE [memo].[Order]
 DROP COLUMN PriceFinalCzk;
 GO
@@ -587,21 +599,28 @@ GO
 
 -----------------------------------------------------------------------------------------
 PRINT 'Změna INT na DECIMAL u částek s penězi ... memo.Order.NegotiatedPrice'
+-----------------------------------------------------------------------------------------
 ALTER TABLE [memo].[Order]
 ALTER COLUMN NegotiatedPrice DECIMAL(18,3)
 GO
 
+-----------------------------------------------------------------------------------------
 PRINT 'Změna INT na DECIMAL u částek s penězi ... memo.Order.PriceFinal'
+-----------------------------------------------------------------------------------------
 ALTER TABLE [memo].[Order]
 ALTER COLUMN PriceFinal DECIMAL(18,3)
 GO
 
+-----------------------------------------------------------------------------------------
 PRINT 'Změna INT na DECIMAL u částek s penězi ... memo.SharedInfo.Price'
+-----------------------------------------------------------------------------------------
 ALTER TABLE [memo].[SharedInfo]
 ALTER COLUMN Price DECIMAL(18,3)
 GO
 
+-----------------------------------------------------------------------------------------
 PRINT 'Změna INT na DECIMAL u částek s penězi ... memo.SharedInfo.PriceCzk'
+-----------------------------------------------------------------------------------------
 ALTER TABLE [memo].[SharedInfo]
 ALTER COLUMN PriceCzk DECIMAL(18,3)
 GO
