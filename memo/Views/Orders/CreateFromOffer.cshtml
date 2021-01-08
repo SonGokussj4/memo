@@ -1,8 +1,11 @@
-@using System.Globalization
+@using System.Globalization;
+@using System;
+@using System.Web;
 
 @{
     ViewData["Title"] = "Nová zakázka";
-    string baseUrl = string.Join("/", Context.Request.Path.ToUriComponent().Split('/').Take(3));
+    @* int take_number = Context.Request.Path.ToUriComponent().Contains("memo/") ? 4 : 3; *@
+    @* string baseUrl = string.Join("/", Context.Request.Path.ToUriComponent().Split('/').Take(take_number)); *@
 }
 
 @model memo.ViewModels.OfferOrderVM
@@ -33,7 +36,7 @@
                 <div class="col-lg-7 new-order-from-offer">
                     <input type="hidden" asp-for="Order.OfferId" />
 
-                    <select asp-for="Order.OfferId" asp-items="Model.WonOffersList" class="form-control selectpicker" onchange="document.location.href = '@baseUrl/' + this.options[this.selectedIndex].value;">
+                    <select asp-for="Order.OfferId" asp-items="Model.WonOffersList" class="form-control selectpicker" data-submit-url="@Url.Action("CreateFromOffer","Orders")">
                         <option select="">-- Vyber nabídku --</option>
                     </select>
                     <span asp-validation-for="Order.OfferId" class="text-danger"></span>
@@ -364,6 +367,25 @@
                 row.remove();
             }
         };
+
+        $(document).ready(function () {
+            $("select#Order_OfferId").change(function () {
+                var $this = $(this);
+                var url = $this.data("submit-url") + "/" + $this.val();
+                var lastUrlPortion = location.href.substring(location.href.lastIndexOf('/') + 1);
+
+                if (isNumeric(lastUrlPortion)) {
+                    url = $this.data("submit-url");
+                    if ($this.val().endsWith("--")) {
+                        url = url.substring(0, url.lastIndexOf("/") + 1);
+                    }
+                    else {
+                        url = url.substring(0, url.lastIndexOf("/") + 1) + $this.val();
+                    }
+                }
+                window.location.href = url;
+            });
+        });
 
         $(document).ready(function(){
 
