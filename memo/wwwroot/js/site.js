@@ -270,21 +270,113 @@ function isNumeric(str) {
         !isNaN(parseFloat(str));  // ...and ensure strings of whitespace fail
 }
 
-// Jak clovek pise, delat mezery za tisicovkami
-// $('.space-separated-thousands').keyup(function(event) {
 
-//     // skip for arrow keys
-//     if(event.which >= 37 && event.which <= 40) return;
+// Number.prototype.formatMoney = function(c, d, t){
+//     var n = this,
+//     c = isNaN(c = Math.abs(c)) ? 2 : c,
+//     d = d == undefined ? "." : d,
+//     t = t == undefined ? "," : t,
+//     s = n < 0 ? "-" : "",
+//     i = parseInt(n = Math.abs(+n || 0).toFixed(c)) + "",
+//     j = (j = i.length) > 3 ? j % 3 : 0;
+//     return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : "");
+// };
 
-//     // format number
-//     $(this).val(function(index, value) {
-//       return value
-//       .replace(/\D/g, "")
-//       .replace(/\B(?=(\d{3})+(?!\d))/g, " ")
-//       ;
-//     });
-//   });
+/*
+decimal_sep: character used as deciaml separtor, it defaults to '.' when omitted
+thousands_sep: char used as thousands separator, it defaults to ',' when omitted
+*/
+Number.prototype.formatMoney = function(decimals, decimal_sep, thousands_sep)
+{
+   var n = this,
+   c = isNaN(decimals) ? 2 : Math.abs(decimals), //if decimal is zero we must take it, it means user does not want to show any decimal
+   d = decimal_sep || '.', //if no decimal separator is passed we use the dot as default decimal separator (we MUST use a decimal separator)
 
+   /*
+   according to [https://stackoverflow.com/questions/411352/how-best-to-determine-if-an-argument-is-not-sent-to-the-javascript-function]
+   the fastest way to check for not defined parameter is to use typeof value === 'undefined'
+   rather than doing value === undefined.
+   */
+   t = (typeof thousands_sep === 'undefined') ? ',' : thousands_sep, //if you don't want to use a thousands separator you can pass empty string as thousands_sep value
+
+   sign = (n < 0) ? '-' : '',
+
+   //extracting the absolute value of the integer part of the number and converting to string
+   i = parseInt(n = Math.abs(n).toFixed(c)) + '',
+
+   j = ((j = i.length) > 3) ? j % 3 : 0;
+   return sign + (j ? i.substr(0, j) + t : '') + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : '');
+};
+
+
+
+// ==========================================================================
+// BOOTSTRAP TABLE FILTER AND SORTING FORMATTERS
+// ==========================================================================
+function sumHoursFormatter(data) {
+    var field = parseInt(this.field);
+    var result = data.map(function (row) {
+        var hours = parseInt(row[field]
+            .replace("hod", '')
+            .replace(" ", '')
+        ) || 0;
+        return + hours;
+    }).reduce(function (sum, i) {
+        return sum + i;
+    }, 0);
+    return result.toLocaleString('cs-CZ') + ' hod';
+}
+
+function priceFormatterCz(data) {
+    var field = parseInt(this.field);
+    //var field = parseInt(this.field.replace(",", "").replace("&nbsp;", "").replace(" ", "").replace("Kč", ""));
+    //var field = parseInt(this.field).val().replace(/[^0-9]/g, '')
+    var vysledek = data.map(function (row) {
+        var cost = parseInt(row[field]
+            //.replace(/, (Kč)(&nbsp);/g, ''));
+            .replaceAllTxt(",", "")
+            .replaceAllTxt("&nbsp;", "")
+            .replaceAllTxt(" ", "")
+            .replaceAllTxt("Kč", "")
+            ) || 0;
+        //console.log(`CostCz: ${cost}`);
+        return + cost;
+    }).reduce(function (sum, i) {
+        return sum + i;
+    }, 0);
+    return vysledek.toLocaleString('cs-CZ') + ' Kč';
+}
+
+function priceSorter(a, b) {
+    let aa = a.replaceAllTxt(' Kč', '').replaceAllTxt(' €', '').replaceAllTxt('$', '')
+        .replaceAllTxt('&nbsp;', '').replaceAllTxt('.', '').replaceAllTxt(',', '');
+    let bb = b.replaceAllTxt(' Kč', '').replaceAllTxt(' €', '').replaceAllTxt('$', '')
+        .replaceAllTxt('&nbsp;', '').replaceAllTxt('.', '').replaceAllTxt(',', '');
+    return aa - bb;
+}
+
+function priceFormatter(data) {
+    var field = parseInt(this.field
+        .replace(",", "").replace(".", "").replace("&nbsp;", "").replace(" ", "")
+        .replace("Kč", "").replace("$", "").replace("€", "")
+    );
+    var vysledek = data.map(function (row) {
+        var cost = parseInt(row[field]
+            //.replace(/, (Kč)(&nbsp);/g, ''));
+            .replaceAllTxt(",", "")
+            .replaceAllTxt(".", "")
+            .replaceAllTxt("&nbsp;", "")
+            .replaceAllTxt(" ", "")
+            .replaceAllTxt("Kč", "")
+            .replaceAllTxt("$", "")
+            .replaceAllTxt("€", "")
+            ) || 0;
+        return + cost;
+    }).reduce(function (sum, i) {
+        return sum + i
+    }, 0);
+    return (vysledek).formatMoney(0, '.', ' ');
+}
 
 
 // NOTE: Stara vec, predtim jsem klikal na Order/Create z nabidky, ramcovky nebo bez nabidky

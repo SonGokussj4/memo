@@ -112,15 +112,15 @@
             <th scope="col" class="text-center" data-field="8" data-sortable="true" data-filter-control="input">Key acc.<br />manager</th>
             <th scope="col" class="text-center" data-field="9" data-sortable="true" data-filter-control="input">Vedoucí <br />projektu</th>
             <th scope="col" class="text-center" data-field="10" data-sortable="true" data-filter-control="input">Oddělení</th>
-            <th scope="col" class="text-center" data-field="11" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatterCz"><div data-toggle="tooltip" title="Vyjednaná cena zakázky (po případné slevě)">Vyjednaná <br />cena</div></th>
-            <th scope="col" class="text-center" data-field="12" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatterProgress"><div data-toggle="tooltip" title="Součet fakturací">Vyfakturováno</div></th>
-            <th scope="col" class="text-center" data-field="13" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatterCz"><div data-toggle="tooltip" title="Vyjednaná cena - součet fakturací">Zbývá</div></th>
+            <th scope="col" class="text-center" data-field="11" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatter" data-sorter="priceSorter"><div data-toggle="tooltip" title="Vyjednaná cena zakázky (po případné slevě)">Vyjednaná <br />cena</div></th>
+            <th scope="col" class="text-center" data-field="12" data-sortable="true" data-filter-control="input"><div data-toggle="tooltip" title="Součet fakturací">Vyfakturováno</div></th>
+            <th scope="col" class="text-center" data-field="13" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatter" data-sorter="priceSorter"><div data-toggle="tooltip" title="Vyjednaná cena - součet fakturací">Zbývá</div></th>
             <th scope="col" class="text-center" data-field="14" data-sortable="true" data-filter-control="input" data-footer-formatter="sumHoursFormatter">Vyčerpáno</th>
             <th scope="col" class="text-center" data-field="15" data-sortable="true" data-filter-control="input" data-footer-formatter="sumHoursFormatter">Plánované <br />hod</th>
             <th scope="col" class="text-center" data-field="16" data-sortable="true" data-filter-control="input">Využito</th>
-            <th scope="col" class="text-center" data-field="17" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatterProgress"><div data-toggle="tooltip" title="Suma (vyčerpané hod * jejich hodinová mzda)">Skutečné <br />náklady</div></th>
-            <th scope="col" class="text-center" data-field="18" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatterProgress"><div data-toggle="tooltip" title="Skutečné náklady + další náklady">Celkové skut. <br />náklady</div></th>
-            <th scope="col" class="text-center" data-field="19" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatterProgress"><div data-toggle="tooltip" title="Vyjednaná cena - Celkové skut. náklady">Odčerpáno <br />nákladů</div></th>
+            <th scope="col" class="text-center" data-field="17" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatter" data-sorter="priceSorter"><div data-toggle="tooltip" title="Suma (vyčerpané hod * jejich hodinová mzda)">Skutečné <br />náklady</div></th>
+            <th scope="col" class="text-center" data-field="18" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatter" data-sorter="priceSorter"><div data-toggle="tooltip" title="Skutečné náklady + další náklady">Celkové skut. <br />náklady</div></th>
+            <th scope="col" class="text-center" data-field="19" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatter" data-sorter="priceSorter"><div data-toggle="tooltip" title="Vyjednaná cena - Celkové skut. náklady">Odčerpáno <br />nákladů</div></th>
             <th scope="col" class="text-center" data-field="20" data-sortable="true" data-filter-control="input">Poznámky</th>
         </tr>
     </thead>
@@ -346,83 +346,6 @@
 
     function idFormatter() {
         return 'Součet'
-    }
-
-    //function nameFormatter(data) {
-    //    return data.length
-    //}
-
-    function sumHoursFormatter(data) {
-        var field = parseInt(this.field);
-        var result = data.map(function (row) {
-            var hours = parseInt(row[field]
-                .replace("hod", '')
-                .replace(" ", '')
-            ) || 0;
-            return + hours
-        }).reduce(function (sum, i) {
-            return sum + i
-        }, 0)
-        return result.toLocaleString('cs-CZ') + ' hod'
-    }
-
-    function priceFormatterCz(data) {
-        var field = parseInt(this.field);
-        //var field = parseInt(this.field.replace(",", "").replace("&nbsp;", "").replace(" ", "").replace("Kč", ""));
-        //var field = parseInt(this.field).val().replace(/[^0-9]/g, '')
-        var vysledek = data.map(function (row) {
-            var cost = parseInt(row[field]
-                //.replace(/, (Kč)(&nbsp);/g, ''));
-                .replaceAllTxt(",", "")
-                .replaceAllTxt("&nbsp;", "")
-                .replaceAllTxt(" ", "")
-                .replaceAllTxt("Kč", "")
-                ) || 0;
-            //console.log(`CostCz: ${cost}`);
-            return + cost
-        }).reduce(function (sum, i) {
-            return sum + i
-        }, 0)
-        return vysledek.toLocaleString('cs-CZ') + ' Kč'
-    }
-
-    function priceFormatterProgress(data) {
-        var field = parseInt(this.field);
-        //var field = parseInt(this.field.replace(",", "").replace("&nbsp;", "").replace(" ", "").replace("Kč", ""));
-        //var field = parseInt(this.field).val().replace(/[^0-9]/g, '')
-        var vysledek = data.map(function (row) {
-            var cost = parseInt(row[field].substring(row[field].indexOf('">') + 2,row[field].indexOf('</span>'))
-                //.replace(/, (Kč)(&nbsp);/g, ''));
-                .replaceAllTxt(",", "")
-                .replaceAllTxt("&nbsp;", "")
-                .replaceAllTxt(" ", "")
-                .replaceAllTxt("Kč", "")
-                ) || 0;
-            //console.log(`CostProgress: ${cost}`);
-            return + cost
-        }).reduce(function (sum, i) {
-            return sum + i
-        }, 0)
-        return vysledek.toLocaleString("cs-CZ")
-    }
-
-    function priceFormatter(data) {
-        var field = parseInt(this.field.replace(",", "").replace("&nbsp;", "").replace(" ", "").replace("Kč", ""));
-        console.log(field);
-        //var field = parseInt(this.field).val().replace(/[^0-9]/g, '')
-        var vysledek = data.map(function (row) {
-            var cost = parseInt(row[field]
-                //.replace(/, (Kč)(&nbsp);/g, ''));
-                .replace(",", "")
-                .replace("&nbsp;", "")
-                .replace(" ", "")
-                .replace("Kč", "")
-            ) || 0;
-            return + cost
-        }).reduce(function (sum, i) {
-            return sum + i
-        }, 0)
-        return vysledek
     }
 
     function footerStyle(row, index) {
