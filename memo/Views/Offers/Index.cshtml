@@ -114,9 +114,9 @@
             <th scope="col" class="text-center" data-field="9" data-sortable="true" data-filter-control="input">Zákazník</th>
             <th scope="col" class="text-center" data-field="10" data-sortable="true" data-filter-control="input">Kontakt</th>
             <th scope="col" class="text-center" data-field="11" data-sortable="true" data-filter-control="input">Předmět</th>
-            <th scope="col" class="text-center" data-field="12" data-sortable="true" data-filter-control="input">Cena</th>
+            <th scope="col" class="text-center" data-field="12" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatter" data-sorter="priceSorter">Cena</th>
             <th scope="col" class="text-center" data-field="13" data-sortable="true" data-filter-control="input">Měna</th>
-            <th scope="col" class="text-center" data-field="14" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatterCz">Cena [CZK]</th>
+            <th scope="col" class="text-center" data-field="14" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatterCz" data-sorter="priceSorter">Cena [CZK]</th>
             <th scope="col" class="text-center" data-field="15" data-sortable="true" data-filter-control="input">Poznámky</th>
         </tr>
     </thead>
@@ -320,43 +320,6 @@
 
     function nameFormatter(data) {
         return data.length
-    }
-
-    function priceFormatterCz(data) {
-        var field = parseInt(this.field.replace(",", "").replace("&nbsp;", "").replace(" ", "").replace("Kč", ""));
-        //var field = parseInt(this.field).val().replace(/[^0-9]/g, '')
-        var vysledek = data.map(function (row) {
-            var cost = parseInt(row[field]
-                //.replace(/, (Kč)(&nbsp);/g, ''));
-                .replaceAllTxt(",", "")
-                .replaceAllTxt("&nbsp;", "")
-                .replaceAllTxt(" ", "")
-                .replaceAllTxt("Kč", "")
-                ) || 0;
-            return + cost
-        }).reduce(function (sum, i) {
-            return sum + i
-        }, 0)
-        return vysledek.toLocaleString('cs-CZ') + ' Kč'
-    }
-
-    function priceFormatter(data) {
-        var field = parseInt(this.field.replace(",", "").replace("&nbsp;", "").replace(" ", "").replace("Kč", ""));
-        console.log(field);
-        //var field = parseInt(this.field).val().replace(/[^0-9]/g, '')
-        var vysledek = data.map(function (row) {
-            var cost = parseInt(row[field]
-                //.replace(/, (Kč)(&nbsp);/g, ''));
-                .replaceAllTxt(",", "")
-                .replaceAllTxt("&nbsp;", "")
-                .replaceAllTxt(" ", "")
-                .replaceAllTxt("Kč", "")
-                ) || 0;
-            return + cost
-        }).reduce(function (sum, i) {
-            return sum + i
-        }, 0)
-        return vysledek
     }
 
     function footerStyle(row, index) {
