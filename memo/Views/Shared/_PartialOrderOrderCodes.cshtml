@@ -7,19 +7,14 @@
 }
 
 <!-- Modal placeholder -->
-<div id="modal-placeholder-@i"></div>
+@* <div id="modal-placeholder-@i"></div> *@
 
-<input hidden="true" asp-for="@Model.Order.OrderCodes[i].OrderCodeId" />
+@* <input hidden="true" asp-for="@Model.Order.OrderCodes[i].OrderCodeId" /> *@
 
-<div class="row form-group justify-content-end">
+<div class="row form-group justify-content-end" id="dynamic-row-order-codes-@i">
 
-    @* <input hidden="true" type="number" data-val="true" data-val-required="The OrderCodeId field is required." id="Order_OrderCodes_' + idOrderCode + '__OrderCodeId" name="Order.OrderCodes[' + idOrderCode + '].OrderCodeId" value="0"> *@
     <input asp-for="@Model.Order.OrderCodes[i].OrderCodeId" hidden="true">
     <input asp-for="@Model.Order.OrderCodes[i].OrderId" hidden="true">
-
-    @* <div class="col-lg-1 text-right mt-2" style="color: grey; font-size: 0.9em;">
-        <label class="order-codes-sum-hours-label">@Model.Order.OrderCodes[i].SumHours/@Model.Order.OrderCodes[i].PlannedHours hod</label>
-    </div> *@
 
     <div class="col-lg-3">
         <span class="has-float-label">
@@ -28,7 +23,8 @@
                 <div class="input-group-append">
                     <!-- Button trigger modal -->
                     <span data-toggle="tooltip" title="Vyhledat kód">
-                        <button class="btn btn-light border" type="button" data-toggle="ajax-modal" data-target="#SearchForOrderCodeModal" data-id="@i" data-url="@Url.Action("GetOrderCodes", "Orders", new { id = @i })">
+                        @* <button class="btn btn-light border" type="button" data-toggle="ajax-modal" data-target="#SearchForOrderCodeModal" data-id="@i" data-url="@Url.Action("GetOrderCodes", "Orders", new { id = @i })"> *@
+                        <button class="btn btn-light border" type="button" data-toggle="ajax-modal" data-target="#SearchForOrderCodeModal" data-url="@Url.Action("GetOrderCodes", "Orders", new { id = @i })">
                             <i class="fa fa-search"></i>
                         </button>
                     </span>

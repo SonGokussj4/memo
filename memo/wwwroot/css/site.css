@@ -379,17 +379,17 @@ form.myform {
   white-space: nowrap;
 }
 
-/* .select2-container--open .select2-dropdown--below {
-  min-width: 300px !important;
-  white-space: nowrap;
-} */
-
 .select2 {
   width:100%!important;
 }
-/* .select2 select2-container select2-container--default {
-  max-width: -webkit-fill-available;
-} */
+
+.select2-container--default .select2-selection--single .select2-selection__clear {
+  padding-top: 3px;
+  padding-left: 0px;
+  font-size: 1.4em;
+  color: darkgrey;
+  font-weight: bold;
+}
 
 /* Bootstrap Z-Index fix */
 .input-group>.form-control:focus {

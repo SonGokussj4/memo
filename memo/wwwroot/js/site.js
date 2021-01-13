@@ -231,15 +231,14 @@ function initializeOrderAjaxModalClickEvent() {
     // all buttons with data-toggle equal to ajax-modal
     $('button[data-toggle="ajax-modal"]').unbind('click');  // first unbind click or it will duplicate the event to existing DOM objects
     $('button[data-toggle="ajax-modal"]').click(function (event) {
-        let url = $(this).data('url');
-        // let id = $(this).data('id');
+        var url = $(this).data("url") + "/" + $(this).val();
         console.log("initializeOrderAjaxModalClickEvent: " + url);
         $.get(url).done(function (data) {
             $('#modal-placeholder').html(data);
             // $('#modal-placeholder-' + id).html(data);
             $('#modal-placeholder > .modal').modal('show');
             // $('#modal-placeholder-' + id + ' > .modal').modal('show');
-            initializeSelectpicker();
+            // initializeSelectpicker();
         });
     });
 }
@@ -252,7 +251,7 @@ $('body').on('load', 'div[data-toggle=checkboxes]', function () {
 
 // Modal, user select OrderCode, press Vlozit, it will insert value into a distinc val
 function OrderCodeToInput(id) {
-    console.log("OrderCodeToInput id: " + id);
+    // console.log("OrderCodeToInput id: " + id);
     let SelectValue = $(`#SelectedOrderCode_${id}`).val();
     $(`#Order_OrderCodes_${id}__OrderCode`).val(SelectValue).blur();
 }

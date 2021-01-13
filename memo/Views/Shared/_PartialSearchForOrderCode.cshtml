@@ -10,14 +10,13 @@
             </div>
             <!-- body -->
             <div class="modal-body">
-                @* <input id="xxx1" value="Filter1" /> *@
-                @* <input id="xxx2" value="Filter2" /> *@
-                <select id="SelectedOrderCode_@Model.OrderCodeId" asp-items="Model.EveOrderCodes" class="form-control selectpicker"></select>
+                <select id="SelectedOrderCode_@Model.OrderCodeId" class="form-control select-order-code"></select>
+                @* <select id="SelectedOrderCode_@Model.OrderCodeId" asp-items="Model.EveOrderCodes" class="form-control select-order-code"></select> *@
             </div>
             <!-- footer -->
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" onclick="OrderCodeToInput(@Model.OrderCodeId)" data-dismiss="modal">Vložit</button>
                 <button type="button" class="btn btn-info" data-dismiss="modal">Zpět</button>
+                <button type="button" class="btn btn-primary" onclick="OrderCodeToInput(@Model.OrderCodeId)" data-dismiss="modal">Vložit</button>
             </div>
         </div>
     </div>
@@ -25,9 +24,47 @@
 
 
 <script>
+
     // Preselect
     var orderCodeText = $(`#Order_OrderCodes_${@Model.OrderCodeId}__OrderCode`).val();
     if (!orderCodeText == "") {
         $(`#SelectedOrderCode_${@Model.OrderCodeId} option:contains(${orderCodeText})`).attr('selected', true);
     }
+
+    $(".select-order-code").select2({
+            placeholder: "-- Vyber kód --",
+            minimumInputLength: 0,  // minimum number of characters required to start a search
+            dropdownAutoWidth: true,  // make width of the dropdown to MAX of the longest item
+            allowClear: false,  // 'times' button to click for emptying selection
+            minimumResultsForSearch: 0,  // '-1' to disable search box
+            language: { searching: function() { return "Načítám..."; } }, // disable "Searching..." text
+            ajax: {
+                url: '@Url.Action("getOrderCodesJson", "Orders")',
+                dataType: 'json',
+                type: 'Get',
+                delay: 150,
+                async: true,
+                data: function (params) {
+                    return {
+                        match: params.term,  // search term
+                        pageSize: params.pageSize || 20,  // how many items on page
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        // data = return Json { items = [ { id: 1, text: "one" }, { id: 2, text: "two" } ] }
+                        @* results: data.items *@
+                        // data = return Json { items = [ SelectListItem { Value: 1, Text: "one" }, SelectListItem { Value: 2, Text: "two" } ] }
+                        results: $.map(data.items, function(item) {
+                            return {
+                                id: item.value,  // need to be lowercase "v"
+                                text: item.text  // need to be lowercase "t"
+                            }
+                        })
+                    };
+                },
+                cache: true,
+            },
+        });
+
 </script>

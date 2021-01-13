@@ -92,7 +92,8 @@
         <div class="form-group row customerOffer">
             <label class="required col-lg-3 col-form-label form-control-label control-label">Zákazník</label>
             <div class="col-lg-4">
-                <select class="form-control selectpicker" asp-for="Offer.SharedInfo.CompanyId" asp-items="@Model.CompanyList">
+                @* <select class="form-control selectpicker ajaxfill-company-list" asp-for="Offer.SharedInfo.CompanyId" asp-items="@Model.CompanyList"> *@
+                <select class="form-control select-company" asp-for="Offer.SharedInfo.CompanyId" >
                     <option value="">-- Vyber firmu --</option>
                 </select>
                 <span asp-validation-for="Offer.SharedInfo.CompanyId" class="text-danger"></span>
@@ -188,6 +189,64 @@
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 
     <script>
+
+        $(".select-company").select2({
+            placeholder: "-- Vyber firmu --",
+            minimumInputLength: 0,  // minimum number of characters required to start a search
+            dropdownAutoWidth: true,  // make width of the dropdown to MAX of the longest item
+            allowClear: false,  // 'times' button to click for emptying selection
+            minimumResultsForSearch: 0,  // '-1' to disable search box
+            language: { searching: function() { return null; } }, // disable "Searching..." text
+            ajax: {
+                url: '@Url.Action("GetContactsList", "Contacts")',
+                dataType: 'json',
+                type: 'Get',
+                delay: 150,
+                data: function (params) {
+                    return {
+                        match: params.term,  // search term
+                        pageSize: params.pageSize || 20,  // how many items on page
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        // data = return Json { items = [ { id: 1, text: "one" }, { id: 2, text: "two" } ] }
+                        @* results: data.items *@
+                        // data = return Json { items = [ SelectListItem { Value: 1, Text: "one" }, SelectListItem { Value: 2, Text: "two" } ] }
+                        results: $.map(data.items, function(item) {
+                            return {
+                                id: item.value,  // need to be lowercase "v"
+                                text: item.text  // need to be lowercase "t"
+                            }
+                        })
+                    };
+                },
+                cache: true,
+                // PAGINATION ???
+                //data: function (params) {
+                //    var query = {
+                //        match: params.term,
+                //        page: params.page || 1,
+                //        pageSize: params.pageSize || 5
+                //    }
+                //    return query;
+                //},
+                //processResults: function (data, params) {
+                //    console.log(params);
+                //    return {
+                //        results: data.items,
+                //        term: params.term || "",
+                //        page: params.page || 1,
+                //        pagination: {
+                //            more:(params.page * 5) < data.total_count
+                //        }
+                //    }
+                //},
+                //pagination: {
+                //    more: true
+                //},
+            },
+        });
 
         $(document).ready(function(){
 

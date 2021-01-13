@@ -14,6 +14,7 @@ using memo.Models;
 using memo.ViewModels;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
 namespace memo.Controllers
 {
@@ -866,6 +867,19 @@ namespace memo.Controllers
                 .SingleOrDefault();
         }
 
+        public int GetSumHours(string orderCode)
+        {
+            int idOrder = _eveDb.cOrders
+                .Where(x => x.OrderCode == orderCode)
+                .Select(x => x.Idorder)
+                .FirstOrDefault();
+            int sumMinutes = _eveDb.tWorks
+                .Where(x => x.Idorder == idOrder)
+                .Sum(x => x.Minutes);
+
+            return Convert.ToInt32((double)sumMinutes / 60);
+        }
+
         /// <summary>
         /// Get sum of minutes from tWorks table of by selected 'orderCode'
         /// </summary>
@@ -1152,11 +1166,57 @@ namespace memo.Controllers
             OrderEditViewModel vm = new OrderEditViewModel();
             vm.cOrders = await _eveDb.cOrders.ToListAsync();
             vm.Orders = await _db.Order.Include(x => x.OrderCodes).ToListAsync();
-            vm.EveOrderCodes = await getOrderCodesAsync(_eveDb);
+            // vm.EveOrderCodes = await getOrderCodesAsync(_eveDb);
             vm.OrderCodeId = id;
             // vm.SelectedModalOrderCode = id;
 
             return PartialView("_PartialSearchForOrderCode", vm);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> AddOrderCodesPartial(int id)
+        {
+            Order order = new Order();
+            order.OrderCodes = new List<OrderCodes>();
+
+            for (int i = 0; i < id + 1; i++)
+            {
+                order.OrderCodes.Add(new OrderCodes() { OrderCodeId = i });
+                // OrderCodes orderCodes = new OrderCodes();
+                // {
+                //     OrderCodeId = i,
+                // };
+                // order.OrderCodes.Add(orderCodes);
+            }
+
+            OfferOrderVM vm = new OfferOrderVM()
+            {
+                Order = order,
+                IDOrder = id,
+            };
+
+            return PartialView("_PartialOrderOrderCodesCreate", vm );
+        }
+
+        public async Task<JsonResult> getOrderCodesJson(string match, int pageSize = 100)
+        {
+            match = !string.IsNullOrWhiteSpace(match) ? match : "";
+
+            // IOrderedQueryable<SelectListItem> eveOrderCodes = _eveDb.cOrders
+            var eveOrderCodes = _eveDb.cOrders
+                .Where(x => x.OrderCode.Contains(match) || x.OrderName.Contains(match))
+                .Take(pageSize)
+                .AsEnumerable()
+                .Select(m => new SelectListItem {
+                    Text = m.OrderCode + " - " + m.OrderName + " [ " + GetSumHours(m.OrderCode).ToString("N0") + " hod]",
+                    Value = m.OrderCode
+                })
+                .OrderBy(x => x.Value);
+
+            var result = eveOrderCodes.ToList();
+            // var result = await eveOrderCodes.ToListAsync();
+
+            return Json(new { items = result });
         }
 
         /// <summary>

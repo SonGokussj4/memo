@@ -301,6 +301,39 @@ namespace memo.Controllers
             return RedirectToAction("Index", new { showInactive });
         }
 
+        [HttpGet]
+        public JsonResult GetContactsList(string match, int pageSize = 100)
+        // public JsonResult GetContactsList(string match, int page = 1, int pageSize = 5)
+        {
+            // var jsonData = _db.Company.Select(x => new SelectListItem { Value = x.CompanyId.ToString(), Text = x.Name }).ToList();
+            // var jsonData = _db.Company.Select(x => new { id = x.CompanyId.ToString(), text = x.Name }).ToList();
+
+            // if (!string.IsNullOrWhiteSpace(match))
+            // {
+            //     model = model.Where(m => m.text.Contains(match)).ToList();
+            // }
+
+            match = !string.IsNullOrWhiteSpace(match) ? match : "";
+
+            var jsonData = _db.Company
+                .Where(x => x.Name.Contains(match))
+                .Take(pageSize)
+                .Select(x => new SelectListItem { Value = x.CompanyId.ToString(), Text = x.Name })
+                // .Select(x => new { id = x.CompanyId, text = x.Name })
+                .OrderBy(x => x.Text)
+                // .OrderBy(x => x.text)
+                .ToList();
+
+            // var results = new
+            // {
+            //     items = jsonData,
+            //     total_count = jsonData.Count(),
+            // };
+
+            // return Json(results);
+            return Json(new { items = jsonData });
+        }
+
         // // Initilises Select List
         // public void ConfigureViewModel(BookingViewModel bookingViewModel)
         // {
