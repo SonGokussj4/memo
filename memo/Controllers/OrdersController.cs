@@ -1168,9 +1168,9 @@ namespace memo.Controllers
             vm.Orders = await _db.Order.Include(x => x.OrderCodes).ToListAsync();
             // vm.EveOrderCodes = await getOrderCodesAsync(_eveDb);
             vm.OrderCodeId = id;
-            // vm.SelectedModalOrderCode = id;
+            vm.SelectedOrderCode = id.ToString();
 
-            return PartialView("_PartialSearchForOrderCode", vm);
+            return PartialView("Partials/Orders/_PartialSearchForOrderCode", vm);
         }
 
         [HttpGet]
@@ -1195,7 +1195,7 @@ namespace memo.Controllers
                 IDOrder = id,
             };
 
-            return PartialView("_PartialOrderOrderCodesCreate", vm );
+            return PartialView("Partials/Orders/_PartialOrderOrderCodesCreate", vm );
         }
 
         public async Task<JsonResult> getOrderCodesJson(string match, int pageSize = 100)
@@ -1208,7 +1208,7 @@ namespace memo.Controllers
                 .Take(pageSize)
                 .AsEnumerable()
                 .Select(m => new SelectListItem {
-                    Text = m.OrderCode + " - " + m.OrderName + " [ " + GetSumHours(m.OrderCode).ToString("N0") + " hod]",
+                    Text = m.OrderCode + " - " + m.OrderName + " [ " + GetSumHours(m.OrderCode).ToString("N0") + " hod ]",
                     Value = m.OrderCode
                 })
                 .OrderBy(x => x.Value);

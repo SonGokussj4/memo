@@ -28,7 +28,7 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
             @* PARTIAL: SELECT  *@
-            @await Html.PartialAsync("_PartialOrder-Create-SelectFrom", new ViewDataDictionary(ViewData) {{ "selectedOffer", "selected" }})
+            @await Html.PartialAsync("Partials/Orders/_PartialOrder-Create-SelectFrom", new ViewDataDictionary(ViewData) {{ "selectedOffer", "selected" }})
 
             <div class="form-group row justify-content-center mt-3">
 

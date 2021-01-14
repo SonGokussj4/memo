@@ -3,7 +3,7 @@
 @model memo.ViewModels.OfferOrderVM
 
 <!-- Modal placeholder -->
-@* <div id="modal-placeholder-@Model.IDOrder"></div> *@
+<div id="modal-placeholder-@Model.IDOrder"></div>
 
 @* <input hidden="true" asp-for="@Model.Order.OrderCodes[i].OrderCodeId" /> *@
 
@@ -16,19 +16,16 @@
         <span class="has-float-label">
             <div class="input-group">
                 <input asp-for="@Model.Order.OrderCodes[@Model.IDOrder].OrderCode" class="form-control" type="text" autocomplete="off" placeholder=" "/>
-                <div class="input-group-append">
-                    <!-- Button trigger modal -->
-                    <span data-toggle="tooltip" title="Vyhledat kód">
-                        @* <button class="btn btn-light border" type="button" data-toggle="ajax-modal" data-target="#SearchForOrderCodeModal" data-id="@i" data-url="@Url.Action("GetOrderCodes", "Orders", new { id = @i })"> *@
-                        @* <button class="btn btn-light border" type="button" data-toggle="ajax-modal" data-target="#SearchForOrderCodeModal" data-url="@Url.Action("GetOrderCodes", "Orders", new { id = @Model.IDOrder })"> *@
-                        <button class="btn btn-light border" type="button">
-                            <i class="fa fa-search"></i>
-                        </button>
-                    </span>
+                <div class="input-group-append" data-toggle="tooltip" title="Vyhledat kód">
+                    <!-- Button to trigger modal -->
+                    <button class="btn btn-light border" type="button" data-toggle="ajax-modal" data-target="#SearchForOrderCodeModal" data-url="@Url.Action("GetOrderCodes", "Orders", new { id = @Model.IDOrder })">
+                        <i class="fa fa-search"></i>
+                    </button>
                 </div>
             </div>
             <label asp-for="@Model.Order.OrderCodes[@Model.IDOrder].OrderCode">Kód vykazování</label>
         </span>
+        <span asp-validation-for="@Model.Order.OrderCodes[@Model.IDOrder].OrderCode" class="text-danger"></span>
     </div>
 
     <div class="col-lg-3">
@@ -36,6 +33,7 @@
             <input asp-for="@Model.Order.OrderCodes[@Model.IDOrder].HourWageSubject" class="form-control" type="text" autocomplete="off" placeholder=" "/>
             <label asp-for="@Model.Order.OrderCodes[@Model.IDOrder].HourWageSubject">Popis hod. mzdy</label>
         </span>
+        <span asp-validation-for="@Model.Order.OrderCodes[@Model.IDOrder].HourWageSubject" class="text-danger"></span>
     </div>
 
     <div class="col-lg-3">
@@ -43,6 +41,7 @@
             <input asp-for="@Model.Order.OrderCodes[@Model.IDOrder].HourWageCost" class="form-control" type="text" placeholder=" "/>
             <label asp-for="@Model.Order.OrderCodes[@Model.IDOrder].HourWageCost">Hod. mzda</label>
         </span>
+        <span asp-validation-for="@Model.Order.OrderCodes[@Model.IDOrder].HourWageCost" class="text-danger"></span>
         @* <label class="order-codes-sum-hours-label ml-2" style="font-size: 0.8em; color: grey;">
             Vynásobeno: ...
         </label> *@

@@ -70,21 +70,18 @@
         <div class="form-group row eveOffer">
             <label class="col-lg-3 col-form-label form-control-label control-label">Evektor</label>
             <div class="col-lg-2">
-                <span class="has-float-label">
-                    <select class="form-control" asp-for="Offer.SharedInfo.EveDivision" asp-items="@Model.Offer.EveDivisionList"></select>
-                    <label asp-for="Offer.SharedInfo.EveDivision">Divize</label>
-                </span>
+                <span class="floating-select-label">Divize</span>
+                <select class="form-control" asp-for="Offer.SharedInfo.EveDivision" asp-items="@Model.Offer.EveDivisionList"></select>
                 <span asp-validation-for="Offer.SharedInfo.EveDivision" class="text-danger"></span>
             </div>
             <div class="col-lg-3">
-                <span class="has-float-label">
-                    <select asp-for="Offer.SharedInfo.EveDepartment" asp-items="@Model.DepartmentList" class="form-control"></select>
-                    <label asp-for="Offer.SharedInfo.EveDepartment">Oddělení</label>
-                </span>
+                <span class="floating-select-label">Oddělení</span>
+                <select asp-for="Offer.SharedInfo.EveDepartment" class="select-department form-control"></select>
                 <span asp-validation-for="Offer.SharedInfo.EveDepartment" class="text-danger"></span>
             </div>
             <div class="col-lg-4">
-                <select class="form-control selectpicker" asp-for="Offer.SharedInfo.EveCreatedUser" asp-items="@Model.EveContactList" required></select>
+                <span class="floating-select-label">Uživatel</span>
+                <select class="form-control select-user" asp-for="Offer.SharedInfo.EveCreatedUser"></select>
                 <span asp-validation-for="Offer.SharedInfo.EveCreatedUser" class="text-danger"></span>
             </div>
         </div>
@@ -210,6 +207,38 @@
                 },
                 processResults: function (data) {
                     return {
+                        results: $.map(data.items, function(item) {
+                            return {
+                                id: item.value,
+                                text: item.text
+                            }
+                        })
+                    };
+                },
+                cache: true,
+            },
+        });
+
+        $(".select-department").select2({
+            placeholder: "-- Vyber oddělení --",
+            minimumInputLength: 0,  // minimum number of characters required to start a search
+            dropdownAutoWidth: true,  // make width of the dropdown to MAX of the longest item
+            allowClear: false,  // 'times' button to click for emptying selection
+            minimumResultsForSearch: 0,  // '-1' to disable search box
+            language: { searching: function() { return null; } }, // disable/change "Searching..." text
+            ajax: {
+                url: '@Url.Action("getDepartmentsJson", "Evektor")',
+                dataType: 'json',
+                type: 'Get',
+                delay: 150,
+                data: function (params) {
+                    return {
+                        match: params.term,  // search term
+                        pageSize: params.pageSize || 100,  // how many items on page
+                    };
+                },
+                processResults: function (data) {
+                    return {
                         // data = return Json { items = [ { id: 1, text: "one" }, { id: 2, text: "two" } ] }
                         @* results: data.items *@
                         // data = return Json { items = [ SelectListItem { Value: 1, Text: "one" }, SelectListItem { Value: 2, Text: "two" } ] }
@@ -222,34 +251,56 @@
                     };
                 },
                 cache: true,
-                // PAGINATION ???
-                //data: function (params) {
-                //    var query = {
-                //        match: params.term,
-                //        page: params.page || 1,
-                //        pageSize: params.pageSize || 5
-                //    }
-                //    return query;
-                //},
-                //processResults: function (data, params) {
-                //    console.log(params);
-                //    return {
-                //        results: data.items,
-                //        term: params.term || "",
-                //        page: params.page || 1,
-                //        pagination: {
-                //            more:(params.page * 5) < data.total_count
-                //        }
-                //    }
-                //},
-                //pagination: {
-                //    more: true
-                //},
+            },
+        });
+
+        $(".select-user").select2({
+            placeholder: "-- Vyber uživatele --",
+            minimumInputLength: 0,  // minimum number of characters required to start a search
+            dropdownAutoWidth: true,  // make width of the dropdown to MAX of the longest item
+            allowClear: false,  // 'times' button to click for emptying selection
+            minimumResultsForSearch: 0,  // '-1' to disable search box
+            language: { searching: function() { return null; } }, // disable/change "Searching..." text
+            ajax: {
+                url: '@Url.Action("getUsersJson", "Evektor")',
+                dataType: 'json',
+                type: 'Get',
+                delay: 150,
+                data: function (params) {
+                    return {
+                        match: params.term,  // search term
+                        pageSize: params.pageSize || 100,  // how many items on page
+                        filter: $(".select-department").children("option:selected").val(),
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        // data = return Json { items = [ { id: 1, text: "one" }, { id: 2, text: "two" } ] }
+                        @* results: data.items *@
+                        // data = return Json { items = [ SelectListItem { Value: 1, Text: "one" }, SelectListItem { Value: 2, Text: "two" } ] }
+                        results: $.map(data.items, function(item) {
+                            return {
+                                id: item.value,  // need to be lowercase "v"
+                                text: item.text  // need to be lowercase "t"
+                            }
+                        })
+                    };
+                },
+                cache: true,
             },
         });
 
         $(document).ready(function(){
 
+            // DEFAULT VALUES
+            // =======================================
+            var selectDepartmentDefaultOption = new Option('@Html.Raw(Model.Offer.SharedInfo.EveDepartment)', '@Html.Raw(Model.Offer.SharedInfo.EveDepartment)', false, false);
+            $('.select-department').append(selectDepartmentDefaultOption).trigger('change');
+
+            var selectUserOption = new Option('@Html.Raw(Model.Offer.SharedInfo.EveCreatedUser)', '@Html.Raw(Model.Offer.SharedInfo.EveCreatedUser)', false, false);
+            $('.select-user').append(selectUserOption).trigger('change');
+
+            // INITIALIZATIONS
             $('.mycalendar input').datepicker(datepickerParameters[0]);
 
             checkItemNameExists($("#Offer_OfferName"), 'Offers');

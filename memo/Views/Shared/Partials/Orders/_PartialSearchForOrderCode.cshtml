@@ -25,10 +25,17 @@
 
 <script>
 
-    // Preselect
+    // Preselect value
     var orderCodeText = $(`#Order_OrderCodes_${@Model.OrderCodeId}__OrderCode`).val();
     if (!orderCodeText == "") {
-        $(`#SelectedOrderCode_${@Model.OrderCodeId} option:contains(${orderCodeText})`).attr('selected', true);
+        // From <input data-original-title> get OrderCode text
+        var orderCodeTooltip = $(`#Order_OrderCodes_${@Model.OrderCodeId}__OrderCode`).attr("data-original-title");
+        // From <label> xxx hod </label> get number of hours
+        var orderCodeLabel = $('#OrderCodeLabel-' + @Model.OrderCodeId).text();
+        var hoursUsed = orderCodeLabel.substring(orderCodeLabel.lastIndexOf(":") + 2, orderCodeLabel.lastIndexOf("/") - 1);
+        // Create new Select Option and add it to Select
+        var newOption = new Option(`${orderCodeText} - ${orderCodeTooltip} [ ${hoursUsed} hod ]`, orderCodeText, false, false);
+        $(`#SelectedOrderCode_${@Model.OrderCodeId}`).append(newOption).trigger('change');
     }
 
     $(".select-order-code").select2({
@@ -47,7 +54,7 @@
                 data: function (params) {
                     return {
                         match: params.term,  // search term
-                        pageSize: params.pageSize || 20,  // how many items on page
+                        pageSize: params.pageSize || 100,  // how many items on page
                     };
                 },
                 processResults: function (data) {

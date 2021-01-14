@@ -283,7 +283,7 @@
             <div id="modal-placeholder"></div>
             @for (int i = 0; i < Model.Order.OrderCodes.Count(); i++)
             {
-                @await Html.PartialAsync("_PartialOrderOrderCodes", Model, new ViewDataDictionary(ViewData) {{ "i", i }})
+                @await Html.PartialAsync("Partials/Orders/_PartialOrderOrderCodes", Model, new ViewDataDictionary(ViewData) {{ "i", i }})
             }
             <span asp-validation-for="Order.OrderCodes" class="text-danger"></span>
         </div>
