@@ -64,5 +64,12 @@ namespace memo.Models
         // public virtual ICollection<Offer> Offers { get; set; }
 
         public virtual List<SharedInfo> SharedInfo { get; set; }
+
+
+        // NOT MAPPED PROPERTIES
+
+        [Display(Name = "Jméno")]
+        [NotMapped]
+        public string PersonFullName => $"{PersonName} {PersonLastName} {PersonTitle}";
     }
 }

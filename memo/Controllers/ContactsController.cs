@@ -302,69 +302,26 @@ namespace memo.Controllers
         }
 
         [HttpGet]
-        public JsonResult GetContactsList(string match, int pageSize = 100)
-        // public JsonResult GetContactsList(string match, int page = 1, int pageSize = 5)
+        public JsonResult getContactsJson(string match, int pageSize = 100, string filter = "")
         {
-            // var jsonData = _db.Company.Select(x => new SelectListItem { Value = x.CompanyId.ToString(), Text = x.Name }).ToList();
-            // var jsonData = _db.Company.Select(x => new { id = x.CompanyId.ToString(), text = x.Name }).ToList();
-
-            // if (!string.IsNullOrWhiteSpace(match))
-            // {
-            //     model = model.Where(m => m.text.Contains(match)).ToList();
-            // }
-
             match = !string.IsNullOrWhiteSpace(match) ? match : "";
 
-            var jsonData = _db.Company
-                .Where(x => x.Name.Contains(match))
+            IQueryable<Contact> jsonData = _db.Contact;
+
+            // Filter potential selected company
+            if (!string.IsNullOrWhiteSpace(filter))
+                jsonData = jsonData.Where(x => x.CompanyId == Convert.ToInt32(filter));
+
+            // Get rest of the data, filter by match if entered
+            var result = jsonData
+                .AsEnumerable()
+                .Where(x => x.PersonFullName.Contains(match))
                 .Take(pageSize)
-                .Select(x => new SelectListItem { Value = x.CompanyId.ToString(), Text = x.Name })
-                // .Select(x => new { id = x.CompanyId, text = x.Name })
-                .OrderBy(x => x.Text)
-                // .OrderBy(x => x.text)
-                .ToList();
+                .Select(x => new SelectListItem { Value = x.ContactId.ToString(), Text = x.PersonFullName })
+                .OrderBy(x => x.Text);
 
-            // var results = new
-            // {
-            //     items = jsonData,
-            //     total_count = jsonData.Count(),
-            // };
-
-            // return Json(results);
-            return Json(new { items = jsonData });
+            return Json(new { items = result });
         }
-
-        // // Initilises Select List
-        // public void ConfigureViewModel(BookingViewModel bookingViewModel)
-        // {
-        //     // Displays Opticians Name - Needs changed to full name
-        //     bookingViewModel.OpticiansList = db.Opticians.Select(o => new SelectListItem()
-        //     {
-        //         Value = o.OpticianId.ToString(),
-        //         Text = o.User.FirstName
-        //     });
-
-        //     // Displays Patients name - needs changed to full name DOB
-        //     bookingViewModel.PatientList = db.Patients.Select(p => new SelectListItem()
-        //     {
-        //         Value = p.PatientId.ToString(),
-        //         Text = p.User.FirstName
-        //     });
-
-        //     // Displays Practice Name
-        //     bookingViewModel.PracticeList = db.Practices.Select(p => new SelectListItem()
-        //     {
-        //         Value = p.PracticeId.ToString(),
-        //         Text = p.PracticeName
-        //     });
-
-        //     // Displays Appointment Times
-        //     bookingViewModel.TimeList = db.Times.Select(t => new SelectListItem()
-        //     {
-        //         Value = t.TimeId.ToString(),
-        //         Text = t.AppointmentTime
-        //     });
-        // }
 
     }
 }

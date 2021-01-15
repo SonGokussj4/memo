@@ -16,13 +16,6 @@
         <form class="card" role="form" autocomplete="on" asp-action="Create" method="post">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-        @* <input type="hidden" asp-for="Offer.SharedInfo.Currency.Name" /> *@
-        @* <input type="hidden" asp-for="Offer.SharedInfo.Company.Name" /> *@
-        @* <input type="hidden" asp-for="Offer.SharedInfo.Company.InvoiceDueDays" /> *@
-        @* <input type="hidden" asp-for="Offer.SharedInfo.Contact.CompanyId" /> *@
-        @* <input type="hidden" asp-for="Offer.SharedInfo.Contact.PersonName" /> *@
-        @* <input type="hidden" asp-for="Offer.SharedInfo.Contact.PersonLastName" /> *@
-
         <div class="form-group row">
             <label asp-for="Offer.OfferName" class="required col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-9">
@@ -89,10 +82,8 @@
         <div class="form-group row customerOffer">
             <label class="required col-lg-3 col-form-label form-control-label control-label">Zákazník</label>
             <div class="col-lg-4">
-                @* <select class="form-control selectpicker ajaxfill-company-list" asp-for="Offer.SharedInfo.CompanyId" asp-items="@Model.CompanyList"> *@
-                <select class="form-control select-company" asp-for="Offer.SharedInfo.CompanyId" >
-                    <option value="">-- Vyber firmu --</option>
-                </select>
+                <span class="floating-select-label">Firma zákazníka</span>
+                <select class="form-control select-company" asp-for="Offer.SharedInfo.CompanyId" ></select>
                 <span asp-validation-for="Offer.SharedInfo.CompanyId" class="text-danger"></span>
             </div>
             <div class="col-lg-1" data-toggle="tooltip" title="Nová firma">
@@ -101,9 +92,8 @@
                 </a>
             </div>
             <div class="col-lg-3">
-                <select class="form-control selectpicker" asp-for="Offer.SharedInfo.ContactId" asp-items="@Model.ContactList">
-                    <option value="">-- Vyber kontakt --</option>
-                </select>
+                <span class="floating-select-label">Kontakt</span>
+                <select class="form-control select-contact" asp-for="Offer.SharedInfo.ContactId"></select>
                 <span asp-validation-for="Offer.SharedInfo.ContactId" class="text-danger"></span>
             </div>
             <div class="col-lg-1" data-toggle="tooltip" title="Nový kontakt">
@@ -187,38 +177,6 @@
 
     <script>
 
-        $(".select-company").select2({
-            placeholder: "-- Vyber firmu --",
-            minimumInputLength: 0,  // minimum number of characters required to start a search
-            dropdownAutoWidth: true,  // make width of the dropdown to MAX of the longest item
-            allowClear: false,  // 'times' button to click for emptying selection
-            minimumResultsForSearch: 0,  // '-1' to disable search box
-            language: { searching: function() { return null; } }, // disable "Searching..." text
-            ajax: {
-                url: '@Url.Action("GetContactsList", "Contacts")',
-                dataType: 'json',
-                type: 'Get',
-                delay: 150,
-                data: function (params) {
-                    return {
-                        match: params.term,  // search term
-                        pageSize: params.pageSize || 20,  // how many items on page
-                    };
-                },
-                processResults: function (data) {
-                    return {
-                        results: $.map(data.items, function(item) {
-                            return {
-                                id: item.value,
-                                text: item.text
-                            }
-                        })
-                    };
-                },
-                cache: true,
-            },
-        });
-
         $(".select-department").select2({
             placeholder: "-- Vyber oddělení --",
             minimumInputLength: 0,  // minimum number of characters required to start a search
@@ -247,12 +205,19 @@
                                 id: item.value,  // need to be lowercase "v"
                                 text: item.text  // need to be lowercase "t"
                             }
-                        })
+                        }),
                     };
                 },
                 cache: true,
             },
         });
+
+        // Clear and unselect '.select-user' when '.select-department' changes it's value
+        $('.select-department').on('select2:select', function (e) {
+            $(".select-user").select2('data', null).trigger('change');
+            @* $(".select-user").val(null).trigger('change').select2("disable"); *@
+        });
+
 
         $(".select-user").select2({
             placeholder: "-- Vyber uživatele --",
@@ -282,6 +247,76 @@
                             return {
                                 id: item.value,  // need to be lowercase "v"
                                 text: item.text  // need to be lowercase "t"
+                            }
+                        })
+                    };
+                },
+                cache: true,
+            },
+        });
+
+        $(".select-company").select2({
+            placeholder: "-- Vyber firmu --",
+            minimumInputLength: 0,  // minimum number of characters required to start a search
+            dropdownAutoWidth: true,  // make width of the dropdown to MAX of the longest item
+            allowClear: false,  // 'times' button to click for emptying selection
+            minimumResultsForSearch: 0,  // '-1' to disable search box
+            language: { searching: function() { return null; } }, // disable "Searching..." text
+            ajax: {
+                url: '@Url.Action("getCompaniesJson", "Companies")',
+                dataType: 'json',
+                type: 'Get',
+                delay: 150,
+                data: function (params) {
+                    return {
+                        match: params.term,  // search term
+                        pageSize: params.pageSize || 100,  // how many items on page
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        results: $.map(data.items, function(item) {
+                            return {
+                                id: item.value,
+                                text: item.text
+                            }
+                        })
+                    };
+                },
+                cache: true,
+            },
+        });
+
+        // Clear and unselect '.select-user' when '.select-department' changes it's value
+        $('.select-company').on('select2:select', function (e) {
+            $(".select-contact").val(null).empty().trigger('change');
+        });
+
+        $(".select-contact").select2({
+            placeholder: "-- Vyber kontakt --",
+            minimumInputLength: 0,  // minimum number of characters required to start a search
+            dropdownAutoWidth: true,  // make width of the dropdown to MAX of the longest item
+            allowClear: false,  // 'times' button to click for emptying selection
+            minimumResultsForSearch: 0,  // '-1' to disable search box
+            language: { searching: function() { return null; } }, // disable/change "Searching..." text
+            ajax: {
+                url: '@Url.Action("getContactsJson", "Contacts")',
+                dataType: 'json',
+                type: 'Get',
+                delay: 150,
+                data: function (params) {
+                    return {
+                        match: params.term,  // search term
+                        pageSize: params.pageSize || 100,  // how many items on page
+                        filter: $(".select-company").children("option:selected").val(),
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        results: $.map(data.items, function(item) {
+                            return {
+                                id: item.value,
+                                text: item.text
                             }
                         })
                     };
