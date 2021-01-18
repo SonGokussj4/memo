@@ -39,7 +39,6 @@ namespace memo.Controllers
 
             vm.DepartmentList.Insert(0, new SelectListItem { Value = "All", Text = "Vše" } );
 
-            // // TODO: Join?
             List<int> usedCompaniesFromOffer = await _db.Offer.Include(x => x.SharedInfo).Select(x => x.SharedInfo.CompanyId).Distinct().ToListAsync();
             List<int> usedCompaniesFromOrder = await _db.Order.Include(x => x.SharedInfo).Select(x => x.SharedInfo.CompanyId).Distinct().ToListAsync();
             List<int> usedCompaniesFromContract = await _db.Contracts.Include(x => x.SharedInfo).Select(x => x.SharedInfo.CompanyId).Distinct().ToListAsync();
