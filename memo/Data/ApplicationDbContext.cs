@@ -33,7 +33,6 @@ namespace memo.Data
         public virtual DbSet<Audit> Audit { get; set; }
         public virtual DbSet<SharedInfo> SharedInfo { get; set; }
 
-
         /// <summary>
         /// Extension method for saving changes with username into UserContext
         /// </summary>
