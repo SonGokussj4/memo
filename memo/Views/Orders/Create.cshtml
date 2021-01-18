@@ -58,25 +58,20 @@
                 </div>
 
                 <div class="form-group row eveOffer">
-                    <label class="required col-lg-3 col-form-label form-control-label control-label">Evektor</label>
+                    <label class="col-lg-3 col-form-label form-control-label control-label">Evektor</label>
                     <div class="col-lg-2">
-                        <span class="has-float-label">
-                            <select class="form-control" asp-for="Order.SharedInfo.EveDivision" asp-items="Model.EveDivisionList"></select>
-                            <label asp-for="Order.SharedInfo.EveDivision">Divize</label>
-                        </span>
+                        <span class="floating-select-label">Divize</span>
+                        <select class="form-control" asp-for="Order.SharedInfo.EveDivision" asp-items="@Model.EveDivisionList"></select>
                         <span asp-validation-for="Order.SharedInfo.EveDivision" class="text-danger"></span>
                     </div>
                     <div class="col-lg-3">
-                        <span class="has-float-label">
-                            <select asp-for="Order.SharedInfo.EveDepartment" asp-items="Model.DepartmentList" class="form-control"></select>
-                            <label asp-for="Order.SharedInfo.EveDepartment">Oddělení</label>
-                        </span>
+                        <span class="floating-select-label">Oddělení</span>
+                        <select asp-for="Order.SharedInfo.EveDepartment" class="form-control select-department-ajax eve-department-default"></select>
                         <span asp-validation-for="Order.SharedInfo.EveDepartment" class="text-danger"></span>
                     </div>
                     <div class="col-lg-4">
-                        <select class="form-control selectpicker" asp-for="Order.SharedInfo.EveCreatedUser" asp-items="Model.EveContactList" required>
-                            @* <option value="">-- Vyber uživatele --</option> *@
-                        </select>
+                        <span class="floating-select-label">Uživatel</span>
+                        <select asp-for="Order.SharedInfo.EveCreatedUser" class="form-control select-user-ajax eve-created-user-default"></select>
                         <span asp-validation-for="Order.SharedInfo.EveCreatedUser" class="text-danger"></span>
                     </div>
                 </div>
@@ -84,9 +79,8 @@
                 <div class="form-group row customerOffer">
                     <label class="required col-lg-3 col-form-label form-control-label control-label">Zákazník</label>
                     <div class="col-lg-4">
-                        <select class="form-control selectpicker" asp-for="Order.SharedInfo.CompanyId" asp-items="@Model.CompanyList">
-                            <option value="">-- Vyber firmu --</option>
-                        </select>
+                        <span class="floating-select-label">Firma zákazníka</span>
+                        <select asp-for="Order.SharedInfo.CompanyId" class="form-control select-company-ajax"></select>
                         <span asp-validation-for="Order.SharedInfo.CompanyId" class="text-danger"></span>
                     </div>
                     <div class="col-lg-1" data-toggle="tooltip" title="Nová firma">
@@ -95,9 +89,8 @@
                         </a>
                     </div>
                     <div class="col-lg-3">
-                        <select class="form-control selectpicker" asp-for="Order.SharedInfo.ContactId" asp-items="@Model.ContactList">
-                            <option value="">-- Vyber kontakt --</option>
-                        </select>
+                        <span class="floating-select-label">Kontakt</span>
+                        <select asp-for="Order.SharedInfo.ContactId" class="form-control select-contact-ajax"></select>
                         <span asp-validation-for="Order.SharedInfo.ContactId" class="text-danger"></span>
                     </div>
                     <div class="col-lg-1" data-toggle="tooltip" title="Nový kontakt">
@@ -137,8 +130,8 @@
                     <input asp-for="Order.OrderName" class="form-control" type="text" required="" placeholder=" "/>
                     <label asp-for="Order.OrderName">Číslo objednávky zákazníka</label>
                 </span>
+                <span asp-validation-for="Order.OrderName" class="text-danger"></span>
             </div>
-            <span asp-validation-for="Order.OrderName" class="text-danger"></span>
         </div>
 
         <div class="form-group row">
@@ -163,17 +156,13 @@
         <div class="form-group row">
             <label asp-for="Order.EveContactName" class="required col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-3">
-                <span style="color: gray; font-size: 0.9em;">Vedoucí projektu</span>
-                <select asp-for="Order.EveContactName" asp-items="Model.EveContactList" class="form-control selectpicker">
-                    <option value="">-- Vyber kontakt --</option>
-                </select>
+                <span class="floating-select-label">Vedoucí projektu</span>
+                <select asp-for="Order.EveContactName" class="form-control select-user-ajax project-manager-default"></select>
                 <span asp-validation-for="Order.EveContactName" class="text-danger"></span>
             </div>
             <div class="col-lg-3">
-                <span style="color: gray; font-size: 0.9em;">Key account manager</span>
-                <select asp-for="Order.KeyAccountManager" asp-items="Model.EveContactList" class="form-control selectpicker">
-                    <option value="">-- Vyber managera --</option>
-                </select>
+                <span class="floating-select-label">Key account manager</span>
+                <select asp-for="Order.KeyAccountManager" class="form-control select-user-ajax"></select>
                 <span asp-validation-for="Order.KeyAccountManager" class="text-danger"></span>
             </div>
         </div>
@@ -192,21 +181,6 @@
                 </a>
             </div>
         </div>
-
-        @* <div class="form-group row border-top pt-2"> *@
-            @* <div class="col-lg-2 col-form-label d-flex justify-content-left"> *@
-                @* <label class="form-control-label control-label">Kód(y) vykazování</label> *@
-            @* </div> *@
-            @* <div class="col-lg-10"> *@
-                @* <a href="javascript:void(0)" class="btn btn-success col-lg-3 add-row-order-codes mt-1" data-toggle="tooltip" title="Přidat hodinové sazby"> *@
-                    @* <i class="fa fa-plus"></i> Přidat kód *@
-                @* </a> *@
-            @* </div> *@
-        @* </div> *@
-
-        @* <div class="dynamic-rows-order-codes" id="template-order-codes" data-order="@Model.Order.OrderCodes.Count()"> *@
-            @* <div id="modal-placeholder"></div> *@
-        @* </div> *@
 
         <div class="form-group row border-top pt-2">
             <div class="col-lg-2 col-form-label d-flex justify-content-left">
@@ -300,24 +274,6 @@
             <span asp-validation-for="Order.OtherCosts" class="text-danger"></span>
         </div>
 
-        @* <div class="form-group row">
-            <label asp-for="Order.ExchangeRate" class="col-lg-3 col-form-label form-control-label control-label"></label>
-            <div class="col-lg-3">
-                 <div class="input-group mb-2 mr-sm-2">
-                    <div class="input-group-prepend">
-                        <div class="input-group-text"><span>@Model.Order.SharedInfo.Currency.Name</span></div>
-                    </div>
-                    <input asp-for="Order.ExchangeRate" class="form-control" type="text" />
-                    <div class="input-group-append">
-                        <div class="input-group-text" data-toggle="tooltip" title="Vložit dnešní kurz z ČNB" onclick="changeExchangeRate('@Model.Order.SharedInfo.Currency.Name');" style="cursor: pointer;">
-                            <i class="fa fa-caret-left">&nbsp;<i class="fa fa-cloud-download"></i></i>
-                        </div>
-                    </div>
-                 </div>
-                <span asp-validation-for="Order.ExchangeRate" class="text-danger"></span>
-            </div>
-        </div> *@
-
         <div class="form-group row border-top pt-2">
             <label asp-for="Order.Notes" class="col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-9">
@@ -366,9 +322,6 @@
             $.ajax({
                 url: '@Url.Action("getCurrencyStr", "Orders")',
                 type: 'GET',
-                //dataType: 'json',
-                // we set cache: false because GET requests are often cached by browsers
-                // IE is particularly aggressive in that respect
                 cache: false,
                 data: { symbol: curSymbol },
                 success: function(res) {
@@ -407,8 +360,21 @@
             }
         };
 
+        // Clear and unselect '.select-contact-ajax' when '.select-company-ajax' changes it's value
+        $('.select-company-ajax').on('select2:select', function (e) {
+            $(".select-contact-ajax").val(null).empty().trigger('change');
+        });
+
         $(document).ready(function(){
 
+            // DEFAULT VALUES
+            // =======================================
+            $('.project-manager-default').append(new Option('@Html.Raw(Model.Order.EveContactName)', '@Html.Raw(Model.Order.EveContactName)', false, false)).trigger('change');
+            $('.eve-department-default').append(new Option('@Html.Raw(Model.Order.SharedInfo.EveDepartment)', '@Html.Raw(Model.Order.SharedInfo.EveDepartment)', false, false)).trigger('change');
+            $('.eve-created-user-default').append(new Option('@Html.Raw(Model.Order.SharedInfo.EveCreatedUser)', '@Html.Raw(Model.Order.SharedInfo.EveCreatedUser)', false, false)).trigger('change');
+
+            // OTHER
+            // =======================================
             $("#Order_OrderName").on("keyup", function() {
                 checkItemNameExists($(this), 'Orders');
             });

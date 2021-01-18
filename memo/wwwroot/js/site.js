@@ -408,3 +408,149 @@ function priceFormatter(data) {
 //    $("#orderForm").css("visibility", "visible");
 //});
 
+
+// ==========================================================================
+// AJAX - LOAD DATA WHEN SELECTLIST IS OPEN
+// ==========================================================================
+$(".select-department-ajax").select2({
+    placeholder: "-- Vyber oddělení --",
+    minimumInputLength: 0,  // minimum number of characters required to start a search
+    dropdownAutoWidth: true,  // make width of the dropdown to MAX of the longest item
+    allowClear: false,  // 'times' button to click for emptying selection
+    minimumResultsForSearch: 0,  // '-1' to disable search box
+    language: { searching: function() { return null; } }, // disable/change "Searching..." text
+    ajax: {
+        // url: '@Url.Action("getDepartmentsJson", "Evektor")',
+        url: `${getBaseUrl()}/Evektor/getDepartmentsJson`,
+        dataType: 'json',
+        type: 'Get',
+        delay: 150,
+        data: function (params) {
+            return {
+                match: params.term,  // search term
+                pageSize: params.pageSize || 100,  // how many items on page
+            };
+        },
+        processResults: function (data) {
+            return {
+                // data = return Json { items = [ { id: 1, text: "one" }, { id: 2, text: "two" } ] }
+                // results: data.items
+                // data = return Json { items = [ SelectListItem { Value: 1, Text: "one" }, SelectListItem { Value: 2, Text: "two" } ] }
+                results: $.map(data.items, function(item) {
+                    return {
+                        id: item.value,  // need to be lowercase "v"
+                        text: item.text  // need to be lowercase "t"
+                    };
+                }),
+            };
+        },
+        cache: true,
+    },
+});
+
+
+$(".select-user-ajax").select2({
+    placeholder: "-- Vyber uživatele --",
+    minimumInputLength: 0,  // minimum number of characters required to start a search
+    dropdownAutoWidth: true,  // make width of the dropdown to MAX of the longest item
+    allowClear: false,  // 'times' button to click for emptying selection
+    minimumResultsForSearch: 0,  // '-1' to disable search box
+    language: { searching: function() { return null; } }, // disable/change "Searching..." text
+    ajax: {
+        // url: '@Url.Action("getUsersJson", "Evektor")',
+        url: `${getBaseUrl()}/Evektor/getUsersJson`,
+        dataType: 'json',
+        type: 'Get',
+        delay: 150,
+        data: function (params) {
+            return {
+                match: params.term,  // search term
+                pageSize: params.pageSize || 100,  // how many items on page
+                // filter: $(".select-department").children("option:selected").val(),
+            };
+        },
+        processResults: function (data) {
+            return {
+                // data = return Json { items = [ { id: 1, text: "one" }, { id: 2, text: "two" } ] }
+                // results: data.items
+                // data = return Json { items = [ SelectListItem { Value: 1, Text: "one" }, SelectListItem { Value: 2, Text: "two" } ] }
+                results: $.map(data.items, function(item) {
+                    return {
+                        id: item.value,  // need to be lowercase "v"
+                        text: item.text  // need to be lowercase "t"
+                    };
+                })
+            };
+        },
+        cache: true,
+    },
+});
+
+
+$(".select-company-ajax").select2({
+    placeholder: "-- Vyber firmu --",
+    minimumInputLength: 0,  // minimum number of characters required to start a search
+    dropdownAutoWidth: true,  // make width of the dropdown to MAX of the longest item
+    allowClear: true,  // 'times' button to click for emptying selection
+    minimumResultsForSearch: 0,  // '-1' to disable search box
+    language: { searching: function() { return null; } }, // disable "Searching..." text
+    ajax: {
+        // url: '@Url.Action("getCompaniesJson", "Companies")',
+        url: `${getBaseUrl()}/Companies/getCompaniesJson`,
+        dataType: 'json',
+        type: 'Get',
+        delay: 150,
+        data: function (params) {
+            return {
+                match: params.term,  // search term
+                pageSize: params.pageSize || 100,  // how many items on page
+            };
+        },
+        processResults: function (data) {
+            return {
+                results: $.map(data.items, function(item) {
+                    return {
+                        id: item.value,
+                        text: item.text
+                    };
+                })
+            };
+        },
+        cache: true,
+    },
+});
+
+
+$(".select-contact-ajax").select2({
+    placeholder: "-- Vyber kontakt --",
+    minimumInputLength: 0,  // minimum number of characters required to start a search
+    dropdownAutoWidth: true,  // make width of the dropdown to MAX of the longest item
+    allowClear: false,  // 'times' button to click for emptying selection
+    minimumResultsForSearch: 0,  // '-1' to disable search box
+    language: { searching: function() { return null; } }, // disable/change "Searching..." text
+    ajax: {
+        //url: '@Url.Action("getContactsJson", "Contacts")',
+        url: `${getBaseUrl()}/Contacts/getContactsJson`,
+        dataType: 'json',
+        type: 'Get',
+        delay: 150,
+        data: function (params) {
+            return {
+                match: params.term,  // search term
+                pageSize: params.pageSize || 100,  // how many items on page
+                filter: $(".select-company-ajax").children("option:selected").val(),
+            };
+        },
+        processResults: function (data) {
+            return {
+                results: $.map(data.items, function(item) {
+                    return {
+                        id: item.value,
+                        text: item.text
+                    };
+                })
+            };
+        },
+        cache: true,
+    },
+});

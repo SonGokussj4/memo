@@ -69,12 +69,12 @@
             </div>
             <div class="col-lg-3">
                 <span class="floating-select-label">Oddělení</span>
-                <select asp-for="Offer.SharedInfo.EveDepartment" class="select-department form-control"></select>
+                <select asp-for="Offer.SharedInfo.EveDepartment" class="form-control select-department-ajax"></select>
                 <span asp-validation-for="Offer.SharedInfo.EveDepartment" class="text-danger"></span>
             </div>
             <div class="col-lg-4">
                 <span class="floating-select-label">Uživatel</span>
-                <select class="form-control select-user" asp-for="Offer.SharedInfo.EveCreatedUser"></select>
+                <select asp-for="Offer.SharedInfo.EveCreatedUser" class="form-control select-user-ajax"></select>
                 <span asp-validation-for="Offer.SharedInfo.EveCreatedUser" class="text-danger"></span>
             </div>
         </div>
@@ -83,7 +83,7 @@
             <label class="required col-lg-3 col-form-label form-control-label control-label">Zákazník</label>
             <div class="col-lg-4">
                 <span class="floating-select-label">Firma zákazníka</span>
-                <select class="form-control select-company" asp-for="Offer.SharedInfo.CompanyId" ></select>
+                <select asp-for="Offer.SharedInfo.CompanyId" class="form-control select-company-ajax"></select>
                 <span asp-validation-for="Offer.SharedInfo.CompanyId" class="text-danger"></span>
             </div>
             <div class="col-lg-1" data-toggle="tooltip" title="Nová firma">
@@ -93,7 +93,7 @@
             </div>
             <div class="col-lg-3">
                 <span class="floating-select-label">Kontakt</span>
-                <select class="form-control select-contact" asp-for="Offer.SharedInfo.ContactId"></select>
+                <select asp-for="Offer.SharedInfo.ContactId" class="form-control select-contact-ajax"></select>
                 <span asp-validation-for="Offer.SharedInfo.ContactId" class="text-danger"></span>
             </div>
             <div class="col-lg-1" data-toggle="tooltip" title="Nový kontakt">
@@ -119,21 +119,6 @@
                 </span>
                 <span asp-validation-for="Offer.SharedInfo.CurrencyId" class="text-danger"></span>
             </div>
-
-            @* <div class="col-lg-2">
-                <span class="has-float-label">
-                    <select asp-for="Offer.SharedInfo.CurrencyId" asp-items="ViewBag.CurrencyList" class="form-control"></select>
-                    <label asp-for="Offer.SharedInfo.CurrencyId">Měna</label>
-                </span>
-                <span asp-validation-for="Offer.SharedInfo.Currency" class="text-danger"></span>
-            </div>
-            <div class="col-lg-2">
-                <span class="has-float-label">
-                    <input asp-for="Offer.SharedInfo.ExchangeRate" class="form-control" type="text" data-toggle="tooltip" data-placement="top" title="Měnový kurz z ČNB" />
-                    <label asp-for="Offer.SharedInfo.ExchangeRate">Kurz</label>
-                </span>
-                <span asp-validation-for="Offer.SharedInfo.ExchangeRate" class="text-danger"></span>
-            </div> *@
         </div>
 
         <div class="form-group row">
@@ -177,165 +162,20 @@
 
     <script>
 
-        $(".select-department").select2({
-            placeholder: "-- Vyber oddělení --",
-            minimumInputLength: 0,  // minimum number of characters required to start a search
-            dropdownAutoWidth: true,  // make width of the dropdown to MAX of the longest item
-            allowClear: false,  // 'times' button to click for emptying selection
-            minimumResultsForSearch: 0,  // '-1' to disable search box
-            language: { searching: function() { return null; } }, // disable/change "Searching..." text
-            ajax: {
-                url: '@Url.Action("getDepartmentsJson", "Evektor")',
-                dataType: 'json',
-                type: 'Get',
-                delay: 150,
-                data: function (params) {
-                    return {
-                        match: params.term,  // search term
-                        pageSize: params.pageSize || 100,  // how many items on page
-                    };
-                },
-                processResults: function (data) {
-                    return {
-                        // data = return Json { items = [ { id: 1, text: "one" }, { id: 2, text: "two" } ] }
-                        @* results: data.items *@
-                        // data = return Json { items = [ SelectListItem { Value: 1, Text: "one" }, SelectListItem { Value: 2, Text: "two" } ] }
-                        results: $.map(data.items, function(item) {
-                            return {
-                                id: item.value,  // need to be lowercase "v"
-                                text: item.text  // need to be lowercase "t"
-                            }
-                        }),
-                    };
-                },
-                cache: true,
-            },
-        });
-
-        // Clear and unselect '.select-user' when '.select-department' changes it's value
-        $('.select-department').on('select2:select', function (e) {
-            $(".select-user").select2('data', null).trigger('change');
-            @* $(".select-user").val(null).trigger('change').select2("disable"); *@
-        });
-
-
-        $(".select-user").select2({
-            placeholder: "-- Vyber uživatele --",
-            minimumInputLength: 0,  // minimum number of characters required to start a search
-            dropdownAutoWidth: true,  // make width of the dropdown to MAX of the longest item
-            allowClear: false,  // 'times' button to click for emptying selection
-            minimumResultsForSearch: 0,  // '-1' to disable search box
-            language: { searching: function() { return null; } }, // disable/change "Searching..." text
-            ajax: {
-                url: '@Url.Action("getUsersJson", "Evektor")',
-                dataType: 'json',
-                type: 'Get',
-                delay: 150,
-                data: function (params) {
-                    return {
-                        match: params.term,  // search term
-                        pageSize: params.pageSize || 100,  // how many items on page
-                        filter: $(".select-department").children("option:selected").val(),
-                    };
-                },
-                processResults: function (data) {
-                    return {
-                        // data = return Json { items = [ { id: 1, text: "one" }, { id: 2, text: "two" } ] }
-                        @* results: data.items *@
-                        // data = return Json { items = [ SelectListItem { Value: 1, Text: "one" }, SelectListItem { Value: 2, Text: "two" } ] }
-                        results: $.map(data.items, function(item) {
-                            return {
-                                id: item.value,  // need to be lowercase "v"
-                                text: item.text  // need to be lowercase "t"
-                            }
-                        })
-                    };
-                },
-                cache: true,
-            },
-        });
-
-        $(".select-company").select2({
-            placeholder: "-- Vyber firmu --",
-            minimumInputLength: 0,  // minimum number of characters required to start a search
-            dropdownAutoWidth: true,  // make width of the dropdown to MAX of the longest item
-            allowClear: false,  // 'times' button to click for emptying selection
-            minimumResultsForSearch: 0,  // '-1' to disable search box
-            language: { searching: function() { return null; } }, // disable "Searching..." text
-            ajax: {
-                url: '@Url.Action("getCompaniesJson", "Companies")',
-                dataType: 'json',
-                type: 'Get',
-                delay: 150,
-                data: function (params) {
-                    return {
-                        match: params.term,  // search term
-                        pageSize: params.pageSize || 100,  // how many items on page
-                    };
-                },
-                processResults: function (data) {
-                    return {
-                        results: $.map(data.items, function(item) {
-                            return {
-                                id: item.value,
-                                text: item.text
-                            }
-                        })
-                    };
-                },
-                cache: true,
-            },
-        });
-
-        // Clear and unselect '.select-user' when '.select-department' changes it's value
-        $('.select-company').on('select2:select', function (e) {
-            $(".select-contact").val(null).empty().trigger('change');
-        });
-
-        $(".select-contact").select2({
-            placeholder: "-- Vyber kontakt --",
-            minimumInputLength: 0,  // minimum number of characters required to start a search
-            dropdownAutoWidth: true,  // make width of the dropdown to MAX of the longest item
-            allowClear: false,  // 'times' button to click for emptying selection
-            minimumResultsForSearch: 0,  // '-1' to disable search box
-            language: { searching: function() { return null; } }, // disable/change "Searching..." text
-            ajax: {
-                url: '@Url.Action("getContactsJson", "Contacts")',
-                dataType: 'json',
-                type: 'Get',
-                delay: 150,
-                data: function (params) {
-                    return {
-                        match: params.term,  // search term
-                        pageSize: params.pageSize || 100,  // how many items on page
-                        filter: $(".select-company").children("option:selected").val(),
-                    };
-                },
-                processResults: function (data) {
-                    return {
-                        results: $.map(data.items, function(item) {
-                            return {
-                                id: item.value,
-                                text: item.text
-                            }
-                        })
-                    };
-                },
-                cache: true,
-            },
+        // Clear and unselect '.select-contact-ajax' when '.select-company-ajax' changes it's value
+        $('.select-company-ajax').on('select2:select', function (e) {
+            $(".select-contact-ajax").val(null).empty().trigger('change');
         });
 
         $(document).ready(function(){
 
             // DEFAULT VALUES
             // =======================================
-            var selectDepartmentDefaultOption = new Option('@Html.Raw(Model.Offer.SharedInfo.EveDepartment)', '@Html.Raw(Model.Offer.SharedInfo.EveDepartment)', false, false);
-            $('.select-department').append(selectDepartmentDefaultOption).trigger('change');
-
-            var selectUserOption = new Option('@Html.Raw(Model.Offer.SharedInfo.EveCreatedUser)', '@Html.Raw(Model.Offer.SharedInfo.EveCreatedUser)', false, false);
-            $('.select-user').append(selectUserOption).trigger('change');
+            $('.select-department-ajax').append(new Option('@Html.Raw(Model.Offer.SharedInfo.EveDepartment)', '@Html.Raw(Model.Offer.SharedInfo.EveDepartment)', false, false)).trigger('change');
+            $('.select-user-ajax').append(new Option('@Html.Raw(Model.Offer.SharedInfo.EveCreatedUser)', '@Html.Raw(Model.Offer.SharedInfo.EveCreatedUser)', false, false)).trigger('change');
 
             // INITIALIZATIONS
+            // =======================================
             $('.mycalendar input').datepicker(datepickerParameters[0]);
 
             checkItemNameExists($("#Offer_OfferName"), 'Offers');
@@ -348,9 +188,6 @@
                 $.ajax({
                     url: '@Url.Action("getCurrencyStr", "Offers")',
                     type: 'GET',
-                    //dataType: 'json',
-                    // we set cache: false because GET requests are often cached by browsers
-                    // IE is particularly aggressive in that respect
                     cache: false,
                     data: { symbol: curSymbol },
                     success: function(res) {

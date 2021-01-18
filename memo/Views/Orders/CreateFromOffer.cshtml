@@ -103,13 +103,12 @@
                         </span>
                         <div class="input-group-append">
                             <div class="input-group-text" data-toggle="tooltip" title="Vložit název Evektor nabídky" onclick="insertEvektorOfferName('@Model.Order.Offer.OfferName');" style="cursor: pointer;">
-                            @* <div class="input-group-text" data-toggle="tooltip" title="Vložit název Evektor nabídky" style="cursor: pointer;"> *@
                                 <i class="fa fa-caret-left">&nbsp;<i class="fa fa-tasks"></i></i>
                             </div>
                         </div>
                     </div>
+                    <span asp-validation-for="Order.OrderName" class="text-danger"></span>
                 </div>
-                <span asp-validation-for="Order.OrderName" class="text-danger"></span>
             </div>
 
             <div class="form-group row">
@@ -121,35 +120,18 @@
                     </span>
                     <span asp-validation-for="Order.NegotiatedPrice" class="text-danger"></span>
                 </div>
-                @* <div class="col-lg-3">
-                    <span class="has-float-label">
-                        <input asp-for="Order.PriceDiscount" class="form-control" type="text" placeholder=" "/>
-                        <label asp-for="Order.PriceDiscount">Sleva z nabídky [@Model.Order?.SharedInfo?.Currency?.Name]</label>
-                    </span>
-                    <span asp-validation-for="Order.PriceDiscount" class="text-danger"></span>
-                </div> *@
-                @* @if (@Model.Order.OfferId != 0)
-                {
-                <div class="col-lg-3">
-                    <p class="mt-1">Cena nab: <b>@String.Format(CultureInfo.CreateSpecificCulture(Model.Order.SharedInfo.Currency.CultureCode), "{0:C0}", @Model.Order.SharedInfo.Price)</b></p>
-                </div>
-                } *@
             </div>
 
             <div class="form-group row">
                 <label asp-for="Order.EveContactName" class="required col-lg-3 col-form-label form-control-label control-label"></label>
                 <div class="col-lg-3">
-                    <span style="color: gray; font-size: 0.9em;">Vedoucí projektu</span>
-                    <select asp-for="Order.EveContactName" asp-items="Model.EveContactList" class="form-control selectpicker">
-                        <option value="">-- Vyber kontakt --</option>
-                    </select>
+                    <span class="floating-select-label">Vedoucí projektu</span>
+                    <select asp-for="Order.EveContactName" class="form-control select-user-ajax project-manager-default"></select>
                     <span asp-validation-for="Order.EveContactName" class="text-danger"></span>
                 </div>
                 <div class="col-lg-3">
-                    <span style="color: gray; font-size: 0.9em;">Key account manager</span>
-                    <select asp-for="Order.KeyAccountManager" asp-items="Model.EveContactList" class="form-control selectpicker">
-                        <option value="">-- Vyber managera --</option>
-                    </select>
+                    <span class="floating-select-label">Key account manager</span>
+                    <select asp-for="Order.KeyAccountManager" class="form-control select-user-ajax"></select>
                     <span asp-validation-for="Order.KeyAccountManager" class="text-danger"></span>
                 </div>
             </div>
@@ -180,6 +162,7 @@
                 </div>
             </div>
 
+            <!-- PLACEHOLDER: _PartialOrderOrderCodesCreate -->
             <div class="dynamic-rows-order-codes" id="template-order-codes" data-order="@Model.Order.OrderCodes.Count()">
                 <div id="modal-placeholder"></div>
             </div>
@@ -369,6 +352,13 @@
         };
 
         $(document).ready(function () {
+
+            // DEFAULT VALUES
+            // =======================================
+            $('.project-manager-default').append(new Option('@Html.Raw(Model.Order.EveContactName)', '@Html.Raw(Model.Order.EveContactName)', false, false)).trigger('change');
+
+            // OTHER
+            // =======================================
             $("select#Order_OfferId").change(function () {
                 var $this = $(this);
                 var url = $this.data("submit-url") + "/" + $this.val();

@@ -9,12 +9,12 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using memo.Data;
-using memo.Models;
-using memo.ViewModels;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using memo.Data;
+using memo.Models;
+using memo.ViewModels;
 
 namespace memo.Controllers
 {

@@ -98,7 +98,9 @@ namespace memo.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(int? id)
         {
-            Contact contact = await _db.Contact.FirstOrDefaultAsync(x => x.ContactId == id);
+            Contact contact = await _db.Contact
+                .Include(x => x.Company)
+                .FirstOrDefaultAsync(x => x.ContactId == id);
 
             if (contact == null)
             {

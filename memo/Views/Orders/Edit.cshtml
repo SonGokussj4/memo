@@ -137,21 +137,16 @@
             </div>
         </div>
 
-        <div class="form-group row pb-2">
+        <div class="form-group row">
             <label asp-for="Order.EveContactName" class="required col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-3">
-                <span style="color: gray; font-size: 0.9em;">Vedoucí projektu</span>
-                <select asp-for="Order.EveContactName" asp-items="Model.EveContactList" class="form-control selectpicker">
-                    <option value="">-- Vyber kontakt --</option>
-                </select>
+                <span class="floating-select-label">Vedoucí projektu</span>
+                <select asp-for="Order.EveContactName" class="form-control select-user-ajax project-manager-default"></select>
                 <span asp-validation-for="Order.EveContactName" class="text-danger"></span>
             </div>
-            @* <label asp-for="Order.KeyAccountManager" class="col-lg-3 col-form-label form-control-label control-label"></label> *@
             <div class="col-lg-3">
-                <span style="color: gray; font-size: 0.9em;">Key account manager</span>
-                <select asp-for="Order.KeyAccountManager" asp-items="Model.EveContactList" class="form-control selectpicker">
-                    <option value="">-- Vyber managera --</option>
-                </select>
+                <span class="floating-select-label">Key account manager</span>
+                <select asp-for="Order.KeyAccountManager" class="form-control select-user-ajax key-account-manager-default"></select>
                 <span asp-validation-for="Order.KeyAccountManager" class="text-danger"></span>
             </div>
         </div>
@@ -671,6 +666,13 @@
         // -----------------------  DOCUMENT READY  --------------------------//
         $(document).ready(function(){
 
+            // DEFAULT VALUES
+            // =======================================
+            $('.project-manager-default').append(new Option('@Html.Raw(Model.Order.EveContactName)', '@Html.Raw(Model.Order.EveContactName)', false, false)).trigger('change');
+            $('.key-account-manager-default').append(new Option('@Html.Raw(Model.Order.KeyAccountManager)', '@Html.Raw(Model.Order.KeyAccountManager)', false, false)).trigger('change');
+
+            // OTHER
+            // =======================================
             let orderName = '@Html.Raw(@Model.Order.OrderName)';
 
             checkItemNameExists($("#Order_OrderName"), 'Orders', ignoreName=orderName);
