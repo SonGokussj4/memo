@@ -39,6 +39,7 @@ namespace memo.Models
         [Column(TypeName = "decimal(18,3)")]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:N0}")]
         public decimal CostCzk { get; set; }
+        // public decimal CostCzk => this.Order.ExchangeRate * this.Cost;
 
         [Display(Name = "Dodací list")]
         public string DeliveryNote { get; set; }

@@ -77,139 +77,123 @@ namespace memo.Controllers
                 vm.Customer = "All";
             }
 
-            // List<Invoice> invoices = new List<Invoice>();
+            List<Invoice> invoices = new List<Invoice>();
 
-            // // TODO: kdyz prekliknu zakaznika, oddeleni by se melo vyfiltrovat podle toho.
-            // // TODO: to same oddeleni, vyfiltrovat zakaznika, pokud by bylo oddeleni C2 a zakaznik Levit neobsahoval C2, tak zmenit C2 na All
+            // TODO: kdyz prekliknu zakaznika, oddeleni by se melo vyfiltrovat podle toho.
+            // TODO: to same oddeleni, vyfiltrovat zakaznika, pokud by bylo oddeleni C2 a zakaznik Levit neobsahoval C2, tak zmenit C2 na All
 
-            // // ===========================================================================================================
-            // // FILTERS
-            // // ===========================================================================================================
+            // ===========================================================================================================
+            // FILTERS
+            // ===========================================================================================================
 
-            // // Filter - Department, get offers == department and then invoices from those offers
-            // if (vm.Department != "All")
-            // {
-            //     List<int> offerIds = await (
-            //             from r in _db.Offer
-            //             where r.EveDepartment == vm.Department
-            //             select r.OfferId
-            //         )
-            //         .ToListAsync();
+            // Filter - Department, get offers == department and then invoices from those offers
+            if (vm.Department != "All")
+            {
+                List<int> offerIds = await _db.Offer
+                    .Where(x => x.SharedInfo.EveDepartment == vm.Department)
+                    .Select(x => x.OfferId)
+                    .ToListAsync();
 
-            //     // IQueryable<Order> orders = _db.Order.Where(x => offerIds.Contains((int)x.OfferId));
-            //     List<int> orderIds = await (
-            //             from r in _db.Order
-            //             where offerIds.Contains((int)r.OfferId)
-            //             select r.OrderId
-            //         )
-            //         .ToListAsync();
+                List<int> orderIds = await _db.Order
+                    .Where(x => offerIds.Contains(Convert.ToInt32(x.OfferId)))
+                    .Select(x => x.OrderId)
+                    .ToListAsync();
 
-            //     invoices = await _db.Invoice
-            //         .Where(x => orderIds.Contains(x.OrderId))
-            //         .ToListAsync();
-            // }
-            // else
-            // {
-            //     invoices = await _db.Invoice.ToListAsync();
-            // }
+                invoices = await _db.Invoice
+                    .Where(x => orderIds.Contains(x.OrderId))
+                    .ToListAsync();
+            }
+            else
+            {
+                invoices = await _db.Invoice.ToListAsync();
+            }
 
-            // // Filter - Customer on existing invoices
-            // if (vm.Customer != "All")
-            // {
-            //     int companyId = await _db.Company
-            //         .Where(x => x.Name == vm.Customer)
-            //         .Select(x => x.CompanyId)
-            //         .FirstOrDefaultAsync();
+            // Filter - Customer on existing invoices
+            if (vm.Customer != "All")
+            {
+                int companyId = await _db.Company
+                    .Where(x => x.Name == vm.Customer)
+                    .Select(x => x.CompanyId)
+                    .FirstOrDefaultAsync();
 
-            //     List<int> offerIdsList = await (
-            //             from x in _db.Offer
-            //             where x.CompanyId == companyId
-            //             select x.OfferId
-            //         )
-            //         .ToListAsync();
+                List<int> offerIdsList = await _db.Offer
+                    .Where(x => x.SharedInfo.CompanyId == companyId)
+                    .Select(x => x.OfferId)
+                    .ToListAsync();
 
-            //     List<int> orderIds = await (
-            //             from x in _db.Order
-            //             where offerIdsList.Contains((int)x.OfferId)
-            //             select x.OrderId
-            //         )
-            //         .ToListAsync();
+                List<int> orderIds = await _db.Order
+                    .Where(x => offerIdsList.Contains(Convert.ToInt32(x.OfferId)))
+                    .Select(x => x.OrderId)
+                    .ToListAsync();
 
-            //     invoices = invoices.Where(x => orderIds.Contains(x.OrderId)).ToList();
-            // }
+                invoices = invoices.Where(x => orderIds.Contains(x.OrderId)).ToList();
+            }
 
-            // // ===========================================================================================================
-            // // PLOT - BAR - INCOME
-            // // ===========================================================================================================
-            // List<DashboardCashVM> viewModelCash = new List<DashboardCashVM>();
-            // if (vm.TimePeriod == "months")
-            // {
-            //     viewModelCash = invoices
-            //         .Where(a => a.InvoiceDueDate.Value.Year == vm.Year)
-            //         .GroupBy(b => b.InvoiceDueDate.Value.Month)
-            //         .Select(g => new DashboardCashVM
-            //         {
-            //             // Month2020 = g.Key,
-            //             // TotalCount = g.Count(),
-            //             // SumaNormal = g.Sum(gi => gi.PriceFinalCzk),
-            //             // Suma = string.Format("{0:#.00}", Convert.ToDecimal(g.Sum(gi => gi.PriceFinalCzk))),
-            //             // SumaC = string.Format("{0:C}", Convert.ToDecimal(g.Sum(gi => gi.PriceFinalCzk))),
-            //             // TotalHours = $"{g.Sum(gi => gi.TotalHours)} hod",
-            //             // AvgHourWage = $"{string.Format("{0:C}", g.Average(gi => gi.HourWage))}/hod",
-            //             Month = new DateTime(vm.Year, g.Key, 1),
-            //             Cash = (int)g.Sum(gi => gi.CostCzk),
-            //         })
-            //         .OrderBy(x => x.Month)
-            //         .ToList();
+            // ===========================================================================================================
+            // PLOT - BAR - INCOME
+            // ===========================================================================================================
+            List<DashboardCashVM> viewModelCash = new List<DashboardCashVM>();
+            if (vm.TimePeriod == "months")
+            {
+                viewModelCash = invoices
+                    .Where(a => a.InvoiceDueDate.Value.Year == vm.Year)
+                    .GroupBy(b => b.InvoiceDueDate.Value.Month)
+                    .Select(g => new DashboardCashVM
+                    {
+                        Month = new DateTime(vm.Year, g.Key, 1),
+                        Cash = (int)g.Sum(gi => Convert.ToDecimal(gi.Cost) * Convert.ToDecimal(_db.Order.Where(x => x.OrderId == gi.OrderId).Select(x => x.ExchangeRate).FirstOrDefault())),
+                    })
+                    .OrderBy(x => x.Month)
+                    .ToList();
 
-            //     if (viewModelCash.Count() != 0)
-            //     {
-            //         DateTime firstMonth = viewModelCash.FirstOrDefault().Month;
-            //         DateTime lastMonth = viewModelCash.LastOrDefault().Month;
+                if (viewModelCash.Count() != 0)
+                {
+                    DateTime firstMonth = viewModelCash.FirstOrDefault().Month;
+                    DateTime lastMonth = viewModelCash.LastOrDefault().Month;
 
-            //         var ls = viewModelCash.Select(x => x.Month.Month);
-            //         var missingMonths = Enumerable.Range(firstMonth.Month, lastMonth.Month - firstMonth.Month + 1).Except(ls);
+                    var ls = viewModelCash.Select(x => x.Month.Month);
+                    var missingMonths = Enumerable.Range(firstMonth.Month, lastMonth.Month - firstMonth.Month + 1).Except(ls);
 
-            //         foreach (var item in missingMonths)
-            //         {
-            //             viewModelCash.Add( new DashboardCashVM{ Month = new DateTime(vm.Year, item, 1), Cash = 0 });
-            //         }
+                    foreach (var item in missingMonths)
+                    {
+                        viewModelCash.Add( new DashboardCashVM{ Month = new DateTime(vm.Year, item, 1), Cash = 0 });
+                    }
 
-            //         viewModelCash = viewModelCash.OrderBy(x => x.Month).ToList();
-            //     }
-            // }
-            // else  // Weeks
-            // {
-            //     viewModelCash = invoices
-            //         .Where(a => a.InvoiceDueDate.Value.Year == vm.Year)
-            //         .AsEnumerable()
-            //         .GroupBy(b => ISOWeek.GetWeekOfYear((DateTime)b.InvoiceDueDate))
-            //         .Select(g => new DashboardCashVM
-            //         {
-            //             Week = g.Key,
-            //             Cash = (int)g.Sum(gi => gi.CostCzk),
-            //         })
-            //         .OrderBy(x => x.Week)
-            //         .ToList();
+                    viewModelCash = viewModelCash.OrderBy(x => x.Month).ToList();
+                }
+            }
+            else  // Weeks
+            {
+                viewModelCash = invoices
+                    .Where(a => a.InvoiceDueDate.Value.Year == vm.Year)
+                    .AsEnumerable()
+                    .GroupBy(b => ISOWeek.GetWeekOfYear((DateTime)b.InvoiceDueDate))
+                    .Select(g => new DashboardCashVM
+                    {
+                        Week = g.Key,
+                        Cash = (int)g.Sum(gi => gi.CostCzk),
+                    })
+                    .OrderBy(x => x.Week)
+                    .ToList();
 
-            //     if (viewModelCash.Count() != 0)
-            //     {
-            //         int firstWeek = viewModelCash.FirstOrDefault().Week;
-            //         int lastWeek = viewModelCash.LastOrDefault().Week;
+                if (viewModelCash.Count() != 0)
+                {
+                    int firstWeek = viewModelCash.FirstOrDefault().Week;
+                    int lastWeek = viewModelCash.LastOrDefault().Week;
 
-            //         var ls = viewModelCash.Select(x => x.Week);
-            //         var missingWeeks = Enumerable.Range(firstWeek, lastWeek - firstWeek + 1).Except(ls);
+                    var ls = viewModelCash.Select(x => x.Week);
+                    var missingWeeks = Enumerable.Range(firstWeek, lastWeek - firstWeek + 1).Except(ls);
 
-            //         foreach (var item in missingWeeks)
-            //         {
-            //             viewModelCash.Add( new DashboardCashVM{ Week = item, Cash = 0 });
-            //         }
+                    foreach (var item in missingWeeks)
+                    {
+                        viewModelCash.Add( new DashboardCashVM{ Week = item, Cash = 0 });
+                    }
 
-            //         viewModelCash = viewModelCash.OrderBy(x => x.Week).ToList();
-            //     }
-            // }
+                    viewModelCash = viewModelCash.OrderBy(x => x.Week).ToList();
+                }
+            }
 
-            // vm.DashboardCashVM = viewModelCash;
+            vm.DashboardCashVM = viewModelCash;
 
             // // ===========================================================================================================
             // // PLOT - BAR - Offer Status
@@ -287,7 +271,7 @@ namespace memo.Controllers
             // TABLE - Invoices
             // ===========================================================================================================
             List<DashboardInvoiceTableViewModel> dashboardInvoiceTableViewModels = new List<DashboardInvoiceTableViewModel>();
-            var invoices = await _db.Invoice
+            var invoicesTab = await _db.Invoice
                 .Include(x => x.Order)
                     // .ThenInclude(x => x.SharedInfo)
                         // .ThenInclude(x => x.Company)
@@ -298,7 +282,7 @@ namespace memo.Controllers
             // await _db.Company.LoadAsync();
             // await _db.Currency.ToListAsync();
 
-            foreach (var invoice in invoices)
+            foreach (var invoice in invoicesTab)
             {
                 // Need to load related data (3rd jump of related entities is null?)
                 _db.Entry(invoice.Order).Reference(p => p.SharedInfo).Load();
