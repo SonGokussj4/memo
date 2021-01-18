@@ -226,14 +226,8 @@
 
     var filter = @Html.Raw(Json.Serialize(Model.TimePeriod))
     var items = @Html.Raw(Json.Serialize(Model.DashboardCashVM));
-    if (filter == "months")
-    {
-        var monthArray = items.map(a => new Date(a.month).toLocaleString('cs-CZ', { month: 'long' }));
-    }
-    else if(filter == "weeks")
-    {
-        var monthArray = items.map(a => a.week);
-    }
+
+    var monthArray = filter == "months" ? items.map(a => new Date(a.month).toLocaleString('cs-CZ', { month: 'long' })) : items.map(a => a.week);
     var cashArray = items.map(a => a.cash);
 
     var ctx = document.getElementById('bar_chart');
