@@ -96,6 +96,7 @@ namespace memo.Controllers
                 "jhubacek",
                 "jkerndl",
                 "jmatuska",
+                "jprokop",
                 "jverner",  // ADMIN
                 "kgalasova",
                 "kvsetula",
@@ -211,6 +212,37 @@ namespace memo.Controllers
             return new SelectList(eveDepartmentList, "Value", "Text");
         }
 
+        public async Task<SelectList> getDepartmentListAsync(EvektorDochnaDbContext _eveDbDochna)
+        {
+            List<vEmployees> employees = await _eveDbDochna.vEmployees
+                .Where(x => x.EVE == 1)
+                .OrderBy(x => x.DepartName)
+                .ToListAsync();
+
+            IEnumerable<SelectListItem> eveDepartmentList = employees
+                .Select(x => new SelectListItem {
+                    Value = x.DepartName,
+                    Text = x.DepartName,
+                })
+                .Distinct(new SelectListItemComparer());
+
+            return new SelectList(eveDepartmentList, "Value", "Text");
+        }
+
+        public async Task<List<SelectListItem>> getDepartmentListAsync2(EvektorDochnaDbContext _eveDbDochna)
+        {
+            IQueryable<SelectListItem> eveDepartmentList = _eveDbDochna.vEmployees
+                .Where(x => x.EVE == 1)
+                .Select(x => new SelectListItem {
+                    Value = x.DepartName,
+                    Text = x.DepartName,
+                })
+                .OrderBy(x => x.Text)
+                .Distinct(new SelectListItemComparer());
+
+            return await eveDepartmentList.ToListAsync();
+        }
+
         public SelectList getOrderCodes(EvektorDbContext _eveDb)
         {
             IOrderedEnumerable<SelectListItem> eveOrderCodes = _eveDb.cOrders
@@ -275,8 +307,6 @@ namespace memo.Controllers
                     UpdateDate = g.First().UpdateDate,
                     KeyName = Regex.Match(g.First().PK, @"<\[(.+?)\]=(.+?)>").Groups[1].Value,
                     KeyValue = Regex.Match(g.First().PK, @"<\[(.+?)\]=(.+?)>").Groups[2].Value,
-                    // LogList = g.Select(i => @$"{{""FieldName"": ""{i.FieldName}"", ""OldValue"": ""{i.OldValue}"", ""NewValue"": ""{i.NewValue}""}}"),
-                    // LogJson = "[" + string.Join(", ", g.Select(i => @$"{{""FieldName"": ""{i.FieldName}"", ""OldValue"": ""{i.OldValue}"", ""NewValue"": ""{i.NewValue}""}}")) + "]"
                     Json = g.Select(i => JsonConvert.SerializeObject(i)),
                 })
                 .OrderByDescending(x => x.UpdateDate);
@@ -287,6 +317,40 @@ namespace memo.Controllers
             };
 
             return vm;
+        }
+
+        public async Task<List<AuditViewModel>> getAuditViewModelAsync(ApplicationDbContext db, string targetTableName, int id)
+        {
+            var audits = await db.Audit.ToListAsync();
+
+            List<AuditViewModel> filteredAudits = audits
+                .Where(
+                    x => x.TableName == targetTableName
+                    && Regex.Match(x.PK, @"<\[(.+?)\]=(.+?)>").Groups[2].Value == id.ToString()
+                    && x.FieldName != "ModifiedDate"
+                    // && x.PK.Split("=").Last().Split(">").First() == id.ToString()
+                )
+                // .AsEnumerable()
+                .GroupBy(x => new
+                {
+                    x.PK,
+                    x.UpdateDate
+                })
+                .Select(g => new AuditViewModel
+                {
+                    AuditId = g.First().AuditId,
+                    Type = g.First().Type,
+                    TableName = g.First().TableName,
+                    UpdateBy = g.First().UpdateBy,
+                    UpdateDate = g.First().UpdateDate,
+                    KeyName = Regex.Match(g.First().PK, @"<\[(.+?)\]=(.+?)>").Groups[1].Value,
+                    KeyValue = Regex.Match(g.First().PK, @"<\[(.+?)\]=(.+?)>").Groups[2].Value,
+                    Json = g.Select(i => JsonConvert.SerializeObject(i)),
+                })
+                .OrderByDescending(x => x.UpdateDate)
+                .ToList();
+
+            return filteredAudits;
         }
     }
 

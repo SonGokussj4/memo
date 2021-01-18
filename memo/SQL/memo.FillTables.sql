@@ -178,31 +178,28 @@ VALUES
 
 
 
-
-------------------- NEVYZKOUSENE ale stejne jako nahore -------------
--- -- First, add identity column
--- alter table
---     mytable
-
--- add
---     id int identity(1, 1) not null
-
--- -- Second, create new table from existing one with correct column order
--- select
---     id,
---     col1,
---     col2
-
--- into
---     newtable
-
--- from
---     mytable
-
+--------------------------------------------------------------------
+-----------------   DROPOVANI RUZNYCH VECI   -----------------------
+--------------------------------------------------------------------
+-- IF OBJECT_ID('[memo].TR__Company__AUDIT', 'TR') IS NOT NULL
+--     DROP TRIGGER [memo].TR__Company__AUDIT
 -- GO
 
--- drop table
---     mytable
-
--- exec sp_rename
---     'newtable', 'mytable'
+-- AF = Aggregate function (CLR)
+-- C = CHECK constraint
+-- D = DEFAULT (constraint or stand-alone)
+-- F = FOREIGN KEY constraint
+-- FN = SQL scalar function
+-- FS = Assembly (CLR) scalar-function
+-- FT = Assembly (CLR) table-valued function
+-- IF = SQL inline table-valued function
+-- IT = Internal table
+-- P = SQL Stored Procedure
+-- PC = Assembly (CLR) stored-procedure
+-- PG = Plan guide
+-- PK = PRIMARY KEY constraint
+-- R = Rule (old-style, stand-alone)
+-- RF = Replication-filter-procedure
+-- S = System base table
+-- SN = Synonym
+-- SO = Sequence object

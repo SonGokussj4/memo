@@ -1,0 +1,495 @@
+@using System.Globalization;
+
+@model memo.ViewModels.EditContractViewModel
+
+@{
+    ViewData["Title"] = "Úprava rámcové smlouvy";
+    ViewData["SubTitle"] = "Upravit informace o rámcové smlouvě";
+}
+
+
+<style>
+    .offerStatus_1 {
+        color: grey;
+        text-align: center;
+        font-weight: 600;
+    }
+
+    .offerStatus_2 {
+        color: green;
+        text-align: center;
+        font-weight: 600;
+    }
+
+    .offerStatus_3 {
+        color: red;
+        text-align: center;
+        font-weight: 600;
+    }
+
+    .wonOffer {
+        border: 1px solid #ced4da;
+        margin: 0px -15px;
+        padding: 8px 0px;
+        margin-bottom: 10px;
+        background-color: #00ff0d21;
+        border-radius: .25rem;
+    }
+</style>
+
+@await Html.PartialAsync("_PartialToastNotification")
+
+<div class="text-center">
+    <h1 class="display-6">@ViewData["Title"]</h1>
+    <hr />
+</div>
+
+
+<div class="container d-flex justify-content-center">
+    <div class="col-lg-10 push-lg-2 ">
+        <form class="card" role="form" autocomplete="on" asp-action="Edit" method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <input type="hidden" asp-for="Contract.ContractsId" />
+        <input type="hidden" asp-for="Contract.SharedInfo.SharedInfoId" />
+
+        <div class="cardTitleMerged">
+
+            <h5 class="card-title">@ViewData["SubTitle"]</h5>
+
+            <div class="form-group">
+                <div class="pretty p-bigger p-default p-curve p-toggle">
+                    <input asp-for="Contract.Active" type="checkbox"/>
+                    <div class="state p-success p-on">
+                        <label>Aktivní</label>
+                    </div>
+                    <div class="state p-danger p-off">
+                        <label>Neaktivní </label>
+                    </div>
+                </div>
+                <span asp-validation-for="Contract.Active" class="text-danger"></span>
+            </div>
+
+        </div>
+
+        <hr />
+
+        <div class="form-group row">
+            <label asp-for="Contract.ContractName" class="required col-lg-3 col-form-label form-control-label control-label"></label>
+            <div class="col-lg-9">
+                <span class="has-float-label">
+                    <input asp-for="Contract.ContractName" class="form-control" placeholder=" " type="text" />
+                    <label asp-for="Contract.ContractName"></label>
+                </span>
+                <span asp-validation-for="Contract.ContractName" class="text-danger"></span>
+                @* <p id="NumberAlreadyExistsWarning" class="hide text-danger text-right pt-1 pb-0 mb-0" >Číslo je již použito!</p> *@
+            </div>
+        </div>
+
+        <div class="createOrder">
+
+            <div class="form-group row">
+
+                <table class="table table-sm mt-3" style="font-size: 0.9em;">
+                    <thead>
+                        <tr>
+                            <th class="text-center">Vytvořené zakázky</th>
+                            <th class="text-center">Vyjednaná cena</th>
+                            <th class="text-center">Aktuálně</th>
+                            <th class="text-center">Vyčerpáno</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (Order order in Model.CreatedOrders)
+                    {
+                        <tr>
+                            <td class="pl-3"><a asp-action="Edit" asp-controller="Orders" asp-route-id="@order.OrderId">@order.OrderName</a></td>
+                            <td class="text-right">@string.Format(CultureInfo.CreateSpecificCulture(@order.Contract?.SharedInfo.Currency.CultureCode), "{0:C0}", @order.NegotiatedPrice)</td>
+                            <td class="text-right">
+                                @string.Format(CultureInfo.CreateSpecificCulture(@order.Contract?.SharedInfo.Currency.CultureCode), "{0:C0}", @order.PriceFinal)
+                                <div class="progress" style="height: 5px; margin-left: 25%;">
+                                @{
+                                    int percentValue = 0;
+                                    if (order.NegotiatedPrice != 0)
+                                    {
+                                        percentValue = (int)Math.Ceiling((decimal)order.PriceFinal / order.NegotiatedPrice * 100);
+                                    }
+                                    string progressBarWidth = percentValue <= 100 ? (percentValue).ToString() : "100";
+                                    string progressbarClassColor = percentValue <= 100 ? "" : "bg-danger";
+                                }
+                                    <div class="progress-bar @progressbarClassColor progress-bar-striped" role="progressbar" style="width: @progressBarWidth%;"></div>
+                                </div>
+                            </td>
+                            <td class="text-right pr-3">
+                                @( order.Burned / 60 )/@order.TotalHours hod = @( (float)order.Burned / 60 / order.TotalHours * 100 ) %
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        @* <div class="createOrder">
+            <div class="form-group row text-center">
+                <div class="col-md-12 from-control">
+                    <button class="col-md-4 btn btn-success mt-3"
+                        asp-action="CreateFromContract" asp-controller="Orders" asp-route-id="@Model.Contract.ContractsId">
+                        <i class="fa fa-plus"></i> Vytvořit novou zakázku
+                    </button>
+                </div>
+            </div>
+        </div> *@
+
+        <div class="createOrder">
+            <div class="form-group row text-center">
+                <div class="col-md-12 from-control">
+                    <a class="col-md-4 btn btn-success mt-3"
+                            asp-action="CreateFromContract" asp-controller="Orders"
+                            asp-route-id="@Model.Contract.ContractsId">
+                        <i class="fa fa-plus"></i> Vytvořit novou zakázku
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <hr />
+
+        <div class="form-group row">
+            <label asp-for="Contract.SharedInfo.ReceiveDate" class="required col-lg-3 col-form-label form-control-label control-label">Datum přijetí</label>
+            <div class="col-lg-9 mycalendar">
+                <span class="has-float-label">
+                    <input asp-for="Contract.SharedInfo.ReceiveDate" class="form-control" type="text" placeholder=" " required="" autocomplete="off"/>
+                    <label asp-for="Contract.SharedInfo.ReceiveDate"></label>
+                </span>
+                <span asp-validation-for="Contract.SharedInfo.ReceiveDate" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label asp-for="Contract.SharedInfo.Subject" class="required col-lg-3 col-form-label form-control-label control-label">Předmět</label>
+            <div class="col-lg-9">
+                <span class="has-float-label">
+                    <input asp-for="Contract.SharedInfo.Subject" class="form-control" placeholder="Krátký popis nabídky" type="text" />
+                    <label asp-for="Contract.SharedInfo.Subject"></label>
+                </span>
+                <span asp-validation-for="Contract.SharedInfo.Subject" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-group row eveOffer">
+            <label class="col-lg-3 col-form-label form-control-label control-label">Evektor</label>
+            <div class="col-lg-2">
+                <span class="has-float-label">
+                    <select class="form-control" asp-for="Contract.SharedInfo.EveDivision" asp-items="Model.EveDivisionList"></select>
+                    <label asp-for="Contract.SharedInfo.EveDivision">Divize</label>
+                </span>
+                <span asp-validation-for="Contract.SharedInfo.EveDivision" class="text-danger"></span>
+            </div>
+            <div class="col-lg-3">
+                <span class="has-float-label">
+                    <select asp-for="Contract.SharedInfo.EveDepartment" asp-items="Model.DepartmentList" class="form-control"></select>
+                    <label asp-for="Contract.SharedInfo.EveDepartment">Oddělení</label>
+                </span>
+                <span asp-validation-for="Contract.SharedInfo.EveDepartment" class="text-danger"></span>
+            </div>
+            <div class="col-lg-4">
+                <select class="form-control selectpicker" asp-for="Contract.SharedInfo.EveCreatedUser" asp-items="Model.EveContactList" required>
+                    @* <option value="">-- Vyber uživatele --</option> *@
+                </select>
+                <span asp-validation-for="Contract.SharedInfo.EveCreatedUser" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-group row customerOffer">
+            <label class="required col-lg-3 col-form-label form-control-label control-label">Zákazník</label>
+            <div class="col-lg-4">
+                <select class="form-control selectpicker" asp-for="Contract.SharedInfo.CompanyId" asp-items="@Model.CompanyList">
+                    <option value="">-- Vyber firmu --</option>
+                </select>
+                <span asp-validation-for="Contract.SharedInfo.CompanyId" class="text-danger"></span>
+            </div>
+            <div class="col-lg-1" data-toggle="tooltip" title="Nová firma">
+                <a asp-action="create" asp-controller="Companies" target="_blank">
+                    <i class="form-control fa fa-plus-circle" style="color: green; cursor: pointer;"></i>
+                </a>
+            </div>
+            <div class="col-lg-3">
+                <select class="form-control selectpicker" asp-for="Contract.SharedInfo.ContactId" asp-items="@Model.ContactList">
+                    <option value="">-- Vyber kontakt --</option>
+                </select>
+                <span asp-validation-for="Contract.SharedInfo.ContactId" class="text-danger"></span>
+            </div>
+            <div class="col-lg-1" data-toggle="tooltip" title="Nový kontakt">
+                <a asp-action="create" asp-controller="Contacts" target="_blank">
+                    <i class="form-control fa fa-plus-circle" style="color: green; cursor: pointer;"></i>
+                </a>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label asp-for="Contract.SharedInfo.Price" class="col-lg-3 col-form-label form-control-label control-label"></label>
+            <div class="col-lg-5">
+                <span class="has-float-label">
+                    <input asp-for="Contract.SharedInfo.Price" class="form-control" type="text" placeholder=" " />
+                    <label asp-for="Contract.SharedInfo.Price">Cena bez DPH</label>
+                </span>
+                <span asp-validation-for="Contract.SharedInfo.Price" class="text-danger"></span>
+            </div>
+            <div class="col-lg-2">
+                <span class="has-float-label">
+                    <select asp-for="Contract.SharedInfo.CurrencyId" asp-items="Model.CurrencyListNoRate" class="form-control"></select>
+                    <label asp-for="Contract.SharedInfo.CurrencyId">Měna</label>
+                </span>
+                <span asp-validation-for="Contract.SharedInfo.CurrencyId" class="text-danger"></span>
+            </div>
+            <div class="col-lg-2">
+                <span class="has-float-label hiddenOnLoad">
+                    <input asp-for="Contract.SharedInfo.ExchangeRate" class="form-control" type="text" data-toggle="tooltip" data-placement="top" title="Měnový kurz z ČNB" />
+                    <label asp-for="Contract.SharedInfo.ExchangeRate">Kurz</label>
+                </span>
+                <span asp-validation-for="Contract.SharedInfo.ExchangeRate" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label asp-for="Contract.Notes" class="col-lg-3 col-form-label form-control-label control-label"></label>
+            <div class="col-lg-9">
+                <span class="has-float-label">
+                    <textarea asp-for="Contract.Notes" class="form-control" placeholder=" "></textarea>
+                    <label asp-for="Contract.Notes">Poznámky</label>
+                </span>
+                <span asp-validation-for="Contract.Notes" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <div class="col-lg-12">
+                <div class="d-flex justify-content-between">
+                    <label asp-for="Contract.CreatedDate" ></label> <b>@Model.Contract.CreatedDate</b>
+                    <label asp-for="Contract.ModifiedDate"></label> <b>@Model.Contract.ModifiedDate</b>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <div class="col-lg-3">
+                <a asp-action="Index" class="btn btn-light border"><i class="fa fa-arrow-left"></i> Zpět</a>
+            </div>
+            <div class="col-lg-9">
+                <input type="submit" class="btn btn-primary" name="actionType" value="Uložit" />
+                <input type="submit" class="btn btn-primary" name="actionType" value="Uložit a zavřít" />
+                <a href="javascript:void(0)" class="btn btn-danger pull-right" onclick="ConfirmDelete(@Model.Contract.ContractsId)">Smazat</a>
+            </div>
+        </div>
+
+        <input asp-for="Contract.CreatedDate" type="text" readonly hidden />
+        <input asp-for="Contract.CreatedBy" type="text" readonly hidden />
+        <input asp-for="Contract.ModifiedBy" type="text" readonly hidden />
+
+        </form>
+    </div>
+</div>
+
+<div class="d-flex justify-content-center pt-3">
+    <a href="#collapsible-audits" class="btn-sm btn-primary collapsed" data-toggle="collapse">
+        <i class="if-collapsed fa fa-fw fa-chevron-down"></i>
+        <i class="if-not-collapsed fa fa-fw fa-chevron-up"></i>
+        Poslední změny <span class="badge badge-pill badge-light">@Model.Audits.Count()</span>
+    </a>
+</div>
+
+<div class="collapse" id="collapsible-audits">
+    @await Html.PartialAsync("_PartialAuditChanges", Model)
+</div>
+
+<!-- Modal Confirm Delete-->
+<div class="modal fade" id="deleteConfirmModal" tabindex="-1" role="dialog" aria-labelledby="deleteConfirmModalLabel">
+    <div class="modal-dialog modal-md" role="document">
+        <div class="modal-content">
+            <!-- header -->
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteConfirmModalLabel">Smazání nabídky</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <!-- body -->
+            <div class="modal-body">
+                Opravdu smazat?<br />
+                Ev. Číslo: <b>@Model.Contract.ContractName</b><br />
+                Předmět: <b>@Model.Contract.SharedInfo.Subject</b>
+            </div>
+            <!-- footer -->
+            <div class="modal-footer">
+                <a href="javascript:void(0)" class="btn btn-info" data-dismiss="modal">Zpět</a>
+                <a href="javascript:void(0)" class="btn btn-warning" onclick="DeactivateItem()">Deaktivovat</a>
+                <a href="javascript:void(0)" class="btn btn-danger" onclick="DeleteItem()">Smazat</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="~/js/CustomValidation.js"></script>
+
+    <script>
+
+        let contractName = '@Html.Raw(@Model.Contract.ContractName)';
+        // TODO(jverner) dve nize uvedene jsou duplicitni v Offers
+        $(document).ready(function(){
+            handleExchangeRateVisibility();
+            checkItemNameExists($("#Contract_ContractName"), 'Contracts', ignoreName=contractName);
+        });
+
+        $("#Contract_ContractName").keyup(function() {
+            checkItemNameExists($(this), 'Contracts', ignoreName=contractName);
+        });
+
+        // Changing currency Selectlist behaviour
+        $('select#Contract_SharedInfo_CurrencyId').on('change', function() {
+            handleExchangeRateVisibility();
+        });
+
+        function handleExchangeRateVisibility() {
+            let currencySymbol = $('select#Contract_SharedInfo_CurrencyId').find("option:selected").text();  // selected text
+            let exchangeRate = getExchangeRate(currencySymbol);  // call baseController function to get 'EUR' --> '26.360'
+            let txtExchangeRate = $('#Contract_SharedInfo_ExchangeRate').val(exchangeRate);
+
+            // Handle visibility of the textbox (don't show when CZK is selected)
+            if(exchangeRate == "1" && txtExchangeRate.is(":visible")) {
+                txtExchangeRate.parent().hide();
+            }
+            else if(exchangeRate != "1" && txtExchangeRate.not(":visible")) {
+                txtExchangeRate.parent().show();
+            };
+        };
+
+        function getExchangeRate(currencySymbol) {
+            let exchangeRate = "";
+            $.ajax({
+                url: '@Url.Action("getCurrencyStr", "Base")',
+                data: { symbol: currencySymbol },
+                type: 'GET',
+                dataType: 'json',
+                contentType: "application/json; charset=utf-8",
+                // we set cache: false because GET requests are often cached by browsers
+                // IE is particularly aggressive in that respect
+                cache: false,
+                async: false,
+                success: function (data) {
+                    exchangeRate = data;
+                },
+                error: function () {},
+            });
+            return exchangeRate;
+        }
+
+        // MODAL dialog for delete confirmation
+        //-------------------------------------
+        var ConfirmDelete = function (ItemId) {
+            $("#deleteConfirmModal").modal('show');
+        };
+
+        // POST delete command to controller
+        //----------------------------------
+        function DeleteItem() {
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("Delete")',
+                data: { Id: @Model.Contract.ContractsId },
+                beforeSend: function (request) {
+                    request.setRequestHeader("RequestVerificationToken", $("[name='__RequestVerificationToken']").val());
+                },
+                success: function () {
+                    $("#deleteConfirmModal").modal("hide")
+                    window.location.href = '../'
+                },
+                error: function() {
+                    alert("Nelze z nějakého důvodu odstranit...");
+                    $("#deleteConfirmModal").modal("hide");
+                }
+            })
+        }
+
+        // POST deactivate command to controller
+        //----------------------------------
+        function DeactivateItem() {
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("Deactivate")',
+                data: { Id: @Model.Contract.ContractsId },
+                success: function () {
+                    $("#deleteConfirmModal").modal("hide")
+                    window.location.href = './' + @Model.Contract.ContractsId
+                },
+                error: function() {
+                    alert("Nelze z nějakého důvodu deaktivovat...");
+                    $("#deleteConfirmModal").modal("hide");
+                }
+            })
+        }
+
+        // Show input ExchangeRate if selected anything else than CZK
+        $(function() {  // == $(document).ready(function() {
+            let txtExchangeRate = $('#Contract_ExchangeRate');
+            if ($('#Contract_CurrencyId').val() != "1") {
+                txtExchangeRate.parent().show();
+            };
+        });
+
+        $(document).ready(function(){
+
+            $('.mycalendar input').datepicker(datepickerParameters[0]);
+
+//            $('#CurrencyId').change(function() {
+//                var sel = document.getElementById('CurrencyId');
+//                var opt = sel.options[sel.selectedIndex];
+//                curSymbol = opt.text
+//                //console.log("Changing... to " + curSymbol);
+//                changeExchangeRate(curSymbol);
+//            });
+
+//            $("#ExchangeRate").on("keydown input change textInput", function (e) {
+//                // allow function keys and decimal separators
+//                if (
+//                    // backspace, delete, tab, escape, enter, comma and .
+//                    $.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 188, 190]) !== -1 ||
+//                    // Ctrl/cmd+A, Ctrl/cmd+C, Ctrl/cmd+X
+//                    ($.inArray(e.keyCode, [65, 67, 88]) !== -1 && (e.ctrlKey === true || e.metaKey === true)) ||
+//                    // home, end, left, right
+//                    (e.keyCode >= 35 && e.keyCode <= 39)) {
+//
+//                    // // optional: replace commas with dots in real-time (for en-US locals)
+//                    // if (e.keyCode === 188) {
+//                    //     e.preventDefault();
+//                    //     $(this).val($(this).val() + whatDecimalSeparator());
+//                    // }
+//
+//                    // // optional: replace decimal points (num pad) and dots with commas in real-time (for EU locals)
+//                    // if (e.keyCode === 110 || e.keyCode === 190) {
+//                    //     e.preventDefault();
+//                    //     $(this).val($(this).val() + whatDecimalSeparator());
+//                    // }
+//
+//                    return;
+//                }
+//                // block any non-number
+//                if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+//                    e.preventDefault();
+//                }
+//            });
+
+//            function whatDecimalSeparator() {
+//                var n = 1.1;
+//                n = n.toLocaleString().substring(1, 2);
+//                return n;
+//            };
+
+        });
+
+    </script>
+
+}
+

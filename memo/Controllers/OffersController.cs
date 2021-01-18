@@ -40,11 +40,22 @@ namespace memo.Controllers
             stopwatch.Start();
 
             List<Offer> offers = await _db.Offer
-                .Include(x => x.Company)
-                .Include(y => y.Contact)
-                .Include(z => z.Currency)
+                // .Include(x => x.SharedInfo)
+                //     .ThenInclude(y => y.Contact)
+                // .Include(x => x.SharedInfo)
+                //     .ThenInclude(y => y.Company)
+                // .Include(x => x.SharedInfo)
+                //     .ThenInclude(y => y.Currency)
+                // .Include(x => x.SharedInfo.Contact)
+                // .Include(x => x.SharedInfo.Company)
+                // .Include(x => x.SharedInfo.Currency)
                 .Include(a => a.OfferStatus)
                 .ToListAsync();
+
+            await _db.SharedInfo.LoadAsync();
+            await _db.Contact.LoadAsync();
+            await _db.Company.LoadAsync();
+            await _db.Currency.LoadAsync();
 
             if (showInactive is false)
             {
@@ -72,31 +83,27 @@ namespace memo.Controllers
         {
             Offer offer = new Offer();
 
-            offer.ExchangeRate = decimal.Parse(getCurrencyStr("CZK"));
+            offer.SharedInfo.ReceiveDate = DateTime.Now;
+            offer.SharedInfo.ExchangeRate = decimal.Parse(getCurrencyStr("CZK"));
             offer.OfferName = await getNewOfferNumAsync();
 
             OfferViewModel vm = new OfferViewModel()
             {
                 Offer = offer,
-                CompanyList = _db.Company.Select(x => new SelectListItem()
-                {
-                    Value = x.CompanyId.ToString(),
-                    Text = x.Name
-                }),
             };
 
-            populateModel(null, 0);
+            await populateModelAsync(vm);
 
             // TODO: Dat do PopulateModel nebo tak nejak
             string domainUser = User.GetLoggedInUserName();
             string username = domainUser.Split('\\').LastOrDefault();
             int userId = await _eveDbDochna.tUsers.Where(x => x.TxAccount == username).Select(x => x.Id).FirstOrDefaultAsync();
 
-            vEmployees res = await _eveDbDochna.vEmployees.Where(x => x.Id == userId).FirstOrDefaultAsync();
+            vEmployees vEmployee = await _eveDbDochna.vEmployees.Where(x => x.Id == userId).FirstOrDefaultAsync();
 
-            vm.Offer.EveCreatedUser = res.FormatedName;
-            vm.Offer.EveDepartment = res.DepartName;
-            vm.Offer.EveDivision = res.EVE == 1 ? "EVE" : "EVAT";
+            vm.Offer.SharedInfo.EveCreatedUser = vEmployee.FormatedName;
+            vm.Offer.SharedInfo.EveDepartment = vEmployee.DepartName;
+            vm.Offer.SharedInfo.EveDivision = vEmployee.EVE == 1 ? "EVE" : "EVAT";
 
             return View(vm);
         }
@@ -106,20 +113,14 @@ namespace memo.Controllers
         public async Task<IActionResult> Create(Offer offer)
         {
             // offer.OfferName = getNewOfferNum();  // TODO Tohle vratit zpet, az tam budou vsechny aktualni
-            offer.PriceCzk = Convert.ToInt32(offer.Price * offer.ExchangeRate);  // 1000 * 26,243
-            offer.CreatedDate = DateTime.Now;
+            string exchangeRateText = await _db.Currency.Where(x => x.CurrencyId == offer.SharedInfo.CurrencyId).Select(x => x.Name).FirstOrDefaultAsync();
+            Decimal ExchangeRate = Convert.ToDecimal(getCurrencyStr(exchangeRateText));
 
-            // Check if OfferName exists, if yes, add model error...
-            Offer existingOffer = await _db.Offer
-                .Where(x => x.OfferName == offer.OfferName)
-                .FirstOrDefaultAsync();
-
-            if (existingOffer != null)
+            if (offer.SharedInfo.Price != null)
             {
-                ModelState.AddModelError("Offer.OfferName", "Ev. Číslo nabídky již existuje. Zvolte jinou, nebo upravte stávající.");
+                offer.SharedInfo.PriceCzk = Convert.ToInt32(offer.SharedInfo.Price * ExchangeRate);  // 1000 * 26,243
             }
 
-            // Save new offer to the DB
             if (ModelState.IsValid)
             {
                 offer.CreatedBy = User.GetLoggedInUserName();
@@ -131,6 +132,10 @@ namespace memo.Controllers
                 await _db.SaveChangesAsync(User.GetLoggedInUserName());
 
                 TempData["Success"] = "Vytvoření bylo úspěšné";
+                OfferViewModel vmm = new OfferViewModel()
+                {
+                    Offer = offer,
+                };
 
                 return RedirectToAction("Index");
             }
@@ -138,15 +143,9 @@ namespace memo.Controllers
             OfferViewModel vm = new OfferViewModel()
             {
                 Offer = offer,
-                CompanyList = _db.Company.Select(x => new SelectListItem()
-                {
-                    Value = x.CompanyId.ToString(),
-                    Text = x.Name
-                }),
             };
 
-            populateModel(offer, 0);
-
+            await populateModelAsync(vm);
             TempData["Error"] = "Nepovedlo se uložit.";
 
             return View(vm);
@@ -162,7 +161,7 @@ namespace memo.Controllers
             }
 
             Offer offer = await _db.Offer
-                .Include(x => x.Currency)
+                .Include(x => x.SharedInfo)
                 .FirstOrDefaultAsync(x => x.OfferId == id);
 
             if (offer == null)
@@ -178,14 +177,11 @@ namespace memo.Controllers
             {
                 Offer = offer,
                 Audits = audits,
-                CompanyList = _db.Company.Select(x => new SelectListItem()
-                {
-                    Value = x.CompanyId.ToString(),
-                    Text = x.Name
-                }),
             };
 
-            populateModel(offer, (int)id);
+            await populateModelAsync(vm);
+            ViewBag.OfferStatusName = _db.OfferStatus.Find(offer.OfferStatusId).Name;
+            ViewBag.CreatedOrders = _db.Order.Include(x => x.Offer).Where(x => x.OfferId == id).ToList();
 
             return View(vm);
         }
@@ -194,56 +190,73 @@ namespace memo.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(string actionType, int id, OfferViewModel vm)
         {
-            if (id != vm.Offer.OfferId)
-            {
-                return NotFound();
-            }
+            // if (id != vm.Offer.OfferId)
+            // {
+            //     return NotFound();
+            // }
 
             if (ModelState.IsValid)
             {
                 try
                 {
                     OfferViewModel oldVm = new OfferViewModel();
-                    oldVm.Offer = await _db.Offer.AsNoTracking().FirstOrDefaultAsync(x => x.OfferId == vm.Offer.OfferId);
+                    oldVm.Offer = await _db.Offer
+                        .AsNoTracking()
+                        .Include(x => x.SharedInfo).
+                        FirstOrDefaultAsync(x => x.OfferId == vm.Offer.OfferId);
 
                     if (oldVm.Offer.OfferName == vm.Offer.OfferName &&
-                        oldVm.Offer.ReceiveDate == vm.Offer.ReceiveDate &&
+                        oldVm.Offer.SharedInfo.ReceiveDate == vm.Offer.SharedInfo.ReceiveDate &&
+                        oldVm.Offer.SharedInfo.EstimatedFinishDate == vm.Offer.SharedInfo.EstimatedFinishDate &&
                         oldVm.Offer.SentDate == vm.Offer.SentDate &&
-                        oldVm.Offer.Subject == vm.Offer.Subject &&
-                        oldVm.Offer.ContactId == vm.Offer.ContactId &&
-                        oldVm.Offer.CompanyId == vm.Offer.CompanyId &&
-                        oldVm.Offer.EveDivision == vm.Offer.EveDivision &&
-                        oldVm.Offer.EveDepartment == vm.Offer.EveDepartment &&
-                        oldVm.Offer.EveCreatedUser == vm.Offer.EveCreatedUser &&
-                        oldVm.Offer.Price == vm.Offer.Price &&
-                        oldVm.Offer.CurrencyId == vm.Offer.CurrencyId &&
-                        oldVm.Offer.ExchangeRate == vm.Offer.ExchangeRate &&
+                        oldVm.Offer.SharedInfo.Subject == vm.Offer.SharedInfo.Subject &&
+                        oldVm.Offer.SharedInfo.ContactId == vm.Offer.SharedInfo.ContactId &&
+                        oldVm.Offer.SharedInfo.CompanyId == vm.Offer.SharedInfo.CompanyId &&
+                        oldVm.Offer.SharedInfo.EveDivision == vm.Offer.SharedInfo.EveDivision &&
+                        oldVm.Offer.SharedInfo.EveDepartment == vm.Offer.SharedInfo.EveDepartment &&
+                        oldVm.Offer.SharedInfo.EveCreatedUser == vm.Offer.SharedInfo.EveCreatedUser &&
+                        oldVm.Offer.SharedInfo.Price == vm.Offer.SharedInfo.Price &&
+                        oldVm.Offer.SharedInfo.CurrencyId == vm.Offer.SharedInfo.CurrencyId &&
+                        oldVm.Offer.SharedInfo.ExchangeRate == vm.Offer.SharedInfo.ExchangeRate &&
                         oldVm.Offer.LostReason == vm.Offer.LostReason &&
                         oldVm.Offer.Notes == vm.Offer.Notes &&
                         oldVm.Offer.Active == vm.Offer.Active)
                     {
                         TempData["Info"] = "Nebyla provedena změna, není co uložit";
 
-                        // Populate VM
-                        List<AuditViewModel> audits = getAuditViewModel(_db).Audits
-                            .Where(x => x.TableName == "Offer" && x.KeyValue == id.ToString())
-                            .ToList();
-                        vm.Audits = audits;
-                        vm.CompanyList = _db.Company.Select(x => new SelectListItem()
+                        if (actionType == "Uložit")
                         {
-                            Value = x.CompanyId.ToString(),
-                            Text = x.Name
-                        });
+                            // Populate VM
+                            vm.Audits = getAuditViewModel(_db).Audits
+                                .Where(x => x.TableName == "Offer" && x.KeyValue == id.ToString())
+                                .ToList();
 
-                        populateModel(vm.Offer, id);
+                            await populateModelAsync(vm);
 
-                        return View(vm);
+                            ViewBag.OfferStatusName = _db.OfferStatus.Find(vm.Offer.OfferStatusId).Name;
+                            ViewBag.CreatedOrders = _db.Order.Include(x => x.Offer).ThenInclude(x => x.SharedInfo).Where(x => x.OfferId == id).ToList();
+
+                            return View(vm);
+                        }
+                        else
+                        {
+                            return RedirectToAction(nameof(Index));
+                        }
                     }
 
-                    vm.Offer.PriceCzk = Convert.ToInt32(vm.Offer.Price * vm.Offer.ExchangeRate);  // 1000 * 26,243
+            //         vm.Offer.PriceCzk = Convert.ToInt32(vm.Offer.Price * vm.Offer.ExchangeRate);  // 1000 * 26,243
+
+                    if (vm.Offer.SharedInfo.Price != null)
+                    {
+                        string exchangeRateText = await _db.Currency.Where(x => x.CurrencyId == vm.Offer.SharedInfo.CurrencyId).Select(x => x.Name).FirstOrDefaultAsync();
+                        Decimal ExchangeRate = Convert.ToDecimal(getCurrencyStr(exchangeRateText));
+
+                        vm.Offer.SharedInfo.PriceCzk = Convert.ToInt32(vm.Offer.SharedInfo.Price * ExchangeRate);  // 1000 * 26,243
+                    }
                     vm.Offer.ModifiedBy = User.GetLoggedInUserName();
                     vm.Offer.ModifiedDate = DateTime.Now;
 
+                    // _db.Update(vm.Offer.SharedInfo);
                     _db.Update(vm.Offer);
                     await _db.SaveChangesAsync(User.GetLoggedInUserName());
                 }
@@ -262,13 +275,11 @@ namespace memo.Controllers
                     vm.Audits = getAuditViewModel(_db).Audits
                         .Where(x => x.TableName == "Offer" && x.KeyValue == id.ToString())
                         .ToList();
-                    vm.CompanyList = _db.Company.Select(x => new SelectListItem()
-                    {
-                        Value = x.CompanyId.ToString(),
-                        Text = x.Name
-                    });
 
-                    populateModel(vm.Offer, id);
+                    await populateModelAsync(vm);
+                    ViewBag.OfferStatusName = _db.OfferStatus.Find(vm.Offer.OfferStatusId).Name;
+                    ViewBag.CreatedOrders = _db.Order.Include(x => x.Offer).Where(x => x.OfferId == id).ToList();
+
                     return View(vm);
                 }
                 else
@@ -281,13 +292,8 @@ namespace memo.Controllers
             vm.Audits = getAuditViewModel(_db).Audits
                 .Where(x => x.TableName == "Offer" && x.KeyValue == id.ToString())
                 .ToList();
-            vm.CompanyList = _db.Company.Select(x => new SelectListItem()
-            {
-                Value = x.CompanyId.ToString(),
-                Text = x.Name
-            });
 
-            populateModel(vm.Offer, id);
+            await populateModelAsync(vm);
 
             return View(vm);
         }
@@ -315,31 +321,6 @@ namespace memo.Controllers
             return RedirectToAction("Index");
         }
 
-        // [HttpPost]
-        // public async Task<IActionResult> Deactivate(int? id)
-        // {
-        //     if (id == null)
-        //     {
-        //         return NotFound();
-        //     }
-
-        //     Offer offer = await _db.Offer.FirstOrDefaultAsync(m => m.OfferId == id);
-        //     if (offer == null)
-        //     {
-        //         return NotFound();
-        //     }
-
-        //     offer.Active = false;
-
-        //     _db.Offer.Update(offer);
-        //     // TODO: bylo async
-        //     _db.SaveChanges(User.GetLoggedInUserName());
-
-        //     TempData["Success"] = "Změněno na neaktivní";
-
-        //     return RedirectToAction("Index");
-        // }
-
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
@@ -349,12 +330,13 @@ namespace memo.Controllers
         [HttpPost]
         public async Task<IActionResult> ChangeOfferStatus(int id, int btnOfferStatusId)
         {
-            // No status change, uses pushes "Create new Order"
+            // User pushes button "Create new Order". No status on Offer. Redirect to new Order
             if (btnOfferStatusId == 0)
             {
-                return RedirectToAction("Create", "Orders", new { id = id });
+                return RedirectToAction("CreateFromOffer", "Orders", new { id = id });
             }
 
+            // User pushes button "Ceka, Vyhra, Prohra"
             Offer offer = await _db.Offer.FirstOrDefaultAsync(x => x.OfferId == id);
 
             if (offer == null)
@@ -370,53 +352,46 @@ namespace memo.Controllers
 
             switch (btnOfferStatusId)
             {
-                case 1:
-                    // Status WAIT, reset potential `LostReason` value
+                case 1:  // Status WAIT, reset potential `LostReason` value
+                case 2:  // Status WON, reset potential `LostReason` value
                     if (!String.IsNullOrEmpty(offer.LostReason))
                     {
                         offer.LostReason = "";
                     }
                     _db.Update(offer);
                     await _db.SaveChangesAsync(User.GetLoggedInUserName());
-                    return RedirectToAction("Edit", "Offers", new {Id = id});
-
-                case 2:
-                    // Status WON, reset potential `LostReason` value
-                    if (!String.IsNullOrEmpty(offer.LostReason))
-                    {
-                        offer.LostReason = "";
-                    }
-                    _db.Update(offer);
-                    await _db.SaveChangesAsync(User.GetLoggedInUserName());
-                    return RedirectToAction("Edit", "Offers", new {Id = id});
+                    return RedirectToAction("Edit", "Offers", new {id = id});
 
                 case 3:
                     // Status LOST
                     await _db.SaveChangesAsync(User.GetLoggedInUserName());
-                    return RedirectToAction("Edit", "Offers", new {Id = id});
+                    return RedirectToAction("Edit", "Offers", new {id = id});
 
                 default:
+                    // Something went wrong...
+                    TempData["Error"] = "Něco se pokazilo při změně statusu nabídky...";
                     return RedirectToAction(nameof(Index));
             }
         }
 
-        private bool OfferExists(int id)
-        {
-            return _db.Offer.Any(e => e.OfferId == id);
-        }
+        // TODO(jverner) Nepotrebne?
+        // private bool OfferExists(int id)
+        // {
+        //     return _db.Offer.Any(e => e.OfferId == id);
+        // }
 
         [HttpGet]
         public async Task<IActionResult> Deactivate(int id, string showInactive)
         {
-            Offer model = await _db.Offer.FirstOrDefaultAsync(m => m.OfferId == id);
-            if (model == null)
+            Offer offer = await _db.Offer.FirstOrDefaultAsync(m => m.OfferId == id);
+            if (offer == null)
             {
                 return NotFound();
             }
 
-            model.Active = false;
+            offer.Active = false;
 
-            _db.Offer.Update(model);
+            _db.Offer.Update(offer);
             _db.SaveChanges(User.GetLoggedInUserName());
 
             TempData["Success"] = "Změněno na neaktivní";
@@ -427,15 +402,15 @@ namespace memo.Controllers
         [HttpGet]
         public async Task<IActionResult> Activate(int id, string showInactive)
         {
-            Offer model = await _db.Offer.FirstOrDefaultAsync(m => m.OfferId == id);
-            if (model == null)
+            Offer offer = await _db.Offer.FirstOrDefaultAsync(m => m.OfferId == id);
+            if (offer == null)
             {
                 return NotFound();
             }
 
-            model.Active = true;
+            offer.Active = true;
 
-            _db.Offer.Update(model);
+            _db.Offer.Update(offer);
             _db.SaveChanges(User.GetLoggedInUserName());
 
             TempData["Success"] = "Změněno na aktivní";
@@ -470,31 +445,47 @@ namespace memo.Controllers
             return newOfferNum;
         }
 
-        private void populateModel(Offer model, int id)
+        private async Task populateModelAsync(dynamic vm)
         {
-            // Populate
-            ViewBag.DepartmentList = getDepartmentList(_eveDbDochna);
-            // ViewBag.CompanyList = new SelectList(_db.Company.ToList(), "CompanyId", "Name");
-            ViewBag.ContactList = new SelectList((
-                from s in _db.Contact.ToList()
-                select new {
-                    ContactId = s.ContactId,
-                    FullName = s.PersonName + " " + s.PersonLastName
-                }
-            ), "ContactId", "FullName");
-            ViewBag.EveContactList = getEveContacts(_eveDbDochna);
-            ViewBag.CurrencyList = new SelectList(_db.Currency.ToList(), "CurrencyId", "Name");
-            // ViewBag.OfferStatusList = new SelectList(_db.OfferStatus.ToList(), "OfferStatusId", "Status");
+            List<Company> companies = await _db.Company.OrderBy(x => x.Name).ToListAsync();
+            vm.CompanyList = companies
+                .Select(x => new SelectListItem {
+                    Value = x.CompanyId.ToString(),
+                    Text = x.Name
+                });
 
-            if (model != null)
-            {
-                ViewBag.OfferStatusName = _db.OfferStatus.Find(model.OfferStatusId).Name;
-            }
+            List<Contact> contacts = await _db.Contact.OrderBy(x => x.PersonLastName).ToListAsync();
+            vm.ContactList = contacts
+                .Select(x => new SelectListItem {
+                    Value = x.ContactId.ToString(),
+                    Text = $"{x.PersonLastName} {x.PersonName}"
+                });
 
-            if (id != 0)
-            {
-                ViewBag.CreatedOrders = _db.Order.Include(x => x.Offer).Where(x => x.OfferId == id).ToList();
-            }
+            List<Currency> currencies = await _db.Currency.ToListAsync();
+            vm.CurrencyList = currencies
+                .Select(x => new SelectListItem {
+                    Value = x.CurrencyId.ToString(),
+                    Text = x.Name != "CZK" ? $"{x.Name} (kurz {getCurrencyStr(x.Name)})" : x.Name
+                });
+            vm.CurrencyListNoRate = currencies
+                .Select(x => new SelectListItem {
+                    Value = x.CurrencyId.ToString(),
+                    Text = x.Name
+                });
+
+            // vm.DepartmentList = await getDepartmentListAsync2(_eveDbDochna);  // TODO zjistit, co je rychlejsi (tohle nějak failuje)
+            vm.DepartmentList = await getDepartmentListAsync(_eveDbDochna);
+            vm.EveContactList = await getEveContactsAsync(_eveDbDochna);
+
+            // Fill default Division/Department/Username values of logged in user
+            string domainAndUsername = User.GetLoggedInUserName();
+            string username = domainAndUsername.Split('\\').LastOrDefault();
+            int userId = await _eveDbDochna.tUsers.Where(x => x.TxAccount == username).Select(x => x.Id).FirstOrDefaultAsync();
+
+            vEmployees vEmployee = await _eveDbDochna.vEmployees.Where(x => x.Id == userId).FirstOrDefaultAsync();
+            vm.Offer.SharedInfo.EveCreatedUser = vEmployee.FormatedName;
+            vm.Offer.SharedInfo.EveDepartment = vEmployee.DepartName;
+            vm.Offer.SharedInfo.EveDivision = vEmployee.EVE == 1 ? "EVE" : "EVAT";
         }
 
         /// <summary>
@@ -503,9 +494,9 @@ namespace memo.Controllers
         /// <param name="itemName"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<JsonResult> itemNameExistsAsync(string itemName)
+        public async Task<JsonResult> itemNameExistsAsync(string itemName, string ignoreName = "")
         {
-            return Json(new { exists = await offerExistsAsync(itemName) });
+            return Json(new { exists = await offerExistsAsync(itemName, ignoreName) });
         }
 
         /// <summary>
@@ -513,8 +504,13 @@ namespace memo.Controllers
         /// </summary>
         /// <param name="itemName"></param>
         /// <returns></returns>
-        private async Task<bool> offerExistsAsync(string itemName)
+        private async Task<bool> offerExistsAsync(string itemName, string ignoreName = "")
         {
+            if (ignoreName != "" && ignoreName == itemName)
+            {
+                return false;
+            }
+
             return await _db.Offer.AnyAsync(x => x.OfferName == itemName);
         }
     }

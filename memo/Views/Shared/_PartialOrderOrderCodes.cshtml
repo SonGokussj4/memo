@@ -1,3 +1,4 @@
+@using System.Globalization
 
 @model memo.ViewModels.OfferOrderVM
 
@@ -14,6 +15,11 @@
 
     @* <input hidden="true" type="number" data-val="true" data-val-required="The OrderCodeId field is required." id="Order_OrderCodes_' + idOrderCode + '__OrderCodeId" name="Order.OrderCodes[' + idOrderCode + '].OrderCodeId" value="0"> *@
     <input asp-for="@Model.Order.OrderCodes[i].OrderCodeId" hidden="true">
+    <input asp-for="@Model.Order.OrderCodes[i].OrderId" hidden="true">
+
+    @* <div class="col-lg-1 text-right mt-2" style="color: grey; font-size: 0.9em;">
+        <label class="order-codes-sum-hours-label">@Model.Order.OrderCodes[i].SumHours/@Model.Order.OrderCodes[i].PlannedHours hod</label>
+    </div> *@
 
     <div class="col-lg-3">
         <span class="has-float-label">
@@ -31,7 +37,26 @@
             <label asp-for="@Model.Order.OrderCodes[i].OrderCode">Kód vykazování</label>
         </span>
         <span asp-validation-for="@Model.Order.OrderCodes[i].OrderCode" class="text-danger"></span>
+        <label class="order-codes-sum-hours-label ml-2" style="font-size: 0.8em; color: grey;">
+            Vykázáno: @Model.Order.OrderCodes[i].SumHours / @Model.Order.OrderCodes[i].PlannedHours hod
+        </label>
     </div>
+
+    @* <div class="col-lg-2 mycalendar">
+        <span class="has-float-label">
+            <input asp-for="@Model.Order.OrderCodes[i].StartDate" class="form-control" type="text" autocomplete="off" data-id="@i" placeholder=" " />
+            <label>Od</label>
+        </span>
+        <span asp-validation-for="@Model.Order.OrderCodes[i].StartDate" class="text-danger"></span>
+    </div>
+
+    <div class="col-lg-2 mycalendar">
+        <span class="has-float-label">
+            <input asp-for="@Model.Order.OrderCodes[i].EndDate" class="form-control" type="text" autocomplete="off" data-id="@i" placeholder=" " />
+            <label>Od</label>
+        </span>
+        <span asp-validation-for="@Model.Order.OrderCodes[i].EndDate" class="text-danger"></span>
+    </div> *@
 
     <div class="col-lg-3">
         <span class="has-float-label">
@@ -44,9 +69,12 @@
     <div class="col-lg-3">
         <span class="has-float-label">
             <input asp-for="@Model.Order.OrderCodes[i].HourWageCost" class="form-control" type="text" placeholder=" "/>
-            <label asp-for="@Model.Order.OrderCodes[i].HourWageCost">Hod. mzda [@Model.CurrencyName]</label>
+            <label asp-for="@Model.Order.OrderCodes[i].HourWageCost">Hod. mzda [@Model.Order.SharedInfo.Currency.Name]</label>
         </span>
         <span asp-validation-for="@Model.Order.OrderCodes[i].HourWageCost" class="text-danger"></span>
+        <label class="order-codes-sum-hours-label ml-2" style="font-size: 0.8em; color: grey;">
+            Vynásobeno: @string.Format(CultureInfo.CreateSpecificCulture(@Model.Order.SharedInfo.Currency.CultureCode), "{0:C0}", @Model.Order.OrderCodes[i].HourWageSum)
+        </label>
     </div>
 
     <div class="col-lg-1">
