@@ -1182,11 +1182,6 @@ namespace memo.Controllers
             for (int i = 0; i < id + 1; i++)
             {
                 order.OrderCodes.Add(new OrderCodes() { OrderCodeId = i });
-                // OrderCodes orderCodes = new OrderCodes();
-                // {
-                //     OrderCodeId = i,
-                // };
-                // order.OrderCodes.Add(orderCodes);
             }
 
             OfferOrderVM vm = new OfferOrderVM()
