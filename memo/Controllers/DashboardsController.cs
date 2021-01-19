@@ -198,6 +198,11 @@ namespace memo.Controllers
 
             vm.DashboardCashVM = invoiceBarChartList;
 
+            // Add 'avg' line to the plot
+            vm.barChartAvgValue = Convert.ToInt32(invoiceBarChartList.Average(x => x.Cash));
+            vm.barChartSumValue = Convert.ToInt32(invoiceBarChartList.Sum(x => x.Cash));
+
+
             // // ===========================================================================================================
             // // PLOT - BAR - Offer Status
             // // ===========================================================================================================
@@ -241,22 +246,19 @@ namespace memo.Controllers
             // vm.DashboardWonOffersVM = viewModelWonOffers;
 
             // ===========================================================================================================
-            // TABLE - Successes
+            // TABLE - Success of each department
             // ===========================================================================================================
             List<DashboardTableVM> dashboardTableVMs = new List<DashboardTableVM>();
             var departments = await _db.Offer.Include(x => x.SharedInfo).Select(x => x.SharedInfo.EveDepartment).Distinct().ToListAsync();
             foreach (var department in departments)
             {
                 var allOffers = _db.Offer.Include(x => x.SharedInfo).Where(x => x.SharedInfo.EveDepartment == department);
-
                 var waitingOffers = await allOffers.Where(x => x.OfferStatusId == 1).ToListAsync();
                 var wonOffers = await allOffers.Where(x => x.OfferStatusId == 2).ToListAsync();
                 var lostOffers = await allOffers.Where(x => x.OfferStatusId == 3).ToListAsync();
-
                 // Get hours
                 // List<int> offersIds = await allOffers.Select(x => x.OfferId).ToListAsync();
                 // IEnumerable<Order> orders = _db.Order.Where(x => offersIds.Contains((int)x.OfferId));
-
                 DashboardTableVM dashboardTableVM = new DashboardTableVM()
                 {
                     Department = department,

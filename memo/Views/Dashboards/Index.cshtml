@@ -52,6 +52,8 @@
             <div style="display: flex; align-items: center; justify-content: center;">
                 <div id="chart_container" style="width: 800px;">
                     <canvas id="bar_chart" width="800" height="400"></canvas>
+                    <div class="chart-bottom-tip">Ø: <span>@string.Format(CultureInfo.CreateSpecificCulture("cs-CZ"), "{0:C0}", @Model.barChartAvgValue)</span></div>
+                    <div class="chart-bottom-tip">Σ: <span>@string.Format(CultureInfo.CreateSpecificCulture("cs-CZ"), "{0:C0}", @Model.barChartSumValue)</span></div>
                 </div>
             </div>
         </div>
@@ -231,21 +233,23 @@
     // BAR CHART - Očekávaný příjem
     // =====================================================
 
-    var filter = @Html.Raw(Json.Serialize(Model.TimePeriod))
+    var canvas = document.getElementById("bar_chart");
+    var ctx = canvas.getContext("2d");
+
     var items = @Html.Raw(Json.Serialize(Model.DashboardCashVM));
 
-    var monthArray = filter == "months" ? items.map(a => new Date(a.month).toLocaleString('cs-CZ', { month: 'long' })) : items.map(a => a.week);
-    var cashArray = items.map(a => a.cash);
+    var xValues = '@Html.Raw(Model.TimePeriod)' == "months" ? items.map(a => new Date(2021, a.month - 1, 15).toLocaleString('cs-CZ', { month: 'long' })) : items.map(a => a.week);
+    var yValues = items.map(a => a.cash);
 
-    var ctx = document.getElementById('bar_chart');
+    @* var ctx = document.getElementById('bar_chart'); *@
 
     var barChart = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: monthArray,
+            labels: xValues,
             datasets: [{
                 label: 'Příjem v Kč',
-                data: cashArray,
+                data: yValues,
                 fillColor: "#79D1CF",
                 backgroundColor: '#4d8fdb',
                 borderColor: '#4179ba',
@@ -270,7 +274,14 @@
                         return tooltipItem.yLabel.toLocaleString('cs-CZ') + ' Kč';
                     }
                 }
-            }
+            },
+            "horizontalLine": [
+                {
+                    "y": @Html.Raw(Model.barChartAvgValue),
+                    "style": "rgba(77, 143, 219, .6)",
+                    "text": "avg",
+                }
+            ]
         }
     });
 
@@ -280,7 +291,7 @@
 //    var ctx = document.getElementById('chart_wonOffers');
 //
 //    var items = @Html.Raw(Json.Serialize(Model.DashboardWonOffersVM));
-//    var monthArray = items.map(a => new Date(a.month).toLocaleString('cs-CZ', { month: 'long' }));
+//    var xValues = items.map(a => new Date(a.month).toLocaleString('cs-CZ', { month: 'long' }));
 //    var allArray = items.map(a => a.all);
 //    var waitArray = items.map(a => a.wait);
 //    var wonArray = items.map(a => a.won);
@@ -289,7 +300,7 @@
 //    var barChart = new Chart(ctx, {
 //        type: 'horizontalBar',
 //        data: {
-//            labels: monthArray,
+//            labels: xValues,
 //            datasets: [
 //                {
 //                    label: 'Čekají',

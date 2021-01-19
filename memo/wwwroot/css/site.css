@@ -406,6 +406,14 @@ form.myform {
   display: none;
 }
 
+/* BAR CHART text on the bottom */
+.chart-bottom-tip {
+  font-size: 0.75em;
+  font-family: monospace;
+}
+.chart-bottom-tip>span {
+  color: gray;
+}
 
 /* BOOTSTRAP - CUSTOM Column OFFSET from RIGHT */
 .col-xs-offset-right-12 {
