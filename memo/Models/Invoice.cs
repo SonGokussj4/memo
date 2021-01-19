@@ -34,21 +34,15 @@ namespace memo.Models
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:N0}")]
         public decimal Cost { get; set; }
 
-        [Required]
-        [Display(Name = "Částka v Czk")]
-        [Column(TypeName = "decimal(18,3)")]
-        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:N0}")]
-        public decimal CostCzk { get; set; }
-        // public decimal CostCzk => this.Order.ExchangeRate * this.Cost;
-
         [Display(Name = "Dodací list")]
         public string DeliveryNote { get; set; }
 
-        // public Invoice()
-        // {
-        //     Cost = 0;
-        //     InvoiceIssueDate = DateTime.Now;
-        //     InvoiceDueDate = DateTime.Now;
-        // }
+        // NOT MAPPED PROPERTIES
+
+        // public decimal CostCzk { get; set; }
+        [Column(TypeName = "decimal(18,3)")]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:N0}")]
+        [NotMapped]
+        public decimal? CostCzk => Order?.ExchangeRate * this.Cost;
     }
 }

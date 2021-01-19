@@ -10,7 +10,8 @@ namespace memo.ViewModels
         // public List<DateTime?> Months { get; set; }
         // public List<int?> PlannedCashPerMonth { get; set; }
 
-        public DateTime Month { get; set; }
+        // public DateTime Month { get; set; }
+        public int Month { get; set; }
         public int Week { get; set; }
 
         public int Cash { get; set; }
