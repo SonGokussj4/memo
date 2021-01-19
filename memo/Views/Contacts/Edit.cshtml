@@ -74,14 +74,10 @@
             </div>
 
             <div class="form-group row">
-                <label asp-for="Contact.CompanyId" class="required col-lg-3 col-form-label form-control-label control-label"></label>
+                <label class="required col-lg-3 col-form-label form-control-label control-label">Zákazník</label>
                 <div class="col-lg-3">
-                    @* <span class="has-float-label"> *@
-                        <select class="form-control selectpicker" asp-for="Contact.CompanyId" asp-items="@Model.CompanyList">
-                            <option>-- Vyber firmu --</option>
-                        </select>
-                        @* <label asp-for="Contact.CompanyId">Firma</label> *@
-                    @* </span> *@
+                    <span class="floating-select-label">Firma zákazníka</span>
+                    <select asp-for="Contact.CompanyId" class="form-control select-company-ajax"></select>
                     <span asp-validation-for="Contact.CompanyId" class="text-danger"></span>
                 </div>
                 <div class="col-lg-3">
@@ -200,6 +196,13 @@
 
     <script>
 
+        $(document).ready(function(){
+
+            // DEFAULT VALUES
+            // =======================================
+            $('.select-company-ajax').append(new Option('@Html.Raw(Model.Contact.Company?.Name)', '@Html.Raw(Model.Contact.CompanyId)', false, false)).trigger('change');
+        });
+
         // MODAL dialog for delete confirmation
         //-------------------------------------
         var ConfirmDelete = function (ItemId) {
@@ -244,5 +247,6 @@
                 }
             })
         }
+
     </script>
 }

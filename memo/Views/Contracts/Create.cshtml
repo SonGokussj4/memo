@@ -60,23 +60,18 @@
         <div class="form-group row eveOffer">
             <label class="col-lg-3 col-form-label form-control-label control-label">Evektor</label>
             <div class="col-lg-2">
-                <span class="has-float-label">
-                    <select class="form-control" asp-for="Contract.SharedInfo.EveDivision" asp-items="Model.EveDivisionList"></select>
-                    <label asp-for="Contract.SharedInfo.EveDivision">Divize</label>
-                </span>
+                <span class="floating-select-label">Divize</span>
+                <select class="form-control" asp-for="Contract.SharedInfo.EveDivision" asp-items="@Model.EveDivisionList"></select>
                 <span asp-validation-for="Contract.SharedInfo.EveDivision" class="text-danger"></span>
             </div>
             <div class="col-lg-3">
-                <span class="has-float-label">
-                    <select asp-for="Contract.SharedInfo.EveDepartment" asp-items="Model.DepartmentList" class="form-control"></select>
-                    <label asp-for="Contract.SharedInfo.EveDepartment">Oddělení</label>
-                </span>
+                <span class="floating-select-label">Oddělení</span>
+                <select asp-for="Contract.SharedInfo.EveDepartment" class="form-control select-department-ajax"></select>
                 <span asp-validation-for="Contract.SharedInfo.EveDepartment" class="text-danger"></span>
             </div>
             <div class="col-lg-4">
-                <select class="form-control selectpicker" asp-for="Contract.SharedInfo.EveCreatedUser" asp-items="Model.EveContactList" required>
-                    @* <option value="">-- Vyber uživatele --</option> *@
-                </select>
+                <span class="floating-select-label">Uživatel</span>
+                <select asp-for="Contract.SharedInfo.EveCreatedUser" class="form-control select-user-ajax"></select>
                 <span asp-validation-for="Contract.SharedInfo.EveCreatedUser" class="text-danger"></span>
             </div>
         </div>
@@ -84,9 +79,8 @@
         <div class="form-group row customerOffer">
             <label class="required col-lg-3 col-form-label form-control-label control-label">Zákazník</label>
             <div class="col-lg-4">
-                <select class="form-control selectpicker" asp-for="Contract.SharedInfo.CompanyId" asp-items="@Model.CompanyList">
-                    <option value="">-- Vyber firmu --</option>
-                </select>
+                <span class="floating-select-label">Firma zákazníka</span>
+                <select asp-for="Contract.SharedInfo.CompanyId" class="form-control select-company-ajax"></select>
                 <span asp-validation-for="Contract.SharedInfo.CompanyId" class="text-danger"></span>
             </div>
             <div class="col-lg-1" data-toggle="tooltip" title="Nová firma">
@@ -95,9 +89,8 @@
                 </a>
             </div>
             <div class="col-lg-3">
-                <select class="form-control selectpicker" asp-for="Contract.SharedInfo.ContactId" asp-items="@Model.ContactList">
-                    <option value="">-- Vyber kontakt --</option>
-                </select>
+                <span class="floating-select-label">Kontakt</span>
+                <select asp-for="Contract.SharedInfo.ContactId" class="form-control select-contact-ajax"></select>
                 <span asp-validation-for="Contract.SharedInfo.ContactId" class="text-danger"></span>
             </div>
             <div class="col-lg-1" data-toggle="tooltip" title="Nový kontakt">
@@ -155,13 +148,31 @@
 
     <script>
 
+        // Clear and unselect '.select-contact-ajax' when '.select-company-ajax' changes it's value
+        $('.select-company-ajax').on('select2:select', function (e) {
+            $(".select-contact-ajax").val(null).empty().trigger('change');
+        });
+
         $(document).ready(function(){
+
+            // DEFAULT VALUES
+            // =======================================
+
+            // Logged in user's department
+            $('.select-department-ajax').append(new Option('@Html.Raw(Model.Contract.SharedInfo.EveDepartment)', '@Html.Raw(Model.Contract.SharedInfo.EveDepartment)', false, false)).trigger('change');
+
+            // Logged in user's name
+            $('.select-user-ajax').append(new Option('@Html.Raw(Model.Contract.SharedInfo.EveCreatedUser)', '@Html.Raw(Model.Contract.SharedInfo.EveCreatedUser)', false, false)).trigger('change');
+
+            // INITIALIZATIONS
+            // =======================================
 
             // Init calendar datepickers
             $('.mycalendar input').datepicker(datepickerParameters[0]);
 
             // Green/Red border if item name is free
             checkItemNameExists($("#Contract_ContractName"), 'Contracts', ignoreName='@Model.Contract.ContractName');
+
         });
 
         $("#Contract_ContractName").keyup(function() {
@@ -172,9 +183,6 @@
             $.ajax({
                 url: '@Url.Action("getCurrencyStr", "Contracts")',
                 type: 'GET',
-                //dataType: 'json',
-                // we set cache: false because GET requests are often cached by browsers
-                // IE is particularly aggressive in that respect
                 cache: false,
                 data: { symbol: curSymbol },
                 success: function(res) {

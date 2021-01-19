@@ -22,6 +22,7 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Server.IISIntegration;
 using memo.Data;
 using memo.Helpers;
+using Microsoft.AspNetCore.Mvc.Razor;
 
 namespace memo
 {
@@ -46,23 +47,22 @@ namespace memo
             }
 
             services.AddDbContext<LoginDbContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("DevelopmentLocal_MemoDB")));
 
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("EvektorDbConnectionEvektor")));
-                // options.UseSqlServer(Configuration.GetConnectionString("EvektorDbConnectionMock")));
-                    // .UseLazyLoadingProxies());
+                // options.UseSqlServer(Configuration.GetConnectionString("ProductionDB_Evektor")));
+                options.UseSqlServer(Configuration.GetConnectionString("DevelopmentLocal_MemoDB")));
 
             services.AddDbContext<EvektorDbContext>(options =>
-                  options.UseSqlServer(Configuration.GetConnectionString("EvektorDbConnectionEvektor")));
-                // options.UseSqlServer(Configuration.GetConnectionString("EvektorDBdev")));
-                    // .UseLazyLoadingProxies());
+                //   options.UseSqlServer(Configuration.GetConnectionString("ProductionDB_Evektor")));
+                options.UseSqlServer(Configuration.GetConnectionString("DevelopmentLocal_MemoDB")));
 
             services.AddDbContext<EvektorDochnaDbContext>(options =>
-                  options.UseSqlServer(Configuration.GetConnectionString("EvektorDbConnectionDochna")));
-                // options.UseSqlServer(Configuration.GetConnectionString("DochadzkaDBdev")));
-                    // .UseLazyLoadingProxies());
+                //   options.UseSqlServer(Configuration.GetConnectionString("ProductionDB_Dochadzka")));
+                options.UseSqlServer(Configuration.GetConnectionString("DevelopmentLocal_MemoDB")));
 
             //services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+
             services.AddDefaultIdentity<IdentityUser>()
                 .AddEntityFrameworkStores<LoginDbContext>();
 
@@ -75,9 +75,11 @@ namespace memo
                 .AddNegotiate();
 
             services.AddControllersWithViews();
+
             // services.AddControllersWithViews(options => {
             //     options.SuppressAsyncSuffixInActionNames = false;
             // });
+
 
         }
 

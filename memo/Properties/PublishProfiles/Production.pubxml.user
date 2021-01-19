@@ -4,6 +4,6 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
 -->
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <_PublishTargetUrl>\\ar-sc\wwwroot\memo</_PublishTargetUrl>
+    <_PublishTargetUrl>\\ar-sc\wwwroot\dev-memo</_PublishTargetUrl>
   </PropertyGroup>
 </Project>

@@ -7,36 +7,6 @@
     ViewData["SubTitle"] = "Upravit informace o rámcové smlouvě";
 }
 
-
-<style>
-    .offerStatus_1 {
-        color: grey;
-        text-align: center;
-        font-weight: 600;
-    }
-
-    .offerStatus_2 {
-        color: green;
-        text-align: center;
-        font-weight: 600;
-    }
-
-    .offerStatus_3 {
-        color: red;
-        text-align: center;
-        font-weight: 600;
-    }
-
-    .wonOffer {
-        border: 1px solid #ced4da;
-        margin: 0px -15px;
-        padding: 8px 0px;
-        margin-bottom: 10px;
-        background-color: #00ff0d21;
-        border-radius: .25rem;
-    }
-</style>
-
 @await Html.PartialAsync("_PartialToastNotification")
 
 <div class="text-center">
@@ -82,7 +52,6 @@
                     <label asp-for="Contract.ContractName"></label>
                 </span>
                 <span asp-validation-for="Contract.ContractName" class="text-danger"></span>
-                @* <p id="NumberAlreadyExistsWarning" class="hide text-danger text-right pt-1 pb-0 mb-0" >Číslo je již použito!</p> *@
             </div>
         </div>
 
@@ -130,17 +99,6 @@
             </div>
         </div>
 
-        @* <div class="createOrder">
-            <div class="form-group row text-center">
-                <div class="col-md-12 from-control">
-                    <button class="col-md-4 btn btn-success mt-3"
-                        asp-action="CreateFromContract" asp-controller="Orders" asp-route-id="@Model.Contract.ContractsId">
-                        <i class="fa fa-plus"></i> Vytvořit novou zakázku
-                    </button>
-                </div>
-            </div>
-        </div> *@
-
         <div class="createOrder">
             <div class="form-group row text-center">
                 <div class="col-md-12 from-control">
@@ -178,25 +136,20 @@
         </div>
 
         <div class="form-group row eveOffer">
-            <label class="col-lg-3 col-form-label form-control-label control-label">Evektor</label>
+            <label class="required col-lg-3 col-form-label form-control-label control-label">Evektor</label>
             <div class="col-lg-2">
-                <span class="has-float-label">
-                    <select class="form-control" asp-for="Contract.SharedInfo.EveDivision" asp-items="Model.EveDivisionList"></select>
-                    <label asp-for="Contract.SharedInfo.EveDivision">Divize</label>
-                </span>
+                <span class="floating-select-label">Divize</span>
+                <select class="form-control" asp-for="Contract.SharedInfo.EveDivision" asp-items="@Model.EveDivisionList"></select>
                 <span asp-validation-for="Contract.SharedInfo.EveDivision" class="text-danger"></span>
             </div>
             <div class="col-lg-3">
-                <span class="has-float-label">
-                    <select asp-for="Contract.SharedInfo.EveDepartment" asp-items="Model.DepartmentList" class="form-control"></select>
-                    <label asp-for="Contract.SharedInfo.EveDepartment">Oddělení</label>
-                </span>
+                <span class="floating-select-label">Oddělení</span>
+                <select asp-for="Contract.SharedInfo.EveDepartment" class="form-control select-department-ajax"></select>
                 <span asp-validation-for="Contract.SharedInfo.EveDepartment" class="text-danger"></span>
             </div>
             <div class="col-lg-4">
-                <select class="form-control selectpicker" asp-for="Contract.SharedInfo.EveCreatedUser" asp-items="Model.EveContactList" required>
-                    @* <option value="">-- Vyber uživatele --</option> *@
-                </select>
+                <span class="floating-select-label">Uživatel</span>
+                <select asp-for="Contract.SharedInfo.EveCreatedUser" class="form-control select-user-ajax"></select>
                 <span asp-validation-for="Contract.SharedInfo.EveCreatedUser" class="text-danger"></span>
             </div>
         </div>
@@ -204,9 +157,8 @@
         <div class="form-group row customerOffer">
             <label class="required col-lg-3 col-form-label form-control-label control-label">Zákazník</label>
             <div class="col-lg-4">
-                <select class="form-control selectpicker" asp-for="Contract.SharedInfo.CompanyId" asp-items="@Model.CompanyList">
-                    <option value="">-- Vyber firmu --</option>
-                </select>
+                <span class="floating-select-label">Firma zákazníka</span>
+                <select asp-for="Contract.SharedInfo.CompanyId" class="form-control select-company-ajax"></select>
                 <span asp-validation-for="Contract.SharedInfo.CompanyId" class="text-danger"></span>
             </div>
             <div class="col-lg-1" data-toggle="tooltip" title="Nová firma">
@@ -215,9 +167,8 @@
                 </a>
             </div>
             <div class="col-lg-3">
-                <select class="form-control selectpicker" asp-for="Contract.SharedInfo.ContactId" asp-items="@Model.ContactList">
-                    <option value="">-- Vyber kontakt --</option>
-                </select>
+                <span class="floating-select-label">Kontakt</span>
+                <select asp-for="Contract.SharedInfo.ContactId" class="form-control select-contact-ajax"></select>
                 <span asp-validation-for="Contract.SharedInfo.ContactId" class="text-danger"></span>
             </div>
             <div class="col-lg-1" data-toggle="tooltip" title="Nový kontakt">
@@ -337,10 +288,25 @@
     <script>
 
         let contractName = '@Html.Raw(@Model.Contract.ContractName)';
+
+        // Clear and unselect '.select-contact-ajax' when '.select-company-ajax' changes it's value
+        $('.select-company-ajax').on('select2:select', function (e) {
+            $(".select-contact-ajax").val(null).empty().trigger('change');
+        });
+
         // TODO(jverner) dve nize uvedene jsou duplicitni v Offers
         $(document).ready(function(){
+
             handleExchangeRateVisibility();
             checkItemNameExists($("#Contract_ContractName"), 'Contracts', ignoreName=contractName);
+
+            // DEFAULT VALUES
+            // =======================================
+            $('.select-department-ajax').append(new Option('@Html.Raw(Model.Contract.SharedInfo.EveDepartment)', '@Html.Raw(Model.Contract.SharedInfo.EveDepartment)', false, false)).trigger('change');
+            $('.select-user-ajax').append(new Option('@Html.Raw(Model.Contract.SharedInfo.EveCreatedUser)', '@Html.Raw(Model.Contract.SharedInfo.EveCreatedUser)', false, false)).trigger('change');
+            $('.select-company-ajax').append(new Option('@Html.Raw(Model.Contract.SharedInfo.Company.Name)', '@Html.Raw(Model.Contract.SharedInfo.CompanyId)', false, false)).trigger('change');
+            $('.select-contact-ajax').append(new Option('@Html.Raw(Model.Contract.SharedInfo.Contact.PersonFullName)', '@Html.Raw(Model.Contract.SharedInfo.ContactId)', false, false)).trigger('change');
+
         });
 
         $("#Contract_ContractName").keyup(function() {

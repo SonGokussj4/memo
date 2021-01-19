@@ -28,7 +28,7 @@
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
         @* PARTIAL: SELECT  *@
-        @await Html.PartialAsync("_PartialOrder-Create-SelectFrom", new ViewDataDictionary(ViewData) {{ "selectedClean", "selected" }})
+        @await Html.PartialAsync("Partials/Orders/_PartialOrder-Create-SelectFrom", new ViewDataDictionary(ViewData) {{ "selectedClean", "selected" }})
 
         <div class="form-group row justify-content-center mt-3">
 
@@ -58,25 +58,20 @@
                 </div>
 
                 <div class="form-group row eveOffer">
-                    <label class="required col-lg-3 col-form-label form-control-label control-label">Evektor</label>
+                    <label class="col-lg-3 col-form-label form-control-label control-label">Evektor</label>
                     <div class="col-lg-2">
-                        <span class="has-float-label">
-                            <select class="form-control" asp-for="Order.SharedInfo.EveDivision" asp-items="Model.EveDivisionList"></select>
-                            <label asp-for="Order.SharedInfo.EveDivision">Divize</label>
-                        </span>
+                        <span class="floating-select-label">Divize</span>
+                        <select class="form-control" asp-for="Order.SharedInfo.EveDivision" asp-items="@Model.EveDivisionList"></select>
                         <span asp-validation-for="Order.SharedInfo.EveDivision" class="text-danger"></span>
                     </div>
                     <div class="col-lg-3">
-                        <span class="has-float-label">
-                            <select asp-for="Order.SharedInfo.EveDepartment" asp-items="Model.DepartmentList" class="form-control"></select>
-                            <label asp-for="Order.SharedInfo.EveDepartment">Oddělení</label>
-                        </span>
+                        <span class="floating-select-label">Oddělení</span>
+                        <select asp-for="Order.SharedInfo.EveDepartment" class="form-control select-department-ajax eve-department-default"></select>
                         <span asp-validation-for="Order.SharedInfo.EveDepartment" class="text-danger"></span>
                     </div>
                     <div class="col-lg-4">
-                        <select class="form-control selectpicker" asp-for="Order.SharedInfo.EveCreatedUser" asp-items="Model.EveContactList" required>
-                            @* <option value="">-- Vyber uživatele --</option> *@
-                        </select>
+                        <span class="floating-select-label">Uživatel</span>
+                        <select asp-for="Order.SharedInfo.EveCreatedUser" class="form-control select-user-ajax eve-created-user-default"></select>
                         <span asp-validation-for="Order.SharedInfo.EveCreatedUser" class="text-danger"></span>
                     </div>
                 </div>
@@ -84,9 +79,8 @@
                 <div class="form-group row customerOffer">
                     <label class="required col-lg-3 col-form-label form-control-label control-label">Zákazník</label>
                     <div class="col-lg-4">
-                        <select class="form-control selectpicker" asp-for="Order.SharedInfo.CompanyId" asp-items="@Model.CompanyList">
-                            <option value="">-- Vyber firmu --</option>
-                        </select>
+                        <span class="floating-select-label">Firma zákazníka</span>
+                        <select asp-for="Order.SharedInfo.CompanyId" class="form-control select-company-ajax"></select>
                         <span asp-validation-for="Order.SharedInfo.CompanyId" class="text-danger"></span>
                     </div>
                     <div class="col-lg-1" data-toggle="tooltip" title="Nová firma">
@@ -95,9 +89,8 @@
                         </a>
                     </div>
                     <div class="col-lg-3">
-                        <select class="form-control selectpicker" asp-for="Order.SharedInfo.ContactId" asp-items="@Model.ContactList">
-                            <option value="">-- Vyber kontakt --</option>
-                        </select>
+                        <span class="floating-select-label">Kontakt</span>
+                        <select asp-for="Order.SharedInfo.ContactId" class="form-control select-contact-ajax"></select>
                         <span asp-validation-for="Order.SharedInfo.ContactId" class="text-danger"></span>
                     </div>
                     <div class="col-lg-1" data-toggle="tooltip" title="Nový kontakt">
@@ -116,19 +109,10 @@
                         </span>
                         <span asp-validation-for="Order.SharedInfo.Price" class="text-danger"></span>
                     </div>
-
                 </div>
 
             </div>
         </div>
-
-        @* <div class="cardTitleMerged">
-            <a asp-action="Index" class="btn btn-light border"><i class="fa fa-arrow-left"></i> Zpět</a>
-        </div> *@
-
-        @* </form> *@
-
-        @* <br /> *@
 
         <!--------------------------------------------------------------------------------------
             FORM - ZAKAZKA
@@ -145,8 +129,8 @@
                     <input asp-for="Order.OrderName" class="form-control" type="text" required="" placeholder=" "/>
                     <label asp-for="Order.OrderName">Číslo objednávky zákazníka</label>
                 </span>
+                <span asp-validation-for="Order.OrderName" class="text-danger"></span>
             </div>
-            <span asp-validation-for="Order.OrderName" class="text-danger"></span>
         </div>
 
         <div class="form-group row">
@@ -158,13 +142,7 @@
                 </span>
                 <span asp-validation-for="Order.NegotiatedPrice" class="text-danger"></span>
             </div>
-            @* <div class="col-lg-3">
-                <span class="has-float-label">
-                    <input asp-for="Order.PriceDiscount" class="form-control" type="text" placeholder=" "/>
-                    <label asp-for="Order.PriceDiscount">Sleva z nabídky [@Model.Order.SharedInfo.Currency.Name]</label>
-                </span>
-                <span asp-validation-for="Order.PriceDiscount" class="text-danger"></span>
-            </div> *@
+
             <div class="col-lg-3">
                 <span class="has-float-label" data-toggle="tooltip" title="Aktuální kurz ČNB">
                     <select asp-for="Order.SharedInfo.CurrencyId" asp-items="Model.CurrencyList" class="form-control"></select>
@@ -177,17 +155,13 @@
         <div class="form-group row">
             <label asp-for="Order.EveContactName" class="required col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-3">
-                <span style="color: gray; font-size: 0.9em;">Vedoucí projektu</span>
-                <select asp-for="Order.EveContactName" asp-items="Model.EveContactList" class="form-control selectpicker">
-                    <option value="">-- Vyber kontakt --</option>
-                </select>
+                <span class="floating-select-label">Vedoucí projektu</span>
+                <select asp-for="Order.EveContactName" class="form-control select-user-ajax project-manager-default"></select>
                 <span asp-validation-for="Order.EveContactName" class="text-danger"></span>
             </div>
             <div class="col-lg-3">
-                <span style="color: gray; font-size: 0.9em;">Key account manager</span>
-                <select asp-for="Order.KeyAccountManager" asp-items="Model.EveContactList" class="form-control selectpicker">
-                    <option value="">-- Vyber managera --</option>
-                </select>
+                <span class="floating-select-label">Key account manager</span>
+                <select asp-for="Order.KeyAccountManager" class="form-control select-user-ajax"></select>
                 <span asp-validation-for="Order.KeyAccountManager" class="text-danger"></span>
             </div>
         </div>
@@ -212,15 +186,17 @@
                 <label class="form-control-label control-label">Kód(y) vykazování</label>
             </div>
             <div class="col-lg-10">
-                <a href="javascript:void(0)" class="btn btn-success col-lg-3 add-row-order-codes mt-1" data-toggle="tooltip" title="Přidat hodinové sazby">
+                <a href="javascript:void(0)" class="btn btn-success col-lg-3 add-partial-order-codes-href mt-1" data-toggle="tooltip" title="Přidat hodinové sazby">
                     <i class="fa fa-plus"></i> Přidat kód
                 </a>
             </div>
         </div>
 
-        <div class="dynamic-rows-order-codes" id="template-order-codes" data-order="@Model.Order.OrderCodes.Count()">
-            <div id="modal-placeholder"></div>
-        </div>
+        <!-- PLACEHOLDER: _PartialSearchForOrderCode -->
+        <div id="modal-placeholder"></div>
+
+        <!-- PLACEHOLDER: _PartialOrderOrderCodesCreate -->
+        <div class="add-partial-order-codes"></div>
 
         <div class="form-group row border-top pt-2">
             <div class="col-lg-2 col-form-label d-flex justify-content-left">
@@ -298,24 +274,6 @@
             <span asp-validation-for="Order.OtherCosts" class="text-danger"></span>
         </div>
 
-        @* <div class="form-group row">
-            <label asp-for="Order.ExchangeRate" class="col-lg-3 col-form-label form-control-label control-label"></label>
-            <div class="col-lg-3">
-                 <div class="input-group mb-2 mr-sm-2">
-                    <div class="input-group-prepend">
-                        <div class="input-group-text"><span>@Model.Order.SharedInfo.Currency.Name</span></div>
-                    </div>
-                    <input asp-for="Order.ExchangeRate" class="form-control" type="text" />
-                    <div class="input-group-append">
-                        <div class="input-group-text" data-toggle="tooltip" title="Vložit dnešní kurz z ČNB" onclick="changeExchangeRate('@Model.Order.SharedInfo.Currency.Name');" style="cursor: pointer;">
-                            <i class="fa fa-caret-left">&nbsp;<i class="fa fa-cloud-download"></i></i>
-                        </div>
-                    </div>
-                 </div>
-                <span asp-validation-for="Order.ExchangeRate" class="text-danger"></span>
-            </div>
-        </div> *@
-
         <div class="form-group row border-top pt-2">
             <label asp-for="Order.Notes" class="col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-9">
@@ -364,9 +322,6 @@
             $.ajax({
                 url: '@Url.Action("getCurrencyStr", "Orders")',
                 type: 'GET',
-                //dataType: 'json',
-                // we set cache: false because GET requests are often cached by browsers
-                // IE is particularly aggressive in that respect
                 cache: false,
                 data: { symbol: curSymbol },
                 success: function(res) {
@@ -405,8 +360,21 @@
             }
         };
 
+        // Clear and unselect '.select-contact-ajax' when '.select-company-ajax' changes it's value
+        $('.select-company-ajax').on('select2:select', function (e) {
+            $(".select-contact-ajax").val(null).empty().trigger('change');
+        });
+
         $(document).ready(function(){
 
+            // DEFAULT VALUES
+            // =======================================
+            $('.project-manager-default').append(new Option('@Html.Raw(Model.Order.EveContactName)', '@Html.Raw(Model.Order.EveContactName)', false, false)).trigger('change');
+            $('.eve-department-default').append(new Option('@Html.Raw(Model.Order.SharedInfo.EveDepartment)', '@Html.Raw(Model.Order.SharedInfo.EveDepartment)', false, false)).trigger('change');
+            $('.eve-created-user-default').append(new Option('@Html.Raw(Model.Order.SharedInfo.EveCreatedUser)', '@Html.Raw(Model.Order.SharedInfo.EveCreatedUser)', false, false)).trigger('change');
+
+            // OTHER
+            // =======================================
             $("#Order_OrderName").on("keyup", function() {
                 checkItemNameExists($(this), 'Orders');
             });
@@ -416,75 +384,78 @@
 
             var offerPrice = parseInt('@Model.Order.SharedInfo.Price');
 
-            //$('#Order_NegotiatedPrice').on('keydown input change textInput', function(){
-            //    var negotiatedPrice = parseInt($('#Order_NegotiatedPrice').val());
-            //    $('#Order_PriceDiscount').val(offerPrice - negotiatedPrice);
-            //});
+            // Add new ORDER CODES row
+            var idNewOrderCode = @Model.Order.OrderCodes.Count();
+            $('.add-partial-order-codes-href').on('click', function() {
+                $.ajax({
+                    url: '@Url.Action("AddOrderCodesPartial", "Orders")/' + idNewOrderCode,
+                    dataType: 'html',
+                    success: function (result) {
+                        $(".add-partial-order-codes").append(result);
 
-            //$('#Order_PriceDiscount').on('keydown input change textInput', function(){
-            //    var priceDiscount = parseInt($('#Order_PriceDiscount').val());
-            //    $('#Order_NegotiatedPrice').val(offerPrice - priceDiscount);
-            //});
+                        @* floatingLabelsInit(); *@
+                        initializeTooltips();
+                        initializeOrderAjaxModalClickEvent();
+                        $('form').data('validator', null);
+                        $.validator.unobtrusive.parse($('form'));
+                    }
+                });
 
-            //$('.invoiceDate').change('input', function(){
-            //    var date = new Date($('.invoiceDate').val());
-            //    var futureDate = getPrettyDate(date, @Model.Order?.SharedInfo?.Company?.InvoiceDueDays);
-            //    $('#Order_InvoiceDueDate').val(futureDate);
-            //});
+
+                idNewOrderCode = idNewOrderCode + 1;
+            });
 
             // Add new INVOICES row
             var idInvoice = @Model.Order.Invoices.Count();
             var invoiceDueDays = @Html.Raw(Json.Serialize(Model.InvoiceDueDays));
             $('.add-row-invoice').click(function () {
                 console.log('Adding invoice: ' + idInvoice);
-                var html =''+
-                    @* '<div class="dynamic-rows-invoices" id="template-invoices" data-order="' + idInvoice + '">'+ *@
-                        '<div class="row form-group justify-content-end border-top pt-4" id="dynamic-row-invoice-' + idInvoice + '">'+
+                var html =
+                    '<div class="row form-group justify-content-end border-top pt-4" id="dynamic-row-invoice-' + idInvoice + '">'+
 
-                            '<input type="number" hidden="true" data-val="true" data-val-required="The InvoiceId field is required." id="Order_Invoices_' + idInvoice + '__InvoiceId" name="Order.Invoices[' + idInvoice + '].InvoiceId" value="0">'+
+                        '<input type="number" hidden="true" data-val="true" data-val-required="The InvoiceId field is required." id="Order_Invoices_' + idInvoice + '__InvoiceId" name="Order.Invoices[' + idInvoice + '].InvoiceId" value="0">'+
 
-                            '<div class="col-lg-3 mycalendar">'+
-                                '<span class="has-float-label">'+
-                                    '<input class="form-control" type="text" autocomplete="off" placeholder="dd-MM-yyyy" data-id="' + idInvoice + '" data-val="true" data-val-required="The Předp. termín vystavení faktury field is required." id="Order_Invoices_' + idInvoice + '__InvoiceIssueDate" name="Order.Invoices[' + idInvoice + '].InvoiceIssueDate" value="">'+
-                                    '<label for="Order_Invoices_' + idInvoice + '__InvoiceIssueDate">Termín vystavení</label>'+
-                                '</span>'+
-                                '<span class="text-danger field-validation-valid" data-valmsg-for="Order.Invoices[' + idInvoice + '].InvoiceIssueDate" data-valmsg-replace="true"></span>'+
-                            '</div>'+
-
-                            '<div class="col-lg-3">'+
-                                '<span class="has-float-label">'+
-                                    '<input class="form-control" type="text" autocomplete="off" placeholder="dd-MM-yyyy" data-val="true" data-id="' + idInvoice + '" data-val-required="The Splatnost faktury field is required." id="Order_Invoices_' + idInvoice + '__InvoiceDueDate" name="Order.Invoices[' + idInvoice + '].InvoiceDueDate" value="">'+
-                                    '<label for="Order_Invoices_' + idInvoice + '__InvoiceDueDate">Splatnost faktury</label>'+
-                                '</span>'+
-                                '<span class="text-danger field-validation-valid" data-valmsg-for="Order.Invoices[' + idInvoice + '].InvoiceDueDate" data-valmsg-replace="true"></span>'+
-                            '</div>'+
-
-                            '<div class="col-lg-3">'+
-                                '<span class="has-float-label">'+
-                                    '<input class="form-control" type="text" placeholder="Částka" data-val="true" data-val-number="The field Částka must be a number." data-val-required="The Částka field is required." id="Order_Invoices_' + idInvoice + '__Cost" name="Order.Invoices[' + idInvoice + '].Cost" value="" />'+
-                                    '<label for="Order_Invoices_' + idInvoice + '__Cost">Částka [@Model.Order.SharedInfo.Currency.Name]</label>'+
-                                '</span>'+
-                                '<span class="text-danger field-validation-valid" data-valmsg-for="Order.Invoices[' + idInvoice + '].Cost" data-valmsg-replace="true"></span>'+
-                            '</div>'+
-
-                            '<div class="col-lg-1">'+
-                                '<a href="javascript:void(0)" class="btn btn-danger btn-sm mt-1" data-toggle="tooltip" title="" data-original-title="Odstranit záznam" onclick="DeleteInvoice(' + idInvoice + ')"><i class="fa fa-trash white"></i></a>'+
-                            '</div>'+
-
+                        '<div class="col-lg-3 mycalendar">'+
+                            '<span class="has-float-label">'+
+                                '<input class="form-control" type="text" autocomplete="off" placeholder="dd-MM-yyyy" data-id="' + idInvoice + '" data-val="true" data-val-required="The Předp. termín vystavení faktury field is required." id="Order_Invoices_' + idInvoice + '__InvoiceIssueDate" name="Order.Invoices[' + idInvoice + '].InvoiceIssueDate" value="">'+
+                                '<label for="Order_Invoices_' + idInvoice + '__InvoiceIssueDate">Termín vystavení</label>'+
+                            '</span>'+
+                            '<span class="text-danger field-validation-valid" data-valmsg-for="Order.Invoices[' + idInvoice + '].InvoiceIssueDate" data-valmsg-replace="true"></span>'+
                         '</div>'+
 
-                        '<div class="row form-group justify-content-end " id="dynamic-row-delivery-note-' + idInvoice + '">'+
-                            '<div class="col-lg-9">'+
-                                '<span class="has-float-label">'+
-                                    '<input class="form-control" type="text" placeholder="Cesta k dodacímu listu" id="Order_Invoices_' + idInvoice + '__DeliveryNote" name="Order.Invoices[' + idInvoice + '].DeliveryNote" value="" />'+
-                                    '<label for="Order_Invoices_' + idInvoice + '__DeliveryNote">Dodací list</label>'+
-                                '</span>'+
-                                '<span data-valmsg-for="Order.Invoices[' + idInvoice + '].DeliveryNote" data-valmsg-replace="true" class="text-danger"></span>'+
-                            '</div>'+
-                            '<div class="col-lg-1"></div>'+
-                        '</div>'
-                    @* '</div>' *@
-                    ;
+                        '<div class="col-lg-3">'+
+                            '<span class="has-float-label">'+
+                                '<input class="form-control" type="text" autocomplete="off" placeholder="dd-MM-yyyy" data-val="true" data-id="' + idInvoice + '" data-val-required="The Splatnost faktury field is required." id="Order_Invoices_' + idInvoice + '__InvoiceDueDate" name="Order.Invoices[' + idInvoice + '].InvoiceDueDate" value="">'+
+                                '<label for="Order_Invoices_' + idInvoice + '__InvoiceDueDate">Splatnost faktury</label>'+
+                            '</span>'+
+                            '<span class="text-danger field-validation-valid" data-valmsg-for="Order.Invoices[' + idInvoice + '].InvoiceDueDate" data-valmsg-replace="true"></span>'+
+                        '</div>'+
+
+                        '<div class="col-lg-3">'+
+                            '<span class="has-float-label">'+
+                                '<input class="form-control" type="text" placeholder="Částka" data-val="true" data-val-number="The field Částka must be a number." data-val-required="The Částka field is required." id="Order_Invoices_' + idInvoice + '__Cost" name="Order.Invoices[' + idInvoice + '].Cost" value="" />'+
+                                '<label for="Order_Invoices_' + idInvoice + '__Cost">Částka [@Model.Order.SharedInfo.Currency.Name]</label>'+
+                            '</span>'+
+                            '<span class="text-danger field-validation-valid" data-valmsg-for="Order.Invoices[' + idInvoice + '].Cost" data-valmsg-replace="true"></span>'+
+                        '</div>'+
+
+                        '<div class="col-lg-1">'+
+                            '<a href="javascript:void(0)" class="btn btn-danger btn-sm mt-1" data-toggle="tooltip" title="" data-original-title="Odstranit záznam" onclick="DeleteInvoice(' + idInvoice + ')"><i class="fa fa-trash white"></i></a>'+
+                        '</div>'+
+
+                    '</div>'+
+
+                    '<div class="row form-group justify-content-end " id="dynamic-row-delivery-note-' + idInvoice + '">'+
+                        '<div class="col-lg-9">'+
+                            '<span class="has-float-label">'+
+                                '<input class="form-control" type="text" placeholder="Cesta k dodacímu listu" id="Order_Invoices_' + idInvoice + '__DeliveryNote" name="Order.Invoices[' + idInvoice + '].DeliveryNote" value="" />'+
+                                '<label for="Order_Invoices_' + idInvoice + '__DeliveryNote">Dodací list</label>'+
+                            '</span>'+
+                            '<span data-valmsg-for="Order.Invoices[' + idInvoice + '].DeliveryNote" data-valmsg-replace="true" class="text-danger"></span>'+
+                        '</div>'+
+                        '<div class="col-lg-1"></div>'+
+                    '</div>'
+                ;
                 var _formTemp = $("#template-invoices").clone(true)
                 var _targetForm = $(".dynamic-rows-invoices")
                 _targetForm.append(html)
@@ -557,69 +528,6 @@
                 return false;
             });
 
-            // Add new ORDER CODES row
-            var idOrderCode = @Model.Order.OrderCodes.Count();
-            $('.add-row-order-codes').on('click', function () {
-                var html =
-                    '<div class="row form-group justify-content-end" id="dynamic-row-order-codes-' + idOrderCode + '">'+
-
-                        '<input hidden="true" type="number" data-val="true" data-val-required="The OrderCodeId field is required." id="Order_OrderCodes_' + idOrderCode + '__OrderCodeId" name="Order.OrderCodes[' + idOrderCode + '].OrderCodeId" value="0">'+
-
-                        '<div class="col-lg-3">'+
-                            '<span class="has-float-label">'+
-                                '<div class="input-group">'+
-                                    '<input class="form-control" type="text" autocomplete="off" placeholder=" " data-val="true" data-val-length="The field Kód vykazování EVE must be a string with a maximum length of 50." data-val-length-max="50" data-val-regex="Kód ve formátu xxx.xxxx" data-val-regex-pattern="(\\d{3}[.]\\d{4})?" id="Order_OrderCodes_' + idOrderCode + '__OrderCode" maxlength="50" name="Order.OrderCodes[' + idOrderCode + '].OrderCode" value="">'+
-                                    '<div class="input-group-append">'+
-                                        '<!-- Button trigger modal -->'+
-                                        '<span data-toggle="tooltip" title="" data-original-title="Vyhledat kód">'+
-                                            '<button class="btn btn-light border" type="button" data-toggle="ajax-modal" data-target="#SearchForOrderCodeModal" data-url="/Orders/GetOrderCodes/' + idOrderCode + '">'+
-                                                '<i class="fa fa-search"></i>'+
-                                            '</button>'+
-                                        '</span>'+
-                                    '</div>'+
-                                '</div>'+
-                                '<label for="Order_OrderCodes_' + idOrderCode + '__OrderCode">Kód vykazování</label>'+
-                            '</span>'+
-                            '<span class="text-danger field-validation-valid" data-valmsg-for="Order.OrderCodes[' + idOrderCode + '].OrderCode" data-valmsg-replace="true"></span>'+
-                        '</div>'+
-
-                        '<div class="col-lg-3">'+
-                            '<span class="has-float-label">'+
-                                '<input class="form-control" type="text" autocomplete="off" placeholder=" " data-val="true" data-val-length="The field Hodinová mzda @Model.Order.SharedInfo.Currency.Name must be a string with a maximum length of 50." data-val-length-max="50" id="Order_OrderCodes_' + idOrderCode + '__HourWageSubject" maxlength="50" name="Order.OrderCodes[' + idOrderCode + '].HourWageSubject" value="">'+
-                                '<label for="Order_OrderCodes_' + idOrderCode + '__HourWageSubject">Popis hod. mzdy</label>'+
-                            '</span>'+
-                            '<span class="text-danger field-validation-valid" data-valmsg-for="Order.OrderCodes[' + idOrderCode + '].HourWageSubject" data-valmsg-replace="true"></span>'+
-                        '</div>'+
-
-                        '<div class="col-lg-3">'+
-                            '<span class="has-float-label">'+
-                                '<input class="form-control" type="text" placeholder=" " data-val="true" data-val-number="The field Hodinová mzda must be a number." id="Order_OrderCodes_' + idOrderCode + '__HourWageCost" name="Order.OrderCodes[' + idOrderCode + '].HourWageCost" value="">'+
-                                '<label for="Order_OrderCodes_' + idOrderCode + '__HourWageCost">Hod. mzda [@Model.Order.SharedInfo.Currency.Name]</label>'+
-                            '</span>'+
-                            '<span class="text-danger field-validation-valid" data-valmsg-for="Order.OrderCodes[' + idOrderCode + '].HourWageCost" data-valmsg-replace="true"></span>'+
-                        '</div>'+
-
-                        '<div class="col-lg-1">'+
-                            '<a href="javascript:void(0)" class="btn btn-danger btn-sm mt-1" data-toggle="tooltip" title="" onclick="DeleteOrderCode(' + idOrderCode + ')" data-original-title="Odstranit záznam"><i class="fa fa-trash"></i></a>'+
-                        '</div>'+
-
-                    '</div>';
-
-                //$("tbody").append($(html).clone(true))
-                var _formTemp = $("#template-order-codes").clone(true)
-                var _targetForm = $(".dynamic-rows-order-codes")
-                _targetForm.append(html)
-
-                floatingLabelsInit();
-                initializeTooltips();
-                initializeOrderAjaxModalClickEvent();
-
-                $('form').data('validator', null);
-                $.validator.unobtrusive.parse($('form'));
-
-                idOrderCode = idOrderCode + 1;
-                return false;
-            });
         })
 
     </script>

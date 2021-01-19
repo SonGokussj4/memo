@@ -98,7 +98,9 @@ namespace memo.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(int? id)
         {
-            Contact contact = await _db.Contact.FirstOrDefaultAsync(x => x.ContactId == id);
+            Contact contact = await _db.Contact
+                .Include(x => x.Company)
+                .FirstOrDefaultAsync(x => x.ContactId == id);
 
             if (contact == null)
             {
@@ -301,37 +303,27 @@ namespace memo.Controllers
             return RedirectToAction("Index", new { showInactive });
         }
 
-        // // Initilises Select List
-        // public void ConfigureViewModel(BookingViewModel bookingViewModel)
-        // {
-        //     // Displays Opticians Name - Needs changed to full name
-        //     bookingViewModel.OpticiansList = db.Opticians.Select(o => new SelectListItem()
-        //     {
-        //         Value = o.OpticianId.ToString(),
-        //         Text = o.User.FirstName
-        //     });
+        [HttpGet]
+        public JsonResult getContactsJson(string match, int pageSize = 100, string filter = "")
+        {
+            match = !string.IsNullOrWhiteSpace(match) ? match : "";
 
-        //     // Displays Patients name - needs changed to full name DOB
-        //     bookingViewModel.PatientList = db.Patients.Select(p => new SelectListItem()
-        //     {
-        //         Value = p.PatientId.ToString(),
-        //         Text = p.User.FirstName
-        //     });
+            IQueryable<Contact> jsonData = _db.Contact;
 
-        //     // Displays Practice Name
-        //     bookingViewModel.PracticeList = db.Practices.Select(p => new SelectListItem()
-        //     {
-        //         Value = p.PracticeId.ToString(),
-        //         Text = p.PracticeName
-        //     });
+            // Filter potential selected company
+            if (!string.IsNullOrWhiteSpace(filter))
+                jsonData = jsonData.Where(x => x.CompanyId == Convert.ToInt32(filter));
 
-        //     // Displays Appointment Times
-        //     bookingViewModel.TimeList = db.Times.Select(t => new SelectListItem()
-        //     {
-        //         Value = t.TimeId.ToString(),
-        //         Text = t.AppointmentTime
-        //     });
-        // }
+            // Get rest of the data, filter by match if entered
+            var result = jsonData
+                .AsEnumerable()
+                .Where(x => x.PersonFullName.ToLower().Contains(match.ToLower()))
+                .Take(pageSize)
+                .Select(x => new SelectListItem { Value = x.ContactId.ToString(), Text = x.PersonFullName })
+                .OrderBy(x => x.Text);
+
+            return Json(new { items = result });
+        }
 
     }
 }

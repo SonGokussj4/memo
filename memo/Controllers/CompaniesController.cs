@@ -9,6 +9,7 @@ using memo.Models;
 using memo.Data;
 using memo.ViewModels;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace memo.Controllers
 {
@@ -187,36 +188,8 @@ namespace memo.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult ShowInactive()
         {
-            if (ModelState.IsValid)
-            {
-                // user.TermsAcceptedOn = DateTime.Now;
-                // company.Active = "Accepted";
-            }
             return RedirectToAction("Index", new { showInactive = true });
         }
-
-        // [HttpPost]
-        // [ValidateAntiForgeryToken]
-        // public async Task<IActionResult> Deactivate(int? id)
-        // {
-        //     if (id == null)
-        //     {
-        //         return NotFound();
-        //     }
-
-        //     Company company = await _db.Company.FirstOrDefaultAsync(m => m.CompanyId == id);
-        //     if (company == null)
-        //     {
-        //         return NotFound();
-        //     }
-
-        //     company.Active = false;
-
-        //     _db.Company.Update(company);
-        //     _db.SaveChanges(User.GetLoggedInUserName());
-
-        //     return RedirectToAction("Index");
-        // }
 
         [HttpGet]
         public async Task<IActionResult> Deactivate(int id, string showInactive)
@@ -250,6 +223,25 @@ namespace memo.Controllers
             _db.SaveChanges(User.GetLoggedInUserName());
 
             return RedirectToAction("Index", new { showInactive });
+        }
+
+        [HttpGet]
+        public JsonResult getCompaniesJson(string match, int pageSize = 100)
+        {
+            match = !string.IsNullOrWhiteSpace(match) ? match : "";
+
+            var jsonData = _db.Company
+                .Where(x => x.Name.Contains(match))
+                .Take(pageSize)
+                .Select(x => new SelectListItem
+                    {
+                        Value = x.CompanyId.ToString(),
+                        Text = x.Name + " (" + _db.Contact.Where(y => y.CompanyId == x.CompanyId).Count() + ")"
+                    })
+                .OrderBy(x => x.Text)
+                .ToList();
+
+            return Json(new { items = jsonData });
         }
 
         // private AuditsViewModel initViewModel()
