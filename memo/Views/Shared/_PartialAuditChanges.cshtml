@@ -30,7 +30,7 @@
 <div class="audit-log pt-5">
     @* @foreach (AuditViewModel item in Model.Audits.OrderByDescending(x => x.UpdateDate)) *@
     @{
-        int i = -1;
+        int i = 0;
         @* string showStatus = ""; *@
     }
     @foreach (AuditViewModel item in Model.Audits)
@@ -39,10 +39,10 @@
         string showStatus = i < 3 ? "show" : "";
 
         int numberOfChanges = item.Json.Count() - 1;  // Because there is "ModifiedTime" change every time
-        if (item.TableName ==  "OtherCost" || item.TableName == "Invoice")
+        @* if (item.TableName ==  "OtherCost" || item.TableName == "Invoice")
         {
             numberOfChanges += 1;  // No "ModifiedTime" field in these tables
-        }
+        } *@
         // TODO: Nejak to necti cisla. Nekdy je zmena, ale je 0. Nekdy je naopak nula a uvnitr opravdu nic. Celkovy pocet vse, ne jen zmeny...
         @* if (numberOfChanges == 0)
         {
@@ -63,7 +63,7 @@
                         <span class="badge badge-@pillText py-1" style="font-size: 0.8rem; width: 70px;"
                             data-toggle="tooltip" title="Aktivita"> @typeText
                         </span>
-                        <span class="badge badge-info ml-3 py-1" style="font-size: 0.8rem; width: 105px;"
+                        <span class="badge badge-info ml-3 py-1" style="font-size: 0.8rem; width: 125px;"
                             data-toggle="tooltip" title="Tabulka"> @tableNameCz
                         </span>
                         @if (item.Type != "D")

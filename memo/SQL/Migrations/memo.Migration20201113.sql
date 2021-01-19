@@ -22,7 +22,7 @@ WHERE x.OrderId = y.OrderId;
 
 
 -----------------------------------------------------------------------------------------
--- NAPLNIT OtherCodes SLOUPCE HourWageCost, HourWageCostCzk, HourWageSubject DLE TABULKY HourWages
+-- ZMENIT OtherCodes SLOUPEC OrderCode na NVARCHAR(50) NULL
 ALTER TABLE [memo].[OrderCodes]
 ALTER COLUMN OrderCode NVARCHAR(50) NULL;
 

@@ -1,6 +1,21 @@
 ﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
 for details on configuring this project to bundle and minify static web assets. */
 
+/* Active menu element */
+.nav-item.active {
+  border-bottom: 3px solid #5ca9ef;
+  margin-bottom: -3px;
+}
+
+/* Navigation bar items in one line, no line warping */
+.nav-item {
+  white-space: nowrap;
+}
+
+.hiddenOnLoad {
+  display: none;
+}
+
 a.navbar-brand {
   white-space: normal;
   text-align: center;
@@ -22,6 +37,22 @@ a {
   color: #fff;
   background-color: #1b6ec2;
   border-color: #1861ac;
+}
+
+
+/* DROPDOWN ON HOVER */
+/* ------------------------------------------------------------------------------------- */
+a.nav-link .dropdown-toggle::after {
+   transition: transform 0.10s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+a.nav-link .show.dropdown .dropdown-toggle::after {
+  transform: translateY(3px);
+}
+
+ul > li.nav-item > a:hover::after {
+  transform: translateY(3px);
+  transition: transform 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 
@@ -59,18 +90,44 @@ html {
   min-height: 100%;
 }
 
-body {
+/* body { */
   /* Margin bottom by footer height */
-  margin-bottom: 60px;
-}
-.footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  white-space: nowrap;
-  line-height: 60px; /* Vertically center the text there */
+  /* margin-bottom: 60px; */
+/* } */
+
+body {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
 }
 
+.footer {
+  flex-shrink: 0;
+  width: 100%;
+  line-height: 60px; /* Vertically center the text there */
+  position: static;
+  /* bottom: 0; */
+  /* width: 100%; */
+  /* white-space: nowrap; */
+  /* line-height: 60px; /* Vertically center the text there */
+}
+
+/* @media (min-width: 1200px) {
+    .container, .container-lg, .container-md, .container-sm, .container-xl {
+        max-width: calc(100% - 4rem);
+} */
+
+
+header {
+  flex: 0 0 50px;
+}
+.content {
+  flex: 1 0 auto;
+}
+
+/* Bootstrap table filter control box size and color
+-------------------------------------------------- */
+.filter-control
 /* Body and Card
 -------------------------------------------------- */
 body {
@@ -192,7 +249,7 @@ form.myform {
 }
 
 /* Smaller filter field above DataTable */
-.filter-control>input.form-control,
+/* .filter-control>input.form-control,
 .filter-control>select.form-control {
     margin: 0px;
     padding: 0px 20px;
@@ -201,7 +258,77 @@ form.myform {
     border-left: 0px;
     border-right: 0px;
     border-bottom: 0px;
+    width: 90%;
+    border: 1px solid lightgrey;
+    margin: 5px auto;
+} */
+
+.filter-control {
+  width: 90%;
+  margin: 5px auto;
+  border: 1px solid lightgrey;
 }
+.filter-control>.search-input {
+  border: 0px;
+  border-radius: 0px;
+  height: calc(1em + .65rem + 2px);
+  /* margin: 5px 0px; */
+}
+.fht-cell {
+  background-color: rgb(250, 250, 250);
+  padding: 1px 0px;
+}
+
+/* Smaller text in input groups */
+.input-group-text {
+    font-size: 0.9rem;
+}
+
+.cardTitleMerged {
+    display: flex;
+    justify-content: space-between;
+}
+
+
+/* NEW ORDER box behaviour after mouse hover and active selection (FromOffer, FromContract, SimpleOrder) */
+.new-order-radios input {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+.new-order-radios label {
+    font-size: 1.2rem;
+}
+.new-order-radios label:hover {
+    cursor: pointer;
+}
+.new-order-radios label.selected::after {
+    content: '';
+    display: block;
+    width: 100%;
+    border-bottom: 4px solid #5ca9ef;
+}
+.cool-link {
+    display: inline-block;
+    color: #000;
+    text-decoration: none;
+}
+.cool-link a {
+  color: #000 !important;
+  text-decoration: none;
+}
+.cool-link::after {
+    content: '';
+    display: block;
+    width: 0;
+    transition: width .3s;
+    border-bottom: 4px solid #5ca9ef;
+    border-radius: 4%;
+}
+.cool-link:hover::after {
+    width: 100%;
+}
+
 
 /* Bootstrap-Select fixes
 -------------------------------------------------- */
@@ -279,6 +406,14 @@ form.myform {
   display: none;
 }
 
+/* BAR CHART text on the bottom */
+.chart-bottom-tip {
+  font-size: 0.75em;
+  font-family: monospace;
+}
+.chart-bottom-tip>span {
+  color: gray;
+}
 
 /* BOOTSTRAP - CUSTOM Column OFFSET from RIGHT */
 .col-xs-offset-right-12 {

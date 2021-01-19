@@ -15,45 +15,62 @@ namespace memo.Helpers
         public ApplicationDbContext _db { get; }
 
         public StaticUtils(ApplicationDbContext db)
-        // public StaticUtils()
         {
             _db = db;
         }
 
+        /// <summary>
+        /// {DbTriggerName}-Models/{ModelName}.cs
+        /// </summary>
+        /// <value></value>
         public static Dictionary<string, Type> modelTypeFromString = new Dictionary<string, Type>
         {
             {"BugReport", typeof(BugReport)},
             {"Offer", typeof(Offer)},
             {"Order", typeof(Order)},
+            {"Contracts", typeof(Contract)},
             {"Invoice", typeof(Invoice)},
             {"Company", typeof(Company)},
             {"Contact", typeof(Contact)},
             {"OtherCost", typeof(OtherCost)},
             {"OrderCodes", typeof(OrderCodes)},
+            {"SharedInfo", typeof(SharedInfo)},
         };
 
+        /// <summary>
+        /// {DbTriggerName}-{Translation for Audit table view field}
+        /// </summary>
+        /// <value></value>
         public static Dictionary<string, string> modelNameFromString = new Dictionary<string, string>
         {
             {"BugReport", "Hlášení chyb"},
             {"Offer", "Nabídka"},
             {"Order", "Zakázka"},
+            {"Contracts", "Rámcová smlouva"},
             {"Invoice", "Faktura"},
             {"Company", "Firma"},
             {"Contact", "Kontakt"},
             {"OtherCost", "Ostatní náklady"},
             {"OrderCodes", "Kód vykazování"},
+            {"SharedInfo", "Sdílené"},
         };
 
+        /// <summary>
+        /// {DbTriggerName}-Controllers/{ControllerName}Controller.cs
+        /// </summary>
+        /// <value></value>
         public static Dictionary<string, string> controllerLink = new Dictionary<string, string>
         {
             {"BugReport", "BugReport"},
             {"Offer", "Offers"},
             {"Order", "Orders"},
+            {"Contracts", "Contracts"},
             {"Invoice", "Orders"},
             {"Company", "Companies"},
             {"Contact", "Contacts"},
             {"OtherCost", "Orders"},
             {"OrderCodes", "Orders"},
+            {"SharedInfo", "Contracts"},
         };
 
         public static string getOrderIdFromInvoice(AuditViewModel item, ApplicationDbContext db)

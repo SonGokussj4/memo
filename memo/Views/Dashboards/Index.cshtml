@@ -13,22 +13,11 @@
     <hr />
 </div>
 
-@* @foreach (var item in @Model)
-{
-    <p>Item: @item.Month, Penizky: @string.Format(CultureInfo.CreateSpecificCulture("cs-CZ"), "{0:C}", item.Cash)</p>
-    <p>Item: @item.Month, Penizky: @item.Cash.ToString("C", CultureInfo.CreateSpecificCulture("ja-JP"))</p>
-} *@
-@*string.Format("{0:#.00}", Convert.ToDecimal(g.Sum(gi => gi.PriceFinalCzk))),
-@for (int i = 0; i < @Model.Months.Count; i++)
-{
-    <p>Mesic: @Model.Months[i], Penizky: @Model.PlannedCashPerMonth[i]</p>
-}
-*@
 
 <form class="form-inline" asp-action="Index" method="get">
     <div class="container d-flex justify-content-around">
         <div class="d-flex" style="flex-direction: column;">
-            <label class="mb-2 font-weight-bold">Období</label>
+            <label class="mb-2 font-weight-bold">Zobrazit po</label>
             <select asp-for="TimePeriod" asp-items="@Model.TimePeriodList" class="form-control shadow-sm auto-post" data-toggle="tooltip" title="Vyberte časové rozmezí"></select>
         </div>
         <div class="d-flex" style="flex-direction: column;">
@@ -36,11 +25,11 @@
             <select asp-for="Year" asp-items="@Model.YearList" class="form-control shadow-sm auto-post" data-toggle="tooltip" title="Zvolte rok"></select>
         </div>
         <div class="d-flex" style="flex-direction: column;">
-            <label class="mb-2 font-weight-bold">Oddělení</label>
+            <label class="mb-2 font-weight-bold">Oddělení (počet faktur)</label>
             <select asp-for="Department" asp-items="@Model.DepartmentList" class="form-control shadow-sm auto-post" data-toggle="tooltip" title="Zvolte oddělení"></select>
         </div>
         <div class="d-flex" style="flex-direction: column;">
-            <label class="mb-2 font-weight-bold">Zákazník</label>
+            <label class="mb-2 font-weight-bold">Zákazník (počet faktur)</label>
             <select asp-for="Customer" asp-items="@Model.CustomerList" class="form-control shadow-sm auto-post" data-toggle="tooltip" title="Zvolte zákazníka"></select>
         </div>
         @* <button id="btnFilter" type="submit" class="btn btn-primary" style="visibility: hidden;"><i class="fa fa-filter fa-fw"></i>Filtrovat</button> *@
@@ -49,146 +38,167 @@
 
 <hr />
 
+@* ============================ *@
+@* BAR CHART - Očekávaný příjem *@
+@* ============================ *@
 <div class="container d-flex justify-content-center">
 
     <div class="container d-flex justify-content-center">
         <div class="card">
             <div class="card-title text-center">
                 <h5>Očekávaný příjem</h5>
-                <h6>(Dle data a částky splatnosti faktur)</h6>
+                <h6>(Vychází z datumů a částek splatnosti faktur v zakázkách)</h6>
             </div>
             <div style="display: flex; align-items: center; justify-content: center;">
-                <div id="chart_container" style="width: 400px;">
-                    <canvas id="bar_chart" width="400" height="400"></canvas>
+                <div id="chart_container" style="width: 800px;">
+                    <canvas id="bar_chart" width="800" height="400"></canvas>
+                    <div class="chart-bottom-tip">Ø: <span>@string.Format(CultureInfo.CreateSpecificCulture("cs-CZ"), "{0:C0}", @Model.barChartAvgValue)</span></div>
+                    <div class="chart-bottom-tip">Σ: <span>@string.Format(CultureInfo.CreateSpecificCulture("cs-CZ"), "{0:C0}", @Model.barChartSumValue)</span></div>
                 </div>
             </div>
         </div>
     </div>
 
+    @* <div class="container d-flex justify-content-center"> *@
+        @* <div class="card"> *@
+            @* <div class="card-title text-center"> *@
+                @* <h5>Status nabídek</h5> *@
+                @* <h6>(Dle data přijetí poptávky)</h6> *@
+            @* </div> *@
+            @* <div style="display: flex; align-items: center; justify-content: center;"> *@
+                @* <div id="chart_container" style="width: 400px;"> *@
+                    @* <canvas id="chart_wonOffers" width="400" height="400"></canvas> *@
+                @* </div> *@
+            @* </div> *@
+        @* </div> *@
+    @* </div> *@
+
+</div>
+
+<hr />
+
+@* ==================================== *@
+@* TABLE - Faktury zakázek se zákazníky *@
+@* ==================================== *@
+<div>
+    <div class="container d-flex justify-content-center py-4">
+        <h2>Faktury zakázek se zákazníky</h2>
+    </div>
+
+    <table
+        id="table"
+        class="table table-sm text-xsmall text-nowrap"
+        style="width:100%"
+        data-cookie="true"
+        data-cookie-id-table="invoicesTableCookie"
+        data-export-data-type="basic"  @* 'basic', 'all', 'selected' *@
+        data-export-footer=false  @* false, true *@
+        data-export-types="['txt', 'csv', 'excel']"  @* ['json', 'xml', 'csv', 'txt', 'sql', 'excel', 'png', 'doc', 'xlsx', 'pdf'] *@
+        data-filter-control="true"
+        data-footer-style="footerStyle"
+        @* data-height="800" *@
+        data-maintain-meta-data="true"
+        data-page-list="[15, 25, 50, 100, All]"
+        data-page-size="15"
+        data-pagination="true"
+        data-show-search-clear-button="true"
+        data-show-toggle="true"
+        data-show-columns-toggle-all="true"
+        data-show-columns="true"
+        data-show-export="true"
+        data-show-footer="true"
+        data-show-fullscreen="true"
+        data-sort-name="3"
+        data-sort-order="desc"
+        data-search="true"
+        data-silent-sort="true"
+        data-toolbar="#toolbar"
+        data-toggle="table"
+        data-virtual-scroll="true"
+        data-visible-search="true"
+        @* data-reorderable-columns="true" *@
+        @* data-show-pagination-switch="true" *@
+        cellspacing="0"
+        style="font-size: 0.9em;"
+        >
+        <thead>
+            <tr>
+                <th scope="col" class="text-center" data-field="0" data-sortable="true" data-filter-control="input">Zakázka</th>
+                <th scope="col" class="text-center" data-field="1" data-sortable="true" data-filter-control="input">Zákazník</th>
+                <th scope="col" class="text-center" data-field="2" data-sortable="true" data-filter-control="input">Termín vystavení <br />faktury</th>
+                <th scope="col" class="text-center" data-field="3" data-sortable="true" data-filter-control="input">Splatnost <br />faktury</th>
+                <th scope="col" class="text-center" data-field="4" data-sortable="true" data-filter-control="input">Oddělení</th>
+                <th scope="col" class="text-center" data-field="5" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatter" data-sorter="priceSorter"></i>Částka</th>
+                <th scope="col" class="text-center" data-field="6" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatterCz" data-sorter="priceSorter"></i>Částka [CZK]</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in @Model.DashboardInvoiceTableViewModel)
+            {
+            <tr>
+                @* Zakázka *@
+                <td class="text-left"><a asp-controller="Orders" asp-action="Edit" asp-route-id="@item.Order.OrderId">@item.Order.OrderName</a></td>
+                @* Zákazník *@
+                <td class="text-left"><a asp-controller="Companies" asp-action="Edit" asp-route-id="@item.Company.CompanyId">@item.Company.Name</a></td>
+                @* Termín vystavení faktury *@
+                <td class="text-center">
+                    <span style="display:none">@String.Format("{0:yyyy-MM-dd HH:mm}",  @item.Invoice.InvoiceIssueDate)</span>  <!-- Hidden span for sorting date correctly-->
+                    @String.Format("{0:dd.MM.yyyy}", @item.Invoice.InvoiceIssueDate)
+                </td>
+                @* Splatnost faktury *@
+                <td class="text-center">
+                    <span style="display:none">@String.Format("{0:yyyy-MM-dd HH:mm}",  @item.Invoice.InvoiceDueDate)</span>  <!-- Hidden span for sorting date correctly-->
+                    @String.Format("{0:dd.MM.yyyy}", @item.Invoice.InvoiceDueDate)
+                </td>
+                @* Oddělení *@
+                <td class="text-right">@item.Invoice.Order.SharedInfo.EveDepartment</td>
+                @* Částka *@
+                <td class="text-right">@string.Format(CultureInfo.CreateSpecificCulture(@item.Currency.CultureCode), "{0:C0}",@item.Invoice.Cost)</td>
+                @* ČástkaCzk *@
+                <td class="text-right">@string.Format(CultureInfo.CreateSpecificCulture("cs-CZ"), "{0:C0}", item.Invoice.CostCzk)</td>
+            </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@* ======================================= *@
+@* TABLE - Úspěšnost jednotlivých oddělení *@
+@* ======================================= *@
+<div>
+    <div class="container d-flex justify-content-center py-4">
+        <h2>Úspěšnost jednotlivých oddělení</h2>
+    </div>
     <div class="container d-flex justify-content-center">
-        <div class="card">
-            <div class="card-title text-center">
-                <h5>Status nabídek</h5>
-                <h6>(Dle data přijetí poptávky)</h6>
-            </div>
-            <div style="display: flex; align-items: center; justify-content: center;">
-                <div id="chart_container" style="width: 400px;">
-                    <canvas id="chart_wonOffers" width="400" height="400"></canvas>
-                </div>
-            </div>
-        </div>
+        <table
+            id="table"
+            class="table table-sm text-xsmall text-nowrap">
+            <thead>
+                <tr>
+                    <th class="text-center">Oddělení</th>
+                    @* <th><span data-toggle="tooltip" title="Vyhrané / (Vyhrané + Prohrané)">Úspěšnost</span></th> *@
+                    <th scope="col" data-toggle="tooltip" title="Vyhrané / (Vyhrané + Prohrané)">Úspěšnost</th>
+                    <th>(Vyhrané)</th>
+                    <th>(Prohrané)</th>
+                    <th>(Čekající)</th>
+                    @* <th>Hodiny</th> *@
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in @Model.DashboardTableVM)
+                {
+                <tr>
+                    <td class="text-left">@item.Department</td>
+                    <td class="text-right">@item.SuccessRate.ToString("P")</td>
+                    <td class="text-right">@item.WonSum</td>
+                    <td class="text-right">@item.LostSum</td>
+                    <td class="text-right">@item.WaitingSum</td>
+                    @* <td class="text-right">---</td> *@
+                </tr>
+                }
+            </tbody>
+        </table>
     </div>
-
-</div>
-
-<hr />
-
-<div class="container d-flex justify-content-center py-4">
-<h2>Úspěšnost jednotlivých oddělení</h2>
-</div>
-
-<div class="container d-flex justify-content-center">
-<table
-    id="table"
-    class="table table-sm text-xsmall text-nowrap">
-    <thead>
-        <tr>
-            <th class="text-center">Oddělení</th>
-            @* <th><span data-toggle="tooltip" title="Vyhrané / (Vyhrané + Prohrané)">Úspěšnost</span></th> *@
-            <th scope="col" data-toggle="tooltip" title="Vyhrané / (Vyhrané + Prohrané)">Úspěšnost</th>
-            <th>(Vyhrané)</th>
-            <th>(Prohrané)</th>
-            <th>(Čekající)</th>
-            @* <th>Hodiny</th> *@
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in @Model.DashboardTableVM)
-        {
-        <tr>
-            <td class="text-left">@item.Department</td>
-            <td class="text-right">@item.SuccessRate.ToString("P")</td>
-            <td class="text-right">@item.WonSum</td>
-            <td class="text-right">@item.LostSum</td>
-            <td class="text-right">@item.WaitingSum</td>
-            @* <td class="text-right">---</td> *@
-        </tr>
-        }
-    </tbody>
-</table>
-</div>
-
-<hr />
-
-<div class="container d-flex justify-content-center py-4">
-<h2>Faktury zakázek se zákazníky</h2>
-</div>
-
-
-<div class="container d-flex justify-content-center">
-<div id="toolbar" style="padding-bottom: 10px;">
-    <button style="margin-right: 5px;" class="btn btn-outline-info" name="BtnMujFilter" id="BtnMujFilter" type="button">
-        <i class="fa fa-filter"></i> Filter
-    </button>
-</div>
-<table
-    id="table"
-    class="table table-sm text-xsmall text-nowrap"
-    data-cookie="true"
-    data-cookie-id-table="invoicesTableCookie"
-    data-export-data-type="basic"  @* 'basic', 'all', 'selected' *@
-    data-export-footer=false  @* false, true *@
-    data-export-types="['txt', 'csv', 'excel']"  @* ['json', 'xml', 'csv', 'txt', 'sql', 'excel', 'png', 'doc', 'xlsx', 'pdf'] *@
-    data-filter-control="false"
-    data-footer-style="footerStyle"
-    data-height="800"
-    data-show-search-clear-button="true"
-    data-show-toggle="true"
-    data-show-columns-toggle-all="true"
-    data-show-columns="true"
-    data-show-fullscreen="true"
-    data-sort-name="DateCreated"
-    data-sort-order="desc"
-    data-search="true"
-    data-silent-sort="true"
-    data-show-export="true"
-    data-show-footer="true"
-    data-toolbar="#toolbar"
-    data-toggle="table"
-    data-virtual-scroll="true"
-    data-visible-search="true"
-    style="font-size: 0.9em;"
-    >
-    <thead>
-        <tr>
-            <th scope="col" class="text-center" data-field="0" data-sortable="true" data-filter-control="input"></i>Zakázka</th>
-            <th scope="col" class="text-center" data-field="1" data-sortable="true" data-filter-control="input"></i>Zákazník</th>
-            <th scope="col" class="text-center" data-field="2" data-sortable="true" data-filter-control="input"></i>Termín vystavení <br />faktury</th>
-            <th scope="col" class="text-center" data-field="3" data-sortable="true" data-filter-control="input"></i>Splatnost <br />faktury</th>
-            <th scope="col" class="text-center" data-field="4" data-sortable="true" data-filter-control="input"></i>Částka</th>
-            <th scope="col" class="text-center" data-field="5" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatterCz" data-sorter="priceSorter"></i>ČástkaCzk</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in @Model.DashboardInvoiceTableViewModel)
-        {
-        <tr>
-            <td class="text-left"><a asp-controller="Orders" asp-action="Edit" asp-route-id="@item.Order.OrderId">@item.Order.OrderName</a></td>
-            <td class="text-left"><a asp-controller="Companies" asp-action="Edit" asp-route-id="@item.Company.CompanyId">@item.Company.Name</a></td>
-            <td class="text-center">
-                <span style="display:none">@String.Format("{0:yyyy-MM-dd HH:mm}",  @item.Invoice.InvoiceIssueDate)</span>  <!-- Hidden span for sorting date correctly-->
-                @String.Format("{0:dd.MM.yyyy}", @item.Invoice.InvoiceIssueDate)
-            </td>
-            <td class="text-center">
-                <span style="display:none">@String.Format("{0:yyyy-MM-dd HH:mm}",  @item.Invoice.InvoiceDueDate)</span>  <!-- Hidden span for sorting date correctly-->
-                @String.Format("{0:dd.MM.yyyy}", @item.Invoice.InvoiceDueDate)
-            </td>
-            <td class="text-right">@string.Format(CultureInfo.CreateSpecificCulture(@item.Currency.CultureCode), "{0:C0}",@item.Invoice.Cost)</td>
-            <td class="text-right">@string.Format(CultureInfo.CreateSpecificCulture("cs-CZ"), "{0:C0}", item.Invoice.CostCzk)</td>
-        </tr>
-        }
-    </tbody>
-</table>
 </div>
 
 
@@ -202,6 +212,11 @@
 
     // Add .auto-post class to ComboBox, when changed, it will autosubmit form
     $(document).ready(function () {
+
+        $('#Department').change( function () {
+            $('#Customer').val('');
+        });
+
         $('form').find('select.auto-post').change(function () {
             if ($('form').find('select.auto-post').val() != "range") {
                 $(this).parents('form').submit();
@@ -212,39 +227,29 @@
                 console.log("Zobrazuji");
             }
         });
-
-        //$('form').find('#TimePeriod').change(function() {
-        //    console.log("Hmm");
-        //    var hmm = $(this).find('InputRanges')
-        //    console.log(`hmm: ${hmm}`);
-        //});
     });
 
-    // ----------------------------------------------------------------------------------------------
-    // Graf - Očekávaný příjem v průběhu měsíců
-    // ----------------------------------------------------------------------------------------------
+    // =====================================================
+    // BAR CHART - Očekávaný příjem
+    // =====================================================
 
-    var filter = @Html.Raw(Json.Serialize(Model.TimePeriod))
+    var canvas = document.getElementById("bar_chart");
+    var ctx = canvas.getContext("2d");
+
     var items = @Html.Raw(Json.Serialize(Model.DashboardCashVM));
-    if (filter == "months")
-    {
-        var monthArray = items.map(a => new Date(a.month).toLocaleString('cs-CZ', { month: 'long' }));
-    }
-    else if(filter == "weeks")
-    {
-        var monthArray = items.map(a => a.week);
-    }
-    var cashArray = items.map(a => a.cash);
 
-    var ctx = document.getElementById('bar_chart');
+    var xValues = '@Html.Raw(Model.TimePeriod)' == "months" ? items.map(a => new Date(2021, a.month - 1, 15).toLocaleString('cs-CZ', { month: 'long' })) : items.map(a => a.week);
+    var yValues = items.map(a => a.cash);
+
+    @* var ctx = document.getElementById('bar_chart'); *@
 
     var barChart = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: monthArray,
+            labels: xValues,
             datasets: [{
                 label: 'Příjem v Kč',
-                data: cashArray,
+                data: yValues,
                 fillColor: "#79D1CF",
                 backgroundColor: '#4d8fdb',
                 borderColor: '#4179ba',
@@ -269,84 +274,91 @@
                         return tooltipItem.yLabel.toLocaleString('cs-CZ') + ' Kč';
                     }
                 }
-            }
-        }
-    });
-
-    // ----------------------------------------------------------------------------------------------
-    // Graf - Vyhrané/celkem zadané nabídky v průběhu měsíců
-    // ----------------------------------------------------------------------------------------------
-    var ctx = document.getElementById('chart_wonOffers');
-
-    var items = @Html.Raw(Json.Serialize(Model.DashboardWonOffersVM));
-    var monthArray = items.map(a => new Date(a.month).toLocaleString('cs-CZ', { month: 'long' }));
-    var allArray = items.map(a => a.all);
-    var waitArray = items.map(a => a.wait);
-    var wonArray = items.map(a => a.won);
-    var lostArray = items.map(a => a.lost);
-
-    var barChart = new Chart(ctx, {
-        type: 'horizontalBar',
-        data: {
-            labels: monthArray,
-            datasets: [
-                {
-                    label: 'Čekají',
-                    data: waitArray,
-                    fillColor: "#949494",
-                    backgroundColor: '#949494',
-                    borderColor: '#6e6e6e',
-                    borderWidth: 1,
-                    barPercentage: 0.8,
-                },
-                {
-                    label: 'Vyhrané',
-                    data: wonArray,
-                    fillColor: "#79D1CF",
-                    backgroundColor: '#2db53a',
-                    borderColor: '#208029',
-                    borderWidth: 1,
-                    barPercentage: 0.8,
-                },
-                {
-                    label: 'Prohrané',
-                    data: lostArray,
-                    fillColor: "#79D1CF",
-                    backgroundColor: 'rgba(255, 0, 0, 0.6)',
-                    borderColor: 'rgba(230, 20, 20, 0.8)',
-                    borderWidth: 1,
-                    barPercentage: 0.8,
-                },
-            ]
-        },
-        options: {
-            scales: {
-                xAxes: [{
-                    ticks: {
-                        beginAtZero: true,
-                        steps: 1,
-                        stepValue: 1,
-                        min: 0,
-                        callback: function(value, index, values) {
-                            return value.toLocaleString('cs-CZ');
-                        }
-                    }
-                }],
             },
-            tooltips: {
-                callbacks: {
-                    label: function(tooltipItem, data) {
-                        return ' ' + tooltipItem.xLabel.toLocaleString('cs-CZ') + ' / ' + allArray[tooltipItem.index] + ' - ' + data.datasets[tooltipItem.datasetIndex].label;
-                    }
+            "horizontalLine": [
+                {
+                    "y": @Html.Raw(Model.barChartAvgValue),
+                    "style": "rgba(77, 143, 219, .6)",
+                    "text": "avg",
                 }
-            }
+            ]
         }
     });
 
+//    // =====================================================
+//    // Graf - Vyhrané/celkem zadané nabídky v průběhu měsíců
+//    // =====================================================
+//    var ctx = document.getElementById('chart_wonOffers');
+//
+//    var items = @Html.Raw(Json.Serialize(Model.DashboardWonOffersVM));
+//    var xValues = items.map(a => new Date(a.month).toLocaleString('cs-CZ', { month: 'long' }));
+//    var allArray = items.map(a => a.all);
+//    var waitArray = items.map(a => a.wait);
+//    var wonArray = items.map(a => a.won);
+//    var lostArray = items.map(a => a.lost);
+//
+//    var barChart = new Chart(ctx, {
+//        type: 'horizontalBar',
+//        data: {
+//            labels: xValues,
+//            datasets: [
+//                {
+//                    label: 'Čekají',
+//                    data: waitArray,
+//                    fillColor: "#949494",
+//                    backgroundColor: '#949494',
+//                    borderColor: '#6e6e6e',
+//                    borderWidth: 1,
+//                    barPercentage: 0.8,
+//                },
+//                {
+//                    label: 'Vyhrané',
+//                    data: wonArray,
+//                    fillColor: "#79D1CF",
+//                    backgroundColor: '#2db53a',
+//                    borderColor: '#208029',
+//                    borderWidth: 1,
+//                    barPercentage: 0.8,
+//                },
+//                {
+//                    label: 'Prohrané',
+//                    data: lostArray,
+//                    fillColor: "#79D1CF",
+//                    backgroundColor: 'rgba(255, 0, 0, 0.6)',
+//                    borderColor: 'rgba(230, 20, 20, 0.8)',
+//                    borderWidth: 1,
+//                    barPercentage: 0.8,
+//                },
+//            ]
+//        },
+//        options: {
+//            scales: {
+//                xAxes: [{
+//                    ticks: {
+//                        beginAtZero: true,
+//                        steps: 1,
+//                        stepValue: 1,
+//                        min: 0,
+//                        callback: function(value, index, values) {
+//                            return value.toLocaleString('cs-CZ');
+//                        }
+//                    }
+//                }],
+//            },
+//            tooltips: {
+//                callbacks: {
+//                    label: function(tooltipItem, data) {
+//                        return ' ' + tooltipItem.xLabel.toLocaleString('cs-CZ') + ' / ' + allArray[tooltipItem.index] + ' - ' + data.datasets[tooltipItem.datasetIndex].label;
+//                    }
+//                }
+//            }
+//        }
+//    });
 
-    // ==================
-    // INVOICE TABLE
-    // ==================
+
+    // ====================================
+    // TABLE - Faktury zakázek se zákazníky
+    // ====================================
     function footerStyle(row, index) {
         return {
             css: {
@@ -355,36 +367,5 @@
         };
     };
 
-    function priceFormatterCz(data) {
-        var field = parseInt(this.field);
-        //var field = parseInt(this.field.replace(",", "").replace("&nbsp;", "").replace(" ", "").replace("Kč", ""));
-        //var field = parseInt(this.field).val().replace(/[^0-9]/g, '')
-        var vysledek = data.map(function (row) {
-            var cost = parseInt(row[field]
-                //.replace(/, (Kč)(&nbsp);/g, ''));
-                .replaceAllTxt(",", "")
-                .replaceAllTxt("&nbsp;", "")
-                .replaceAllTxt(" ", "")
-                .replaceAllTxt("Kč", "")
-                ) || 0;
-            //console.log(`CostCz: ${cost}`);
-            return + cost
-        }).reduce(function (sum, i) {
-            return sum + i
-        }, 0)
-        return vysledek.toLocaleString('cs-CZ') + ' Kč'
-    }
-
-    function priceSorter(a, b) {
-        let aa = a.replaceAllTxt(' Kč', '').replaceAllTxt('&nbsp;', '').replaceAllTxt('€', '').replaceAllTxt('$;', '')
-        let bb = b.replaceAllTxt(' Kč', '').replaceAllTxt('&nbsp;', '').replaceAllTxt('€', '').replaceAllTxt('$;', '')
-        return aa - bb
-    }
-
-    //function dateSorter(a, b) {
-    //    var aa = a.replaceAllTxt(' Kč', '').replaceAllTxt('&nbsp;', '').replaceAllTxt('€', '').replaceAllTxt('$;', '')
-    //    var bb = b.replaceAllTxt(' Kč', '').replaceAllTxt('&nbsp;', '').replaceAllTxt('€', '').replaceAllTxt('$;', '')
-    //    return aa - bb
-    //}
 </script>
 }

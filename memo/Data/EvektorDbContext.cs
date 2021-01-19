@@ -11,12 +11,9 @@ namespace memo.Data
 {
     public partial class EvektorDbContext : DbContext
     {
-        // public EvektorDbContext()
-        // {
-        // }
-
         public EvektorDbContext(DbContextOptions<EvektorDbContext> options) : base(options)
         {
+            // this.ChangeTracker.LazyLoadingEnabled = false;
         }
 
         public virtual DbSet<tWorks> tWorks { get; set; }

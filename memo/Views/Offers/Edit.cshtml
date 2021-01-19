@@ -27,11 +27,6 @@
         font-weight: 600;
     }
 
-    .cardTitleMerged {
-        display: flex;
-        justify-content: space-between;
-    }
-
     .wonOffer {
         border: 1px solid #ced4da;
         margin: 0px -15px;
@@ -57,6 +52,8 @@
 
         <input type="hidden" asp-for="Offer.OfferId" />
         <input type="hidden" asp-for="Offer.OfferStatusId" />
+        @* <input type="hidden" asp-for="Offer.SharedInfoId" /> *@
+        <input type="hidden" asp-for="Offer.SharedInfo.SharedInfoId" />
 
         <div class="cardTitleMerged">
 
@@ -122,9 +119,8 @@
             </div>
         </div>
 
-        <div class="createOffer" style="display: none;">
+        <div class="createOrder" style="display: none;">
 
-            @* <hr /> *@
             <div class="form-group row">
 
                 <table class="table table-sm mt-3" style="font-size: 0.9em;">
@@ -141,12 +137,16 @@
                     {
                         <tr>
                             <td class="pl-3"><a asp-action="Edit" asp-controller="Orders" asp-route-id="@order.OrderId">@order.OrderName</a></td>
-                            <td class="text-right">@string.Format(CultureInfo.CreateSpecificCulture(@order.Offer?.Currency.CultureCode), "{0:C0}", @order.NegotiatedPrice)</td>
+                            <td class="text-right">@string.Format(CultureInfo.CreateSpecificCulture(@order.Offer?.SharedInfo.Currency.CultureCode), "{0:C0}", @order.NegotiatedPrice)</td>
                             <td class="text-right">
-                                @string.Format(CultureInfo.CreateSpecificCulture(@order.Offer?.Currency.CultureCode), "{0:C0}", @order.PriceFinal)
+                                @string.Format(CultureInfo.CreateSpecificCulture(@order.Offer?.SharedInfo.Currency.CultureCode), "{0:C0}", @order.PriceFinal)
                                 <div class="progress" style="height: 5px; margin-left: 25%;">
                                 @{
-                                    int percentValue = (int)Math.Ceiling((double)order.PriceFinal / order.NegotiatedPrice * 100);
+                                    int percentValue = 0;
+                                    if (order.NegotiatedPrice != 0)
+                                    {
+                                        percentValue = (int)Math.Ceiling((decimal)order.PriceFinal / order.NegotiatedPrice * 100);
+                                    }
                                     string progressBarWidth = percentValue <= 100 ? (percentValue).ToString() : "100";
                                     string progressbarClassColor = percentValue <= 100 ? "" : "bg-danger";
                                 }
@@ -163,7 +163,7 @@
             </div>
         </div>
 
-        <div class="createOffer" style="display: none;">
+        <div class="createOrder" style="display: none;">
             @* <hr /> *@
             <div class="form-group row text-center">
                 <div class="col-md-12 from-control">
@@ -191,13 +191,13 @@
         <hr />
 
         <div class="form-group row">
-            <label asp-for="Offer.ReceiveDate" class="required col-lg-3 col-form-label form-control-label control-label"></label>
+            <label asp-for="Offer.SharedInfo.ReceiveDate" class="required col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-9 mycalendar">
                 <span class="has-float-label">
-                    <input asp-for="Offer.ReceiveDate" class="form-control" type="text" placeholder=" " required="" autocomplete="off"/>
-                    <label asp-for="Offer.ReceiveDate">Datum přijetí poptávky</label>
+                    <input asp-for="Offer.SharedInfo.ReceiveDate" class="form-control" type="text" placeholder=" " required="" autocomplete="off"/>
+                    <label asp-for="Offer.SharedInfo.ReceiveDate">Datum přijetí poptávky</label>
                 </span>
-                <span asp-validation-for="Offer.ReceiveDate" class="text-danger"></span>
+                <span asp-validation-for="Offer.SharedInfo.ReceiveDate" class="text-danger"></span>
             </div>
         </div>
 
@@ -213,13 +213,13 @@
         </div>
 
         <div class="form-group row">
-            <label asp-for="Offer.Subject" class="required col-lg-3 col-form-label form-control-label control-label"></label>
+            <label asp-for="Offer.SharedInfo.Subject" class="required col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-9">
                 <span class="has-float-label">
-                    <input asp-for="Offer.Subject" class="form-control" placeholder="Krátký popis nabídky" type="text" />
-                    <label asp-for="Offer.Subject">Předmět nabídky</label>
+                    <input asp-for="Offer.SharedInfo.Subject" class="form-control" placeholder="Krátký popis nabídky" type="text" />
+                    <label asp-for="Offer.SharedInfo.Subject">Předmět nabídky</label>
                 </span>
-                <span asp-validation-for="Offer.Subject" class="text-danger"></span>
+                <span asp-validation-for="Offer.SharedInfo.Subject" class="text-danger"></span>
             </div>
         </div>
 
@@ -227,34 +227,33 @@
             <label class="required col-lg-3 col-form-label form-control-label control-label">Evektor</label>
             <div class="col-lg-2">
                 <span class="has-float-label">
-                    <select class="form-control" asp-for="Offer.EveDivision" asp-items="@Model.Offer.EveDivisionList"></select>
-                    <label asp-for="Offer.EveDivision">Divize</label>
+                    <select class="form-control" asp-for="Offer.SharedInfo.EveDivision" asp-items="Model.Offer.EveDivisionList"></select>
+                    <label asp-for="Offer.SharedInfo.EveDivision">Divize</label>
                 </span>
-                <span asp-validation-for="Offer.EveDivision" class="text-danger"></span>
+                <span asp-validation-for="Offer.SharedInfo.EveDivision" class="text-danger"></span>
             </div>
             <div class="col-lg-3">
                 <span class="has-float-label">
-                    <select asp-for="Offer.EveDepartment" asp-items="ViewBag.DepartmentList" class="form-control"></select>
-                    <label asp-for="Offer.EveDepartment">Oddělení</label>
+                    <select asp-for="Offer.SharedInfo.EveDepartment" asp-items="Model.DepartmentList" class="form-control"></select>
+                    <label asp-for="Offer.SharedInfo.EveDepartment">Oddělení</label>
                 </span>
-                <span asp-validation-for="Offer.EveDepartment" class="text-danger"></span>
+                <span asp-validation-for="Offer.SharedInfo.EveDepartment" class="text-danger"></span>
             </div>
             <div class="col-lg-4">
                 <div data-toggle="tooltip" title="Nabídku vytvořil">
-                    <select class="form-control selectpicker" asp-for="Offer.EveCreatedUser" asp-items="@ViewBag.EveContactList"></select>
+                    <select class="form-control selectpicker" asp-for="Offer.SharedInfo.EveCreatedUser" asp-items="@Model.EveContactList"></select>
                 </div>
-                <span asp-validation-for="Offer.EveCreatedUser" class="text-danger"></span>
+                <span asp-validation-for="Offer.SharedInfo.EveCreatedUser" class="text-danger"></span>
             </div>
         </div>
 
         <div class="form-group row customerOffer">
             <label class="col-lg-3 col-form-label form-control-label control-label">Zákazník</label>
             <div class="col-lg-4">
-                @* @Html.DropDownListFor(model => model.CompanyId, ViewBag.CompanyList as SelectList, "-- Vyber firmu --", new { @class = "form-control selectpicker", @style = "width: 100%;" }) *@
-                <select class="form-control selectpicker" asp-for="Offer.CompanyId" asp-items="@Model.CompanyList">
+                <select class="form-control selectpicker" asp-for="Offer.SharedInfo.CompanyId" asp-items="@Model.CompanyList">
                     <option>-- Vyber firmu --</option>
                 </select>
-                <span asp-validation-for="CompanyId" class="text-danger"></span>
+                <span asp-validation-for="Offer.SharedInfo.CompanyId" class="text-danger"></span>
             </div>
             <div class="col-lg-1" data-toggle="tooltip" title="Nová firma">
                 <a asp-action="create" asp-controller="Companies" target="_blank">
@@ -262,8 +261,8 @@
                 </a>
             </div>
             <div class="col-lg-3">
-                <select class="form-control selectpicker" asp-for="Offer.ContactId" asp-items="@ViewBag.ContactList"></select>
-                <span asp-validation-for="ContactId" class="text-danger"></span>
+                <select class="form-control selectpicker" asp-for="Offer.SharedInfo.ContactId" asp-items="Model.ContactList"></select>
+                <span asp-validation-for="Offer.SharedInfo.ContactId" class="text-danger"></span>
             </div>
             <div class="col-lg-1" data-toggle="tooltip" title="Nový kontakt">
                 <a asp-action="create" asp-controller="Contacts" target="_blank">
@@ -273,38 +272,38 @@
         </div>
 
         <div class="form-group row">
-            <label asp-for="Offer.Price" class="required col-lg-3 col-form-label form-control-label control-label"></label>
+            <label asp-for="Offer.SharedInfo.Price" class="required col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-5">
                 <span class="has-float-label">
-                    <input asp-for="Offer.Price" class="form-control" type="text" placeholder=" "/>
-                    <label asp-for="Offer.Price">Cena bez DPH</label>
+                    <input asp-for="Offer.SharedInfo.Price" class="form-control" type="text" placeholder=" "/>
+                    <label asp-for="Offer.SharedInfo.Price">Cena bez DPH</label>
                 </span>
-                <span asp-validation-for="Offer.Price" class="text-danger"></span>
+                <span asp-validation-for="Offer.SharedInfo.Price" class="text-danger"></span>
             </div>
             <div class="col-lg-2">
                 <span class="has-float-label">
-                    <select asp-for="Offer.CurrencyId" asp-items="ViewBag.CurrencyList" class="form-control"></select>
-                    <label asp-for="Offer.CurrencyId">Měna</label>
+                    <select asp-for="Offer.SharedInfo.CurrencyId" asp-items="Model.CurrencyListNoRate" class="form-control"></select>
+                    <label asp-for="Offer.SharedInfo.CurrencyId">Měna</label>
                 </span>
-                <span asp-validation-for="Offer.Currency" class="text-danger"></span>
+                <span asp-validation-for="Offer.SharedInfo.CurrencyId" class="text-danger"></span>
             </div>
             <div class="col-lg-2">
-                <span class="has-float-label">
-                    <input asp-for="Offer.ExchangeRate" class="form-control" type="text" data-toggle="tooltip" data-placement="top" title="Měnový kurz z ČNB" />
-                    <label asp-for="Offer.ExchangeRate">Kurz</label>
+                <span class="has-float-label hiddenOnLoad">
+                    <input asp-for="Offer.SharedInfo.ExchangeRate" class="form-control" type="text" data-toggle="tooltip" data-placement="top" title="Měnový kurz z ČNB" />
+                    <label asp-for="Offer.SharedInfo.ExchangeRate">Kurz</label>
                 </span>
-                <span asp-validation-for="Offer.ExchangeRate" class="text-danger"></span>
+                <span asp-validation-for="Offer.SharedInfo.ExchangeRate" class="text-danger"></span>
             </div>
         </div>
 
         <div class="form-group row">
-            <label asp-for="Offer.EstimatedFinishDate" class="col-lg-3 col-form-label form-control-label control-label"></label>
+            <label asp-for="Offer.SharedInfo.EstimatedFinishDate" class="col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-9 mycalendar">
                 <span class="has-float-label">
-                    <input asp-for="Offer.EstimatedFinishDate" class="form-control" type="text" autocomplete="off" placeholder=" "/>
-                    <label asp-for="Offer.EstimatedFinishDate">Předpodkládaný termín ukončení</label>
+                    <input asp-for="Offer.SharedInfo.EstimatedFinishDate" class="form-control" type="text" autocomplete="off" placeholder=" "/>
+                    <label asp-for="Offer.SharedInfo.EstimatedFinishDate">Předpodkládaný termín ukončení</label>
                 </span>
-                <span asp-validation-for="Offer.EstimatedFinishDate" class="text-danger"></span>
+                <span asp-validation-for="Offer.SharedInfo.EstimatedFinishDate" class="text-danger"></span>
             </div>
         </div>
 
@@ -322,10 +321,8 @@
         <div class="form-group row">
             <div class="col-lg-12">
                 <div class="d-flex justify-content-between">
-                    <label asp-for="Offer.CreatedDate" ></label>
-                    <b>@Model.Offer.CreatedDate</b>
-                    <label asp-for="Offer.ModifiedDate"></label>
-                    <b>@Model.Offer.ModifiedDate</b>
+                    <label asp-for="Offer.CreatedDate" ></label> <b>@Model.Offer.CreatedDate</b>
+                    <label asp-for="Offer.ModifiedDate"></label> <b>@Model.Offer.ModifiedDate</b>
                 </div>
             </div>
         </div>
@@ -374,7 +371,7 @@
             <div class="modal-body">
                 Opravdu smazat?<br />
                 Ev. Číslo: <b>@Model.Offer.OfferName</b><br />
-                Předmět: <b>@Model.Offer.Subject</b>
+                Předmět: <b>@Model.Offer.SharedInfo.Subject</b>
             </div>
             <!-- footer -->
             <div class="modal-footer">
@@ -393,6 +390,63 @@
     <script src="~/js/CustomValidation.js"></script>
 
     <script>
+
+        let offerName = '@Html.Raw(@Model.Offer.OfferName)';
+
+        $(document).ready(function(){
+            handleExchangeRateVisibility(firstLoad=true);
+            checkItemNameExists($("#Offer_OfferName"), 'Offers', ignoreName=offerName);
+        });
+
+        $("#Offer_OfferName").keyup(function() {
+            checkItemNameExists($(this), 'Offers', ignoreName=offerName);
+        });
+
+        // Changing currency Selectlist behaviour
+        $('select#Offer_SharedInfo_CurrencyId').on('change', function() {
+            handleExchangeRateVisibility();
+        });
+
+        function handleExchangeRateVisibility(firstLoad) {
+            let currencySymbol = $('select#Offer_SharedInfo_CurrencyId').find("option:selected").text();  // selected text
+            let exchangeRate = getExchangeRate(currencySymbol);  // call baseController function to get 'EUR' --> '26.360'
+
+            let txtExchangeRate = null;
+            if (firstLoad == true) {
+                txtExchangeRate = $('#Offer_SharedInfo_ExchangeRate');
+            }
+            else {
+                txtExchangeRate = $('#Offer_SharedInfo_ExchangeRate').val(exchangeRate);
+            }
+
+            // Handle visibility of the textbox (don't show when CZK is selected)
+            if(exchangeRate == "1" && txtExchangeRate.is(":visible")) {
+                txtExchangeRate.parent().hide();
+            }
+            else if(exchangeRate != "1" && txtExchangeRate.not(":visible")) {
+                txtExchangeRate.parent().show();
+            };
+        };
+
+        function getExchangeRate(currencySymbol) {
+            let exchangeRate = "";
+            $.ajax({
+                url: '@Url.Action("getCurrencyStr", "Base")',
+                data: { symbol: currencySymbol },
+                type: 'GET',
+                dataType: 'json',
+                contentType: "application/json; charset=utf-8",
+                // we set cache: false because GET requests are often cached by browsers
+                // IE is particularly aggressive in that respect
+                cache: false,
+                async: false,
+                success: function (data) {
+                    exchangeRate = data;
+                },
+                error: function () {},
+            });
+            return exchangeRate;
+        }
 
         // MODAL dialog for delete confirmation
         //-------------------------------------
@@ -453,7 +507,7 @@
                 case 2:
                     $('.offerWait').show();
                     $('.offerLost').show();
-                    $('.createOffer').show();
+                    $('.createOrder').show();
                     break;
                 case 3:
                     $('.offerWait').show();
