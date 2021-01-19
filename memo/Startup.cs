@@ -47,19 +47,19 @@ namespace memo
             }
 
             services.AddDbContext<LoginDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("Develompent_MemoDB")));
+                options.UseSqlServer(Configuration.GetConnectionString("DevelopmentLocal_MemoDB")));
 
             services.AddDbContext<ApplicationDbContext>(options =>
                 // options.UseSqlServer(Configuration.GetConnectionString("ProductionDB_Evektor")));
-                options.UseSqlServer(Configuration.GetConnectionString("Develompent_MemoDB")));
+                options.UseSqlServer(Configuration.GetConnectionString("DevelopmentLocal_MemoDB")));
 
             services.AddDbContext<EvektorDbContext>(options =>
                 //   options.UseSqlServer(Configuration.GetConnectionString("ProductionDB_Evektor")));
-                options.UseSqlServer(Configuration.GetConnectionString("Develompent_MemoDB")));
+                options.UseSqlServer(Configuration.GetConnectionString("DevelopmentLocal_MemoDB")));
 
             services.AddDbContext<EvektorDochnaDbContext>(options =>
                 //   options.UseSqlServer(Configuration.GetConnectionString("ProductionDB_Dochadzka")));
-                options.UseSqlServer(Configuration.GetConnectionString("Develompent_MemoDB")));
+                options.UseSqlServer(Configuration.GetConnectionString("DevelopmentLocal_MemoDB")));
 
             //services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
 
