@@ -231,15 +231,14 @@ function initializeOrderAjaxModalClickEvent() {
     // all buttons with data-toggle equal to ajax-modal
     $('button[data-toggle="ajax-modal"]').unbind('click');  // first unbind click or it will duplicate the event to existing DOM objects
     $('button[data-toggle="ajax-modal"]').click(function (event) {
-        let url = $(this).data('url');
-        // let id = $(this).data('id');
+        var url = $(this).data("url") + "/" + $(this).val();
         console.log("initializeOrderAjaxModalClickEvent: " + url);
         $.get(url).done(function (data) {
             $('#modal-placeholder').html(data);
             // $('#modal-placeholder-' + id).html(data);
             $('#modal-placeholder > .modal').modal('show');
             // $('#modal-placeholder-' + id + ' > .modal').modal('show');
-            initializeSelectpicker();
+            // initializeSelectpicker();
         });
     });
 }
@@ -252,7 +251,7 @@ $('body').on('load', 'div[data-toggle=checkboxes]', function () {
 
 // Modal, user select OrderCode, press Vlozit, it will insert value into a distinc val
 function OrderCodeToInput(id) {
-    console.log("OrderCodeToInput id: " + id);
+    // console.log("OrderCodeToInput id: " + id);
     let SelectValue = $(`#SelectedOrderCode_${id}`).val();
     $(`#Order_OrderCodes_${id}__OrderCode`).val(SelectValue).blur();
 }
@@ -409,3 +408,197 @@ function priceFormatter(data) {
 //    $("#orderForm").css("visibility", "visible");
 //});
 
+
+// ==========================================================================
+// AJAX - LOAD DATA WHEN SELECTLIST IS OPEN
+// ==========================================================================
+$(".select-department-ajax").select2({
+    placeholder: "-- Vyber oddělení --",
+    minimumInputLength: 0,  // minimum number of characters required to start a search
+    dropdownAutoWidth: true,  // make width of the dropdown to MAX of the longest item
+    allowClear: false,  // 'times' button to click for emptying selection
+    minimumResultsForSearch: 0,  // '-1' to disable search box
+    language: { searching: function() { return null; } }, // disable/change "Searching..." text
+    ajax: {
+        // url: '@Url.Action("getDepartmentsJson", "Evektor")',
+        url: `${getBaseUrl()}/Evektor/getDepartmentsJson`,
+        dataType: 'json',
+        type: 'Get',
+        delay: 150,
+        data: function (params) {
+            return {
+                match: params.term,  // search term
+                pageSize: params.pageSize || 100,  // how many items on page
+            };
+        },
+        processResults: function (data) {
+            return {
+                // data = return Json { items = [ { id: 1, text: "one" }, { id: 2, text: "two" } ] }
+                // results: data.items
+                // data = return Json { items = [ SelectListItem { Value: 1, Text: "one" }, SelectListItem { Value: 2, Text: "two" } ] }
+                results: $.map(data.items, function(item) {
+                    return {
+                        id: item.value,  // need to be lowercase "v"
+                        text: item.text  // need to be lowercase "t"
+                    };
+                }),
+            };
+        },
+        cache: true,
+    },
+});
+
+
+$(".select-user-ajax").select2({
+    placeholder: "-- Vyber uživatele --",
+    minimumInputLength: 0,  // minimum number of characters required to start a search
+    dropdownAutoWidth: true,  // make width of the dropdown to MAX of the longest item
+    allowClear: false,  // 'times' button to click for emptying selection
+    minimumResultsForSearch: 0,  // '-1' to disable search box
+    language: { searching: function() { return null; } }, // disable/change "Searching..." text
+    ajax: {
+        // url: '@Url.Action("getUsersJson", "Evektor")',
+        url: `${getBaseUrl()}/Evektor/getUsersJson`,
+        dataType: 'json',
+        type: 'Get',
+        delay: 150,
+        data: function (params) {
+            return {
+                match: params.term,  // search term
+                pageSize: params.pageSize || 100,  // how many items on page
+                // filter: $(".select-department").children("option:selected").val(),
+            };
+        },
+        processResults: function (data) {
+            return {
+                // data = return Json { items = [ { id: 1, text: "one" }, { id: 2, text: "two" } ] }
+                // results: data.items
+                // data = return Json { items = [ SelectListItem { Value: 1, Text: "one" }, SelectListItem { Value: 2, Text: "two" } ] }
+                results: $.map(data.items, function(item) {
+                    return {
+                        id: item.value,  // need to be lowercase "v"
+                        text: item.text  // need to be lowercase "t"
+                    };
+                })
+            };
+        },
+        cache: true,
+    },
+});
+
+
+$(".select-company-ajax").select2({
+    placeholder: "-- Vyber firmu --",
+    minimumInputLength: 0,  // minimum number of characters required to start a search
+    dropdownAutoWidth: true,  // make width of the dropdown to MAX of the longest item
+    allowClear: true,  // 'times' button to click for emptying selection
+    minimumResultsForSearch: 0,  // '-1' to disable search box
+    language: { searching: function() { return null; } }, // disable "Searching..." text
+    ajax: {
+        // url: '@Url.Action("getCompaniesJson", "Companies")',
+        url: `${getBaseUrl()}/Companies/getCompaniesJson`,
+        dataType: 'json',
+        type: 'Get',
+        delay: 150,
+        data: function (params) {
+            return {
+                match: params.term,  // search term
+                pageSize: params.pageSize || 100,  // how many items on page
+            };
+        },
+        processResults: function (data) {
+            return {
+                results: $.map(data.items, function(item) {
+                    return {
+                        id: item.value,
+                        text: item.text
+                    };
+                })
+            };
+        },
+        cache: true,
+    },
+});
+
+
+$(".select-contact-ajax").select2({
+    placeholder: "-- Vyber kontakt --",
+    minimumInputLength: 0,  // minimum number of characters required to start a search
+    dropdownAutoWidth: true,  // make width of the dropdown to MAX of the longest item
+    allowClear: false,  // 'times' button to click for emptying selection
+    minimumResultsForSearch: 0,  // '-1' to disable search box
+    language: { searching: function() { return null; } }, // disable/change "Searching..." text
+    ajax: {
+        //url: '@Url.Action("getContactsJson", "Contacts")',
+        url: `${getBaseUrl()}/Contacts/getContactsJson`,
+        dataType: 'json',
+        type: 'Get',
+        delay: 150,
+        data: function (params) {
+            return {
+                match: params.term,  // search term
+                pageSize: params.pageSize || 100,  // how many items on page
+                filter: $(".select-company-ajax").children("option:selected").val(),
+            };
+        },
+        processResults: function (data) {
+            return {
+                results: $.map(data.items, function(item) {
+                    return {
+                        id: item.value,
+                        text: item.text
+                    };
+                })
+            };
+        },
+        cache: true,
+    },
+});
+// =================================
+// CHART.JS PLUGIN - HORIZONTAL LINE
+// =================================
+var horizonalLinePlugin = {
+    afterDraw: function(chartInstance) {
+        var yScale = chartInstance.scales["y-axis-0"];
+        var canvas = chartInstance.chart;
+        var ctx = canvas.ctx;
+        var index;
+        var line;
+        var style;
+
+        if (chartInstance.options.horizontalLine) {
+            for (index = 0; index < chartInstance.options.horizontalLine.length; index++) {
+                line = chartInstance.options.horizontalLine[index];
+
+                if (!line.style) {
+                    style = "rgba(169,169,169, .6)";
+                } else {
+                    style = line.style;
+                }
+
+                if (line.y) {
+                    yValue = yScale.getPixelForValue(line.y);
+                } else {
+                    yValue = 0;
+                }
+
+                ctx.lineWidth = 3;
+
+                if (yValue) {
+                    ctx.beginPath();
+                    ctx.moveTo(0, yValue);
+                    ctx.lineTo(canvas.width, yValue);
+                    ctx.strokeStyle = style;
+                    ctx.stroke();
+                }
+
+                if (line.text) {
+                    ctx.fillStyle = style;
+                    ctx.fillText(line.text, 0, yValue + ctx.lineWidth + 5);
+                }
+            }
+        return;
+        }
+    }
+};
+Chart.pluginService.register(horizonalLinePlugin);

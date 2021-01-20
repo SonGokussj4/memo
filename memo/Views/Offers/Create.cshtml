@@ -16,13 +16,6 @@
         <form class="card" role="form" autocomplete="on" asp-action="Create" method="post">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-        @* <input type="hidden" asp-for="Offer.SharedInfo.Currency.Name" /> *@
-        @* <input type="hidden" asp-for="Offer.SharedInfo.Company.Name" /> *@
-        @* <input type="hidden" asp-for="Offer.SharedInfo.Company.InvoiceDueDays" /> *@
-        @* <input type="hidden" asp-for="Offer.SharedInfo.Contact.CompanyId" /> *@
-        @* <input type="hidden" asp-for="Offer.SharedInfo.Contact.PersonName" /> *@
-        @* <input type="hidden" asp-for="Offer.SharedInfo.Contact.PersonLastName" /> *@
-
         <div class="form-group row">
             <label asp-for="Offer.OfferName" class="required col-lg-3 col-form-label form-control-label control-label"></label>
             <div class="col-lg-9">
@@ -70,21 +63,18 @@
         <div class="form-group row eveOffer">
             <label class="col-lg-3 col-form-label form-control-label control-label">Evektor</label>
             <div class="col-lg-2">
-                <span class="has-float-label">
-                    <select class="form-control" asp-for="Offer.SharedInfo.EveDivision" asp-items="@Model.Offer.EveDivisionList"></select>
-                    <label asp-for="Offer.SharedInfo.EveDivision">Divize</label>
-                </span>
+                <span class="floating-select-label">Divize</span>
+                <select class="form-control" asp-for="Offer.SharedInfo.EveDivision" asp-items="@Model.Offer.EveDivisionList"></select>
                 <span asp-validation-for="Offer.SharedInfo.EveDivision" class="text-danger"></span>
             </div>
             <div class="col-lg-3">
-                <span class="has-float-label">
-                    <select asp-for="Offer.SharedInfo.EveDepartment" asp-items="@Model.DepartmentList" class="form-control"></select>
-                    <label asp-for="Offer.SharedInfo.EveDepartment">Oddělení</label>
-                </span>
+                <span class="floating-select-label">Oddělení</span>
+                <select asp-for="Offer.SharedInfo.EveDepartment" class="form-control select-department-ajax"></select>
                 <span asp-validation-for="Offer.SharedInfo.EveDepartment" class="text-danger"></span>
             </div>
             <div class="col-lg-4">
-                <select class="form-control selectpicker" asp-for="Offer.SharedInfo.EveCreatedUser" asp-items="@Model.EveContactList" required></select>
+                <span class="floating-select-label">Uživatel</span>
+                <select asp-for="Offer.SharedInfo.EveCreatedUser" class="form-control select-user-ajax"></select>
                 <span asp-validation-for="Offer.SharedInfo.EveCreatedUser" class="text-danger"></span>
             </div>
         </div>
@@ -92,9 +82,8 @@
         <div class="form-group row customerOffer">
             <label class="required col-lg-3 col-form-label form-control-label control-label">Zákazník</label>
             <div class="col-lg-4">
-                <select class="form-control selectpicker" asp-for="Offer.SharedInfo.CompanyId" asp-items="@Model.CompanyList">
-                    <option value="">-- Vyber firmu --</option>
-                </select>
+                <span class="floating-select-label">Firma zákazníka</span>
+                <select asp-for="Offer.SharedInfo.CompanyId" class="form-control select-company-ajax"></select>
                 <span asp-validation-for="Offer.SharedInfo.CompanyId" class="text-danger"></span>
             </div>
             <div class="col-lg-1" data-toggle="tooltip" title="Nová firma">
@@ -103,9 +92,8 @@
                 </a>
             </div>
             <div class="col-lg-3">
-                <select class="form-control selectpicker" asp-for="Offer.SharedInfo.ContactId" asp-items="@Model.ContactList">
-                    <option value="">-- Vyber kontakt --</option>
-                </select>
+                <span class="floating-select-label">Kontakt</span>
+                <select asp-for="Offer.SharedInfo.ContactId" class="form-control select-contact-ajax"></select>
                 <span asp-validation-for="Offer.SharedInfo.ContactId" class="text-danger"></span>
             </div>
             <div class="col-lg-1" data-toggle="tooltip" title="Nový kontakt">
@@ -131,21 +119,6 @@
                 </span>
                 <span asp-validation-for="Offer.SharedInfo.CurrencyId" class="text-danger"></span>
             </div>
-
-            @* <div class="col-lg-2">
-                <span class="has-float-label">
-                    <select asp-for="Offer.SharedInfo.CurrencyId" asp-items="ViewBag.CurrencyList" class="form-control"></select>
-                    <label asp-for="Offer.SharedInfo.CurrencyId">Měna</label>
-                </span>
-                <span asp-validation-for="Offer.SharedInfo.Currency" class="text-danger"></span>
-            </div>
-            <div class="col-lg-2">
-                <span class="has-float-label">
-                    <input asp-for="Offer.SharedInfo.ExchangeRate" class="form-control" type="text" data-toggle="tooltip" data-placement="top" title="Měnový kurz z ČNB" />
-                    <label asp-for="Offer.SharedInfo.ExchangeRate">Kurz</label>
-                </span>
-                <span asp-validation-for="Offer.SharedInfo.ExchangeRate" class="text-danger"></span>
-            </div> *@
         </div>
 
         <div class="form-group row">
@@ -189,8 +162,20 @@
 
     <script>
 
+        // Clear and unselect '.select-contact-ajax' when '.select-company-ajax' changes it's value
+        $('.select-company-ajax').on('select2:select', function (e) {
+            $(".select-contact-ajax").val(null).empty().trigger('change');
+        });
+
         $(document).ready(function(){
 
+            // DEFAULT VALUES
+            // =======================================
+            $('.select-department-ajax').append(new Option('@Html.Raw(Model.Offer.SharedInfo.EveDepartment)', '@Html.Raw(Model.Offer.SharedInfo.EveDepartment)', false, false)).trigger('change');
+            $('.select-user-ajax').append(new Option('@Html.Raw(Model.Offer.SharedInfo.EveCreatedUser)', '@Html.Raw(Model.Offer.SharedInfo.EveCreatedUser)', false, false)).trigger('change');
+
+            // INITIALIZATIONS
+            // =======================================
             $('.mycalendar input').datepicker(datepickerParameters[0]);
 
             checkItemNameExists($("#Offer_OfferName"), 'Offers');
@@ -203,9 +188,6 @@
                 $.ajax({
                     url: '@Url.Action("getCurrencyStr", "Offers")',
                     type: 'GET',
-                    //dataType: 'json',
-                    // we set cache: false because GET requests are often cached by browsers
-                    // IE is particularly aggressive in that respect
                     cache: false,
                     data: { symbol: curSymbol },
                     success: function(res) {

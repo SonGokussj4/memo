@@ -45,11 +45,10 @@
         </div>
 
         <div class="form-group row">
-            <label asp-for="CompanyId" class="required col-lg-3 col-form-label form-control-label control-label"></label>
+            <label class="required col-lg-3 col-form-label form-control-label control-label">Zákazník</label>
             <div class="col-lg-3">
-                <select asp-for="CompanyId" asp-items="@ViewBag.CompanyList" class="form-control selectpicker">
-                    <option>-- Vyber firmu --</option>
-                </select>
+                <span class="floating-select-label">Firma zákazníka</span>
+                <select asp-for="CompanyId" class="form-control select-company-ajax"></select>
                 <span asp-validation-for="CompanyId" class="text-danger"></span>
             </div>
             <div class="col-lg-3">

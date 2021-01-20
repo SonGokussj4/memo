@@ -39,6 +39,32 @@ a {
   border-color: #1861ac;
 }
 
+/* Manual floating label above Select Lists */
+.floating-select-label{
+  color: gray;
+  font-size: 75%;
+  position: absolute;
+  z-index: 3;
+  top: -0.5em;
+  left: 1.75rem;
+
+  line-height: 1;
+  padding: 0 1px;
+  opacity: 1;
+  color: #71767a;
+}
+
+.floating-select-label::after {
+  content: " ";
+  display: block;
+  position: absolute;
+  background: white;
+  height: 2px;
+  top: 50%;
+  left: -.2em;
+  right: -.2em;
+  z-index: -1;
+}
 
 /* DROPDOWN ON HOVER */
 /* ------------------------------------------------------------------------------------- */
@@ -284,6 +310,18 @@ form.myform {
     font-size: 0.9rem;
 }
 
+/* Fix button left radiuses as a last child in Input Group */
+.input-group>.input-group-append>.btn,
+.input-group>.input-group-append>.input-group-text,
+.input-group>.input-group-prepend:first-child>.btn:not(:first-child),
+.input-group>.input-group-prepend:first-child>.input-group-text:not(:first-child),
+.input-group>.input-group-prepend:not(:first-child)>.btn,
+.input-group>.input-group-prepend:not(:first-child)>.input-group-text {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  /* border-color: #CED4DA; */
+}
+
 .cardTitleMerged {
     display: flex;
     justify-content: space-between;
@@ -379,17 +417,17 @@ form.myform {
   white-space: nowrap;
 }
 
-/* .select2-container--open .select2-dropdown--below {
-  min-width: 300px !important;
-  white-space: nowrap;
-} */
-
 .select2 {
   width:100%!important;
 }
-/* .select2 select2-container select2-container--default {
-  max-width: -webkit-fill-available;
-} */
+
+.select2-container--default .select2-selection--single .select2-selection__clear {
+  padding-top: 3px;
+  padding-left: 0px;
+  font-size: 1.4em;
+  color: darkgrey;
+  font-weight: bold;
+}
 
 /* Bootstrap Z-Index fix */
 .input-group>.form-control:focus {
@@ -406,6 +444,14 @@ form.myform {
   display: none;
 }
 
+/* BAR CHART text on the bottom */
+.chart-bottom-tip {
+  font-size: 0.75em;
+  font-family: monospace;
+}
+.chart-bottom-tip>span {
+  color: gray;
+}
 
 /* BOOTSTRAP - CUSTOM Column OFFSET from RIGHT */
 .col-xs-offset-right-12 {

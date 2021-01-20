@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 using System.Globalization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using memo.Data;
 using memo.Models;
 using memo.ViewModels;
-using Microsoft.AspNetCore.Hosting;
 
 namespace memo.Controllers
 {
@@ -29,187 +29,179 @@ namespace memo.Controllers
             // ===========================================================================================================
             // SETUP
             // ===========================================================================================================
-            // Fill DepartmentList ComboBox with only used Offer Department values
 
-            List<string> filteredDepartments = await _db.SharedInfo.Select(x => x.EveDepartment).Distinct().ToListAsync();
-            foreach (string department in filteredDepartments)
+            // Default values for filter
+            if (String.IsNullOrEmpty(vm.TimePeriod))
             {
-                vm.DepartmentList.Add(new SelectListItem { Value = department, Text = department });
+                vm.Year = DateTime.Now.Year.ToString();
+                vm.TimePeriod = "months";
+                vm.Department = "";
+                vm.Customer = "";
             }
 
-            vm.DepartmentList.Insert(0, new SelectListItem { Value = "All", Text = "Vše" } );
-
-            // // TODO: Join?
-            List<int> usedCompaniesFromOffer = await _db.Offer.Include(x => x.SharedInfo).Select(x => x.SharedInfo.CompanyId).Distinct().ToListAsync();
-            List<int> usedCompaniesFromOrder = await _db.Order.Include(x => x.SharedInfo).Select(x => x.SharedInfo.CompanyId).Distinct().ToListAsync();
-            List<int> usedCompaniesFromContract = await _db.Contracts.Include(x => x.SharedInfo).Select(x => x.SharedInfo.CompanyId).Distinct().ToListAsync();
-            List<int> usedCompanies = usedCompaniesFromOffer;
-            usedCompanies.AddRange(usedCompaniesFromOrder);
-            usedCompanies.AddRange(usedCompaniesFromContract);
-            usedCompanies = usedCompanies.Distinct().ToList();
-
-            // List<Company>
-            List<Company> filteredCompanies = await _db.Company.Where(x => usedCompanies.Contains(x.CompanyId)).ToListAsync();
-            foreach (Company company in filteredCompanies)
+            if (vm.TimePeriod == "years")
             {
-                vm.CustomerList.Add(new SelectListItem { Value = company.Name, Text = company.Name });
+                vm.Year = "";
             }
+            else
+            {
+                // Year SelectList
+                vm.YearList = await _db.Invoice
+                    .GroupBy(x => x.InvoiceDueDate.Value.Year)
+                    .Select(gi => new SelectListItem {
+                        Text = gi.Key.ToString(),
+                        Value = gi.Key.ToString(),
+                    })
+                    .ToListAsync();
+            }
+            vm.YearList.Insert(0, new SelectListItem { Value = "", Text = "Vše" } );
 
-            vm.CustomerList = vm.CustomerList.OrderBy(x => x.Text).ToList();
-            vm.CustomerList.Insert(0, new SelectListItem { Value = "All", Text = "Vše" } );
 
-            List<SelectListItem> yearList = await _db.Invoice
-                .GroupBy(x => x.InvoiceDueDate.Value.Year)
-                .Select(gi => new SelectListItem {
-                    Text = gi.Key.ToString(),
-                    Value = gi.Key.ToString(),
+            // Department SelectList
+            IQueryable<Invoice> departmentQuery = _db.Invoice.Include(x => x.Order);
+
+            if (!String.IsNullOrEmpty(vm.Year))
+                departmentQuery = departmentQuery.Where(x => x.InvoiceDueDate.Value.Year == Convert.ToInt32(vm.Year));
+
+            vm.DepartmentList = await departmentQuery
+                .GroupBy(x => x.Order.SharedInfo.EveDepartment)
+                .Select(x => new SelectListItem {
+                    Value = x.Key,
+                    Text = $"{x.Key} ({x.Count()})",
                 })
                 .ToListAsync();
 
-            vm.YearList = yearList;
+            if (vm.DepartmentList.Where(x => x.Value == vm.Department).FirstOrDefault() == null)
+                vm.Department = "";
 
-            // Default values for filter
-            if (vm.TimePeriod == null)
+            vm.DepartmentList.Insert(0, new SelectListItem { Value = "", Text = "Vše" } );
+
+
+            // Companies SelectList
+            IQueryable<Invoice> customerQuery = _db.Invoice.Include(x => x.Order);
+
+            if (!String.IsNullOrEmpty(vm.Year))
+                customerQuery = customerQuery.Where(x => x.InvoiceDueDate.Value.Year == Convert.ToInt32(vm.Year));
+
+            if (!String.IsNullOrEmpty(vm.Department))
+                customerQuery = customerQuery.Where(x => x.Order.SharedInfo.EveDepartment == vm.Department);
+
+            vm.CustomerList = await customerQuery
+                .GroupBy(x => x.Order.SharedInfo.Company.Name)
+                .Select(x => new SelectListItem {
+                    Value = x.Key,
+                    Text = $"{x.Key} ({x.Count()})",
+                })
+                .ToListAsync();
+
+            vm.CustomerList.Insert(0, new SelectListItem { Value = "", Text = "Vše" } );
+
+            // TODO: kdyz prekliknu zakaznika, oddeleni by se melo vyfiltrovat podle toho.
+            // TODO: to same oddeleni, vyfiltrovat zakaznika, pokud by bylo oddeleni C2 a zakaznik Levit neobsahoval C2, tak zmenit C2 na All
+
+            // ===========================================================================================================
+            // FILTERS
+            // ===========================================================================================================
+            IQueryable<Invoice> query = _db.Invoice.Include(x => x.Order);
+
+            if(!String.IsNullOrEmpty(vm.Department))
             {
-                vm.Year = DateTime.Now.Year;
-                vm.TimePeriod = "months";
-                vm.Department = "All";
-                vm.Customer = "All";
+                query = query.Where(x => x.Order.SharedInfo.EveDepartment == vm.Department);
+            }
+            if(!String.IsNullOrEmpty(vm.Customer))
+            {
+                int filterCompanyId = _db.Company.Where(x => x.Name == vm.Customer).Select(x => x.CompanyId).FirstOrDefault();
+                query = query.Where(x => x.Order.SharedInfo.CompanyId == filterCompanyId);
+            }
+            if(!String.IsNullOrEmpty(vm.Year))
+            {
+                query = query.Where(x => x.InvoiceDueDate.Value.Year == Convert.ToInt32(vm.Year));
             }
 
-            // List<Invoice> invoices = new List<Invoice>();
+            List<Invoice> invoices = await query.ToListAsync();
 
-            // // TODO: kdyz prekliknu zakaznika, oddeleni by se melo vyfiltrovat podle toho.
-            // // TODO: to same oddeleni, vyfiltrovat zakaznika, pokud by bylo oddeleni C2 a zakaznik Levit neobsahoval C2, tak zmenit C2 na All
 
-            // // ===========================================================================================================
-            // // FILTERS
-            // // ===========================================================================================================
+            // ===========================================================================================================
+            // PLOT - BAR - INCOME
+            // ===========================================================================================================
+            List<DashboardCashVM> invoiceBarChartList = new List<DashboardCashVM>();
+            if (vm.TimePeriod == "months")
+            {
+                invoiceBarChartList = invoices
+                    .GroupBy(x => x.InvoiceDueDate.Value.Month)
+                    .Select(g => new DashboardCashVM
+                    {
+                        Month = g.Key,
+                        Cash = Convert.ToInt32(g.Sum(gi => gi.Cost * gi.Order.ExchangeRate)),
+                    })
+                    .OrderBy(x => x.Month)
+                    .ToList();
 
-            // // Filter - Department, get offers == department and then invoices from those offers
-            // if (vm.Department != "All")
-            // {
-            //     List<int> offerIds = await (
-            //             from r in _db.Offer
-            //             where r.EveDepartment == vm.Department
-            //             select r.OfferId
-            //         )
-            //         .ToListAsync();
+                if (invoiceBarChartList.Count() != 0)
+                {
+                    int firstMonth = invoiceBarChartList.FirstOrDefault().Month;
+                    int lastMonth = invoiceBarChartList.LastOrDefault().Month;
 
-            //     // IQueryable<Order> orders = _db.Order.Where(x => offerIds.Contains((int)x.OfferId));
-            //     List<int> orderIds = await (
-            //             from r in _db.Order
-            //             where offerIds.Contains((int)r.OfferId)
-            //             select r.OrderId
-            //         )
-            //         .ToListAsync();
+                    var ls = invoiceBarChartList.Select(x => x.Month);
+                    var missingMonths = Enumerable.Range(firstMonth, lastMonth - firstMonth + 1).Except(ls);
 
-            //     invoices = await _db.Invoice
-            //         .Where(x => orderIds.Contains(x.OrderId))
-            //         .ToListAsync();
-            // }
-            // else
-            // {
-            //     invoices = await _db.Invoice.ToListAsync();
-            // }
+                    foreach (var item in missingMonths)
+                    {
+                        invoiceBarChartList.Add( new DashboardCashVM{ Month = item, Cash = 0 });
+                    }
 
-            // // Filter - Customer on existing invoices
-            // if (vm.Customer != "All")
-            // {
-            //     int companyId = await _db.Company
-            //         .Where(x => x.Name == vm.Customer)
-            //         .Select(x => x.CompanyId)
-            //         .FirstOrDefaultAsync();
+                    invoiceBarChartList = invoiceBarChartList.OrderBy(x => x.Month).ToList();
+                }
+            }
+            else if(vm.TimePeriod == "weeks") // Weeks
+            {
+                invoiceBarChartList = invoices
+                    .AsEnumerable()
+                    .GroupBy(b => ISOWeek.GetWeekOfYear((DateTime)b.InvoiceDueDate))
+                    .Select(g => new DashboardCashVM
+                    {
+                        Week = g.Key,
+                        Cash = Convert.ToInt32(g.Sum(gi => gi.Cost * gi.Order.ExchangeRate)),
+                    })
+                    .OrderBy(x => x.Week)
+                    .ToList();
 
-            //     List<int> offerIdsList = await (
-            //             from x in _db.Offer
-            //             where x.CompanyId == companyId
-            //             select x.OfferId
-            //         )
-            //         .ToListAsync();
+                if (invoiceBarChartList.Count() != 0)
+                {
+                    int firstWeek = invoiceBarChartList.FirstOrDefault().Week;
+                    int lastWeek = invoiceBarChartList.LastOrDefault().Week;
 
-            //     List<int> orderIds = await (
-            //             from x in _db.Order
-            //             where offerIdsList.Contains((int)x.OfferId)
-            //             select x.OrderId
-            //         )
-            //         .ToListAsync();
+                    var ls = invoiceBarChartList.Select(x => x.Week);
+                    var missingWeeks = Enumerable.Range(firstWeek, lastWeek - firstWeek + 1).Except(ls);
 
-            //     invoices = invoices.Where(x => orderIds.Contains(x.OrderId)).ToList();
-            // }
+                    foreach (var item in missingWeeks)
+                    {
+                        invoiceBarChartList.Add( new DashboardCashVM{ Week = item, Cash = 0 });
+                    }
 
-            // // ===========================================================================================================
-            // // PLOT - BAR - INCOME
-            // // ===========================================================================================================
-            // List<DashboardCashVM> viewModelCash = new List<DashboardCashVM>();
-            // if (vm.TimePeriod == "months")
-            // {
-            //     viewModelCash = invoices
-            //         .Where(a => a.InvoiceDueDate.Value.Year == vm.Year)
-            //         .GroupBy(b => b.InvoiceDueDate.Value.Month)
-            //         .Select(g => new DashboardCashVM
-            //         {
-            //             // Month2020 = g.Key,
-            //             // TotalCount = g.Count(),
-            //             // SumaNormal = g.Sum(gi => gi.PriceFinalCzk),
-            //             // Suma = string.Format("{0:#.00}", Convert.ToDecimal(g.Sum(gi => gi.PriceFinalCzk))),
-            //             // SumaC = string.Format("{0:C}", Convert.ToDecimal(g.Sum(gi => gi.PriceFinalCzk))),
-            //             // TotalHours = $"{g.Sum(gi => gi.TotalHours)} hod",
-            //             // AvgHourWage = $"{string.Format("{0:C}", g.Average(gi => gi.HourWage))}/hod",
-            //             Month = new DateTime(vm.Year, g.Key, 1),
-            //             Cash = (int)g.Sum(gi => gi.CostCzk),
-            //         })
-            //         .OrderBy(x => x.Month)
-            //         .ToList();
+                    invoiceBarChartList = invoiceBarChartList.OrderBy(x => x.Week).ToList();
+                }
+            }
+            else  // Years
+            {
+                invoiceBarChartList = invoices
+                    .AsEnumerable()
+                    .GroupBy(x => x.InvoiceDueDate.Value.Year)
+                    .Select(g => new DashboardCashVM
+                    {
+                        Week = g.Key,
+                        Cash = Convert.ToInt32(g.Sum(gi => gi.Cost * gi.Order.ExchangeRate)),
+                    })
+                    .OrderBy(x => x.Week)
+                    .ToList();
+            }
 
-            //     if (viewModelCash.Count() != 0)
-            //     {
-            //         DateTime firstMonth = viewModelCash.FirstOrDefault().Month;
-            //         DateTime lastMonth = viewModelCash.LastOrDefault().Month;
+            vm.DashboardCashVM = invoiceBarChartList;
 
-            //         var ls = viewModelCash.Select(x => x.Month.Month);
-            //         var missingMonths = Enumerable.Range(firstMonth.Month, lastMonth.Month - firstMonth.Month + 1).Except(ls);
+            // Add 'avg' line to the plot
+            vm.barChartAvgValue = Convert.ToInt32(invoiceBarChartList.Average(x => x.Cash));
+            vm.barChartSumValue = Convert.ToInt32(invoiceBarChartList.Sum(x => x.Cash));
 
-            //         foreach (var item in missingMonths)
-            //         {
-            //             viewModelCash.Add( new DashboardCashVM{ Month = new DateTime(vm.Year, item, 1), Cash = 0 });
-            //         }
-
-            //         viewModelCash = viewModelCash.OrderBy(x => x.Month).ToList();
-            //     }
-            // }
-            // else  // Weeks
-            // {
-            //     viewModelCash = invoices
-            //         .Where(a => a.InvoiceDueDate.Value.Year == vm.Year)
-            //         .AsEnumerable()
-            //         .GroupBy(b => ISOWeek.GetWeekOfYear((DateTime)b.InvoiceDueDate))
-            //         .Select(g => new DashboardCashVM
-            //         {
-            //             Week = g.Key,
-            //             Cash = (int)g.Sum(gi => gi.CostCzk),
-            //         })
-            //         .OrderBy(x => x.Week)
-            //         .ToList();
-
-            //     if (viewModelCash.Count() != 0)
-            //     {
-            //         int firstWeek = viewModelCash.FirstOrDefault().Week;
-            //         int lastWeek = viewModelCash.LastOrDefault().Week;
-
-            //         var ls = viewModelCash.Select(x => x.Week);
-            //         var missingWeeks = Enumerable.Range(firstWeek, lastWeek - firstWeek + 1).Except(ls);
-
-            //         foreach (var item in missingWeeks)
-            //         {
-            //             viewModelCash.Add( new DashboardCashVM{ Week = item, Cash = 0 });
-            //         }
-
-            //         viewModelCash = viewModelCash.OrderBy(x => x.Week).ToList();
-            //     }
-            // }
-
-            // vm.DashboardCashVM = viewModelCash;
 
             // // ===========================================================================================================
             // // PLOT - BAR - Offer Status
@@ -254,22 +246,19 @@ namespace memo.Controllers
             // vm.DashboardWonOffersVM = viewModelWonOffers;
 
             // ===========================================================================================================
-            // TABLE - Successes
+            // TABLE - Success of each department
             // ===========================================================================================================
             List<DashboardTableVM> dashboardTableVMs = new List<DashboardTableVM>();
             var departments = await _db.Offer.Include(x => x.SharedInfo).Select(x => x.SharedInfo.EveDepartment).Distinct().ToListAsync();
             foreach (var department in departments)
             {
                 var allOffers = _db.Offer.Include(x => x.SharedInfo).Where(x => x.SharedInfo.EveDepartment == department);
-
                 var waitingOffers = await allOffers.Where(x => x.OfferStatusId == 1).ToListAsync();
                 var wonOffers = await allOffers.Where(x => x.OfferStatusId == 2).ToListAsync();
                 var lostOffers = await allOffers.Where(x => x.OfferStatusId == 3).ToListAsync();
-
                 // Get hours
                 // List<int> offersIds = await allOffers.Select(x => x.OfferId).ToListAsync();
                 // IEnumerable<Order> orders = _db.Order.Where(x => offersIds.Contains((int)x.OfferId));
-
                 DashboardTableVM dashboardTableVM = new DashboardTableVM()
                 {
                     Department = department,
@@ -287,18 +276,11 @@ namespace memo.Controllers
             // TABLE - Invoices
             // ===========================================================================================================
             List<DashboardInvoiceTableViewModel> dashboardInvoiceTableViewModels = new List<DashboardInvoiceTableViewModel>();
-            var invoices = await _db.Invoice
+            var invoicesTab = await _db.Invoice
                 .Include(x => x.Order)
-                    // .ThenInclude(x => x.SharedInfo)
-                        // .ThenInclude(x => x.Company)
-                // .Include(x => x.Order.SharedInfo)
-                // .Include(x => x.Order.SharedInfo.Company)
-                // .Include(x => x.Order.SharedInfo.Currency)
                 .ToListAsync();
-            // await _db.Company.LoadAsync();
-            // await _db.Currency.ToListAsync();
 
-            foreach (var invoice in invoices)
+            foreach (var invoice in invoicesTab)
             {
                 // Need to load related data (3rd jump of related entities is null?)
                 _db.Entry(invoice.Order).Reference(p => p.SharedInfo).Load();

@@ -226,33 +226,27 @@
         <div class="form-group row eveOffer">
             <label class="required col-lg-3 col-form-label form-control-label control-label">Evektor</label>
             <div class="col-lg-2">
-                <span class="has-float-label">
-                    <select class="form-control" asp-for="Offer.SharedInfo.EveDivision" asp-items="Model.Offer.EveDivisionList"></select>
-                    <label asp-for="Offer.SharedInfo.EveDivision">Divize</label>
-                </span>
+                <span class="floating-select-label">Divize</span>
+                <select class="form-control" asp-for="Offer.SharedInfo.EveDivision" asp-items="@Model.Offer.EveDivisionList"></select>
                 <span asp-validation-for="Offer.SharedInfo.EveDivision" class="text-danger"></span>
             </div>
             <div class="col-lg-3">
-                <span class="has-float-label">
-                    <select asp-for="Offer.SharedInfo.EveDepartment" asp-items="Model.DepartmentList" class="form-control"></select>
-                    <label asp-for="Offer.SharedInfo.EveDepartment">Oddělení</label>
-                </span>
+                <span class="floating-select-label">Oddělení</span>
+                <select asp-for="Offer.SharedInfo.EveDepartment" class="form-control select-department-ajax"></select>
                 <span asp-validation-for="Offer.SharedInfo.EveDepartment" class="text-danger"></span>
             </div>
             <div class="col-lg-4">
-                <div data-toggle="tooltip" title="Nabídku vytvořil">
-                    <select class="form-control selectpicker" asp-for="Offer.SharedInfo.EveCreatedUser" asp-items="@Model.EveContactList"></select>
-                </div>
+                <span class="floating-select-label">Uživatel</span>
+                <select asp-for="Offer.SharedInfo.EveCreatedUser" class="form-control select-user-ajax"></select>
                 <span asp-validation-for="Offer.SharedInfo.EveCreatedUser" class="text-danger"></span>
             </div>
         </div>
 
         <div class="form-group row customerOffer">
-            <label class="col-lg-3 col-form-label form-control-label control-label">Zákazník</label>
+            <label class="required col-lg-3 col-form-label form-control-label control-label">Zákazník</label>
             <div class="col-lg-4">
-                <select class="form-control selectpicker" asp-for="Offer.SharedInfo.CompanyId" asp-items="@Model.CompanyList">
-                    <option>-- Vyber firmu --</option>
-                </select>
+                <span class="floating-select-label">Firma zákazníka</span>
+                <select asp-for="Offer.SharedInfo.CompanyId" class="form-control select-company-ajax"></select>
                 <span asp-validation-for="Offer.SharedInfo.CompanyId" class="text-danger"></span>
             </div>
             <div class="col-lg-1" data-toggle="tooltip" title="Nová firma">
@@ -261,7 +255,8 @@
                 </a>
             </div>
             <div class="col-lg-3">
-                <select class="form-control selectpicker" asp-for="Offer.SharedInfo.ContactId" asp-items="Model.ContactList"></select>
+                <span class="floating-select-label">Kontakt</span>
+                <select asp-for="Offer.SharedInfo.ContactId" class="form-control select-contact-ajax"></select>
                 <span asp-validation-for="Offer.SharedInfo.ContactId" class="text-danger"></span>
             </div>
             <div class="col-lg-1" data-toggle="tooltip" title="Nový kontakt">
@@ -393,9 +388,21 @@
 
         let offerName = '@Html.Raw(@Model.Offer.OfferName)';
 
+        // Clear and unselect '.select-contact-ajax' when '.select-company-ajax' changes it's value
+        $('.select-company-ajax').on('select2:select', function (e) {
+            $(".select-contact-ajax").val(null).empty().trigger('change');
+        });
+
         $(document).ready(function(){
             handleExchangeRateVisibility(firstLoad=true);
             checkItemNameExists($("#Offer_OfferName"), 'Offers', ignoreName=offerName);
+
+            // DEFAULT VALUES
+            // =======================================
+            $('.select-department-ajax').append(new Option('@Html.Raw(Model.Offer.SharedInfo.EveDepartment)', '@Html.Raw(Model.Offer.SharedInfo.EveDepartment)', false, false)).trigger('change');
+            $('.select-user-ajax').append(new Option('@Html.Raw(Model.Offer.SharedInfo.EveCreatedUser)', '@Html.Raw(Model.Offer.SharedInfo.EveCreatedUser)', false, false)).trigger('change');
+            $('.select-company-ajax').append(new Option('@Html.Raw(Model.Offer.SharedInfo.Company.Name)', '@Html.Raw(Model.Offer.SharedInfo.CompanyId)', false, false)).trigger('change');
+            $('.select-contact-ajax').append(new Option('@Html.Raw(Model.Offer.SharedInfo.Contact.PersonFullName)', '@Html.Raw(Model.Offer.SharedInfo.ContactId)', false, false)).trigger('change');
         });
 
         $("#Offer_OfferName").keyup(function() {
@@ -443,7 +450,6 @@
                 success: function (data) {
                     exchangeRate = data;
                 },
-                error: function () {},
             });
             return exchangeRate;
         }
