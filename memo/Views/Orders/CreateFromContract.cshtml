@@ -394,21 +394,21 @@
             // All .mycalendar input classes will have 'datepicker()' functionality
             $('.mycalendar input').datepicker(datepickerParameters[0]);
 
-//            var offerPrice = parseInt('@Model.Order?.SharedInfo.Price');
-//
-//            $('#Order_NegotiatedPrice').on('keydown input change textInput', function(){
-//                if (negotiatedPrice != null) {
-//                    var negotiatedPrice = parseInt($('#Order_NegotiatedPrice').val());
-//                    $('#Order_PriceDiscount').val(offerPrice - negotiatedPrice);
-//                }
-//            });
-//
-//            $('#Order_PriceDiscount').on('keydown input change textInput', function(){
-//                if (negotiatedPrice != null) {
-//                    var priceDiscount = parseInt($('#Order_PriceDiscount').val());
-//                    $('#Order_NegotiatedPrice').val(offerPrice - priceDiscount);
-//                }
-//            });
+            @* var offerPrice = parseInt('@Model.Order?.SharedInfo.Price'); *@
+
+            @* $('#Order_NegotiatedPrice').on('keydown input change textInput', function(){ *@
+                @* if (negotiatedPrice != null) { *@
+                    @* var negotiatedPrice = parseInt($('#Order_NegotiatedPrice').val()); *@
+                    @* $('#Order_PriceDiscount').val(offerPrice - negotiatedPrice); *@
+                @* } *@
+            @* }); *@
+
+            @* $('#Order_PriceDiscount').on('keydown input change textInput', function(){ *@
+                @* if (negotiatedPrice != null) { *@
+                    @* var priceDiscount = parseInt($('#Order_PriceDiscount').val()); *@
+                    @* $('#Order_NegotiatedPrice').val(offerPrice - priceDiscount); *@
+                @* } *@
+            @* }); *@
 
             //$('.invoiceDate').change('input', function(){
             //    var date = new Date($('.invoiceDate').val());
