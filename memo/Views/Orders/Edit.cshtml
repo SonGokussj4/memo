@@ -353,16 +353,18 @@
 
         @* @Html.ValidationMessage("OrderCodesValidationMessage", "", new { @class = "text-danger" }) *@
         <div class="dynamic-rows-order-codes" id="template-order-codes" data-order="@Model.Order.OrderCodes.Count()">
+
             <!-- PLACEHOLDER: _PartialSearchForOrderCode -->
             <div id="modal-placeholder"></div>
+
             @for (int i = 0; i < Model.Order.OrderCodes.Count(); i++)
             {
                 @await Html.PartialAsync("Partials/Orders/_PartialOrderOrderCodes", Model, new ViewDataDictionary(ViewData) {{ "i", i }})
             }
-            <span asp-validation-for="Order.OrderCodes" class="text-danger"></span>
+            @* <span asp-validation-for="Order.OrderCodes" class="text-danger"></span> *@
 
             <!-- PLACEHOLDER: _PartialOrderOrderCodesCreate -->
-            <div class="add-partial-order-codes"></div>
+            @* <div class="add-partial-order-codes"></div> *@
         </div>
 
         <div class="form-group row border-top pt-2">
@@ -815,7 +817,8 @@
                     url: '@Url.Action("AddOrderCodesPartial", "Orders")/' + idNewOrderCode,
                     dataType: 'html',
                     success: function (result) {
-                        $(".add-partial-order-codes").append(result);
+                        //$(".add-partial-order-codes").append(result);
+                        $(".dynamic-rows-order-codes").append(result);
                         initializeTooltips();
                         initializeOrderAjaxModalClickEvent();
                         $('form').data('validator', null);

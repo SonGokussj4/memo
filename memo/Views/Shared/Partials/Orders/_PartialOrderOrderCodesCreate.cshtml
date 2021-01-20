@@ -3,19 +3,17 @@
 @model memo.ViewModels.OfferOrderVM
 
 <!-- Modal placeholder -->
-<div id="modal-placeholder-@Model.IDOrder"></div>
-
-@* <input hidden="true" asp-for="@Model.Order.OrderCodes[i].OrderCodeId" /> *@
-
+@* <div id="modal-placeholder-@Model.IDOrder"></div> *@
 
 <div class="row form-group justify-content-end" id="dynamic-row-order-codes-@Model.IDOrder">
 
-    @* <input asp-for="@Model.Order.OrderCodes[@Model.IDOrder].OrderCodeId" hidden="true"> *@
+    @* Needed for solving sending list to controller where [0, 1, 3, 4] would just send only [0, 1] *@
+    <input type="hidden" name="Order.OrderCodes.Index" value="@Model.IDOrder" />
 
     <div class="col-lg-3">
         <span class="has-float-label">
             <div class="input-group">
-                <input asp-for="@Model.Order.OrderCodes[@Model.IDOrder].OrderCode" class="form-control" type="text" autocomplete="off" placeholder=" "/>
+                <input type="text" asp-for="@Model.Order.OrderCodes[Model.IDOrder].OrderCode" class="form-control" autocomplete="off" placeholder=" " />
                 <div class="input-group-append" data-toggle="tooltip" title="Vyhledat kód">
                     <!-- Button to trigger modal -->
                     <button class="btn btn-light border" type="button" data-toggle="ajax-modal" data-target="#SearchForOrderCodeModal" data-url="@Url.Action("GetOrderCodes", "Orders", new { id = @Model.IDOrder })">
@@ -23,32 +21,32 @@
                     </button>
                 </div>
             </div>
-            <label asp-for="@Model.Order.OrderCodes[@Model.IDOrder].OrderCode">Kód vykazování</label>
+            <label asp-for="@Model.Order.OrderCodes[Model.IDOrder].OrderCode">Kód vykazování</label>
         </span>
-        <span asp-validation-for="@Model.Order.OrderCodes[@Model.IDOrder].OrderCode" class="text-danger"></span>
+        <span asp-validation-for="@Model.Order.OrderCodes[Model.IDOrder].OrderCode" class="text-danger"></span>
     </div>
 
     <div class="col-lg-3">
         <span class="has-float-label">
-            <input asp-for="@Model.Order.OrderCodes[@Model.IDOrder].HourWageSubject" class="form-control" type="text" autocomplete="off" placeholder=" "/>
-            <label asp-for="@Model.Order.OrderCodes[@Model.IDOrder].HourWageSubject">Popis hod. mzdy</label>
+            <input asp-for="@Model.Order.OrderCodes[Model.IDOrder].HourWageSubject" class="form-control" type="text" autocomplete="off" placeholder=" "/>
+            <label asp-for="@Model.Order.OrderCodes[Model.IDOrder].HourWageSubject">Popis hod. mzdy</label>
         </span>
-        <span asp-validation-for="@Model.Order.OrderCodes[@Model.IDOrder].HourWageSubject" class="text-danger"></span>
+        <span asp-validation-for="@Model.Order.OrderCodes[Model.IDOrder].HourWageSubject" class="text-danger"></span>
     </div>
 
     <div class="col-lg-3">
         <span class="has-float-label">
-            <input asp-for="@Model.Order.OrderCodes[@Model.IDOrder].HourWageCost" class="form-control" type="text" placeholder=" "/>
-            <label asp-for="@Model.Order.OrderCodes[@Model.IDOrder].HourWageCost">Hod. mzda</label>
+            <input asp-for="@Model.Order.OrderCodes[Model.IDOrder].HourWageCost" class="form-control" type="text" placeholder=" "/>
+            <label asp-for="@Model.Order.OrderCodes[Model.IDOrder].HourWageCost">Hod. mzda</label>
         </span>
-        <span asp-validation-for="@Model.Order.OrderCodes[@Model.IDOrder].HourWageCost" class="text-danger"></span>
-        @* <label class="order-codes-sum-hours-label ml-2" style="font-size: 0.8em; color: grey;">
-            Vynásobeno: ...
-        </label> *@
+        <span asp-validation-for="@Model.Order.OrderCodes[Model.IDOrder].HourWageCost" class="text-danger"></span>
     </div>
 
     <div class="col-lg-1">
-        <a href="javascript:void(0)" class="btn btn-danger btn-sm mt-1" data-toggle="tooltip" title="Odstranit záznam" data-original-title="Odstranit záznam" onclick="DeleteOrderCode(@Model.IDOrder)">
+        @* <a href="javascript:void(0)" class="btn btn-danger btn-sm mt-1" data-toggle="tooltip" title="Odstranit záznam" data-original-title="Odstranit záznam" onclick="DeleteOrderCode(@Model.IDOrder)">
+            <i class="fa fa-trash"></i>
+        </a> *@
+        <a href="javascript:void(0)" class="btn btn-danger btn-sm mt-1" data-toggle="tooltip" title="Odstranit záznam" onclick="DeleteOrderCode(@Model.IDOrder)">
             <i class="fa fa-trash"></i>
         </a>
     </div>

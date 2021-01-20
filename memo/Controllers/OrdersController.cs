@@ -606,6 +606,7 @@ namespace memo.Controllers
 
                     foreach (OrderCodes orderCode in vm.Order.OrderCodes)
                     {
+                        orderCode.OrderId = id;
                         int burnedHours = await GetSumMinutesAsync(orderCode.OrderCode) / 60;
                         vm.Order.PriceFinal += Convert.ToInt32(burnedHours * orderCode.HourWageCost);
                     }

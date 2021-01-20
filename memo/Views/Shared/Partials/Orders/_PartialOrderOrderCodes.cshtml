@@ -20,14 +20,11 @@
         <span class="has-float-label">
             <div class="input-group">
                 <input asp-for="@Model.Order.OrderCodes[i].OrderCode" class="form-control" type="text" autocomplete="off" placeholder=" " data-toggle="tooltip" title="@Model.OrderCodesTooltips[i]" />
-                <div class="input-group-append">
+                <div class="input-group-append" data-toggle="tooltip" title="Vyhledat kód">
                     <!-- Button trigger modal -->
-                    <span data-toggle="tooltip" title="Vyhledat kód">
-                        @* <button class="btn btn-light border" type="button" data-toggle="ajax-modal" data-target="#SearchForOrderCodeModal" data-id="@i" data-url="@Url.Action("GetOrderCodes", "Orders", new { id = @i })"> *@
-                        <button class="btn btn-light border" type="button" data-toggle="ajax-modal" data-target="#SearchForOrderCodeModal" data-url="@Url.Action("GetOrderCodes", "Orders", new { id = @i })">
-                            <i class="fa fa-search"></i>
-                        </button>
-                    </span>
+                    <button class="btn btn-light border" type="button" data-toggle="ajax-modal" data-target="#SearchForOrderCodeModal" data-id="@i" data-url="@Url.Action("GetOrderCodes", "Orders", new { id = @i })">
+                        <i class="fa fa-search"></i>
+                    </button>
                 </div>
             </div>
             <label asp-for="@Model.Order.OrderCodes[i].OrderCode">Kód vykazování</label>
@@ -37,22 +34,6 @@
             Vykázáno: @Model.Order.OrderCodes[i].SumHours / @Model.Order.OrderCodes[i].PlannedHours hod
         </label>
     </div>
-
-    @* <div class="col-lg-2 mycalendar">
-        <span class="has-float-label">
-            <input asp-for="@Model.Order.OrderCodes[i].StartDate" class="form-control" type="text" autocomplete="off" data-id="@i" placeholder=" " />
-            <label>Od</label>
-        </span>
-        <span asp-validation-for="@Model.Order.OrderCodes[i].StartDate" class="text-danger"></span>
-    </div>
-
-    <div class="col-lg-2 mycalendar">
-        <span class="has-float-label">
-            <input asp-for="@Model.Order.OrderCodes[i].EndDate" class="form-control" type="text" autocomplete="off" data-id="@i" placeholder=" " />
-            <label>Od</label>
-        </span>
-        <span asp-validation-for="@Model.Order.OrderCodes[i].EndDate" class="text-danger"></span>
-    </div> *@
 
     <div class="col-lg-3">
         <span class="has-float-label">
@@ -80,3 +61,23 @@
     </div>
 
 </div>
+
+
+
+
+
+    @* <div class="col-lg-2 mycalendar">
+        <span class="has-float-label">
+            <input asp-for="@Model.Order.OrderCodes[i].StartDate" class="form-control" type="text" autocomplete="off" data-id="@i" placeholder=" " />
+            <label>Od</label>
+        </span>
+        <span asp-validation-for="@Model.Order.OrderCodes[i].StartDate" class="text-danger"></span>
+    </div>
+
+    <div class="col-lg-2 mycalendar">
+        <span class="has-float-label">
+            <input asp-for="@Model.Order.OrderCodes[i].EndDate" class="form-control" type="text" autocomplete="off" data-id="@i" placeholder=" " />
+            <label>Od</label>
+        </span>
+        <span asp-validation-for="@Model.Order.OrderCodes[i].EndDate" class="text-danger"></span>
+    </div> *@
