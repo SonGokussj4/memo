@@ -1174,6 +1174,27 @@ namespace memo.Controllers
             return PartialView("Partials/Orders/_Partial_OrderCodes_Create", vm );
         }
 
+        [HttpGet]
+        public async Task<IActionResult> AddInvoicesPartial(int id)
+        {
+            Order order = new Order();
+            order.Invoices = new List<Invoice>();
+            // order.SharedInfo = _db.SharedInfo(x => x.SharedInfoId = o)
+
+            for (int i = 0; i < id + 1; i++)
+            {
+                order.Invoices.Add(new Invoice() { InvoiceId = i });
+            }
+
+            OfferOrderVM vm = new OfferOrderVM()
+            {
+                Order = order,
+                IDOrder = id,
+            };
+
+            return PartialView("Partials/Orders/_Partial_Invoices_Create", vm);
+        }
+
         public async Task<JsonResult> getOrderCodesJson(string match, int pageSize = 100)
         {
             match = !string.IsNullOrWhiteSpace(match) ? match : "";
