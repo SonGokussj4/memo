@@ -357,6 +357,9 @@
             </div>
         </div>
 
+        @* =========== *@
+        @* ORDER CODES *@
+        @* =========== *@
         @* @Html.ValidationMessage("OrderCodesValidationMessage", "", new { @class = "text-danger" }) *@
         <div class="dynamic-rows-order-codes" id="template-order-codes" data-order="@Model.Order.OrderCodes.Count()">
 
@@ -367,10 +370,6 @@
             {
                 @await Html.PartialAsync("Partials/Orders/_Partial_OrderCodes", Model, new ViewDataDictionary(ViewData) {{ "i", i }})
             }
-            @* <span asp-validation-for="Order.OrderCodes" class="text-danger"></span> *@
-
-            <!-- PLACEHOLDER: _Partial_OrderCodes_Create -->
-            @* <div class="add-partial-order-codes"></div> *@
         </div>
 
         <div class="form-group row border-top pt-2">
@@ -391,60 +390,14 @@
             </div>
         </div>
 
-
-
+        @* ======== *@
+        @* INVOICES *@
+        @* ======== *@
         @Html.ValidationMessage("InvoiceMissing", "", new { @class = "text-danger" })
         <div class="dynamic-rows-invoices" id="template-invoices" data-order="@Model.Order.Invoices.Count()">
             @for (int i = 0; i < Model.Order.Invoices.Count(); i++)
             {
-                <div class="dynamicrowsgroup mb-4 pt-4" style="border-top: 1px solid #0000000d;">
-
-                    <div class="row form-group justify-content-end">
-
-                        <input hidden="true" asp-for="@Model.Order.Invoices[i].InvoiceId" />
-
-                        <div class="col-lg-3 mycalendar">
-                            <span class="has-float-label">
-                                <input asp-for="@Model.Order.Invoices[i].InvoiceIssueDate" class="form-control" type="text" autocomplete="off" data-id="@i" placeholder=" " />
-                                <label asp-for="@Model.Order.Invoices[i].InvoiceIssueDate">Termín vystavení</label>
-                            </span>
-                            <span asp-validation-for="@Model.Order.Invoices[i].InvoiceIssueDate" class="text-danger"></span>
-                        </div>
-
-                        <div class="col-lg-3 mycalendar">
-                            <span class="has-float-label">
-                                <input asp-for="@Model.Order.Invoices[i].InvoiceDueDate" class="form-control" type="text" autocomplete="off" data-id="@i" placeholder=" " />
-                                <label asp-for="@Model.Order.Invoices[i].InvoiceDueDate">Splatnost faktury</label>
-                            </span>
-                            <span asp-validation-for="@Model.Order.Invoices[i].InvoiceDueDate" class="text-danger"></span>
-                        </div>
-
-                        <div class="col-lg-3">
-                            <span class="has-float-label">
-                                <input asp-for="@Model.Order.Invoices[i].Cost" class="form-control" type="text" placeholder=" " />
-                                <label asp-for="@Model.Order.Invoices[i].Cost">Částka [@Model.Order.SharedInfo.Currency.Name]</label>
-                            </span>
-                            <span asp-validation-for="@Model.Order.Invoices[i].Cost" class="text-danger"></span>
-                        </div>
-
-                        <div class="col-lg-1">
-                            <a href="javascript:void(0)" class="btn btn-danger btn-sm mt-1" data-toggle="tooltip" title="Odstranit záznam" onclick="DeleteInvoice(@Model.Order.Invoices[i].InvoiceId)"><i class="fa fa-trash"></i></a>
-                        </div>
-
-                    </div>
-
-                    <div class="row form-group justify-content-end">
-                        <div class="col-lg-9">
-                            <span class="has-float-label">
-                                <input asp-for="@Model.Order.Invoices[i].DeliveryNote" class="form-control" type="text" placeholder="Cesta k dodacímu listu"/>
-                                <label asp-for="@Model.Order.Invoices[i].DeliveryNote">Dodací list</label>
-                            </span>
-                            <span asp-validation-for="@Model.Order.Invoices[i].DeliveryNote" class="text-danger"></span>
-                        </div>
-                        <div class="col-lg-1"></div>
-                    </div>
-
-                </div>
+                @await Html.PartialAsync("Partials/Orders/_Partial_Invoices", Model, new ViewDataDictionary(ViewData) {{ "i", i }})
             }
             <span asp-validation-for="Order.Invoices" class="text-danger"></span>
         </div>
