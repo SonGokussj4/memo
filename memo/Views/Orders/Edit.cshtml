@@ -26,69 +26,72 @@
 <div class="container d-flex justify-content-center">
     <div class="col-lg-10 push-lg-2 personal-info">
 
-        @* <!--------------------------------------------------------------------------------------
+        <!--------------------------------------------------------------------------------------
             FORM - NABIDKA
         --------------------------------------------------------------------------------------->
-        <div class="card">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        @if (@Model.Order.FromType != "-")
+        {
+            <div class="card">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-            <h5 class="card-title">Detaily nabídky</h5>
+                <h5 class="card-title">Detaily nabídky</h5>
 
-            <hr />
+                <hr />
 
-            <div class="form-group row">
-                @if (@Model.Order.FromType == "N")
-                {
-                    <label asp-for="Order.OfferId" class="col-lg-3 col-form-label form-control-label control-label">@EvektorSourceText</label>
-                    <div class="col-lg-4">
-                        <input asp-for="Order.Offer.OfferName" class="form-control" type="text" readonly />
-                        <span asp-validation-for="Order.OfferId" class="text-danger"></span>
-                    </div>
-                }
-                else if (@Model.Order.FromType == "Z")
-                {
-                    <label asp-for="Order.ContractId" class="col-lg-3 col-form-label form-control-label control-label">@EvektorSourceText</label>
-                    <div class="col-lg-4">
-                        <input asp-for="Order.Contract.ContractName" class="form-control" type="text" readonly />
-                        <span asp-validation-for="Order.ContractId" class="text-danger"></span>
-                    </div>
-                }
-            </div>
-
-            <ul>
-                <li><b>Předmět:</b> @Model.Order.SharedInfo.Subject - <b>Cena:</b> @String.Format(CultureInfo.CreateSpecificCulture(Model.Order.SharedInfo.Currency.CultureCode), "{0:C0}", @Model.Order.SharedInfo.Price) @PriceInCzk</li>
-                <li><b>Zákazník:</b> @Model.Order.SharedInfo.Company.Name (<b>Splatnost faktury:</b> @Model.Order.SharedInfo.Company.InvoiceDueDays dní)</li>
-                <li>
-                    <b>Přijetí poptávky:</b> @String.Format("{0:dd.MM.yyyy}", @Model.Order.SharedInfo.ReceiveDate) /
+                <div class="form-group row">
                     @if (@Model.Order.FromType == "N")
                     {
-                        <b>Odeslání nabídky:</b> @String.Format("{0:dd.MM.yyyy}", @Model.Order.Offer.SentDate)
+                        <label asp-for="Order.OfferId" class="col-lg-3 col-form-label form-control-label control-label">@EvektorSourceText</label>
+                        <div class="col-lg-4">
+                            <input asp-for="Order.Offer.OfferName" class="form-control" type="text" readonly />
+                            <span asp-validation-for="Order.OfferId" class="text-danger"></span>
+                        </div>
                     }
-                    <b><label asp-for="Order.SharedInfo.EstimatedFinishDate"></label>:</b> @String.Format("{0:dd.MM.yyyy}", @Model.Order.SharedInfo.EstimatedFinishDate)
-                </li>
-            </ul>
-
-            <div class="cardTitleMerged">
-                <div class="">
-                    <a asp-action="Index" class="btn btn-light border"><i class="fa fa-arrow-left"></i> Zpět</a>
+                    else if (@Model.Order.FromType == "Z")
+                    {
+                        <label asp-for="Order.ContractId" class="col-lg-3 col-form-label form-control-label control-label">@EvektorSourceText</label>
+                        <div class="col-lg-4">
+                            <input asp-for="Order.Contract.ContractName" class="form-control" type="text" readonly />
+                            <span asp-validation-for="Order.ContractId" class="text-danger"></span>
+                        </div>
+                    }
                 </div>
 
-                @if (@Model.Order.FromType == "N")
-                {
-                    <div class="">
-                        <a asp-action="Edit" asp-controller="Offers" asp-route-id="@Model.Order.OfferId" class="btn btn-primary"><i class="fa fa-list-alt"></i> Přejít na nabídku</a>
-                    </div>
-                }
-                else if (@Model.Order.FromType == "Z")
-                {
-                    <div class="">
-                        <a asp-action="Edit" asp-controller="Contracts" asp-route-id="@Model.Order.ContractId" class="btn btn-primary"><i class="fa fa-list-alt"></i> Přejít na rámcovku</a>
-                    </div>
-                }
-            </div>
-        </div>
+                <ul>
+                    <li><b>Předmět:</b> @Model.Order.SharedInfo.Subject - <b>Cena:</b> @String.Format(CultureInfo.CreateSpecificCulture(Model.Order.SharedInfo.Currency.CultureCode), "{0:C0}", @Model.Order.SharedInfo.Price) @PriceInCzk</li>
+                    <li><b>Zákazník:</b> @Model.Order.SharedInfo.Company.Name (<b>Splatnost faktury:</b> @Model.Order.SharedInfo.Company.InvoiceDueDays dní)</li>
+                    <li>
+                        <b>Přijetí poptávky:</b> @String.Format("{0:dd.MM.yyyy}", @Model.Order.SharedInfo.ReceiveDate) /
+                        @if (@Model.Order.FromType == "N")
+                        {
+                            <b>Odeslání nabídky:</b> @String.Format("{0:dd.MM.yyyy}", @Model.Order.Offer.SentDate)
+                        }
+                        <b><label asp-for="Order.SharedInfo.EstimatedFinishDate"></label>:</b> @String.Format("{0:dd.MM.yyyy}", @Model.Order.SharedInfo.EstimatedFinishDate)
+                    </li>
+                </ul>
 
-        <br /> *@
+                <div class="cardTitleMerged">
+                    <div class="">
+                        <a asp-action="Index" class="btn btn-light border"><i class="fa fa-arrow-left"></i> Zpět</a>
+                    </div>
+
+                    @if (@Model.Order.FromType == "N")
+                    {
+                        <div class="">
+                            <a asp-action="Edit" asp-controller="Offers" asp-route-id="@Model.Order.OfferId" class="btn btn-primary"><i class="fa fa-list-alt"></i> Přejít na nabídku</a>
+                        </div>
+                    }
+                    else if (@Model.Order.FromType == "Z")
+                    {
+                        <div class="">
+                            <a asp-action="Edit" asp-controller="Contracts" asp-route-id="@Model.Order.ContractId" class="btn btn-primary"><i class="fa fa-list-alt"></i> Přejít na rámcovku</a>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <br />
+        }
 
         <!--------------------------------------------------------------------------------------
             FORM - ZAKAZKA
