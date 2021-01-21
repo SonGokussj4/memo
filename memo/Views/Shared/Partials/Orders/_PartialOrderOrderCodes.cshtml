@@ -50,7 +50,7 @@
         </span>
         <span asp-validation-for="@Model.Order.OrderCodes[i].HourWageCost" class="text-danger"></span>
         <label class="order-codes-sum-hours-label ml-2" style="font-size: 0.8em; color: grey;">
-            Vynásobeno: @string.Format(CultureInfo.CreateSpecificCulture(@Model.Order.SharedInfo.Currency.CultureCode), "{0:C0}", @Model.Order.OrderCodes[i].HourWageSum)
+            Celkem: @string.Format(CultureInfo.CreateSpecificCulture(@Model.Order.SharedInfo.Currency.CultureCode), "{0:C0}", @Model.Order.OrderCodes[i].HourWageSum)
         </label>
     </div>
 

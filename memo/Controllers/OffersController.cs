@@ -93,17 +93,7 @@ namespace memo.Controllers
             };
 
             await populateModelAsync(vm);
-
-            // TODO: Dat do PopulateModel nebo tak nejak
-            string domainUser = User.GetLoggedInUserName();
-            string username = domainUser.Split('\\').LastOrDefault();
-            int userId = await _eveDbDochna.tUsers.Where(x => x.TxAccount == username).Select(x => x.Id).FirstOrDefaultAsync();
-
-            vEmployees vEmployee = await _eveDbDochna.vEmployees.Where(x => x.Id == userId).FirstOrDefaultAsync();
-
-            vm.Offer.SharedInfo.EveCreatedUser = vEmployee.FormatedName;
-            vm.Offer.SharedInfo.EveDepartment = vEmployee.DepartName;
-            vm.Offer.SharedInfo.EveDivision = vEmployee.EVE == 1 ? "EVE" : "EVAT";
+            await defaultEvePreselected(vm);
 
             return View(vm);
         }
@@ -146,6 +136,7 @@ namespace memo.Controllers
             };
 
             await populateModelAsync(vm);
+            await defaultEvePreselected(vm);
             TempData["Error"] = "Nepovedlo se uložit.";
 
             return View(vm);
@@ -180,6 +171,7 @@ namespace memo.Controllers
             };
 
             await populateModelAsync(vm);
+
             ViewBag.OfferStatusName = _db.OfferStatus.Find(offer.OfferStatusId).Name;
             ViewBag.CreatedOrders = _db.Order.Include(x => x.Offer).Where(x => x.OfferId == id).ToList();
 
@@ -190,82 +182,71 @@ namespace memo.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(string actionType, int id, OfferViewModel vm)
         {
-            // if (id != vm.Offer.OfferId)
-            // {
-            //     return NotFound();
-            // }
-
             if (ModelState.IsValid)
             {
-                try
+                OfferViewModel oldVm = new OfferViewModel();
+                oldVm.Offer = await _db.Offer
+                    .AsNoTracking()
+                    .Include(x => x.SharedInfo).
+                    FirstOrDefaultAsync(x => x.OfferId == vm.Offer.OfferId);
+
+                if (oldVm.Offer.OfferName == vm.Offer.OfferName &&
+                    oldVm.Offer.SharedInfo.ReceiveDate == vm.Offer.SharedInfo.ReceiveDate &&
+                    oldVm.Offer.SharedInfo.EstimatedFinishDate == vm.Offer.SharedInfo.EstimatedFinishDate &&
+                    oldVm.Offer.SentDate == vm.Offer.SentDate &&
+                    oldVm.Offer.SharedInfo.Subject == vm.Offer.SharedInfo.Subject &&
+                    oldVm.Offer.SharedInfo.ContactId == vm.Offer.SharedInfo.ContactId &&
+                    oldVm.Offer.SharedInfo.CompanyId == vm.Offer.SharedInfo.CompanyId &&
+                    oldVm.Offer.SharedInfo.EveDivision == vm.Offer.SharedInfo.EveDivision &&
+                    oldVm.Offer.SharedInfo.EveDepartment == vm.Offer.SharedInfo.EveDepartment &&
+                    oldVm.Offer.SharedInfo.EveCreatedUser == vm.Offer.SharedInfo.EveCreatedUser &&
+                    oldVm.Offer.SharedInfo.Price == vm.Offer.SharedInfo.Price &&
+                    oldVm.Offer.SharedInfo.CurrencyId == vm.Offer.SharedInfo.CurrencyId &&
+                    oldVm.Offer.SharedInfo.ExchangeRate == vm.Offer.SharedInfo.ExchangeRate &&
+                    oldVm.Offer.LostReason == vm.Offer.LostReason &&
+                    oldVm.Offer.Notes == vm.Offer.Notes &&
+                    oldVm.Offer.Active == vm.Offer.Active)
                 {
-                    OfferViewModel oldVm = new OfferViewModel();
-                    oldVm.Offer = await _db.Offer
-                        .AsNoTracking()
-                        .Include(x => x.SharedInfo).
-                        FirstOrDefaultAsync(x => x.OfferId == vm.Offer.OfferId);
+                    TempData["Info"] = "Nebyla provedena změna, není co uložit";
 
-                    if (oldVm.Offer.OfferName == vm.Offer.OfferName &&
-                        oldVm.Offer.SharedInfo.ReceiveDate == vm.Offer.SharedInfo.ReceiveDate &&
-                        oldVm.Offer.SharedInfo.EstimatedFinishDate == vm.Offer.SharedInfo.EstimatedFinishDate &&
-                        oldVm.Offer.SentDate == vm.Offer.SentDate &&
-                        oldVm.Offer.SharedInfo.Subject == vm.Offer.SharedInfo.Subject &&
-                        oldVm.Offer.SharedInfo.ContactId == vm.Offer.SharedInfo.ContactId &&
-                        oldVm.Offer.SharedInfo.CompanyId == vm.Offer.SharedInfo.CompanyId &&
-                        oldVm.Offer.SharedInfo.EveDivision == vm.Offer.SharedInfo.EveDivision &&
-                        oldVm.Offer.SharedInfo.EveDepartment == vm.Offer.SharedInfo.EveDepartment &&
-                        oldVm.Offer.SharedInfo.EveCreatedUser == vm.Offer.SharedInfo.EveCreatedUser &&
-                        oldVm.Offer.SharedInfo.Price == vm.Offer.SharedInfo.Price &&
-                        oldVm.Offer.SharedInfo.CurrencyId == vm.Offer.SharedInfo.CurrencyId &&
-                        oldVm.Offer.SharedInfo.ExchangeRate == vm.Offer.SharedInfo.ExchangeRate &&
-                        oldVm.Offer.LostReason == vm.Offer.LostReason &&
-                        oldVm.Offer.Notes == vm.Offer.Notes &&
-                        oldVm.Offer.Active == vm.Offer.Active)
+                    if (actionType == "Uložit")
                     {
-                        TempData["Info"] = "Nebyla provedena změna, není co uložit";
+                        // Populate VM
+                        vm.Audits = getAuditViewModel(_db).Audits
+                            .Where(x => x.TableName == "Offer" && x.KeyValue == id.ToString())
+                            .ToList();
 
-                        if (actionType == "Uložit")
-                        {
-                            // Populate VM
-                            vm.Audits = getAuditViewModel(_db).Audits
-                                .Where(x => x.TableName == "Offer" && x.KeyValue == id.ToString())
-                                .ToList();
+                        await populateModelAsync(vm);
 
-                            await populateModelAsync(vm);
+                        ViewBag.OfferStatusName = _db.OfferStatus.Find(vm.Offer.OfferStatusId).Name;
+                        ViewBag.CreatedOrders = _db.Order.Include(x => x.Offer).ThenInclude(x => x.SharedInfo).Where(x => x.OfferId == id).ToList();
 
-                            ViewBag.OfferStatusName = _db.OfferStatus.Find(vm.Offer.OfferStatusId).Name;
-                            ViewBag.CreatedOrders = _db.Order.Include(x => x.Offer).ThenInclude(x => x.SharedInfo).Where(x => x.OfferId == id).ToList();
+                        vm.Offer.SharedInfo = await _db.SharedInfo
+                            .Where(x => x.SharedInfoId == vm.Offer.SharedInfoId)
+                            .Include(x => x.Company)
+                            .Include(x => x.Contact)
+                            .FirstOrDefaultAsync();
 
-                            return View(vm);
-                        }
-                        else
-                        {
-                            return RedirectToAction(nameof(Index));
-                        }
+                        return View(vm);
                     }
-
-            //         vm.Offer.PriceCzk = Convert.ToInt32(vm.Offer.Price * vm.Offer.ExchangeRate);  // 1000 * 26,243
-
-                    if (vm.Offer.SharedInfo.Price != null)
+                    else
                     {
-                        string exchangeRateText = await _db.Currency.Where(x => x.CurrencyId == vm.Offer.SharedInfo.CurrencyId).Select(x => x.Name).FirstOrDefaultAsync();
-                        Decimal ExchangeRate = Convert.ToDecimal(getCurrencyStr(exchangeRateText));
-
-                        vm.Offer.SharedInfo.PriceCzk = Convert.ToInt32(vm.Offer.SharedInfo.Price * ExchangeRate);  // 1000 * 26,243
+                        return RedirectToAction(nameof(Index));
                     }
-                    vm.Offer.ModifiedBy = User.GetLoggedInUserName();
-                    vm.Offer.ModifiedDate = DateTime.Now;
-
-                    // _db.Update(vm.Offer.SharedInfo);
-                    _db.Update(vm.Offer);
-                    await _db.SaveChangesAsync(User.GetLoggedInUserName());
                 }
-                catch (DbUpdateConcurrencyException)
+
+                if (vm.Offer.SharedInfo.Price != null)
                 {
-                    ModelState.AddModelError("", "Unable to save changes. " +
-                                             "Try again, and if the problem persists, " +
-                                             "see your system administrator.");
+                    string exchangeRateText = await _db.Currency.Where(x => x.CurrencyId == vm.Offer.SharedInfo.CurrencyId).Select(x => x.Name).FirstOrDefaultAsync();
+                    Decimal ExchangeRate = Convert.ToDecimal(getCurrencyStr(exchangeRateText));
+
+                    vm.Offer.SharedInfo.PriceCzk = Convert.ToInt32(vm.Offer.SharedInfo.Price * ExchangeRate);  // 1000 * 26,243
                 }
+                vm.Offer.ModifiedBy = User.GetLoggedInUserName();
+                vm.Offer.ModifiedDate = DateTime.Now;
+
+                _db.Update(vm.Offer);
+                await _db.SaveChangesAsync(User.GetLoggedInUserName());
 
                 TempData["Success"] = "Editace uložena";
 
@@ -277,6 +258,7 @@ namespace memo.Controllers
                         .ToList();
 
                     await populateModelAsync(vm);
+
                     ViewBag.OfferStatusName = _db.OfferStatus.Find(vm.Offer.OfferStatusId).Name;
                     ViewBag.CreatedOrders = _db.Order.Include(x => x.Offer).Where(x => x.OfferId == id).ToList();
 
@@ -476,7 +458,10 @@ namespace memo.Controllers
             // vm.DepartmentList = await getDepartmentListAsync2(_eveDbDochna);  // TODO zjistit, co je rychlejsi (tohle nějak failuje)
             vm.DepartmentList = await getDepartmentListAsync(_eveDbDochna);
             vm.EveContactList = await getEveContactsAsync(_eveDbDochna);
+        }
 
+        private async Task defaultEvePreselected(dynamic vm)
+        {
             // Fill default Division/Department/Username values of logged in user
             string domainAndUsername = User.GetLoggedInUserName();
             string username = domainAndUsername.Split('\\').LastOrDefault();

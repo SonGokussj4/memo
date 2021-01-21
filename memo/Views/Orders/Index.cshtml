@@ -167,12 +167,6 @@
                 <td scope="row" class="text-left">@item.OrderName</td>
                 @* Zákazník *@
                 <td scope="row" class="text-left">@item.SharedInfo.Company.Name</td>
-                @* @{
-                    string OrderCodeTooltip = Model.cOrdersAll
-                        .Where(x => x.OrderCode == item.OrderCode)
-                        .Select(x => x.OrderName)
-                        .FirstOrDefault();
-                } *@
                 @* Kód EVE vykazování *@
                 @* <td scope="row" class="text-center" data-toggle="tooltip" data-html="true" title="@OrderCodeTooltip">@item.OrderCode</td> *@
                 @* Key acc. manager *@
@@ -185,16 +179,16 @@
                 <td scope="row" class="text-right">@string.Format(CultureInfo.CreateSpecificCulture(@item.SharedInfo.Currency.CultureCode), "{0:C0}", @item.NegotiatedPrice)</td>
                 @* Vyfakturováno *@
                 <td scope="row" class="text-right">
-                    <span style="font-size: 0.9rem;">@string.Format(CultureInfo.CreateSpecificCulture(@item.SharedInfo.Currency.CultureCode), "{0:C0}", @item.GetSumInvoices())</span>
                     <div class="progress" style="height: 5px;">
                     @{
-                        @* int percentValue = (int)Math.Ceiling((double)item.PriceFinal / item.NegotiatedPrice * 100); *@
                         int percentValue = item.GetSumInvoicesPercentage();
                         string progressBarWidth = percentValue <= 100 ? (percentValue).ToString() : "100";
                         string progressbarClassColor = percentValue <= 100 ? "" : "bg-danger";
                     }
+                        <span style="display:none">@percentValue</span>  <!-- Hidden span for sorting percentages correctly-->
                         <div class="progress-bar @progressbarClassColor progress-bar-striped" role="progressbar" style="width: @progressBarWidth%;"></div>
                     </div>
+                    <span style="font-size: 0.9rem;">@string.Format(CultureInfo.CreateSpecificCulture(@item.SharedInfo.Currency.CultureCode), "{0:C0}", @item.GetSumInvoices())</span>
                 </td>
                 @* Zbývá *@
                 <td scope="row" class="text-right">@string.Format(CultureInfo.CreateSpecificCulture(@item.SharedInfo.Currency.CultureCode), "{0:C0}", @item.NegotiatedPrice - @item.GetSumInvoices())</td>

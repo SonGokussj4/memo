@@ -18,225 +18,225 @@
 <div class="container d-flex justify-content-center">
     <div class="col-lg-10 push-lg-2 ">
         <form class="card" role="form" autocomplete="on" asp-action="Edit" method="post">
-        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-        <input type="hidden" asp-for="Contract.ContractsId" />
-        <input type="hidden" asp-for="Contract.SharedInfo.SharedInfoId" />
+            <input type="hidden" asp-for="Contract.CreatedDate" readonly />
+            <input type="hidden" asp-for="Contract.CreatedBy" readonly />
+            <input type="hidden" asp-for="Contract.ModifiedBy" readonly />
+            <input type="hidden" asp-for="Contract.ContractsId" readonly />
+            <input type="hidden" asp-for="Contract.SharedInfoId" readonly />
+            <input type="hidden" asp-for="Contract.SharedInfo.SharedInfoId" readonly />
 
-        <div class="cardTitleMerged">
+            <div class="cardTitleMerged">
 
-            <h5 class="card-title">@ViewData["SubTitle"]</h5>
+                <h5 class="card-title">@ViewData["SubTitle"]</h5>
 
-            <div class="form-group">
-                <div class="pretty p-bigger p-default p-curve p-toggle">
-                    <input asp-for="Contract.Active" type="checkbox"/>
-                    <div class="state p-success p-on">
-                        <label>Aktivní</label>
+                <div class="form-group">
+                    <div class="pretty p-bigger p-default p-curve p-toggle">
+                        <input asp-for="Contract.Active" type="checkbox"/>
+                        <div class="state p-success p-on">
+                            <label>Aktivní</label>
+                        </div>
+                        <div class="state p-danger p-off">
+                            <label>Neaktivní </label>
+                        </div>
                     </div>
-                    <div class="state p-danger p-off">
-                        <label>Neaktivní </label>
-                    </div>
+                    <span asp-validation-for="Contract.Active" class="text-danger"></span>
                 </div>
-                <span asp-validation-for="Contract.Active" class="text-danger"></span>
+
             </div>
 
-        </div>
-
-        <hr />
-
-        <div class="form-group row">
-            <label asp-for="Contract.ContractName" class="required col-lg-3 col-form-label form-control-label control-label"></label>
-            <div class="col-lg-9">
-                <span class="has-float-label">
-                    <input asp-for="Contract.ContractName" class="form-control" placeholder=" " type="text" />
-                    <label asp-for="Contract.ContractName"></label>
-                </span>
-                <span asp-validation-for="Contract.ContractName" class="text-danger"></span>
-            </div>
-        </div>
-
-        <div class="createOrder">
+            <hr />
 
             <div class="form-group row">
-
-                <table class="table table-sm mt-3" style="font-size: 0.9em;">
-                    <thead>
-                        <tr>
-                            <th class="text-center">Vytvořené zakázky</th>
-                            <th class="text-center">Vyjednaná cena</th>
-                            <th class="text-center">Aktuálně</th>
-                            <th class="text-center">Vyčerpáno</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    @foreach (Order order in Model.CreatedOrders)
-                    {
-                        <tr>
-                            <td class="pl-3"><a asp-action="Edit" asp-controller="Orders" asp-route-id="@order.OrderId">@order.OrderName</a></td>
-                            <td class="text-right">@string.Format(CultureInfo.CreateSpecificCulture(@order.Contract?.SharedInfo.Currency.CultureCode), "{0:C0}", @order.NegotiatedPrice)</td>
-                            <td class="text-right">
-                                @string.Format(CultureInfo.CreateSpecificCulture(@order.Contract?.SharedInfo.Currency.CultureCode), "{0:C0}", @order.PriceFinal)
-                                <div class="progress" style="height: 5px; margin-left: 25%;">
-                                @{
-                                    int percentValue = 0;
-                                    if (order.NegotiatedPrice != 0)
-                                    {
-                                        percentValue = (int)Math.Ceiling((decimal)order.PriceFinal / order.NegotiatedPrice * 100);
-                                    }
-                                    string progressBarWidth = percentValue <= 100 ? (percentValue).ToString() : "100";
-                                    string progressbarClassColor = percentValue <= 100 ? "" : "bg-danger";
-                                }
-                                    <div class="progress-bar @progressbarClassColor progress-bar-striped" role="progressbar" style="width: @progressBarWidth%;"></div>
-                                </div>
-                            </td>
-                            <td class="text-right pr-3">
-                                @( order.Burned / 60 )/@order.TotalHours hod = @( (float)order.Burned / 60 / order.TotalHours * 100 ) %
-                            </td>
-                        </tr>
-                    }
-                    </tbody>
-                </table>
+                <label asp-for="Contract.ContractName" class="required col-lg-3 col-form-label form-control-label control-label"></label>
+                <div class="col-lg-9">
+                    <span class="has-float-label">
+                        <input asp-for="Contract.ContractName" class="form-control" placeholder=" " type="text" />
+                        <label asp-for="Contract.ContractName"></label>
+                    </span>
+                    <span asp-validation-for="Contract.ContractName" class="text-danger"></span>
+                </div>
             </div>
-        </div>
 
-        <div class="createOrder">
-            <div class="form-group row text-center">
-                <div class="col-md-12 from-control">
-                    <a class="col-md-4 btn btn-success mt-3"
-                            asp-action="CreateFromContract" asp-controller="Orders"
-                            asp-route-id="@Model.Contract.ContractsId">
-                        <i class="fa fa-plus"></i> Vytvořit novou zakázku
+            <div class="createOrder">
+
+                <div class="form-group row">
+
+                    <table class="table table-sm mt-3" style="font-size: 0.9em;">
+                        <thead>
+                            <tr>
+                                <th class="text-center">Vytvořené zakázky</th>
+                                <th class="text-center">Vyjednaná cena</th>
+                                <th class="text-center">Aktuálně</th>
+                                <th class="text-center">Vyčerpáno</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (Order order in Model.CreatedOrders)
+                        {
+                            <tr>
+                                <td class="pl-3"><a asp-action="Edit" asp-controller="Orders" asp-route-id="@order.OrderId">@order.OrderName</a></td>
+                                <td class="text-right">@string.Format(CultureInfo.CreateSpecificCulture(@order.Contract?.SharedInfo.Currency.CultureCode), "{0:C0}", @order.NegotiatedPrice)</td>
+                                <td class="text-right">
+                                    @string.Format(CultureInfo.CreateSpecificCulture(@order.Contract?.SharedInfo.Currency.CultureCode), "{0:C0}", @order.PriceFinal)
+                                    <div class="progress" style="height: 5px; margin-left: 25%;">
+                                    @{
+                                        int percentValue = 0;
+                                        if (order.NegotiatedPrice != 0)
+                                        {
+                                            percentValue = (int)Math.Ceiling((decimal)order.PriceFinal / order.NegotiatedPrice * 100);
+                                        }
+                                        string progressBarWidth = percentValue <= 100 ? (percentValue).ToString() : "100";
+                                        string progressbarClassColor = percentValue <= 100 ? "" : "bg-danger";
+                                    }
+                                        <div class="progress-bar @progressbarClassColor progress-bar-striped" role="progressbar" style="width: @progressBarWidth%;"></div>
+                                    </div>
+                                </td>
+                                <td class="text-right pr-3">
+                                    @( order.Burned / 60 )/@order.TotalHours hod = @( (float)order.Burned / 60 / order.TotalHours * 100 ) %
+                                </td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="createOrder">
+                <div class="form-group row text-center">
+                    <div class="col-md-12 from-control">
+                        <a class="col-md-4 btn btn-success mt-3"
+                                asp-action="CreateFromContract" asp-controller="Orders"
+                                asp-route-id="@Model.Contract.ContractsId">
+                            <i class="fa fa-plus"></i> Vytvořit novou zakázku
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <hr />
+
+            <div class="form-group row">
+                <label asp-for="Contract.SharedInfo.ReceiveDate" class="required col-lg-3 col-form-label form-control-label control-label">Datum přijetí</label>
+                <div class="col-lg-9 mycalendar">
+                    <span class="has-float-label">
+                        <input asp-for="Contract.SharedInfo.ReceiveDate" class="form-control" type="text" placeholder=" " required="" autocomplete="off"/>
+                        <label asp-for="Contract.SharedInfo.ReceiveDate"></label>
+                    </span>
+                    <span asp-validation-for="Contract.SharedInfo.ReceiveDate" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label asp-for="Contract.SharedInfo.Subject" class="required col-lg-3 col-form-label form-control-label control-label">Předmět</label>
+                <div class="col-lg-9">
+                    <span class="has-float-label">
+                        <input asp-for="Contract.SharedInfo.Subject" class="form-control" placeholder="Krátký popis nabídky" type="text" />
+                        <label asp-for="Contract.SharedInfo.Subject"></label>
+                    </span>
+                    <span asp-validation-for="Contract.SharedInfo.Subject" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-group row eveOffer">
+                <label class="required col-lg-3 col-form-label form-control-label control-label">Evektor</label>
+                <div class="col-lg-2">
+                    <span class="floating-select-label">Divize</span>
+                    <select class="form-control" asp-for="Contract.SharedInfo.EveDivision" asp-items="@Model.EveDivisionList"></select>
+                    <span asp-validation-for="Contract.SharedInfo.EveDivision" class="text-danger"></span>
+                </div>
+                <div class="col-lg-3">
+                    <span class="floating-select-label">Oddělení</span>
+                    <select asp-for="Contract.SharedInfo.EveDepartment" class="form-control select-department-ajax"></select>
+                    <span asp-validation-for="Contract.SharedInfo.EveDepartment" class="text-danger"></span>
+                </div>
+                <div class="col-lg-4">
+                    <span class="floating-select-label">Uživatel</span>
+                    <select asp-for="Contract.SharedInfo.EveCreatedUser" class="form-control select-user-ajax"></select>
+                    <span asp-validation-for="Contract.SharedInfo.EveCreatedUser" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-group row customerOffer">
+                <label class="required col-lg-3 col-form-label form-control-label control-label">Zákazník</label>
+                <div class="col-lg-4">
+                    <span class="floating-select-label">Firma zákazníka</span>
+                    <select asp-for="Contract.SharedInfo.CompanyId" class="form-control select-company-ajax"></select>
+                    <span asp-validation-for="Contract.SharedInfo.CompanyId" class="text-danger"></span>
+                </div>
+                <div class="col-lg-1" data-toggle="tooltip" title="Nová firma">
+                    <a asp-action="create" asp-controller="Companies" target="_blank">
+                        <i class="form-control fa fa-plus-circle" style="color: green; cursor: pointer;"></i>
+                    </a>
+                </div>
+                <div class="col-lg-3">
+                    <span class="floating-select-label">Kontakt</span>
+                    <select asp-for="Contract.SharedInfo.ContactId" class="form-control select-contact-ajax"></select>
+                    <span asp-validation-for="Contract.SharedInfo.ContactId" class="text-danger"></span>
+                </div>
+                <div class="col-lg-1" data-toggle="tooltip" title="Nový kontakt">
+                    <a asp-action="create" asp-controller="Contacts" target="_blank">
+                        <i class="form-control fa fa-plus-circle" style="color: green; cursor: pointer;"></i>
                     </a>
                 </div>
             </div>
-        </div>
 
-        <hr />
-
-        <div class="form-group row">
-            <label asp-for="Contract.SharedInfo.ReceiveDate" class="required col-lg-3 col-form-label form-control-label control-label">Datum přijetí</label>
-            <div class="col-lg-9 mycalendar">
-                <span class="has-float-label">
-                    <input asp-for="Contract.SharedInfo.ReceiveDate" class="form-control" type="text" placeholder=" " required="" autocomplete="off"/>
-                    <label asp-for="Contract.SharedInfo.ReceiveDate"></label>
-                </span>
-                <span asp-validation-for="Contract.SharedInfo.ReceiveDate" class="text-danger"></span>
-            </div>
-        </div>
-
-        <div class="form-group row">
-            <label asp-for="Contract.SharedInfo.Subject" class="required col-lg-3 col-form-label form-control-label control-label">Předmět</label>
-            <div class="col-lg-9">
-                <span class="has-float-label">
-                    <input asp-for="Contract.SharedInfo.Subject" class="form-control" placeholder="Krátký popis nabídky" type="text" />
-                    <label asp-for="Contract.SharedInfo.Subject"></label>
-                </span>
-                <span asp-validation-for="Contract.SharedInfo.Subject" class="text-danger"></span>
-            </div>
-        </div>
-
-        <div class="form-group row eveOffer">
-            <label class="required col-lg-3 col-form-label form-control-label control-label">Evektor</label>
-            <div class="col-lg-2">
-                <span class="floating-select-label">Divize</span>
-                <select class="form-control" asp-for="Contract.SharedInfo.EveDivision" asp-items="@Model.EveDivisionList"></select>
-                <span asp-validation-for="Contract.SharedInfo.EveDivision" class="text-danger"></span>
-            </div>
-            <div class="col-lg-3">
-                <span class="floating-select-label">Oddělení</span>
-                <select asp-for="Contract.SharedInfo.EveDepartment" class="form-control select-department-ajax"></select>
-                <span asp-validation-for="Contract.SharedInfo.EveDepartment" class="text-danger"></span>
-            </div>
-            <div class="col-lg-4">
-                <span class="floating-select-label">Uživatel</span>
-                <select asp-for="Contract.SharedInfo.EveCreatedUser" class="form-control select-user-ajax"></select>
-                <span asp-validation-for="Contract.SharedInfo.EveCreatedUser" class="text-danger"></span>
-            </div>
-        </div>
-
-        <div class="form-group row customerOffer">
-            <label class="required col-lg-3 col-form-label form-control-label control-label">Zákazník</label>
-            <div class="col-lg-4">
-                <span class="floating-select-label">Firma zákazníka</span>
-                <select asp-for="Contract.SharedInfo.CompanyId" class="form-control select-company-ajax"></select>
-                <span asp-validation-for="Contract.SharedInfo.CompanyId" class="text-danger"></span>
-            </div>
-            <div class="col-lg-1" data-toggle="tooltip" title="Nová firma">
-                <a asp-action="create" asp-controller="Companies" target="_blank">
-                    <i class="form-control fa fa-plus-circle" style="color: green; cursor: pointer;"></i>
-                </a>
-            </div>
-            <div class="col-lg-3">
-                <span class="floating-select-label">Kontakt</span>
-                <select asp-for="Contract.SharedInfo.ContactId" class="form-control select-contact-ajax"></select>
-                <span asp-validation-for="Contract.SharedInfo.ContactId" class="text-danger"></span>
-            </div>
-            <div class="col-lg-1" data-toggle="tooltip" title="Nový kontakt">
-                <a asp-action="create" asp-controller="Contacts" target="_blank">
-                    <i class="form-control fa fa-plus-circle" style="color: green; cursor: pointer;"></i>
-                </a>
-            </div>
-        </div>
-
-        <div class="form-group row">
-            <label asp-for="Contract.SharedInfo.Price" class="col-lg-3 col-form-label form-control-label control-label"></label>
-            <div class="col-lg-5">
-                <span class="has-float-label">
-                    <input asp-for="Contract.SharedInfo.Price" class="form-control" type="text" placeholder=" " />
-                    <label asp-for="Contract.SharedInfo.Price">Cena bez DPH</label>
-                </span>
-                <span asp-validation-for="Contract.SharedInfo.Price" class="text-danger"></span>
-            </div>
-            <div class="col-lg-2">
-                <span class="has-float-label">
-                    <select asp-for="Contract.SharedInfo.CurrencyId" asp-items="Model.CurrencyListNoRate" class="form-control"></select>
-                    <label asp-for="Contract.SharedInfo.CurrencyId">Měna</label>
-                </span>
-                <span asp-validation-for="Contract.SharedInfo.CurrencyId" class="text-danger"></span>
-            </div>
-            <div class="col-lg-2">
-                <span class="has-float-label hiddenOnLoad">
-                    <input asp-for="Contract.SharedInfo.ExchangeRate" class="form-control" type="text" data-toggle="tooltip" data-placement="top" title="Měnový kurz z ČNB" />
-                    <label asp-for="Contract.SharedInfo.ExchangeRate">Kurz</label>
-                </span>
-                <span asp-validation-for="Contract.SharedInfo.ExchangeRate" class="text-danger"></span>
-            </div>
-        </div>
-
-        <div class="form-group row">
-            <label asp-for="Contract.Notes" class="col-lg-3 col-form-label form-control-label control-label"></label>
-            <div class="col-lg-9">
-                <span class="has-float-label">
-                    <textarea asp-for="Contract.Notes" class="form-control" placeholder=" "></textarea>
-                    <label asp-for="Contract.Notes">Poznámky</label>
-                </span>
-                <span asp-validation-for="Contract.Notes" class="text-danger"></span>
-            </div>
-        </div>
-
-        <div class="form-group row">
-            <div class="col-lg-12">
-                <div class="d-flex justify-content-between">
-                    <label asp-for="Contract.CreatedDate" ></label> <b>@Model.Contract.CreatedDate</b>
-                    <label asp-for="Contract.ModifiedDate"></label> <b>@Model.Contract.ModifiedDate</b>
+            <div class="form-group row">
+                <label asp-for="Contract.SharedInfo.Price" class="col-lg-3 col-form-label form-control-label control-label"></label>
+                <div class="col-lg-5">
+                    <span class="has-float-label">
+                        <input asp-for="Contract.SharedInfo.Price" class="form-control" type="text" placeholder=" " />
+                        <label asp-for="Contract.SharedInfo.Price">Cena bez DPH</label>
+                    </span>
+                    <span asp-validation-for="Contract.SharedInfo.Price" class="text-danger"></span>
+                </div>
+                <div class="col-lg-2">
+                    <span class="has-float-label">
+                        <select asp-for="Contract.SharedInfo.CurrencyId" asp-items="Model.CurrencyListNoRate" class="form-control"></select>
+                        <label asp-for="Contract.SharedInfo.CurrencyId">Měna</label>
+                    </span>
+                    <span asp-validation-for="Contract.SharedInfo.CurrencyId" class="text-danger"></span>
+                </div>
+                <div class="col-lg-2">
+                    <span class="has-float-label hiddenOnLoad">
+                        <input asp-for="Contract.SharedInfo.ExchangeRate" class="form-control" type="text" data-toggle="tooltip" data-placement="top" title="Měnový kurz z ČNB" />
+                        <label asp-for="Contract.SharedInfo.ExchangeRate">Kurz</label>
+                    </span>
+                    <span asp-validation-for="Contract.SharedInfo.ExchangeRate" class="text-danger"></span>
                 </div>
             </div>
-        </div>
 
-        <div class="form-group row">
-            <div class="col-lg-3">
-                <a asp-action="Index" class="btn btn-light border"><i class="fa fa-arrow-left"></i> Zpět</a>
+            <div class="form-group row">
+                <label asp-for="Contract.Notes" class="col-lg-3 col-form-label form-control-label control-label"></label>
+                <div class="col-lg-9">
+                    <span class="has-float-label">
+                        <textarea asp-for="Contract.Notes" class="form-control" placeholder=" "></textarea>
+                        <label asp-for="Contract.Notes">Poznámky</label>
+                    </span>
+                    <span asp-validation-for="Contract.Notes" class="text-danger"></span>
+                </div>
             </div>
-            <div class="col-lg-9">
-                <input type="submit" class="btn btn-primary" name="actionType" value="Uložit" />
-                <input type="submit" class="btn btn-primary" name="actionType" value="Uložit a zavřít" />
-                <a href="javascript:void(0)" class="btn btn-danger pull-right" onclick="ConfirmDelete(@Model.Contract.ContractsId)">Smazat</a>
-            </div>
-        </div>
 
-        <input asp-for="Contract.CreatedDate" type="text" readonly hidden />
-        <input asp-for="Contract.CreatedBy" type="text" readonly hidden />
-        <input asp-for="Contract.ModifiedBy" type="text" readonly hidden />
+            <div class="form-group row">
+                <div class="col-lg-12">
+                    <div class="d-flex justify-content-between">
+                        <label asp-for="Contract.CreatedDate" ></label> <b>@Model.Contract.CreatedDate</b>
+                        <label asp-for="Contract.ModifiedDate"></label> <b>@Model.Contract.ModifiedDate</b>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <div class="col-lg-3">
+                    <a asp-action="Index" class="btn btn-light border"><i class="fa fa-arrow-left"></i> Zpět</a>
+                </div>
+                <div class="col-lg-9">
+                    <input type="submit" class="btn btn-primary" name="actionType" value="Uložit" />
+                    <input type="submit" class="btn btn-primary" name="actionType" value="Uložit a zavřít" />
+                    <a href="javascript:void(0)" class="btn btn-danger pull-right" onclick="ConfirmDelete(@Model.Contract.ContractsId)">Smazat</a>
+                </div>
+            </div>
 
         </form>
     </div>
