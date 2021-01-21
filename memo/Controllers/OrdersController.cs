@@ -128,6 +128,7 @@ namespace memo.Controllers
             vm.Order.KeyAccountManager = vEmployee.FormatedName;
 
             await populateModelAsync(vm);
+            await defaultEvePreselected(vm);
 
             return View(vm);
         }
@@ -525,110 +526,89 @@ namespace memo.Controllers
 
             if (ModelState.IsValid)
             {
-                try
+                // OfferOrderVM original = new OfferOrderVM();
+                // original.Order = await _db.Order.AsNoTracking()
+                //     .Include(x => x.Invoices)
+                //     .Include(x => x.OtherCosts)
+                //     .Include(x => x.OrderCodes)
+                //     .FirstOrDefaultAsync(x => x.OrderId == vm.Order.OrderId);
+
+                // // TODO tady je problém, že když je to type zakázka bez nabídky, tak to necheckuje změnu SharedInfo.XXX (company, eveCreatedUser...)
+                // if (original.Order.OrderName == vm.Order.OrderName &&
+                //     original.Order.NegotiatedPrice == vm.Order.NegotiatedPrice &&
+                //     original.Order.EveContactName == vm.Order.EveContactName &&
+                //     original.Order.KeyAccountManager == vm.Order.KeyAccountManager &&
+                //     original.Order.ExchangeRate == vm.Order.ExchangeRate &&
+                //     original.Order.Notes == vm.Order.Notes &&
+                //     original.Order.ModifiedBy == vm.Order.ModifiedBy &&
+                //     original.Order.Active == vm.Order.Active &&
+                //     original.Order.Burned == vm.Order.Burned &&
+                //     original.Order.Invoices.Count() == vm.Order.Invoices.Count() &&
+                //     original.Order.OtherCosts.Count() == vm.Order.OtherCosts.Count() &&
+                //     original.Order.OrderCodes.Count() == vm.Order.OrderCodes.Count() &&
+                //     // original.Order.SharedInfo.Company.Name == vm.Order.SharedInfo.Company.Name &&
+                //     unchangedOrderCodes(original.Order.OrderCodes, vm.Order.OrderCodes) == true &&
+                //     unchangedOtherCosts(original.Order.OtherCosts, vm.Order.OtherCosts) == true &&
+                //     unchangedInvoices(original.Order.Invoices, vm.Order.Invoices) == true
+                // )
+                // {
+                //     TempData["Info"] = "Nebyla provedena změna, není co uložit";
+                //     if (actionType == "Uložit")
+                //     {
+                //         // Populate VM
+                //         vm.Audits = getAuditViewModel(_db).Audits
+                //             .Where(x => x.TableName == "Order" && x.KeyValue == id.ToString())
+                //             .ToList(); ;
+
+                //         if (vm.Order.FromType == "N")
+                //         {
+                //             vm.Order.Offer = await _db.Offer.Where(x => x.OfferId == vm.Order.OfferId).FirstOrDefaultAsync();
+                //         }
+                //         else if (vm.Order.FromType == "Z")
+                //         {
+                //             vm.Order.Contract = await _db.Contracts.Where(x => x.ContractsId == vm.Order.ContractId).FirstOrDefaultAsync();
+                //         }
+
+                //         vm.Order.SharedInfo = await _db.SharedInfo
+                //             .Where(x => x.SharedInfoId == vm.Order.SharedInfoId)
+                //             .Include(x => x.Currency)
+                //             .Include(x => x.Company)
+                //             .Include(x => x.Contact)
+                //             .FirstOrDefaultAsync();
+
+                //         await populateModelAsync(vm);
+
+                //         return View(vm);
+                //     }
+                //     else
+                //     {
+                //         return RedirectToAction(nameof(Index));
+                //     }
+                // }
+
+                // TODO(jverner) Na toto se kouknout, komunikace s Vitou Cernym, co sem vubec chce...
+                vm.Order.PriceFinal = 0;
+                vm.UnspentMoney = Convert.ToInt32(vm.Order.NegotiatedPrice);
+
+                foreach (OtherCost otherCost in vm.Order.OtherCosts)
                 {
-                    OfferOrderVM oldVm = new OfferOrderVM();
-                    oldVm.Order = await _db.Order.AsNoTracking()
-                        .Include(x => x.Invoices)
-                        .Include(x => x.OtherCosts)
-                        .Include(x => x.OrderCodes)
-                        .FirstOrDefaultAsync(x => x.OrderId == vm.Order.OrderId);
-
-                    if (oldVm.Order.OrderName == vm.Order.OrderName &&
-                        oldVm.Order.NegotiatedPrice == vm.Order.NegotiatedPrice &&
-                        oldVm.Order.PriceFinal == vm.Order.PriceFinal &&
-                        // oldVm.Order.PriceDiscount == vm.Order.PriceDiscount &&
-                        oldVm.Order.EveContactName == vm.Order.EveContactName &&
-                        oldVm.Order.KeyAccountManager == vm.Order.KeyAccountManager &&
-                        oldVm.Order.ExchangeRate == vm.Order.ExchangeRate &&
-                        // oldVm.Order.PriceFinalCzk == vm.Order.PriceFinalCzk &&
-                        oldVm.Order.Notes == vm.Order.Notes &&
-                        oldVm.Order.ModifiedBy == vm.Order.ModifiedBy &&
-                        oldVm.Order.Active == vm.Order.Active &&
-                        oldVm.Order.Burned == vm.Order.Burned &&
-                        oldVm.Order.Invoices.Count() == vm.Order.Invoices.Count() &&
-                        oldVm.Order.OtherCosts.Count() == vm.Order.OtherCosts.Count() &&
-                        oldVm.Order.OrderCodes.Count() == vm.Order.OrderCodes.Count() &&
-                        unchangedOrderCodes(oldVm.Order.OrderCodes, vm.Order.OrderCodes) == true &&
-                        unchangedOtherCosts(oldVm.Order.OtherCosts, vm.Order.OtherCosts) == true &&
-                        unchangedInvoices(oldVm.Order.Invoices, vm.Order.Invoices) == true
-                    )
-                    {
-                        TempData["Info"] = "Nebyla provedena změna, není co uložit";
-                        if (actionType == "Uložit")
-                        {
-                            // Populate VM
-                            vm.Audits = getAuditViewModel(_db).Audits
-                                .Where(x => x.TableName == "Order" && x.KeyValue == id.ToString())
-                                .ToList(); ;
-
-                            if (vm.Order.FromType == "N")
-                            {
-                                vm.Order.Offer = await _db.Offer.Where(x => x.OfferId == vm.Order.OfferId).FirstOrDefaultAsync();
-                            }
-                            else if (vm.Order.FromType == "Z")
-                            {
-                                vm.Order.Contract = await _db.Contracts.Where(x => x.ContractsId == vm.Order.ContractId).FirstOrDefaultAsync();
-                            }
-
-                            foreach (OrderCodes orderCode in vm.Order.OrderCodes)
-                            {
-                                orderCode.SumMinutes = await GetSumMinutesAsync(orderCode.OrderCode);
-                                orderCode.PlannedMinutes = await GetPlannedMinutesAsync(orderCode.OrderCode);
-                            }
-
-                            vm.Order.SharedInfo = await _db.SharedInfo
-                                .Where(x => x.SharedInfoId == vm.Order.SharedInfoId)
-                                .Include(x => x.Currency)
-                                .Include(x => x.Company)
-                                .Include(x => x.Contact)
-                                .FirstOrDefaultAsync();
-
-                            await populateModelAsync(vm);
-
-                            return View(vm);
-                        }
-                        else
-                        {
-                            return RedirectToAction(nameof(Index));
-                        }
-                    }
-
-                    // TODO(jverner) Na toto se kouknout, komunikace s Vitou Cernym, co sem vubec chce...
-                    vm.Order.PriceFinal = 0;
-                    vm.UnspentMoney = Convert.ToInt32(vm.Order.NegotiatedPrice);
-
-                    foreach (OtherCost otherCost in vm.Order.OtherCosts)
-                    {
-                        vm.Order.PriceFinal += Convert.ToInt32(otherCost.Cost);
-                        vm.UnspentMoney -= Convert.ToInt32(otherCost.Cost);
-                    }
-
-                    foreach (OrderCodes orderCode in vm.Order.OrderCodes)
-                    {
-                        orderCode.OrderId = id;
-                        int burnedHours = await GetSumMinutesAsync(orderCode.OrderCode) / 60;
-                        vm.Order.PriceFinal += Convert.ToInt32(burnedHours * orderCode.HourWageCost);
-                    }
-                    vm.UnspentMoney = (int)(vm.Order.NegotiatedPrice - vm.Order.PriceFinal);
-
-                    vm.Order.ModifiedDate = DateTime.Now;
-                    vm.Order.ModifiedBy = User.GetLoggedInUserName();
-
-                    _db.Update(vm.Order);
-                    await _db.SaveChangesAsync(User.GetLoggedInUserName());
+                    vm.Order.PriceFinal += Convert.ToInt32(otherCost.Cost);
+                    vm.UnspentMoney -= Convert.ToInt32(otherCost.Cost);
                 }
-                catch (DbUpdateConcurrencyException)
+
+                foreach (OrderCodes orderCode in vm.Order.OrderCodes)
                 {
-                    if ( !(await OrderExists(vm.Order.OrderId)) )
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    orderCode.OrderId = id;
+                    int burnedHours = await GetSumMinutesAsync(orderCode.OrderCode) / 60;
+                    vm.Order.PriceFinal += Convert.ToInt32(burnedHours * orderCode.HourWageCost);
                 }
+                vm.UnspentMoney = (int)(vm.Order.NegotiatedPrice - vm.Order.PriceFinal);
+
+                vm.Order.ModifiedDate = DateTime.Now;
+                vm.Order.ModifiedBy = User.GetLoggedInUserName();
+
+                _db.Update(vm.Order);
+                await _db.SaveChangesAsync(User.GetLoggedInUserName());
 
                 TempData["Success"] = "Editace zakázky uložena.";
                 if (actionType == "Uložit")
@@ -839,24 +819,24 @@ namespace memo.Controllers
             vm.DepartmentList = await getDepartmentListAsync(_eveDbDochna);
             vm.EveContactList = await getEveContactsAsync(_eveDbDochna);
 
+            if (vm.Order == null)
+                vm.Order = new Order();
+
+            if (vm.Order.SharedInfo == null)
+                vm.Order.SharedInfo = new SharedInfo();
+        }
+
+        private async Task defaultEvePreselected(dynamic vm)
+        {
             // Fill default Division/Department/Username values of logged in user
             string domainAndUsername = User.GetLoggedInUserName();
             string username = domainAndUsername.Split('\\').LastOrDefault();
             int userId = await _eveDbDochna.tUsers.Where(x => x.TxAccount == username).Select(x => x.Id).FirstOrDefaultAsync();
 
             vEmployees employee = await _eveDbDochna.vEmployees.Where(x => x.Id == userId).FirstOrDefaultAsync();
-            if (vm.Order == null)
-            {
-                vm.Order = new Order();
-            }
-            if (vm.Order.SharedInfo == null)
-            {
-                vm.Order.SharedInfo = new SharedInfo();
-            }
             vm.Order.SharedInfo.EveCreatedUser = employee.FormatedName;
             vm.Order.SharedInfo.EveDepartment = employee.DepartName;
             vm.Order.SharedInfo.EveDivision = employee.EVE == 1 ? "EVE" : "EVAT";
-            // vm.Order.PriceDiscount = vm.Order.SharedInfo.Price - vm.Order.NegotiatedPrice;
         }
 
         // TODO: odstranit SP

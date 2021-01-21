@@ -26,7 +26,7 @@
 <div class="container d-flex justify-content-center">
     <div class="col-lg-10 push-lg-2 personal-info">
 
-        <!--------------------------------------------------------------------------------------
+        @* <!--------------------------------------------------------------------------------------
             FORM - NABIDKA
         --------------------------------------------------------------------------------------->
         <div class="card">
@@ -88,7 +88,7 @@
             </div>
         </div>
 
-        <br />
+        <br /> *@
 
         <!--------------------------------------------------------------------------------------
             FORM - ZAKAZKA
@@ -195,7 +195,7 @@
                     <span asp-validation-for="Order.SharedInfo.ContactId" class="text-danger"></span>
                 </div>
                 <div class="col-lg-1" data-toggle="tooltip" title="Nový kontakt">
-                    <a asp-action="create" asp-controller="Contacts" target="_blank">
+                    <a asp-action="create" asp-controller="Contacts" class="modular-company-id" target="_blank">
                         <i class="form-control fa fa-plus-circle" style="color: green; cursor: pointer;"></i>
                     </a>
                 </div>
@@ -247,7 +247,10 @@
                     <input asp-for="Order.NegotiatedPrice" class="form-control" type="text" required placeholder=" "/>
                     <label asp-for="Order.NegotiatedPrice">Vyjednaná cena [@Model.Order.SharedInfo.Currency.Name]</label>
                 </span>
-                <span style="color: gray; font-size: 0.9em;">Sleva: @string.Format(CultureInfo.CreateSpecificCulture(@Model.Order.SharedInfo.Currency.CultureCode), "{0:C0}", @Model.Order.PriceDiscount)</span>
+                @if (Model.Order.FromType != "-")
+                {
+                    <span style="color: gray; font-size: 0.9em;">Sleva: @string.Format(CultureInfo.CreateSpecificCulture(@Model.Order.SharedInfo.Currency.CultureCode), "{0:C0}", @Model.Order.PriceDiscount)</span>
+                }
                 <span asp-validation-for="Order.NegotiatedPrice" class="text-danger"></span>
             </div>
         </div>
@@ -757,6 +760,12 @@
 
             if ('@Html.Raw(Model.Order.FromType)' == '-')
             {
+                // Add attribute when changing Selectlist value
+                var originalHref = $('.modular-company-id').attr('href');
+                $('#Order_SharedInfo_CompanyId').change(function () {
+                    $('.modular-company-id').attr('href', originalHref + "?companyId=" + $(this).children('option:selected').val());
+                })
+
                 // DEFAULT VALUES
                 // =======================================
                 $('.eve-department-default').append(new Option('@Html.Raw(Model.Order.SharedInfo.EveDepartment)', '@Html.Raw(Model.Order.SharedInfo.EveDepartment)', false, false)).trigger('change');

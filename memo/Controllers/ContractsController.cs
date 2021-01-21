@@ -91,6 +91,7 @@ namespace memo.Controllers
             };
 
             await populateModelAsync(vm);
+            await defaultEvePreselected(vm);
 
             return View(vm);
         }
@@ -106,6 +107,7 @@ namespace memo.Controllers
             {
                 TempData["error"] = "Nepovedlo se vytvořit...";
                 await populateModelAsync(vm);
+                await defaultEvePreselected(vm);
                 return View(vm);
             }
 
@@ -165,12 +167,6 @@ namespace memo.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(string actionType, int id, EditContractViewModel vm)
         {
-            if (id != vm.Contract.ContractsId)
-            {
-                return NotFound();
-            }
-
-            // Trim potencial spaces
             if (!ModelState.IsValid)
             {
                 TempData["Error"] = "Něco se porouchalo...";
@@ -203,6 +199,12 @@ namespace memo.Controllers
                 TempData["Info"] = "Nebyla provedena změna, není co uložit";
                 vm.Audits = await getAuditViewModelAsync(_db, "Contracts", (int)id);
                 await populateModelAsync(vm);
+
+                vm.Contract.SharedInfo = await _db.SharedInfo
+                    .Where(x => x.SharedInfoId == vm.Contract.SharedInfoId)
+                    .Include(x => x.Company)
+                    .Include(x => x.Contact)
+                    .FirstOrDefaultAsync();
 
                 return View(vm);
             }
@@ -340,7 +342,10 @@ namespace memo.Controllers
             // vm.DepartmentList = await getDepartmentListAsync2(_eveDbDochna);  // TODO zjistit, co je rychlejsi (tohle nějak failuje)
             vm.DepartmentList = await getDepartmentListAsync(_eveDbDochna);
             vm.EveContactList = await getEveContactsAsync(_eveDbDochna);
+        }
 
+        private async Task defaultEvePreselected(dynamic vm)
+        {
             // Fill default Division/Department/Username values of logged in user
             string domainAndUsername = User.GetLoggedInUserName();
             string username = domainAndUsername.Split('\\').LastOrDefault();
