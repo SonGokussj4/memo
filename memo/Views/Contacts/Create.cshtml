@@ -104,3 +104,15 @@
         </form>
     </div>
 </div>
+
+@section Scripts {
+<script>
+    $(document).ready(function(){
+        // DEFAULT VALUES
+        // =======================================
+        if ('@Html.Raw(Model.CompanyId)' != '0') {
+            $('#CompanyId').append(new Option('@Html.Raw(Model.Company?.Name)', '@Html.Raw(Model.CompanyId)', false, false)).trigger('change');
+        }
+    })
+</script>
+}
