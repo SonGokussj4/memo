@@ -162,19 +162,18 @@
 
     <script>
 
-        $(document).ready(function () {
-            // Add attribute when changing Selectlist value
-            $('#Offer_SharedInfo_CompanyId').change(function () {
-                $('.modular-company-id').attr('href', "/Contacts/Create/?companyId=" + $(this).children('option:selected').val());
-            })
-        })
-
         // Clear and unselect '.select-contact-ajax' when '.select-company-ajax' changes it's value
         $('.select-company-ajax').on('select2:select', function (e) {
             $(".select-contact-ajax").val(null).empty().trigger('change');
         });
 
         $(document).ready(function(){
+
+            // Add attribute when changing Selectlist value
+            var originalHref = $('.modular-company-id').attr('href');
+            $('#Offer_SharedInfo_CompanyId').change(function () {
+                $('.modular-company-id').attr('href', originalHref + "?companyId=" + $(this).children('option:selected').val());
+            })
 
             // DEFAULT VALUES
             // =======================================
@@ -190,6 +189,7 @@
             $("#Offer_OfferName").keyup(function() {
                 checkItemNameExists($(this), 'Offers');
             });
+
 
             function changeExchangeRate(curSymbol) {
                 $.ajax({

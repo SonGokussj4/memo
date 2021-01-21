@@ -195,7 +195,7 @@
                     <span asp-validation-for="Order.SharedInfo.ContactId" class="text-danger"></span>
                 </div>
                 <div class="col-lg-1" data-toggle="tooltip" title="Nový kontakt">
-                    <a asp-action="create" asp-controller="Contacts" target="_blank">
+                    <a asp-action="create" asp-controller="Contacts" class="modular-company-id" target="_blank">
                         <i class="form-control fa fa-plus-circle" style="color: green; cursor: pointer;"></i>
                     </a>
                 </div>
@@ -760,6 +760,12 @@
 
             if ('@Html.Raw(Model.Order.FromType)' == '-')
             {
+                // Add attribute when changing Selectlist value
+                var originalHref = $('.modular-company-id').attr('href');
+                $('#Order_SharedInfo_CompanyId').change(function () {
+                    $('.modular-company-id').attr('href', originalHref + "?companyId=" + $(this).children('option:selected').val());
+                })
+
                 // DEFAULT VALUES
                 // =======================================
                 $('.eve-department-default').append(new Option('@Html.Raw(Model.Order.SharedInfo.EveDepartment)', '@Html.Raw(Model.Order.SharedInfo.EveDepartment)', false, false)).trigger('change');

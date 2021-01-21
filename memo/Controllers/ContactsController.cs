@@ -43,7 +43,7 @@ namespace memo.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Create(int? companyId)
+        public async Task<IActionResult> Create(int companyId = 0)
         {
             Contact model = new Contact();
             // ViewBag.CompanyList = new SelectList(_db.Company.ToList(), "CompanyId", "Name");
@@ -53,6 +53,7 @@ namespace memo.Controllers
                 model.CompanyId = await _db.Company.Where(x => x.CompanyId == companyId).Select(x => x.CompanyId).FirstOrDefaultAsync();
                 model.Company = await _db.Company.Where(x => x.CompanyId == companyId).FirstOrDefaultAsync();
             }
+
             return View(model);
         }
 

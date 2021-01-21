@@ -397,16 +397,17 @@
             $(".select-contact-ajax").val(null).empty().trigger('change');
         });
 
-        $(document).ready(function () {
-            // Add attribute when changing Selectlist value
-            $('#Offer_SharedInfo_CompanyId').change(function () {
-                $('.modular-company-id').attr('href', "/Contacts/Create/?companyId=" + $(this).children('option:selected').val());
-            })
-        })
+
 
         $(document).ready(function(){
             handleExchangeRateVisibility(firstLoad=true);
             checkItemNameExists($("#Offer_OfferName"), 'Offers', ignoreName=offerName);
+
+            // Add attribute when changing Selectlist value
+            var originalHref = $('.modular-company-id').attr('href');
+            $('#Offer_SharedInfo_CompanyId').change(function () {
+                $('.modular-company-id').attr('href', originalHref + "?companyId=" + $(this).children('option:selected').val());
+            })
 
             // DEFAULT VALUES
             // =======================================

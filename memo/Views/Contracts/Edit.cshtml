@@ -176,7 +176,7 @@
                     <span asp-validation-for="Contract.SharedInfo.ContactId" class="text-danger"></span>
                 </div>
                 <div class="col-lg-1" data-toggle="tooltip" title="Nový kontakt">
-                    <a asp-action="create" asp-controller="Contacts" target="_blank">
+                    <a asp-action="create" asp-controller="Contacts" class="modular-company-id" target="_blank">
                         <i class="form-control fa fa-plus-circle" style="color: green; cursor: pointer;"></i>
                     </a>
                 </div>
@@ -289,16 +289,17 @@
 
         let contractName = '@Html.Raw(@Model.Contract.ContractName)';
 
-        // Clear and unselect '.select-contact-ajax' when '.select-company-ajax' changes it's value
-        $('.select-company-ajax').on('select2:select', function (e) {
-            $(".select-contact-ajax").val(null).empty().trigger('change');
-        });
-
         // TODO(jverner) dve nize uvedene jsou duplicitni v Offers
         $(document).ready(function(){
 
             handleExchangeRateVisibility();
             checkItemNameExists($("#Contract_ContractName"), 'Contracts', ignoreName=contractName);
+
+            // Add attribute when changing Selectlist value
+            var originalHref = $('.modular-company-id').attr('href');
+            $('#Contract_SharedInfo_CompanyId').change(function () {
+                $('.modular-company-id').attr('href', originalHref + "?companyId=" + $(this).children('option:selected').val());
+            })
 
             // DEFAULT VALUES
             // =======================================
