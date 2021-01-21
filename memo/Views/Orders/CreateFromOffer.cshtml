@@ -10,7 +10,7 @@
 
 @model memo.ViewModels.OfferOrderVM
 
-@await Html.PartialAsync("_PartialToastNotification")
+@await Html.PartialAsync("_Partial_ToastNotification")
 
 <div class="text-center">
     <h1 class="display-6">@ViewData["Title"]</h1>
@@ -28,7 +28,7 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
             @* PARTIAL: SELECT  *@
-            @await Html.PartialAsync("Partials/Orders/_PartialOrder-Create-SelectFrom", new ViewDataDictionary(ViewData) {{ "selectedOffer", "selected" }})
+            @await Html.PartialAsync("Partials/Orders/_Partial_SelectFromSource", new ViewDataDictionary(ViewData) {{ "selectedOffer", "selected" }})
 
             <div class="form-group row justify-content-center mt-3">
 
@@ -162,10 +162,10 @@
                 </div>
             </div>
 
-            <!-- PLACEHOLDER: _PartialSearchForOrderCode -->
+            <!-- PLACEHOLDER: _Partial_Modal_SearchOrderCode -->
             <div id="modal-placeholder"></div>
 
-            <!-- PLACEHOLDER: _PartialOrderOrderCodesCreate -->
+            <!-- PLACEHOLDER: _Partial_OrderCodes_Create -->
             <div class="add-partial-order-codes"></div>
 
             <div class="form-group row border-top pt-2">

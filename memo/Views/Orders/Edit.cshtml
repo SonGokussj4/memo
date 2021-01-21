@@ -15,7 +15,7 @@
     }
 }
 
-@await Html.PartialAsync("_PartialToastNotification")
+@await Html.PartialAsync("_Partial_ToastNotification")
 
 <div class="text-center">
     <h1 class="display-6">@ViewData["Title"]</h1>
@@ -360,16 +360,16 @@
         @* @Html.ValidationMessage("OrderCodesValidationMessage", "", new { @class = "text-danger" }) *@
         <div class="dynamic-rows-order-codes" id="template-order-codes" data-order="@Model.Order.OrderCodes.Count()">
 
-            <!-- PLACEHOLDER: _PartialSearchForOrderCode -->
+            <!-- PLACEHOLDER: _Partial_Modal_SearchOrderCode -->
             <div id="modal-placeholder"></div>
 
             @for (int i = 0; i < Model.Order.OrderCodes.Count(); i++)
             {
-                @await Html.PartialAsync("Partials/Orders/_PartialOrderOrderCodes", Model, new ViewDataDictionary(ViewData) {{ "i", i }})
+                @await Html.PartialAsync("Partials/Orders/_Partial_OrderCodes", Model, new ViewDataDictionary(ViewData) {{ "i", i }})
             }
             @* <span asp-validation-for="Order.OrderCodes" class="text-danger"></span> *@
 
-            <!-- PLACEHOLDER: _PartialOrderOrderCodesCreate -->
+            <!-- PLACEHOLDER: _Partial_OrderCodes_Create -->
             @* <div class="add-partial-order-codes"></div> *@
         </div>
 
@@ -532,7 +532,7 @@
 </div>
 
 <div class="collapse" id="collapsible-audits">
-    @await Html.PartialAsync("_PartialAuditChanges", Model)
+    @await Html.PartialAsync("_Partial_AuditChanges", Model)
 </div>
 
 

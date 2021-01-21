@@ -7,7 +7,7 @@
     ViewData["SubTitle"] = "Upravit informace o rámcové smlouvě";
 }
 
-@await Html.PartialAsync("_PartialToastNotification")
+@await Html.PartialAsync("_Partial_ToastNotification")
 
 <div class="text-center">
     <h1 class="display-6">@ViewData["Title"]</h1>
@@ -251,7 +251,7 @@
 </div>
 
 <div class="collapse" id="collapsible-audits">
-    @await Html.PartialAsync("_PartialAuditChanges", Model)
+    @await Html.PartialAsync("_Partial_AuditChanges", Model)
 </div>
 
 <!-- Modal Confirm Delete-->

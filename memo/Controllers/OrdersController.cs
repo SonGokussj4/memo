@@ -1151,7 +1151,7 @@ namespace memo.Controllers
             vm.OrderCodeId = id;
             vm.SelectedOrderCode = id.ToString();
 
-            return PartialView("Partials/Orders/_PartialSearchForOrderCode", vm);
+            return PartialView("Partials/Orders/_Partial_Modal_SearchOrderCode", vm);
         }
 
         [HttpGet]
@@ -1171,7 +1171,7 @@ namespace memo.Controllers
                 IDOrder = id,
             };
 
-            return PartialView("Partials/Orders/_PartialOrderOrderCodesCreate", vm );
+            return PartialView("Partials/Orders/_Partial_OrderCodes_Create", vm );
         }
 
         public async Task<JsonResult> getOrderCodesJson(string match, int pageSize = 100)
