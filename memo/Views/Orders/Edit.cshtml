@@ -532,13 +532,45 @@
             var _invoiceDueInput = $('#Order_Invoices_' + inputId + '__InvoiceDueDate').val(futureDate);
         }
 
-        function DeleteInvoice(invoiceId) {
-            var rowDeliveryNote = document.getElementById(`dynamic-row-delivery-note-${invoiceId}`);
-            if (rowDeliveryNote != null) {
-                rowDeliveryNote.remove();
+        function DeleteOrderCode(orderCodeId) {
+            //var row = document.getElementById(`dynamic-row-order-codes-${orderCodeId}`);
+            const row = $(`#dynamic-row-order-codes-${orderCodeId}`);
+            if (row.length != 0) {
+                const btnTrash = row.find("a.btn.btn-danger").tooltip("hide");
+                row.remove();
             }
-            var row = document.getElementById(`dynamic-row-invoice-${invoiceId}`);
-            if (row != null) {
+            else {
+                $.ajax({
+                    async: true,
+                    type: 'POST',
+                    dataType: 'JSON',
+                    ContentType: 'application/json; charset=utf-8',
+                    url: '@Url.Action("DeleteOrderCode")',
+                    data: { id: orderCodeId },
+                    cache: false,
+                    beforeSend:function(){
+                        return confirm(
+                            "Jste si jisti??? Tento úkon smaže označený kód vykazování!"
+                        );
+                    },
+                    success: function(data) {
+                        window.location = "@Model.Order.OrderId";  // return Orders/Edit/{OrderId}
+                    },
+                    @* error: function(data) {
+                        alert(data.responseJSON.errorMessage);
+                    } *@
+                });
+            }
+        }
+
+        function DeleteInvoice(invoiceId) {
+            //var rowDeliveryNote = document.getElementById(`dynamic-row-delivery-note-${invoiceId}`);
+            //if (rowDeliveryNote != null) {
+            //    rowDeliveryNote.remove();
+            //}
+            const row = $(`#dynamic-row-invoices-${invoiceId}`);
+            if (row.length != 0) {
+                const btnTrash = row.find("a.btn.btn-danger").tooltip("hide");
                 row.remove();
             }
             else {
@@ -558,10 +590,6 @@
                     success: function(data) {
                         window.location = "@Model.Order.OrderId";  // return Orders/Edit/{OrderId}
                     },
-                    @* error: function(data) {
-                        //alert(JSON.stringify(data.responseJSON.errorMessage));
-                        alert(data.responseJSON.errorMessage);
-                    } *@
                 });
             }
         }
@@ -597,36 +625,7 @@
             }
         }
 
-        function DeleteOrderCode(orderCodeId) {
-            //var row = document.getElementById(`dynamic-row-order-codes-${orderCodeId}`);
-            const row = $(`#dynamic-row-order-codes-${orderCodeId}`);
-            if (row.length != 0) {
-                const btnTrash = row.find("a.btn.btn-danger").tooltip("hide");
-                row.remove();
-            }
-            else {
-                $.ajax({
-                    async: true,
-                    type: 'POST',
-                    dataType: 'JSON',
-                    ContentType: 'application/json; charset=utf-8',
-                    url: '@Url.Action("DeleteOrderCode")',
-                    data: { id: orderCodeId },
-                    cache: false,
-                    beforeSend:function(){
-                        return confirm(
-                            "Jste si jisti??? Tento úkon smaže označený kód vykazování!"
-                        );
-                    },
-                    success: function(data) {
-                        window.location = "@Model.Order.OrderId";  // return Orders/Edit/{OrderId}
-                    },
-                    @* error: function(data) {
-                        alert(data.responseJSON.errorMessage);
-                    } *@
-                });
-            }
-        }
+
 
 //        function changeExchangeRate(curSymbol) {
 //            $.ajax({
@@ -793,20 +792,51 @@
             });
 
             // Add new INVOICES row
-            var idInvoice = @Model.Order.Invoices.Count();
+            var idNewInvoice = @Model.Order.Invoices.Count();
             $('.add-partial-invoices-href').on('click', function() {
+                console.log("idNewInvoice pred ajax", idNewInvoice);
                 $.ajax({
-                    url: '@Url.Action("AddInvoicesPartial", "Orders")/' + @Model.Order.OrderId + '?invoiceId=' + idInvoice,
+                    url: '@Url.Action("AddInvoicesPartial", "Orders")/' + @Model.Order.OrderId + '?invoiceId=' + idNewInvoice,
                     dataType: 'html',
                     success: function (result) {
                         $(".dynamic-rows-invoices").append(result);
                         @* initializeTooltips(); *@
                         @* initializeOrderAjaxModalClickEvent(); *@
+
+                        console.log("idNewInvoice ajax success", idNewInvoice);
+
+                        var _invoiceIssueInput = $('#Order_Invoices_' + idNewInvoice + '__InvoiceIssueDate');
+                        var _invoiceDueInput = $('#Order_Invoices_' + idNewInvoice + '__InvoiceDueDate');
+
+                        var parsed_date = @Html.Raw(Json.Serialize(Model.Order.SharedInfo.EstimatedFinishDate))
+                        if ( parsed_date != null) {
+                            var issueDate = getPrettyDate(new Date(parsed_date), 0)
+                            //_invoiceIssueInput.val(new Date(parsed_date).toISOString().substring(0, 10));
+                            _invoiceIssueInput.val(issueDate);
+                            var date = new Date(_invoiceIssueInput.val());
+                            var futureDate = getPrettyDate(date, @Model.Order.SharedInfo.Company.InvoiceDueDays);
+                            _invoiceDueInput.val(futureDate);
+                        }
+
+                        _invoiceIssueInput.datepicker(datepickerParameters[0]);
+                        _invoiceDueInput.datepicker(datepickerParameters[0]);
+                        $('.newlyAddedTooltip').tooltip();
+
+                        _invoiceIssueInput.on("changeDate", function(data) {
+                            var date = data.date;
+                            var futureDate = getPrettyDate(date, @Model.Order.SharedInfo.Company.InvoiceDueDays);
+                            $('#Order_Invoices_' + _invoiceIssueInput.data('id') + '__InvoiceDueDate').val(futureDate);
+                        });
+
+                        floatingLabelsInit();
+
+
+
                         $('form').data('validator', null);
                         $.validator.unobtrusive.parse($('form'));
+                        idNewInvoice += 1;
                     }
                 });
-                idInvoice += 1;
             });
 
             // Add new INVOICES row

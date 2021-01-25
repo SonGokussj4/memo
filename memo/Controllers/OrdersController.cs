@@ -590,17 +590,20 @@ namespace memo.Controllers
                 vm.Order.PriceFinal = 0;
                 vm.UnspentMoney = Convert.ToInt32(vm.Order.NegotiatedPrice);
 
-                foreach (OtherCost otherCost in vm.Order.OtherCosts)
-                {
-                    vm.Order.PriceFinal += Convert.ToInt32(otherCost.Cost);
-                    vm.UnspentMoney -= Convert.ToInt32(otherCost.Cost);
-                }
-
                 foreach (OrderCodes orderCode in vm.Order.OrderCodes)
                 {
                     orderCode.OrderId = id;
                     int burnedHours = await GetSumMinutesAsync(orderCode.OrderCode) / 60;
                     vm.Order.PriceFinal += Convert.ToInt32(burnedHours * orderCode.HourWageCost);
+                }
+                foreach (Invoice invoice in vm.Order.Invoices)
+                {
+                    invoice.OrderId = id;
+                }
+                foreach (OtherCost otherCost in vm.Order.OtherCosts)
+                {
+                    vm.Order.PriceFinal += Convert.ToInt32(otherCost.Cost);
+                    vm.UnspentMoney -= Convert.ToInt32(otherCost.Cost);
                 }
                 vm.UnspentMoney = (int)(vm.Order.NegotiatedPrice - vm.Order.PriceFinal);
 
@@ -1193,7 +1196,7 @@ namespace memo.Controllers
             OfferOrderVM vm = new OfferOrderVM()
             {
                 Order = order,
-                IDOrder = id,
+                IDOrder = invoiceId,
             };
 
             return PartialView("Partials/Orders/_Partial_Invoices_Create", vm);

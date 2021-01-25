@@ -2,12 +2,12 @@
 
 @model memo.ViewModels.OfferOrderVM
 
-<div class="mb-4 pt-4" style="border-top: 1px solid #0000000d;">
+<div class="mb-4 pt-4" id="dynamic-row-invoices-@Model.IDOrder" style="border-top: 1px solid #0000000d;">
+
     <div class="row form-group justify-content-end">
 
         <input type="hidden" name="Order.Invoices.Index" value="@Model.IDOrder" />
-
-        <input hidden="true" asp-for="Order.Invoices[Model.IDOrder].InvoiceId" />
+        @* <input type="hidden" asp-for="Order.Invoices[Model.IDOrder].InvoiceId" /> *@
 
         <div class="col-lg-3 mycalendar">
             <span class="has-float-label">
@@ -28,13 +28,14 @@
         <div class="col-lg-3">
             <span class="has-float-label">
                 <input asp-for="Order.Invoices[Model.IDOrder].Cost" class="form-control" type="text" placeholder=" " />
-                <label asp-for="Order.Invoices[Model.IDOrder].Cost">Částka [@Model.Order.SharedInfo.Currency.Name]</label>
+                <label asp-for="Order.Invoices[Model.IDOrder].Cost">Částka [@Model.Order?.SharedInfo?.Currency?.Name]</label>
             </span>
             <span asp-validation-for="Order.Invoices[Model.IDOrder].Cost" class="text-danger"></span>
         </div>
 
         <div class="col-lg-1">
-            <a href="javascript:void(0)" class="btn btn-danger btn-sm mt-1" data-toggle="tooltip" title="Odstranit záznam" onclick="DeleteInvoice(@Model.Order.Invoices[Model.IDOrder].InvoiceId)"><i class="fa fa-trash"></i></a>
+            @* <a href="javascript:void(0)" class="btn btn-danger btn-sm mt-1" data-toggle="tooltip" title="Odstranit záznam" onclick="DeleteInvoice(@Model.Order.Invoices[Model.IDOrder].InvoiceId)"><i class="fa fa-trash"></i></a> *@
+            <a href="javascript:void(0)" class="btn btn-danger btn-sm mt-1" data-toggle="tooltip" title="Odstranit záznam" onclick="DeleteInvoice(@Model.IDOrder)"><i class="fa fa-trash"></i></a>
         </div>
 
     </div>

@@ -6,64 +6,60 @@
     int i = (int)ViewData["i"];
 }
 
-<!-- Modal placeholder -->
-<div id="modal-placeholder-@i"></div>
+            <!-- Modal placeholder -->
+            <div id="modal-placeholder-@i"></div>
 
-@* <input hidden="true" asp-for="@Model.Order.OrderCodes[i].OrderCodeId" /> *@
+            <div class="row form-group justify-content-end" id="dynamic-row-order-codes-@i">
 
-<div class="row form-group justify-content-end" id="dynamic-row-order-codes-@i">
+                <input type="hidden" name="Order.OrderCodes.Index" value="@i" />
+                <input type="hidden" asp-for="@Model.Order.OrderCodes[i].OrderCodeId" >
+                <input type="hidden" asp-for="@Model.Order.OrderCodes[i].OrderId" >
 
-    <input asp-for="@Model.Order.OrderCodes[i].OrderCodeId" hidden="true">
-    <input asp-for="@Model.Order.OrderCodes[i].OrderId" hidden="true">
-
-    <div class="col-lg-3">
-        <span class="has-float-label">
-            <div class="input-group">
-                <input asp-for="@Model.Order.OrderCodes[i].OrderCode" class="form-control" type="text" autocomplete="off" placeholder=" " data-toggle="tooltip" title="@Model.OrderCodesTooltips[i]" />
-                <div class="input-group-append" data-toggle="tooltip" title="Vyhledat kód">
-                    <!-- Button trigger modal -->
-                    <button class="btn btn-light border" type="button" data-toggle="ajax-modal" data-target="#SearchForOrderCodeModal" data-id="@i" data-url="@Url.Action("GetOrderCodes", "Orders", new { id = @i })">
-                        <i class="fa fa-search"></i>
-                    </button>
+                <div class="col-lg-3">
+                    <span class="has-float-label">
+                        <div class="input-group">
+                            <input asp-for="@Model.Order.OrderCodes[i].OrderCode" class="form-control" type="text" autocomplete="off" placeholder=" " data-toggle="tooltip" title="@Model.OrderCodesTooltips[i]" />
+                            <div class="input-group-append" data-toggle="tooltip" title="Vyhledat kód">
+                                <!-- Button trigger modal -->
+                                <button class="btn btn-light border" type="button" data-toggle="ajax-modal" data-target="#SearchForOrderCodeModal" data-id="@i" data-url="@Url.Action("GetOrderCodes", "Orders", new { id = @i })">
+                                    <i class="fa fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <label asp-for="@Model.Order.OrderCodes[i].OrderCode">Kód vykazování</label>
+                    </span>
+                    <span asp-validation-for="@Model.Order.OrderCodes[i].OrderCode" class="text-danger"></span>
+                    <label id="OrderCodeLabel-@i" class="order-codes-sum-hours-label ml-2" style="font-size: 0.8em; color: grey;">
+                        Vykázáno: @Model.Order.OrderCodes[i].SumHours / @Model.Order.OrderCodes[i].PlannedHours hod
+                    </label>
                 </div>
+
+                <div class="col-lg-3">
+                    <span class="has-float-label">
+                        <input asp-for="@Model.Order.OrderCodes[i].HourWageSubject" class="form-control" type="text" autocomplete="off" placeholder=" "/>
+                        <label asp-for="@Model.Order.OrderCodes[i].HourWageSubject">Popis hod. mzdy</label>
+                    </span>
+                    <span asp-validation-for="@Model.Order.OrderCodes[i].HourWageSubject" class="text-danger"></span>
+                </div>
+
+                <div class="col-lg-3">
+                    <span class="has-float-label">
+                        <input asp-for="@Model.Order.OrderCodes[i].HourWageCost" class="form-control" type="text" placeholder=" "/>
+                        <label asp-for="@Model.Order.OrderCodes[i].HourWageCost">Hod. mzda [@Model.Order.SharedInfo.Currency.Name]</label>
+                    </span>
+                    <span asp-validation-for="@Model.Order.OrderCodes[i].HourWageCost" class="text-danger"></span>
+                    <label class="order-codes-sum-hours-label ml-2" style="font-size: 0.8em; color: grey;">
+                        Celkem: @string.Format(CultureInfo.CreateSpecificCulture(@Model.Order.SharedInfo.Currency.CultureCode), "{0:C0}", @Model.Order.OrderCodes[i].HourWageSum)
+                    </label>
+                </div>
+
+                <div class="col-lg-1">
+                    <a href="javascript:void(0)" class="btn btn-danger btn-sm mt-1" data-toggle="tooltip" title="Odstranit záznam" onclick="DeleteOrderCode(@Model.Order.OrderCodes[i].OrderCodeId)">
+                        <i class="fa fa-trash"></i>
+                    </a>
+                </div>
+
             </div>
-            <label asp-for="@Model.Order.OrderCodes[i].OrderCode">Kód vykazování</label>
-        </span>
-        <span asp-validation-for="@Model.Order.OrderCodes[i].OrderCode" class="text-danger"></span>
-        <label id="OrderCodeLabel-@i" class="order-codes-sum-hours-label ml-2" style="font-size: 0.8em; color: grey;">
-            Vykázáno: @Model.Order.OrderCodes[i].SumHours / @Model.Order.OrderCodes[i].PlannedHours hod
-        </label>
-    </div>
-
-    <div class="col-lg-3">
-        <span class="has-float-label">
-            <input asp-for="@Model.Order.OrderCodes[i].HourWageSubject" class="form-control" type="text" autocomplete="off" placeholder=" "/>
-            <label asp-for="@Model.Order.OrderCodes[i].HourWageSubject">Popis hod. mzdy</label>
-        </span>
-        <span asp-validation-for="@Model.Order.OrderCodes[i].HourWageSubject" class="text-danger"></span>
-    </div>
-
-    <div class="col-lg-3">
-        <span class="has-float-label">
-            <input asp-for="@Model.Order.OrderCodes[i].HourWageCost" class="form-control" type="text" placeholder=" "/>
-            <label asp-for="@Model.Order.OrderCodes[i].HourWageCost">Hod. mzda [@Model.Order.SharedInfo.Currency.Name]</label>
-        </span>
-        <span asp-validation-for="@Model.Order.OrderCodes[i].HourWageCost" class="text-danger"></span>
-        <label class="order-codes-sum-hours-label ml-2" style="font-size: 0.8em; color: grey;">
-            Celkem: @string.Format(CultureInfo.CreateSpecificCulture(@Model.Order.SharedInfo.Currency.CultureCode), "{0:C0}", @Model.Order.OrderCodes[i].HourWageSum)
-        </label>
-    </div>
-
-    <div class="col-lg-1">
-        <a href="javascript:void(0)" class="btn btn-danger btn-sm mt-1" data-toggle="tooltip" title="Odstranit záznam" onclick="DeleteOrderCode(@Model.Order.OrderCodes[i].OrderCodeId)">
-            <i class="fa fa-trash"></i>
-        </a>
-    </div>
-
-</div>
-
-
-
 
 
     @* <div class="col-lg-2 mycalendar">
