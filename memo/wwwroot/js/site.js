@@ -146,7 +146,7 @@ $(function() {
  * @return {[string]}     [String in format dd.MM.yyyy]
  */
 function getPrettyDate(date, daysToAdd = 0) {
-    date.setDate(date.getUTCDate() + daysToAdd);
+    date.setDate(date.getDate() + daysToAdd);  // getUTCDate wrong???
     var futureDate =
     ('0' + (date.getDate())).slice(-2)
     + '.'
@@ -155,6 +155,11 @@ function getPrettyDate(date, daysToAdd = 0) {
     + date.getFullYear();
     return futureDate;  // dd.MM.yyyy
 }
+//function getPrettyDate(date, daysToAdd = 0) {
+//    const copy = new Date(Number(date));
+//    copy.setDate(date.getDate() + daysToAdd);
+//    return copy;
+//}
 
 /**
  * @summary Return date (can do days additon) in format RRRR-MM-DD
@@ -167,7 +172,8 @@ function getPrettyDate(date, daysToAdd = 0) {
  * @return {[string]}     [String in format RRRR-MM-DD]
  */
 function getPrettyDateUS(date, daysToAdd = 0) {
-    date.setDate(date.getUTCDate() + daysToAdd);
+    // date.setDate(date.getUTCDate() + daysToAdd);
+    date.setDate(date.getDate() + daysToAdd);
     var futureDate = date.getFullYear()
         + '-'
         + ('0' + (date.getMonth() + 1)).slice(-2)
