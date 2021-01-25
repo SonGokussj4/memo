@@ -43,14 +43,14 @@ namespace memo.Controllers
 
             var eveDepartmentList = _eveDbDochna.vEmployees
                 .Where(x => x.EVE == 1)  // EVE vs EVAT
-                .Where(x => x.DepartName.Contains(match))
+                .AsEnumerable()
+                .Where(x => x.DepartName.ToLower().RemoveDiacritics().Contains(match))
                 .OrderBy(x => x.DepartName)
                 // .AsEnumerable()
                 .Select(x => new SelectListItem {
                     Value = x.DepartName,
                     Text = x.DepartName,
                 })
-                .AsEnumerable()
                 .Distinct(new SelectListItemComparer());
 
             var result = eveDepartmentList.ToList();
@@ -65,7 +65,7 @@ namespace memo.Controllers
 
             IOrderedQueryable<SelectListItem> eveContactsList = _eveDbDochna.vEmployees
                 .Where(x => x.EVE == 1)
-                .Where(x => x.FormatedName.Contains(match))
+                .Where(x => x.FormatedName.ToLower().RemoveDiacritics().Contains(match))
                 .Where(x => x.DepartName.Contains(filter))
                 .Select(x => new SelectListItem {
                     Value = x.FormatedName,
