@@ -796,7 +796,7 @@
             var idInvoice = @Model.Order.Invoices.Count();
             $('.add-partial-invoices-href').on('click', function() {
                 $.ajax({
-                    url: '@Url.Action("AddInvoicesPartial", "Orders")/' + idInvoice,
+                    url: '@Url.Action("AddInvoicesPartial", "Orders")/' + @Model.Order.OrderId + '?invoiceId=' + idInvoice,
                     dataType: 'html',
                     success: function (result) {
                         $(".dynamic-rows-invoices").append(result);

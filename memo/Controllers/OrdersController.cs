@@ -1175,13 +1175,17 @@ namespace memo.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> AddInvoicesPartial(int id)
+        public async Task<IActionResult> AddInvoicesPartial(int id, int invoiceId)
         {
-            Order order = new Order();
+            Order order = _db.Order
+                .Where(x => x.OrderId == id)
+                .Include(x => x.SharedInfo.Currency)
+                .FirstOrDefault();
+
             order.Invoices = new List<Invoice>();
             // order.SharedInfo = _db.SharedInfo(x => x.SharedInfoId = o)
 
-            for (int i = 0; i < id + 1; i++)
+            for (int i = 0; i < invoiceId + 1; i++)
             {
                 order.Invoices.Add(new Invoice() { InvoiceId = i });
             }
