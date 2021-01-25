@@ -319,7 +319,7 @@ namespace memo.Controllers
             // Get rest of the data, filter by match if entered
             var result = jsonData
                 .AsEnumerable()
-                .Where(x => x.PersonFullName.ToLower().Contains(match.ToLower()))
+                .Where(x => x.PersonFullName.ToLower().RemoveDiacritics().Contains(match.ToLower()))
                 .Take(pageSize)
                 .Select(x => new SelectListItem { Value = x.ContactId.ToString(), Text = x.PersonFullName })
                 .OrderBy(x => x.Text);
