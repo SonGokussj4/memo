@@ -1104,13 +1104,6 @@ namespace memo.Controllers
 
             List<Invoice> thisOrderInvoices = await _db.Invoice.Where(x => x.OrderId == invoice.OrderId).ToListAsync();
 
-            // TODO: Proc jsem sem daval tohle? Nemohu odstranit vsechny? proc?
-            // if (thisOrderInvoices.Count() <= 1)
-            // {
-            //     Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-            //     return Json(new { errorMessage = "Nelze odstranit všechny fakturace" });
-            // }
-
             _db.Invoice.Remove(invoice);
             await _db.SaveChangesAsync(User.GetLoggedInUserName());
 

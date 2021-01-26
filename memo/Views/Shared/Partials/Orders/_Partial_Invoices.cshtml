@@ -6,7 +6,8 @@
     int i = (int)ViewData["i"];
 }
 
-            <div class="mb-4 pt-4" id="dynamic-row-invoices-@i" style="border-top: 1px solid #0000000d;">
+            @* <div class="mb-4 pt-4" id="dynamic-row-invoices-@i" style="border-top: 1px solid #0000000d;"> *@
+            <div class="mb-4 pt-4" style="border-top: 1px solid #0000000d;">
 
                 <div class="row form-group justify-content-end">
 
@@ -39,8 +40,8 @@
                     </div>
 
                     <div class="col-lg-1">
-                        @* <a href="javascript:void(0)" class="btn btn-danger btn-sm mt-1" data-toggle="tooltip" title="Odstranit záznam" onclick="DeleteInvoice(@Model.Order.Invoices[i].InvoiceId)"><i class="fa fa-trash"></i></a> *@
-                        <a href="javascript:void(0)" class="btn btn-danger btn-sm mt-1" data-toggle="tooltip" title="Odstranit záznam" onclick="DeleteInvoice(@i)"><i class="fa fa-trash"></i></a>
+                        <a href="javascript:void(0)" class="btn btn-danger btn-sm mt-1" data-toggle="tooltip" title="Odstranit záznam" onclick="DeleteInvoice(@Model.Order.Invoices[i].InvoiceId)"><i class="fa fa-trash"></i></a>
+                        @* <a href="javascript:void(0)" class="btn btn-danger btn-sm mt-1" data-toggle="tooltip" title="Odstranit záznam" onclick="DeleteInvoice(@i)"><i class="fa fa-trash"></i></a> *@
                     </div>
 
                 </div>

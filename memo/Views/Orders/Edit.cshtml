@@ -525,6 +525,22 @@
 
     <script>
 
+//        function changeExchangeRate(curSymbol) {
+//            $.ajax({
+//                url: '@Url.Action("getCurrencyStr", "Orders")',
+//                type: 'GET',
+//                //dataType: 'json',
+//                // we set cache: false because GET requests are often cached by browsers
+//                // IE is particularly aggressive in that respect
+//                cache: false,
+//                data: { symbol: curSymbol },
+//                success: function(res) {
+//                    //$('#Order_ExchangeRate').val(res).focus().keyup().blur();
+//                    $('#Order_ExchangeRate').val(res).keyup();
+//                }
+//            });
+//        }
+
         function AddInvoiceDueDays(inputId) {
             var _invoiceIssueInput = $('#Order_Invoices_' + inputId + '__InvoiceIssueDate');
             var date = new Date(_invoiceIssueInput.val());
@@ -556,9 +572,9 @@
                     success: function(data) {
                         window.location = "@Model.Order.OrderId";  // return Orders/Edit/{OrderId}
                     },
-                    @* error: function(data) {
+                    error: function(data) {
                         alert(data.responseJSON.errorMessage);
-                    } *@
+                    }
                 });
             }
         }
@@ -624,25 +640,6 @@
                 });
             }
         }
-
-
-
-//        function changeExchangeRate(curSymbol) {
-//            $.ajax({
-//                url: '@Url.Action("getCurrencyStr", "Orders")',
-//                type: 'GET',
-//                //dataType: 'json',
-//                // we set cache: false because GET requests are often cached by browsers
-//                // IE is particularly aggressive in that respect
-//                cache: false,
-//                data: { symbol: curSymbol },
-//                success: function(res) {
-//                    //$('#Order_ExchangeRate').val(res).focus().keyup().blur();
-//                    $('#Order_ExchangeRate').val(res).keyup();
-//                }
-//            });
-//        }
-
 
         // MODAL dialog for delete confirmation
         //-------------------------------------
@@ -800,10 +797,8 @@
                     dataType: 'html',
                     success: function (result) {
                         $(".dynamic-rows-invoices").append(result);
-                        @* initializeTooltips(); *@
+                        initializeTooltips();
                         @* initializeOrderAjaxModalClickEvent(); *@
-
-                        console.log("idNewInvoice ajax success", idNewInvoice);
 
                         var _invoiceIssueInput = $('#Order_Invoices_' + idNewInvoice + '__InvoiceIssueDate');
                         var _invoiceDueInput = $('#Order_Invoices_' + idNewInvoice + '__InvoiceDueDate');
@@ -834,6 +829,7 @@
 
                         $('form').data('validator', null);
                         $.validator.unobtrusive.parse($('form'));
+
                         idNewInvoice += 1;
                     }
                 });
