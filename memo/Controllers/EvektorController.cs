@@ -64,9 +64,9 @@ namespace memo.Controllers
 
             var eveContactsList = _eveDbDochna.vEmployees
                 .Where(x => x.EVE == 1)
+                .Where(x => x.DepartName.Contains(filter))
                 .AsEnumerable()
                 .Where(x => x.FormatedName.ToLower().RemoveDiacritics().Contains(match))
-                .Where(x => x.DepartName.Contains(filter))
                 .Select(x => new SelectListItem {
                     Value = x.FormatedName,
                     Text = x.FormatedName,
