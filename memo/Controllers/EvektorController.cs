@@ -46,7 +46,6 @@ namespace memo.Controllers
                 .AsEnumerable()
                 .Where(x => x.DepartName.ToLower().RemoveDiacritics().Contains(match))
                 .OrderBy(x => x.DepartName)
-                // .AsEnumerable()
                 .Select(x => new SelectListItem {
                     Value = x.DepartName,
                     Text = x.DepartName,
@@ -63,8 +62,9 @@ namespace memo.Controllers
         {
             match = !string.IsNullOrWhiteSpace(match) ? match : "";
 
-            IOrderedQueryable<SelectListItem> eveContactsList = _eveDbDochna.vEmployees
+            var eveContactsList = _eveDbDochna.vEmployees
                 .Where(x => x.EVE == 1)
+                .AsEnumerable()
                 .Where(x => x.FormatedName.ToLower().RemoveDiacritics().Contains(match))
                 .Where(x => x.DepartName.Contains(filter))
                 .Select(x => new SelectListItem {
@@ -73,7 +73,7 @@ namespace memo.Controllers
                 })
                 .OrderBy(x => x.Text);
 
-            var result = await eveContactsList.ToListAsync();
+            var result = eveContactsList.ToList();
 
             return Json(new { items = result });
         }
