@@ -151,6 +151,9 @@
                 </div>
             </div>
 
+            @* =========== *@
+            @* ORDER CODES *@
+            @* =========== *@
             <div class="form-group row border-top pt-2">
                 <div class="col-lg-2 col-form-label d-flex justify-content-left">
                     <label class="form-control-label control-label">Kód(y) vykazování</label>
@@ -168,46 +171,26 @@
             <!-- PLACEHOLDER: _Partial_OrderCodes_Create -->
             <div class="add-partial-order-codes"></div>
 
+            @* ======== *@
+            @* INVOICES *@
+            @* ======== *@
             <div class="form-group row border-top pt-2">
                 <div class="col-lg-2 col-form-label d-flex justify-content-left">
                     <label class="form-control-label control-label">Faktury</label>
                 </div>
                 <div class="col-lg-10">
-                    <a href="javascript:void(0)" class="btn btn-success col-lg-3 add-row-invoice mt-1" data-toggle="tooltip" title="Přidat fakturaci"><i class="fa fa-plus"></i> Přidat fakturaci</a>
+                    <a href="javascript:void(0)" class="btn btn-success col-lg-3 add-partial-invoices-href mt-1" data-toggle="tooltip" title="Přidat fakturaci">
+                        <i class="fa fa-plus"></i> Přidat fakturaci
+                    </a>
                 </div>
             </div>
 
-            @Html.ValidationMessage("InvoiceMissing", "", new { @class = "text-danger" })
-            <div class="dynamic-rows-invoices" id="template-invoices" data-order="@Model.Order.Invoices.Count()">
-                @for (int i = 0; i < Model.Order.Invoices.Count(); i++)
-                {
-                    <div class="row form-group justify-content-end">
-                        <input hidden="true" asp-for="@Model.Order.Invoices[i].InvoiceId" />
-                        <div class="col-lg-3 mycalendar">
-                            <input asp-for="@Model.Order.Invoices[i].InvoiceIssueDate" class="form-control" type="text" autocomplete="off" placeholder="Termín vystavení" />
-                            <span asp-validation-for="@Model.Order.Invoices[i].InvoiceIssueDate" class="text-danger"></span>
-                        </div>
-                        <div class="col-lg-3 mycalendar">
-                            <input asp-for="@Model.Order.Invoices[i].InvoiceDueDate" class="form-control" type="text" autocomplete="off" placeholder="Splatnost faktury" />
-                            <span asp-validation-for="@Model.Order.Invoices[i].InvoiceDueDate" class="text-danger"></span>
-                        </div>
-                        <div class="col-lg-3">
-                            <div class="input-group mb-2 mr-sm-2">
-                                <div class="input-group-prepend">
-                                    <div class="input-group-text">@Model.Order?.SharedInfo?.Currency?.Name</div>
-                                </div>
-                                <input asp-for="@Model.Order.Invoices[i].Cost" class="form-control" type="text" placeholder="Částka" />
-                                <span asp-validation-for="@Model.Order.Invoices[i].Cost" class="text-danger"></span>
-                            </div>
-                        </div>
-                        <div class="col-lg-1">
-                            <a href="javascript:void(0)" class="btn btn-danger btn-sm mt-1" data-toggle="tooltip" title="Odstranit záznam" onclick="DeleteInvoice(@Model.Order.Invoices[i].InvoiceId)"><i class="fa fa-trash"></i></a>
-                        </div>
-                    </div>
-                }
-                <span asp-validation-for="Order.Invoices" class="text-danger"></span>
-            </div>
+            <!-- PLACEHOLDER: _Partial_Invoices_Create -->
+            <div class="dynamic-rows-invoices" id="template-invoices"></div>
 
+            @* =========== *@
+            @* OTHER COSTS *@
+            @* =========== *@
             <div class="form-group row border-top pt-2">
                 <div class="col-lg-2 col-form-label d-flex justify-content-left">
                     <label class="form-control-label control-label">Další náklady</label>
@@ -324,28 +307,25 @@
         };
 
         // Just delete the <div> element
-        function DeleteOtherCost(otherCostId) {
-            console.log(`Deleting otherCostId: ${otherCostId}`);
-            var row = document.getElementById(`dynamic-row-other-costs-${otherCostId}`);
-            row.remove();
-        };
-
-        // Just delete the <div> element, don't post anything like in ActionResult Edit()
-        function DeleteInvoice(invoiceId) {
-            var row = document.getElementById(`dynamic-row-invoice-${invoiceId}`);
-            if (row != null) {
+        function DeleteOrderCode(orderCodeId) {
+            const row = $(`#dynamic-row-order-codes-${orderCodeId}`);
+            if (row.length != 0) {
+                const btnTrash = row.find("a.btn.btn-danger").tooltip("hide");
                 row.remove();
             }
+        };
 
-            var rowDeliveryNote = document.getElementById(`dynamic-row-delivery-note-${invoiceId}`);
-            if (rowDeliveryNote != null) {
-                rowDeliveryNote.remove();
+        function DeleteInvoice(invoiceId) {
+            const row = $(`#dynamic-row-invoices-${invoiceId}`);
+            if (row.length != 0) {
+                const btnTrash = row.find("a.btn.btn-danger").tooltip("hide");
+                row.remove();
             }
         };
 
         // Just delete the <div> element
-        function DeleteOrderCode(orderCodeId) {
-            const row = $(`#dynamic-row-order-codes-${orderCodeId}`);
+        function DeleteOtherCost(otherCostId) {
+            const row = $(`#dynamic-row-other-costs-${otherCostId}`);
             if (row.length != 0) {
                 const btnTrash = row.find("a.btn.btn-danger").tooltip("hide");
                 row.remove();
@@ -416,7 +396,8 @@
             //    $('#Order_InvoiceDueDate').val(futureDate);
             //});
 
-            // Add new ORDER CODES row
+            // Add new ORDER CODES row (partial)
+            // =================================
             var idNewOrderCode = @Model.Order.OrderCodes.Count();
             $('.add-partial-order-codes-href').on('click', function() {
                 $.ajax({
@@ -424,98 +405,52 @@
                     dataType: 'html',
                     success: function (result) {
                         $(".add-partial-order-codes").append(result);
+                        @* floatingLabelsInit(); *@
                         initializeTooltips();
                         initializeOrderAjaxModalClickEvent();
                         $('form').data('validator', null);
                         $.validator.unobtrusive.parse($('form'));
                     }
                 });
-                idNewOrderCode = idNewOrderCode + 1;
+                idNewOrderCode += 1;
             });
 
-            // Add new INVOICES row
-            var idInvoice = @Model.Order.Invoices.Count();
-            var invoiceDueDays = @Html.Raw(Json.Serialize(Model.Order?.SharedInfo?.Company?.InvoiceDueDays));
-            $('.add-row-invoice').click(function () {
-                console.log('Adding invoice: ' + idInvoice);
-                var html =
-                    '<div class="row form-group justify-content-end border-top pt-4" id="dynamic-row-invoice-' + idInvoice + '">'+
+            // Add new INVOICES row (partial)
+            // ==============================
+            var idNewInvoice = @Model.Order.Invoices.Count();
+            $('.add-partial-invoices-href').on('click', function() {
+                $.ajax({
+                    url: '@Url.Action("AddInvoicesPartial", "Orders")/' + @Model.Order.OrderId + '?invoiceId=' + idNewInvoice,
+                    dataType: 'html',
+                    success: function (result) {
+                        $(".dynamic-rows-invoices").append(result);
+                        initializeTooltips();
+                        floatingLabelsInit();
+                        var _invoiceIssueInput = $('#Order_Invoices_' + idNewInvoice + '__InvoiceIssueDate');
+                        var _invoiceDueInput = $('#Order_Invoices_' + idNewInvoice + '__InvoiceDueDate');
+                        // Fill in date if SharedInfo.EstimatedFinishDate is filled
+                        var estimatedFinishDate = '@Html.Raw(Model.Order?.SharedInfo?.EstimatedFinishDate)'
+                        if ( estimatedFinishDate != '') {
+                            var issueDate = getPrettyDate(new Date(estimatedFinishDate), 0)
+                            _invoiceIssueInput.val(issueDate);
+                            var futureDate = getPrettyDate(issueDate, @Model.Order?.SharedInfo?.Company?.InvoiceDueDays);
+                            _invoiceDueInput.val(futureDate);
+                        }
+                        // Initialize datepicker(s)
+                        _invoiceDueInput.datepicker(datepickerParameters[0]);
+                        _invoiceIssueInput.datepicker(datepickerParameters[0]);
+                        _invoiceIssueInput.on("changeDate", function(data) {
+                            var date = data.date;
+                            var futureDate = getPrettyDate(date, @Model.Order?.SharedInfo?.Company?.InvoiceDueDays);
+                            $('#Order_Invoices_' + _invoiceIssueInput.data('id') + '__InvoiceDueDate').val(futureDate);
+                        });
+                        // Reinitialize validations
+                        $('form').data('validator', null);
+                        $.validator.unobtrusive.parse($('form'));
 
-                        '<input type="number" hidden="true" data-val="true" data-val-required="The InvoiceId field is required." id="Order_Invoices_' + idInvoice + '__InvoiceId" name="Order.Invoices[' + idInvoice + '].InvoiceId" value="0">'+
-
-                        '<div class="col-lg-3 mycalendar">'+
-                            '<span class="has-float-label">'+
-                                '<input class="form-control" type="text" autocomplete="off" placeholder="dd-MM-yyyy" data-id="' + idInvoice + '" data-val="true" data-val-required="The Předp. termín vystavení faktury field is required." id="Order_Invoices_' + idInvoice + '__InvoiceIssueDate" name="Order.Invoices[' + idInvoice + '].InvoiceIssueDate" value="">'+
-                                '<label for="Order_Invoices_' + idInvoice + '__InvoiceIssueDate">Termín vystavení</label>'+
-                            '</span>'+
-                            '<span class="text-danger field-validation-valid" data-valmsg-for="Order.Invoices[' + idInvoice + '].InvoiceIssueDate" data-valmsg-replace="true"></span>'+
-                        '</div>'+
-
-                        '<div class="col-lg-3">'+
-                            '<span class="has-float-label">'+
-                                '<input class="form-control" type="text" autocomplete="off" placeholder="dd-MM-yyyy" data-val="true" data-id="' + idInvoice + '" data-val-required="The Splatnost faktury field is required." id="Order_Invoices_' + idInvoice + '__InvoiceDueDate" name="Order.Invoices[' + idInvoice + '].InvoiceDueDate" value="">'+
-                                '<label for="Order_Invoices_' + idInvoice + '__InvoiceDueDate">Splatnost faktury</label>'+
-                            '</span>'+
-                            '<span class="text-danger field-validation-valid" data-valmsg-for="Order.Invoices[' + idInvoice + '].InvoiceDueDate" data-valmsg-replace="true"></span>'+
-                        '</div>'+
-
-                        '<div class="col-lg-3">'+
-                            '<span class="has-float-label">'+
-                                '<input class="form-control" type="text" placeholder="Částka" data-val="true" data-val-number="The field Částka must be a number." data-val-required="The Částka field is required." id="Order_Invoices_' + idInvoice + '__Cost" name="Order.Invoices[' + idInvoice + '].Cost" value="" />'+
-                                '<label for="Order_Invoices_' + idInvoice + '__Cost">Částka [@Model.Order?.SharedInfo.Currency?.Name]</label>'+
-                            '</span>'+
-                            '<span class="text-danger field-validation-valid" data-valmsg-for="Order.Invoices[' + idInvoice + '].Cost" data-valmsg-replace="true"></span>'+
-                        '</div>'+
-
-                        '<div class="col-lg-1">'+
-                            '<a href="javascript:void(0)" class="btn btn-danger btn-sm mt-1" data-toggle="tooltip" title="" data-original-title="Odstranit záznam" onclick="DeleteInvoice(' + idInvoice + ')"><i class="fa fa-trash white"></i></a>'+
-                        '</div>'+
-
-                    '</div>'+
-
-                    '<div class="row form-group justify-content-end " id="dynamic-row-delivery-note-' + idInvoice + '">'+
-                        '<div class="col-lg-9">'+
-                            '<span class="has-float-label">'+
-                                '<input class="form-control" type="text" placeholder="Cesta k dodacímu listu" id="Order_Invoices_' + idInvoice + '__DeliveryNote" name="Order.Invoices[' + idInvoice + '].DeliveryNote" value="" />'+
-                                '<label for="Order_Invoices_' + idInvoice + '__DeliveryNote">Dodací list</label>'+
-                            '</span>'+
-                            '<span data-valmsg-for="Order.Invoices[' + idInvoice + '].DeliveryNote" data-valmsg-replace="true" class="text-danger"></span>'+
-                        '</div>'+
-                        '<div class="col-lg-1"></div>'+
-                    '</div>'
-                ;
-                var _formTemp = $("#template-invoices").clone(true)
-                var _targetForm = $(".dynamic-rows-invoices")
-                _targetForm.append(html)
-
-                var _invoiceIssueInput = $('#Order_Invoices_' + idInvoice + '__InvoiceIssueDate');
-                var _invoiceDueInput = $('#Order_Invoices_' + idInvoice + '__InvoiceDueDate');
-
-                var parsed_date = @Html.Raw(Json.Serialize(Model.Order.SharedInfo.EstimatedFinishDate))
-                if ( parsed_date != null) {
-                    var issueDate = getPrettyDate(new Date(parsed_date), 0)
-                    _invoiceIssueInput.val(issueDate);
-                    var futureDate = getPrettyDate(new Date(parsed_date), @Model.Order?.SharedInfo?.Company?.InvoiceDueDays);
-                    _invoiceDueInput.val(futureDate);
-                }
-
-                _invoiceIssueInput.datepicker(datepickerParameters[0]);
-                _invoiceDueInput.datepicker(datepickerParameters[0]);
-                $('.newlyAddedTooltip').tooltip();
-
-                _invoiceIssueInput.on("changeDate", function(data) {
-                    var date = data.date;
-                    var futureDate = getPrettyDate(date, @Model.Order?.SharedInfo?.Company?.InvoiceDueDays);
-                    $('#Order_Invoices_' + _invoiceIssueInput.data('id') + '__InvoiceDueDate').val(futureDate);
-                 });
-
-                floatingLabelsInit();
-
-                $('form').data('validator', null);
-                $.validator.unobtrusive.parse($('form'));
-
-                idInvoice = idInvoice + 1;
-                return false;
+                        idNewInvoice += 1;
+                    }
+                });
             });
 
             // Add new OTHER COSTS row
