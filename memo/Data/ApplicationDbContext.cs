@@ -7,6 +7,7 @@ using memo.Models;
 using memo.ViewModels;
 using Microsoft.Data.SqlClient;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace memo.Data
 {
@@ -32,6 +33,9 @@ namespace memo.Data
         public virtual DbSet<BugReport> BugReport { get; set; }
         public virtual DbSet<Audit> Audit { get; set; }
         public virtual DbSet<SharedInfo> SharedInfo { get; set; }
+
+        public static readonly ILoggerFactory MyLoggerFactory
+            = LoggerFactory.Create(builder => { builder.AddConsole(); });
 
         /// <summary>
         /// Extension method for saving changes with username into UserContext
@@ -87,8 +91,10 @@ namespace memo.Data
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder
+                .UseLoggerFactory(MyLoggerFactory)
                 .EnableSensitiveDataLogging();
         }
+
 
         // MODEL BUILDER
         protected override void OnModelCreating(ModelBuilder modelBuilder)

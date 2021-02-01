@@ -6,6 +6,7 @@ using memo.ViewModels;
 using System.Reflection;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using System.Linq;
+using Microsoft.Extensions.Logging;
 
 namespace memo.Data
 {
@@ -20,9 +21,14 @@ namespace memo.Data
         public virtual DbSet<tUsers> tUsers { get; set; }
         public virtual DbSet<vEmployees> vEmployees { get; set; }
 
+        public static readonly ILoggerFactory MyLoggerFactory
+            = LoggerFactory.Create(builder => { builder.AddConsole(); });
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.EnableSensitiveDataLogging();
+            optionsBuilder
+                .UseLoggerFactory(MyLoggerFactory)
+                .EnableSensitiveDataLogging();
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
