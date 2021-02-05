@@ -24,8 +24,10 @@ namespace memo.Data
         public static readonly ILoggerFactory MyLoggerFactory
             = LoggerFactory.Create(builder => { builder.AddConsole(); });
 
-        // PROCEDURES
+        // STORED PROCEDURES
         public virtual DbSet<SumMinutesSP> SumMinutesSP { get; set; }
+        public virtual DbSet<spAllowedDays> spAllowedDays { get; set; }
+        public virtual DbSet<spGetUserID> spGetUserID { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -36,9 +38,9 @@ namespace memo.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<SumMinutesSP>(entity => {
-                entity.HasNoKey();
-            });
+            modelBuilder.Entity<SumMinutesSP>(entity => {entity.HasNoKey();});
+            modelBuilder.Entity<spGetUserID>(entity => {entity.HasNoKey();});
+            modelBuilder.Entity<spAllowedDays>(entity => {entity.HasNoKey();});
 
             modelBuilder.Entity<tWorks>(entity =>
             {

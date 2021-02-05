@@ -26,6 +26,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Authorization;
 
 namespace memo.Controllers
 {
@@ -40,6 +42,20 @@ namespace memo.Controllers
 
         public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
+            // use the extension method in your filter
+            // if (filterContext.HasAttribute(typeof(AllowAnonymousAttribute)))
+            foreach (var filterDescriptors in filterContext.ActionDescriptor.FilterDescriptors)
+            {
+                if (filterDescriptors.Filter.GetType() == typeof(AllowAnonymousFilter))
+                {
+                    return;
+                }
+            }
+            // if (filterContext. .HasAttribute(typeof(AllowAnonymousAttribute)))
+            // {
+            //     // exit early...
+            //     return;
+            // }
             // Before any controller action check if the one that is logged in has the right Domain and Username
             //if (this.HostEnvironment.IsDevelopment())
             //{
@@ -73,7 +89,6 @@ namespace memo.Controllers
                     }
                 );
             }
-            //}
         }
 
         private bool userNameAuthorized(string userName)
