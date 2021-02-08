@@ -103,7 +103,7 @@
         <tr>
             <th scope="col" class="text-center" data-field="0" data-sortable="true" data-filter-control="false" data-footer-formatter="idFormatter"></i>Edit</th>
             <th scope="col" class="text-center" data-field="1" data-sortable="true" data-filter-control="false"><span data-toggle="tooltip" title="Aktivní / Neaktivní"><i class="fa fa-eye text-secondary"></i></span></th>
-            <th scope="col" class="text-center" data-field="2" data-sortable="true" data-filter-control="input">Vytvořeno</th>
+            <th scope="col" class="text-center" data-field="2" data-sortable="true" data-filter-control="input" data-footer-formatter="countFormatter">Vytvořeno</th>
             <th scope="col" class="text-center" data-field="3" data-sortable="true" data-filter-control="input"><span data-toggle="tooltip" title="Z čeho zakázka vychází... N: Nabídka, R: Rámcová smlouva, -: Bez nabídky">Typ</span></th>
             <th scope="col" class="text-center" data-field="4" data-sortable="true" data-filter-control="input">Nabídka</th>
             <th scope="col" class="text-center" data-field="5" data-sortable="true" data-filter-control="input">Rámcovka</th>
@@ -113,15 +113,16 @@
             <th scope="col" class="text-center" data-field="9" data-sortable="true" data-filter-control="input">Vedoucí <br />projektu</th>
             <th scope="col" class="text-center" data-field="10" data-sortable="true" data-filter-control="input">Oddělení</th>
             <th scope="col" class="text-center" data-field="11" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatter" data-sorter="priceSorter"><div data-toggle="tooltip" title="Vyjednaná cena zakázky (po případné slevě)">Vyjednaná <br />cena</div></th>
-            <th scope="col" class="text-center" data-field="12" data-sortable="true" data-filter-control="input"><div data-toggle="tooltip" title="Součet fakturací">Vyfakturováno</div></th>
-            <th scope="col" class="text-center" data-field="13" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatter" data-sorter="priceSorter"><div data-toggle="tooltip" title="Vyjednaná cena - součet fakturací">Zbývá</div></th>
-            <th scope="col" class="text-center" data-field="14" data-sortable="true" data-filter-control="input" data-footer-formatter="sumHoursFormatter">Vyčerpáno</th>
-            <th scope="col" class="text-center" data-field="15" data-sortable="true" data-filter-control="input" data-footer-formatter="sumHoursFormatter">Plánované <br />hod</th>
-            <th scope="col" class="text-center" data-field="16" data-sortable="true" data-filter-control="input">Využito</th>
-            <th scope="col" class="text-center" data-field="17" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatter" data-sorter="priceSorter"><div data-toggle="tooltip" title="Suma (vyčerpané hod * jejich hodinová mzda)">Skutečné <br />náklady</div></th>
-            <th scope="col" class="text-center" data-field="18" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatter" data-sorter="priceSorter"><div data-toggle="tooltip" title="Skutečné náklady + další náklady">Celkové skut. <br />náklady</div></th>
-            <th scope="col" class="text-center" data-field="19" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatter" data-sorter="priceSorter"><div data-toggle="tooltip" title="Vyjednaná cena - Celkové skut. náklady">Odčerpáno <br />nákladů</div></th>
-            <th scope="col" class="text-center" data-field="20" data-sortable="true" data-filter-control="input">Poznámky</th>
+            <th scope="col" class="text-center" data-field="12" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatter" data-sorter="priceSorter"><div data-toggle="tooltip" title="Vyjednaná cena zakázky (po případné slevě) v CZK">Vyjednaná <br />cena CZK</div></th>
+            <th scope="col" class="text-center" data-field="13" data-sortable="true" data-filter-control="input"><div data-toggle="tooltip" title="Součet fakturací">Vyfakturováno</div></th>
+            <th scope="col" class="text-center" data-field="14" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatter" data-sorter="priceSorter"><div data-toggle="tooltip" title="Vyjednaná cena - součet fakturací">Zbývá</div></th>
+            <th scope="col" class="text-center" data-field="15" data-sortable="true" data-filter-control="input" data-footer-formatter="sumHoursFormatter">Vyčerpáno</th>
+            <th scope="col" class="text-center" data-field="16" data-sortable="true" data-filter-control="input" data-footer-formatter="sumHoursFormatter">Plánované <br />hod</th>
+            <th scope="col" class="text-center" data-field="17" data-sortable="true" data-filter-control="input">Využito</th>
+            <th scope="col" class="text-center" data-field="18" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatter" data-sorter="priceSorter"><div data-toggle="tooltip" title="Suma (vyčerpané hod * jejich hodinová mzda)">Skutečné <br />náklady</div></th>
+            <th scope="col" class="text-center" data-field="19" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatter" data-sorter="priceSorter"><div data-toggle="tooltip" title="Skutečné náklady + další náklady">Celkové skut. <br />náklady</div></th>
+            <th scope="col" class="text-center" data-field="20" data-sortable="true" data-filter-control="input" data-footer-formatter="priceFormatter" data-sorter="priceSorter"><div data-toggle="tooltip" title="Vyjednaná cena - Celkové skut. náklady">Odčerpáno <br />nákladů</div></th>
+            <th scope="col" class="text-center" data-field="21" data-sortable="true" data-filter-control="input">Poznámky</th>
         </tr>
     </thead>
     <tbody>
@@ -177,6 +178,8 @@
                 <td scope="row" class="text-left">@item.SharedInfo.EveDepartment</td>
                 @* Vyjednaná cena *@
                 <td scope="row" class="text-right">@string.Format(CultureInfo.CreateSpecificCulture(@item.SharedInfo.Currency.CultureCode), "{0:C0}", @item.NegotiatedPrice)</td>
+                @* Vyjednaná cena CZK*@
+                <td scope="row" class="text-right">@string.Format(CultureInfo.CreateSpecificCulture("cs-CZ"), "{0:C0}", @item.NegotiatedPriceCzk)</td>
                 @* Vyfakturováno *@
                 <td scope="row" class="text-right">
                     <div class="progress" style="height: 5px;">
