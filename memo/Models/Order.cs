@@ -111,6 +111,10 @@ namespace memo.Models
         [NotMapped]
         public decimal? PriceDiscount => this.SharedInfo?.Price - NegotiatedPrice;
 
+        [Display(Name = "Vyjednaná cena CZK")]
+        [NotMapped]
+        public decimal? NegotiatedPriceCzk => (int?)(this.ExchangeRate * this.NegotiatedPrice);
+
         [Display(Name = "Celkem hodin plánovaných")]
         [NotMapped]
         public int? TotalHours { get; set; }
