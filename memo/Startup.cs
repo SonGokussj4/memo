@@ -46,20 +46,51 @@ namespace memo
                 builder.AddRazorRuntimeCompilation();
             }
 
-            services.AddDbContext<LoginDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DevelopmentLocal_MemoDB")));
+            string appMode = "DEV";  // DEV, PRE, PROD
 
-            services.AddDbContext<ApplicationDbContext>(options =>
-                // options.UseSqlServer(Configuration.GetConnectionString("ProductionDB_Evektor")));
-                options.UseSqlServer(Configuration.GetConnectionString("DevelopmentLocal_MemoDB")));
+            if (appMode == "DEV")
+            {
+                services.AddDbContext<LoginDbContext>(options =>
+                    options.UseSqlServer(Configuration.GetConnectionString("Development_MemoDB")));
 
-            services.AddDbContext<EvektorDbContext>(options =>
-                //   options.UseSqlServer(Configuration.GetConnectionString("ProductionDB_Evektor")));
-                options.UseSqlServer(Configuration.GetConnectionString("DevelopmentLocal_MemoDB")));
+                services.AddDbContext<ApplicationDbContext>(options =>
+                    options.UseSqlServer(Configuration.GetConnectionString("Development_MemoDB")));
 
-            services.AddDbContext<EvektorDochnaDbContext>(options =>
-                //   options.UseSqlServer(Configuration.GetConnectionString("ProductionDB_Dochadzka")));
-                options.UseSqlServer(Configuration.GetConnectionString("DevelopmentLocal_MemoDB")));
+                services.AddDbContext<EvektorDbContext>(options =>
+                    options.UseSqlServer(Configuration.GetConnectionString("Development_MemoDB")));
+
+                services.AddDbContext<EvektorDochnaDbContext>(options =>
+                    options.UseSqlServer(Configuration.GetConnectionString("Development_MemoDB")));
+            }
+            else if (appMode == "PRE")
+            {
+                services.AddDbContext<LoginDbContext>(options =>
+                    options.UseSqlServer(Configuration.GetConnectionString("PreProductionDB_EvektorDBdev")));
+
+                services.AddDbContext<ApplicationDbContext>(options =>
+                    options.UseSqlServer(Configuration.GetConnectionString("PreProductionDB_EvektorDBdev")));
+
+                services.AddDbContext<EvektorDbContext>(options =>
+                    options.UseSqlServer(Configuration.GetConnectionString("PreProductionDB_EvektorDBdev")));
+
+                services.AddDbContext<EvektorDochnaDbContext>(options =>
+                    options.UseSqlServer(Configuration.GetConnectionString("PreProductionDB_DochadzkaDBdev")));
+            }
+            else if (appMode == "PROD")
+            {
+                services.AddDbContext<LoginDbContext>(options =>
+                    options.UseSqlServer(Configuration.GetConnectionString("Development_MemoDB")));
+
+                services.AddDbContext<ApplicationDbContext>(options =>
+                    options.UseSqlServer(Configuration.GetConnectionString("ProductionDB_Evektor")));
+
+                services.AddDbContext<EvektorDbContext>(options =>
+                      options.UseSqlServer(Configuration.GetConnectionString("ProductionDB_Evektor")));
+
+                services.AddDbContext<EvektorDochnaDbContext>(options =>
+                      options.UseSqlServer(Configuration.GetConnectionString("ProductionDB_Dochadzka")));
+            }
+
 
             //services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
 
