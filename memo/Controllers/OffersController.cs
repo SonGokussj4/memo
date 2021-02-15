@@ -410,14 +410,14 @@ namespace memo.Controllers
         /// </returns>
         private async Task<string> getNewOfferNumAsync()
         {
-            int[] allNumbers = Enumerable.Range(1, 9999).ToArray();
-
             var usedNumbers = _db.Offer
                 .OrderBy(x => x.OfferName)
                 .AsEnumerable()
                 .Where(x => x.OfferName.Contains($"/{DateTime.Now.Year}/"))
                 .Select(x => Convert.ToInt32(x.OfferName.Split("/").Last()))
                 .ToArray();
+
+            int[] allNumbers = Enumerable.Range(1, 9999).ToArray();
 
             var availableNumbers = allNumbers.Except(usedNumbers);
 
