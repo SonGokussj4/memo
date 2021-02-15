@@ -376,7 +376,7 @@ function priceFormatter(data) {
             ) || 0;
         return + cost;
     }).reduce(function (sum, i) {
-        return sum + i
+        return sum + i;
     }, 0);
     return (vysledek).formatMoney(0, '.', ' ');
 }
@@ -558,6 +558,8 @@ $(".select-contact-ajax").select2({
         cache: true,
     },
 });
+
+
 // =================================
 // CHART.JS PLUGIN - HORIZONTAL LINE
 // =================================

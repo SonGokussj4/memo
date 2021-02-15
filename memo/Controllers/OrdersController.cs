@@ -1180,9 +1180,9 @@ namespace memo.Controllers
 
             // IOrderedQueryable<SelectListItem> eveOrderCodes = _eveDb.cOrders
             var eveOrderCodes = _eveDb.cOrders
-                .Where(x => x.OrderCode.Contains(match) || x.OrderName.Contains(match))
-                .Take(pageSize)
                 .AsEnumerable()
+                .Where(x => x.OrderCode.Contains(match) || x.OrderName.ToLower().RemoveDiacritics().Contains(match))
+                .Take(pageSize)
                 .Select(m => new SelectListItem {
                     Text = m.OrderCode + " - " + m.OrderName + " [ " + GetSumHours(m.OrderCode).ToString("N0") + " hod ]",
                     Value = m.OrderCode
