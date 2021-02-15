@@ -62,8 +62,12 @@ namespace memo.Controllers
         {
             match = !string.IsNullOrWhiteSpace(match) ? match : "";
 
-            var eveContactsList = _eveDbDochna.vEmployees
+            var eveContactsList = await _eveDbDochna.vEmployees
                 .Where(x => x.EVE == 1)
+                .ToListAsync();
+
+            var result = eveContactsList
+                .Where(x => x.FormatedName.ToLower().RemoveDiacritics().Contains(match))
                 .Where(x => x.DepartName.Contains(filter))
                 .AsEnumerable()
                 .Where(x => x.FormatedName.ToLower().RemoveDiacritics().Contains(match))
@@ -71,9 +75,10 @@ namespace memo.Controllers
                     Value = x.FormatedName,
                     Text = x.FormatedName,
                 })
-                .OrderBy(x => x.Text);
+                .OrderBy(x => x.Text)
+                .ToList();
 
-            var result = eveContactsList.ToList();
+            // var result = eveContactsList.ToList();
 
             return Json(new { items = result });
         }

@@ -318,6 +318,10 @@ Number.prototype.formatMoney = function(decimals, decimal_sep, thousands_sep)
 // ==========================================================================
 // BOOTSTRAP TABLE FILTER AND SORTING FORMATTERS
 // ==========================================================================
+function countFormatter(data) {
+    return data.length;
+}
+
 function sumHoursFormatter(data) {
     var field = parseInt(this.field);
     var result = data.map(function (row) {
