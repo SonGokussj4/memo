@@ -39,8 +39,8 @@ namespace memo.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<SumMinutesSP>(entity => {entity.HasNoKey();});
-            modelBuilder.Entity<spGetUserID>(entity => {entity.HasNoKey();});
             modelBuilder.Entity<spAllowedDays>(entity => {entity.HasNoKey();});
+            modelBuilder.Entity<spGetUserID>(entity => {entity.HasNoKey();});
 
             modelBuilder.Entity<tWorks>(entity =>
             {
