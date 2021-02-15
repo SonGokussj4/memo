@@ -410,19 +410,18 @@ namespace memo.Controllers
         /// </returns>
         private async Task<string> getNewOfferNumAsync()
         {
-            string offerName = await _db.Offer
-                .Where(m => m.OfferName.Contains("/" + DateTime.Now.Year.ToString() + "/"))
-                .Select(m => m.OfferName)
-                .OrderByDescending(x => x)
-                .FirstOrDefaultAsync();
+            int[] allNumbers = Enumerable.Range(1, 9999).ToArray();
 
-            if (offerName == null)
-            {
-                return $"EV-quo/{DateTime.Now.Year.ToString()}/0001";
-            }
-            int maxOfferNum = Convert.ToInt32(offerName.Split("/").Last());  // 0068
-            string maxOfferNumNext = String.Format("{0:0000}", maxOfferNum + 1);  // 0069
-            string newOfferNum = $"EV-quo/{DateTime.Now.Year.ToString()}/{maxOfferNumNext}";  // EV-quo/2020/0069
+            var usedNumbers = _db.Offer
+                .OrderBy(x => x.OfferName)
+                .AsEnumerable()
+                .Where(x => x.OfferName.Contains($"/{DateTime.Now.Year}/"))
+                .Select(x => Convert.ToInt32(x.OfferName.Split("/").Last()))
+                .ToArray();
+
+            var availableNumbers = allNumbers.Except(usedNumbers);
+
+            string newOfferNum = $"EV-quo/{DateTime.Now.Year}/{availableNumbers.First():0000}";  // EV-quo/2020/0069
 
             return newOfferNum;
         }
