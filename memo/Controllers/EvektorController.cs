@@ -63,17 +63,21 @@ namespace memo.Controllers
         {
             match = !string.IsNullOrWhiteSpace(match) ? match : "";
 
-            IOrderedQueryable<SelectListItem> eveContactsList = _eveDbDochna.vEmployees
+            var eveContactsList = await _eveDbDochna.vEmployees
                 .Where(x => x.EVE == 1)
+                .ToListAsync();
+
+            var result = eveContactsList
                 .Where(x => x.FormatedName.ToLower().RemoveDiacritics().Contains(match))
                 .Where(x => x.DepartName.Contains(filter))
                 .Select(x => new SelectListItem {
                     Value = x.FormatedName,
                     Text = x.FormatedName,
                 })
-                .OrderBy(x => x.Text);
+                .OrderBy(x => x.Text)
+                .ToList();
 
-            var result = await eveContactsList.ToListAsync();
+            // var result = eveContactsList.ToList();
 
             return Json(new { items = result });
         }
