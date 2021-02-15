@@ -231,7 +231,8 @@ namespace memo.Controllers
             match = !string.IsNullOrWhiteSpace(match) ? match : "";
 
             var jsonData = _db.Company
-                .Where(x => x.Name.Contains(match))
+                .AsEnumerable()
+                .Where(x => x.Name.ToLower().RemoveDiacritics().Contains(match))
                 .Take(pageSize)
                 .Select(x => new SelectListItem
                     {
